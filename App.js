@@ -2,14 +2,65 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { render } from 'react-dom';
 
+import * as firebase from 'firebase';
+
+var firebaseConfig = {
+  apiKey: "AIzaSyA2J1UBQxi63ZHx3-WN7C2pTOZRh1MJ3bI",
+  authDomain: "social-alarm-2b903.firebaseapp.com",
+  databaseURL: "https://social-alarm-2b903.firebaseio.com",
+  projectId: "social-alarm-2b903",
+  storageBucket: "social-alarm-2b903.appspot.com",
+  /*messagingSenderId: "828360870887",
+  appId: "1:828360870887:web:8d203554e5b469c1dd8b42",
+  measurementId: "G-KXCXV485FZ"*/
+};
+
+firebase.initializeApp(firebaseConfig);
+
+import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
+
+
+
+
 export default class App extends React.Component {
+
+  
   
   state={
     email:"",
     password:""
   }
 
+  signUpUser = (email, password) => {
+    console.log('signup')
+    try{
+      firebase.auth().createUserWithEmailAndPassword(email,  password);
+
+    } 
+    catch(error) {
+      console.log(error.toString())
+    }
+
+  }
+
+  loginUser = (email, password) => {
+    console.log('login')
+    try {
+      firebase.auth().signInWithEmailAndPassword(email, password).then(function(user){
+        console.log(user)
+      })
+
+
+    } catch (error) {
+      console.log(error.toString())
+    }
+    
+  }
+
   render(){
+    if (!firebase.apps.length) {
+      firebase.initializeApp({});
+   }
     return (
       <View style={styles.container}>
         <Text style={styles.logo}>Group Alarm</Text>
@@ -34,11 +85,11 @@ export default class App extends React.Component {
           <Text style={styles.forgot}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginBtn}>
+        <TouchableOpacity style={styles.loginBtn}  onPress={ () => this.loginUser(this.state.email, this.state.password)} >
           <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity  onPress={ () => this.signUpUser(this.state.email, this.state.password)} >
           <Text style={styles.loginText}>Signup</Text>
         </TouchableOpacity>
       </View>
