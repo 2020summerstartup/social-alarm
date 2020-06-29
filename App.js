@@ -1,8 +1,20 @@
-import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+/* Color codes from coolors.co 
+Oxford Blue #0B132B
+Little Boy Blue #71A9F7
+Orange Red Crayola #FB5B5A
+Purple Navy #465881
+Blue Yonder #566C9F
+*/
+
+import React, {Component, useState} from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { render } from 'react-dom';
 
 import * as firebase from 'firebase';
+import Moment from 'moment';
+// import KeepAwake from "react-native-keep-awake";
+
+const moment = require("moment");
 
 var firebaseConfig = {
   apiKey: "AIzaSyA2J1UBQxi63ZHx3-WN7C2pTOZRh1MJ3bI",
@@ -15,17 +27,25 @@ var firebaseConfig = {
   measurementId: "G-KXCXV485FZ"*/
 };
 
-firebase.initializeApp(firebaseConfig);
+/*try {
+  firebase.initializeApp({firebaseConfig})
+}
+catch(err){
+}*/
 
-import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
-
-
-
+import {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
 
 export default class App extends React.Component {
 
-  
-  
+  constructor(props){
+    super(props);
+
+    this.state = {
+      time: moment().format("LTS"),
+      date: moment().format("LL")
+    }
+  }
+
   state={
     email:"",
     password:""
@@ -34,7 +54,7 @@ export default class App extends React.Component {
   signUpUser = (email, password) => {
     console.log('signup')
     try{
-      firebase.auth().createUserWithEmailAndPassword(email,  password);
+      firebase.auth().createUserWithEmailAndPassword(email, password);
 
     } 
     catch(error) {
@@ -63,6 +83,12 @@ export default class App extends React.Component {
    }
     return (
       <View style={styles.container}>
+        <Text style={styles.timeText}>
+          {this.state.time}
+        </Text>
+        <Text style={styles.dateText}>
+          {this.state.date}
+        </Text>
         <Text style={styles.logo}>Group Alarm</Text>
         <View style={styles.inputView}>
           <TextInput
@@ -100,7 +126,7 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#003f5c',
+    backgroundColor: '#71A9F7',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -114,7 +140,7 @@ const styles = StyleSheet.create({
 
   inputView:{
     width:"80%",
-    backgroundColor:"#465881",
+    backgroundColor:"#566C9F",
     borderRadius:25,
     height:50,
     marginBottom:20,
@@ -148,4 +174,30 @@ const styles = StyleSheet.create({
     marginBottom:10
   },
 
+  clock:{
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: "center",
+    alignItems: "center"
+  },
+
+  timeText:{
+    color: "#0B132B",
+    fontSize: 50
+  },
+
+  dateText:{
+    color: "#0B132B",
+    fontSize: 30
+  }
+
 });
+
+/*const screens = {
+  LogIn: {
+    screen: LogIn
+  },
+  Home: {
+    screen: Home
+  }
+}*/
