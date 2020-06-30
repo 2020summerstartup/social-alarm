@@ -1,13 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import NavigationContainer from './screens/navigation';
-
-export default class App extends React.Component {
-  render()
-  {
-    return <NavigationContainer/>
-  }
-}
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 // This is code to create a bottom tab navigator 
 // Code from https://reactnavigation.org/docs/bottom-tab-navigator/

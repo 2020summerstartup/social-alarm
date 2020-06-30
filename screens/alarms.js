@@ -6,9 +6,6 @@
 // Not yet using https://github.com/smartliang/react-native-alarm
 
 import React, { Component } from 'react';
-import { Button, View, Text, StyleSheet } from 'react-native';
-
-import React, { Component } from 'react';
 import { Button, View, Text, StyleSheet, ScrollView } from 'react-native';
 import { createAppContainer } from 'react-navigation'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
