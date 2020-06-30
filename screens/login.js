@@ -54,19 +54,6 @@ export default class App extends Component
     
   }
 
-  onLogin = async () => {
-    const { email, password } = this.state
-    try {
-      if (email.length > 0 && password.length > 0) {
-        this.props.navigation.navigate('Home')
-      }
-    } 
-    
-    catch (error) {
-      alert(error)
-    }
-  }
-
   render(){
     if (!firebase.apps.length) {
       firebase.initializeApp({});
