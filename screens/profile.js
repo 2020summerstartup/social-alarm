@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { StyleSheet, Button, View, Text } from 'react-native';
-import { createAppContainer } from 'react-navigation'
-import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 export default class Profile extends Component 
