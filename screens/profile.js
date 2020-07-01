@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fafafa',
-    alignItems: 'left',
+    alignItems: 'flex-start',
     justifyContent: 'flex-start',
   },
 

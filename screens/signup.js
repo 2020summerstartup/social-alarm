@@ -1,4 +1,4 @@
-// home.js
+// signup.js
 import React, { Component } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import 'react-native-gesture-handler';
@@ -9,51 +9,39 @@ import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'nat
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
 
-var firebaseConfig = {
-  apiKey: "AIzaSyA2J1UBQxi63ZHx3-WN7C2pTOZRh1MJ3bI",
-  authDomain: "social-alarm-2b903.firebaseapp.com",
-  databaseURL: "https://social-alarm-2b903.firebaseio.com",
-  projectId: "social-alarm-2b903",
-  storageBucket: "social-alarm-2b903.appspot.com",
-  /*messagingSenderId: "828360870887",
-  appId: "1:828360870887:web:8d203554e5b469c1dd8b42",
-  measurementId: "G-KXCXV485FZ"*/
-};
 
-firebase.initializeApp(firebaseConfig);
-
-export default function Login({navigation})
+export default class App extends Component
 {
   state={
     email:'',
     password:'',
+    confirmPassword:'',
   }
 
-  signUpUser = () => {
-    navigation.navigate('SignUp')
-
-  };
-
-  loginUser = (email, password) => {
-    console.log('login');
-    try {
-      firebase.auth().signInWithEmailAndPassword(email, password).then(function(user){
-        console.log(user);
-        })
-      }
-      catch (error) {
+  signUpUser = (email, password, confirmPassword) => {
+    try{
+        if (password==confirmPassword) {
+            firebase.auth().createUserWithEmailAndPassword(email.toString(), password.toString()).
+                then(console.log('signup'));
+        } else {
+            console.log('passwords dont match')
+            // TODO: make this pop up on app
+        }
+    } 
+    catch(error) {
       console.log(error.toString())
     }
-    
+
   }
 
+  render(){
     if (!firebase.apps.length) {
       firebase.initializeApp({});
     }
 
     return (
       <View style={styles.container}>
-        <Text style={styles.logo}>Group Alarm</Text>
+        <Text style={styles.logo}>Sign Up</Text>
         <View style={styles.inputView}>
           <TextInput
             style={styles.inputText}
@@ -72,22 +60,23 @@ export default function Login({navigation})
             onChangeText={(text) => this.setState({password: text})}/>
         </View>
 
-        <TouchableOpacity onPress={ () => navigation.navigate('ForgotPassword')}>
-          <Text style={styles.forgot}>Forgot Password?</Text>
-        </TouchableOpacity>
+        <View style={styles.inputView}>
+          <TextInput
+            secureTextEntry
+            style={styles.inputText}
+            placeholder="Confirm password..."
+            placeholderTextColor="#003f5c" 
+            onChangeText={(text) => this.setState({confirmPassword: text})} />
+        </View>
 
-        <TouchableOpacity style={styles.loginBtn}  onPress={ () => this.loginUser(this.state.email, this.state.password) } >
-          <Text style={styles.loginText}>LOGIN</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity  onPress={ () => this.signUpUser()} >
-          <Text style={styles.loginText}>Signup</Text>
+        <TouchableOpacity  style={styles.loginBtn} onPress={ () => this.signUpUser(this.state.email, this.state.password)} >
+          <Text style={styles.loginText}>SIGN UP</Text>
         </TouchableOpacity>
 
       </View>
     );
   }
-
+}
 
 const styles = StyleSheet.create({
   container: {
