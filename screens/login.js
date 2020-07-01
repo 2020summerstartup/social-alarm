@@ -6,7 +6,8 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-nativ
 import { render } from 'react-dom';
 import * as firebase from 'firebase';
 import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
-import { NavigationContainer } from '@react-navigation/native';
+// import { NavigationContainer } from '@react-navigation/native';
+// import NavigationContainer from './navigation';
 
 var firebaseConfig = {
   apiKey: "AIzaSyA2J1UBQxi63ZHx3-WN7C2pTOZRh1MJ3bI",
@@ -24,15 +25,13 @@ firebase.initializeApp(firebaseConfig);
 export default class App extends Component
 {
   state={
-    email:"",
-    password:""
+    email:'',
+    password:'',
   }
 
   signUpUser = (email, password) => {
-    console.log('signup')
     try{
-      firebase.auth().createUserWithEmailAndPassword(email,  password);
-
+      firebase.auth().createUserWithEmailAndPassword(email.toString(), password.toString()).then(console.log('signup'));
     } 
     catch(error) {
       console.log(error.toString())
@@ -41,14 +40,13 @@ export default class App extends Component
   }
 
   loginUser = (email, password) => {
-    console.log('login')
+    console.log('login');
     try {
       firebase.auth().signInWithEmailAndPassword(email, password).then(function(user){
-        console.log(user)
-      })
-
-
-    } catch (error) {
+        console.log(user);
+        })
+      }
+      catch (error) {
       console.log(error.toString())
     }
     
@@ -67,7 +65,8 @@ export default class App extends Component
             style={styles.inputText}
             placeholder="Email..."
             placeholderTextColor="#003f5c"
-            onChangeText={text => this.setState({email:text})}/>
+            onChangeText={(text) => {
+              this.setState({email: text})}}/>
         </View>
 
         <View style={styles.inputView}>
@@ -76,14 +75,15 @@ export default class App extends Component
             style={styles.inputText}
             placeholder="Password..."
             placeholderTextColor="#003f5c"
-            onChangeText={text => this.setState({password:text})}/>
+            onChangeText={(text) => this.setState({password: text})}/>
         </View>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={ () => firebase.auth().sendPasswordResetEmail(this.state.email).then(function(){
+          /* email sent */}).catch(function(error) { /* error */})}>
           <Text style={styles.forgot}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginBtn}  onPress={ this.onLogin } >
+        <TouchableOpacity style={styles.loginBtn}  onPress={ () => this.loginUser(this.state.email, this.state.password) } >
           <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity>
 
