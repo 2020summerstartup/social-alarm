@@ -1,13 +1,12 @@
 // home.js
 import React, { Component } from 'react';
-import { createAppContainer } from 'react-navigation'
-import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import 'react-native-gesture-handler';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { render } from 'react-dom';
 import * as firebase from 'firebase';
 import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
+import { NavigationContainer } from '@react-navigation/native';
 
 var firebaseConfig = {
   apiKey: "AIzaSyA2J1UBQxi63ZHx3-WN7C2pTOZRh1MJ3bI",
@@ -84,7 +83,7 @@ export default class App extends Component
           <Text style={styles.forgot}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginBtn}  onPress={ () => this.loginUser(this.state.email, this.state.password) } >
+        <TouchableOpacity style={styles.loginBtn}  onPress={ this.onLogin } >
           <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity>
 
