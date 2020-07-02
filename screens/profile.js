@@ -1,19 +1,25 @@
 import React, { Component } from 'react';
 import { StyleSheet, Button, View, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import * as firebase from 'firebase';
 
 export default class Profile extends Component 
 {
   render() {
+    var user = firebase.auth().currentUser;
     return (
+      
       <View style={styles.container}>
         <Text style={styles.name}>Name: </Text>
         <Text style={styles.logo}>Age: </Text>
         <Text style={styles.logo}>Location: </Text>
+        <Text style={styles.logo}>Email: {user.Email}</Text>
       </View>
+
     )
   }
 }
+
 
 const styles = StyleSheet.create({
   container: {
