@@ -1,24 +1,39 @@
 import React, { Component } from 'react';
-import { StyleSheet, Button, View, Text } from 'react-native';
+import { StyleSheet, Button, View, Text, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as firebase from 'firebase';
 
-export default class Profile extends Component 
+export default function Profile ({navigation})
 {
-  render() {
-    var user = firebase.auth().currentUser;
-    return (
+  var user = firebase.auth().currentUser;
+  const signOutUser = async () => {
+    navigation.navigate('Auth');
+    /*(firebase.auth().signOut().then(function() {
+      // sign out successful
       
-      <View style={styles.container}>
-        <Text style={styles.name}>Name: </Text>
-        <Text style={styles.logo}>Age: </Text>
-        <Text style={styles.logo}>Location: </Text>
-        <Text style={styles.logo}>Email: {user.Email}</Text>
-      </View>
+        
+    }).catch(function(error) {
+      // errors
+    });*/
 
-    )
   }
+  return (
+    
+    <View style={styles.container}>
+      <Text style={styles.name}>Name: </Text>
+      <Text style={styles.logo}>Age: </Text>
+      <Text style={styles.logo}>Location: </Text>
+      {/*<Text style={styles.logo}>Email: {user.email}</Text>*/}
+
+      <TouchableOpacity style={styles.loginBtn}  onPress={ () => navigation.navigate('Home') } >
+        <Text style={styles.loginText}>Sign Out</Text>
+      </TouchableOpacity>
+
+    </View>
+
+  )
 }
+
 
 
 const styles = StyleSheet.create({
@@ -45,5 +60,16 @@ const styles = StyleSheet.create({
     marginBottom:5,
     marginTop:5,
     marginLeft:20,
+  },
+
+  loginBtn:{
+    width:"80%",
+    backgroundColor:"#fb5b5a",
+    borderRadius:25,
+    height:50,
+    alignItems:"center",
+    justifyContent:"center",
+    marginTop:40,
+    marginBottom:10
   },
 })

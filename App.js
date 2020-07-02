@@ -23,7 +23,6 @@ export default class App extends React.Component {
     //return <StackNavigator />
     //return < SignUp />
     // return <ForgotPassword />
-    // return <NavigationContainer/>
     //return <NavigationContainer/>
     //return < Login />
 
