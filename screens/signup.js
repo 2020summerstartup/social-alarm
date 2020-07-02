@@ -28,8 +28,6 @@ export default class App extends Component
                 then(console.log('signup'));
         } else {
             console.log('passwords dont match')
-            console.log(password)
-            console.log(confirmPassword)
             // TODO: make this pop up on app
         }
     } 
