@@ -15,7 +15,8 @@ export default class App extends React.Component
         <Text>{this.state.switchValue ? 'Switch is ON' : 'Switch is OFF'}</Text>
 
         <Switch
-          style={{ marginTop: 30 }}
+          // style={{ marginTop: 30 }, color = "#000000"}
+          style = {styles.Switch}
           onValueChange={this.toggleSwitch}
           value={this.state.switchValue}
         />
@@ -29,4 +30,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  Switch: {
+    marginTop: 30, 
+    color: "#FFFFFF"
+  }
 });
