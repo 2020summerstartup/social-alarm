@@ -30,8 +30,8 @@ const HomeStack = createStackNavigator({
 
 }, {
         defaultNavigationOptions: {
-            headerStyle: { backgroundColor: '#eee', height: 60, },
-            headerTintColor: '#444',
+            headerStyle: { backgroundColor: '#003f5c', height: 60, },
+            headerTintColor: "#fb5b5a",
         }
     }
 )

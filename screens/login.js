@@ -1,11 +1,12 @@
 // home.js
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import 'react-native-gesture-handler';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage } from 'react-native';
 import { render } from 'react-dom';
 import * as firebase from 'firebase';
 import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
+// import Navigator from './navigation';
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
 
@@ -24,18 +25,26 @@ firebase.initializeApp(firebaseConfig);
 
 export default function Login({navigation})
 {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+/*
   state={
     email:'',
     password:'',
-  }
+  }*/
 
   signUpUser = () => {
     navigation.navigate('SignUp')
 
   };
 
-  loginUser = (email, password) => {
+  loginUser = async (email, password) => {
     console.log('login');
+    
+    // await AsyncStorage.setItem('userToken', 'abc');
+    
+    navigation.navigate('App');
+    console.log({email});
     try {
       firebase.auth().signInWithEmailAndPassword(email, password).then(function(user){
         console.log(user);
@@ -59,8 +68,7 @@ export default function Login({navigation})
             style={styles.inputText}
             placeholder="Email..."
             placeholderTextColor="#003f5c"
-            onChangeText={(text) => {
-              this.setState({email: text})}}/>
+            onChangeText={(text) => {setEmail(text)}}/>
         </View>
 
         <View style={styles.inputView}>
@@ -69,14 +77,14 @@ export default function Login({navigation})
             style={styles.inputText}
             placeholder="Password..."
             placeholderTextColor="#003f5c"
-            onChangeText={(text) => this.setState({password: text})}/>
+            onChangeText={(text) => setPassword(text)}/>
         </View>
 
         <TouchableOpacity onPress={ () => navigation.navigate('ForgotPassword')}>
           <Text style={styles.forgot}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginBtn}  onPress={ () => this.loginUser(this.state.email, this.state.password) } >
+        <TouchableOpacity style={styles.loginBtn}  onPress={ () => this.loginUser(email, password) } >
           <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity>
 

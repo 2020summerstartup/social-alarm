@@ -2,10 +2,11 @@
 import React, { Component } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import 'react-native-gesture-handler';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage } from 'react-native';
 import { render } from 'react-dom';
 import * as firebase from 'firebase';
 import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
+import Navigator from './navigation';
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
 
@@ -18,13 +19,17 @@ export default class App extends Component
     confirmPassword:'',
   }
 
-  signUpUser = (email, password, confirmPassword) => {
+  signUpUser = async (email, password, confirmPassword) => {
     try{
         if (password==confirmPassword) {
+          // await AsyncStorage.setItem('userToken', 'abc');
+          this.props.navigation.navigate('App');
             firebase.auth().createUserWithEmailAndPassword(email.toString(), password.toString()).
                 then(console.log('signup'));
         } else {
             console.log('passwords dont match')
+            console.log(password)
+            console.log(confirmPassword)
             // TODO: make this pop up on app
         }
     } 
@@ -69,7 +74,7 @@ export default class App extends Component
             onChangeText={(text) => this.setState({confirmPassword: text})} />
         </View>
 
-        <TouchableOpacity  style={styles.loginBtn} onPress={ () => this.signUpUser(this.state.email, this.state.password)} >
+        <TouchableOpacity  style={styles.loginBtn} onPress={ () => this.signUpUser(this.state.email, this.state.password, this.state.confirmPassword)} >
           <Text style={styles.loginText}>SIGN UP</Text>
         </TouchableOpacity>
 
