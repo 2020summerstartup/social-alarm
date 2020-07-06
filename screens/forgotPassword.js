@@ -7,7 +7,11 @@ import { render } from 'react-dom';
 import * as firebase from 'firebase';
 import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
 
-
+/* forgotPassword.js
+ * Forgot password screen
+ * when user enters email, sends them an email to reset their password
+ * 
+ */
 
 export default class App extends Component
 {
@@ -15,6 +19,8 @@ export default class App extends Component
     email:'',
   }
 
+  // forgotPass - called when user hits forgot password button
+  // sends reset password email to email in text box
   forgotPass = (email) => {
     firebase.auth().sendPasswordResetEmail(this.state.email).then(function(){
         /* email sent */}).catch(function(error) { /* error */})
@@ -31,6 +37,7 @@ export default class App extends Component
         <Text style={styles.logoTop}>Forgot</Text>
         <Text style={styles.logo}>Password?</Text>
         <View style={styles.inputView}>
+        {/* email text input */}
           <TextInput
             style={styles.inputText}
             placeholder="Email..."
@@ -38,7 +45,8 @@ export default class App extends Component
             onChangeText={(text) => {
               this.setState({email: text})}}/>
         </View>
-
+        
+        {/* forgot pass button */}
         <TouchableOpacity style={styles.loginBtn} onPress={ this.forgotPass(this.state.email)}>
           <Text style={styles.forgot}>Send password reset email</Text>
         </TouchableOpacity>

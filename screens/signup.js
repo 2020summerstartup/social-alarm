@@ -10,6 +10,11 @@ import Navigator from './navigation';
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
 
+/* signup.js
+ * SignUp screen
+ * 
+ */
+
 
 export default class App extends Component
 {
@@ -19,6 +24,9 @@ export default class App extends Component
     confirmPassword:'',
   }
 
+  // signUpUser - called when user presses sign up button
+  // if passwords match, signs user up (and logs them in) and navigates to App
+  // TODO: if passwords don't match, some kind of alert
   signUpUser = async (email, password, confirmPassword) => {
     try{
         if (password==confirmPassword) {
@@ -46,6 +54,7 @@ export default class App extends Component
       <View style={styles.container}>
         <Text style={styles.logo}>Sign Up</Text>
         <View style={styles.inputView}>
+          {/* text inputs - email, password, confirm password */}
           <TextInput
             style={styles.inputText}
             placeholder="Email..."
@@ -71,7 +80,8 @@ export default class App extends Component
             placeholderTextColor="#003f5c" 
             onChangeText={(text) => this.setState({confirmPassword: text})} />
         </View>
-
+        
+        {/* sign up button */}
         <TouchableOpacity  style={styles.loginBtn} onPress={ () => this.signUpUser(this.state.email, this.state.password, this.state.confirmPassword)} >
           <Text style={styles.loginText}>SIGN UP</Text>
         </TouchableOpacity>

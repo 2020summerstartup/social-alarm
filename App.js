@@ -5,7 +5,7 @@ import NavigationContainer from './screens/navigation';
 import SignUp from './screens/signup';
 import ForgotPassword from './screens/forgotPassword';
 import Login from './screens/login';
-import StackNavigator from './screens/stackNavigation'
+import StackNavigator from './screens/stackNavigation';
 import SwitchNavigator from './screens/switchNavigation';
 
 /* Color codes from coolors.co 

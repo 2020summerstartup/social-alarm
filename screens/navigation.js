@@ -7,6 +7,14 @@ import ProfileScreen from './profile';
 import StopwatchScreen from './stopwatch';
 import { NavigationContainer } from '@react-navigation/native';
 
+/* navigation.js
+ * bottom tab navigator for signed in user
+ * contains: home, alarms, profile, and stopwatch
+ * TODO: add friend page
+ * 
+ */
+
+
 // This is code to create a bottom tab navigator 
 // Code from https://reactnavigation.org/docs/bottom-tab-navigator/
 export default function Navigation()

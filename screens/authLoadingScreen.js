@@ -1,4 +1,3 @@
-// code from https://reactnavigation.org/docs/4.x/auth-flow (react navigation api docs example)
 import * as React from 'react';
 import {
   ActivityIndicator,
@@ -7,6 +6,16 @@ import {
   View,
   AsyncStorage
 } from 'react-native';
+
+/* authLoadingScreen.js
+ * Auth loading screen
+ * this is not used/does not work yet
+ * it's supposed to be called when app opens so user can be automatically
+ * signed in to their account via local storage
+ * 
+ * code from https://reactnavigation.org/docs/4.x/auth-flow (react navigation api docs example)
+ * 
+ */
 
 class AuthLoadingScreen extends React.Component {
     constructor() {

@@ -6,6 +6,13 @@ import SignUp from "./signup";
 import ForgotPassword from './forgotPassword';
 import React from 'react';
 
+/* stackNavigation.js
+ * stack navigator for not signed in user
+ * contains: login, sign up, forgot password
+ * login is main page, has buttons that go to sign up and forgot password
+ * 
+ */
+
 const HomeStack = createStackNavigator({
     Login: {
         screen: Login,
