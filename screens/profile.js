@@ -34,7 +34,7 @@ export default function Profile ({navigation})
       <Text style={styles.logo}>Location: </Text>
       {/*<Text style={styles.logo}>Email: {user.email}</Text>*/}
 
-      <TouchableOpacity style={styles.loginBtn}  onPress={ () => navigation.navigate('Auth') } >
+      <TouchableOpacity style={styles.loginBtn}  onPress={ () => navigation.navigate('Auth', {screen: 'Login'}) } >
         <Text style={styles.loginText}>Sign Out</Text>
       </TouchableOpacity>
 
