@@ -16,14 +16,15 @@ export default function Profile ({navigation})
   // DEBUGGING NOW - NOT FUNCTIONAL
   // navigation problems, but conce
   const signOutUser = async () => {
-    navigation.navigate('Auth');
-    /*(firebase.auth().signOut().then(function() {
+    //navigation.navigate('Auth');
+    firebase.auth().signOut().then(function(user) {
+      navigation.navigate('Auth');
       // sign out successful
       
         
     }).catch(function(error) {
       // errors
-    });*/
+    })
 
   }
   return (

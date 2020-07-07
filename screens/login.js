@@ -2,7 +2,7 @@
 import React, { Component, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import 'react-native-gesture-handler';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage,Alert } from 'react-native';
 import { render } from 'react-dom';
 import * as firebase from 'firebase';
 import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
@@ -55,12 +55,15 @@ export default function Login({navigation})
     console.log({email});
     try {
       firebase.auth().signInWithEmailAndPassword(email, password).then(function(user){
-        console.log(user);
-        })
         navigation.navigate('App');
-      }
-      catch (error) {
+        console.log(user);
+        }).catch(function(error) {
+          Alert.alert('Oops!', error.toString(), [{text:'ok'}]);
+        })
+        
+      } catch (error) {
       console.log(error.toString())
+      //Alert.alert('Oops!', error.toString(), [{text:'ok'}]);
     }
     
   }

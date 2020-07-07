@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import 'react-native-gesture-handler';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage, Alert } from 'react-native';
 import { render } from 'react-dom';
 import * as firebase from 'firebase';
 import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
@@ -33,9 +33,12 @@ export default class App extends Component
           // await AsyncStorage.setItem('userToken', 'abc');
           this.props.navigation.navigate('App');
             firebase.auth().createUserWithEmailAndPassword(email.toString(), password.toString()).
-                then(console.log('signup'));
+                then(console.log('signup')).catch(function(error) {
+                  Alert.alert('Oops!', error.toString(), [{text:'ok'}]);
+                })
         } else {
             console.log('passwords dont match')
+            Alert.alert('Oops!', "your passwords don't match", [{text:'ok'}])
             // TODO: make this pop up on app
         }
     } 
