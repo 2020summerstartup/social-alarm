@@ -58,7 +58,7 @@ export default function Login({navigation})
         navigation.navigate('App');
         console.log(user);
         }).catch(function(error) {
-          Alert.alert('Oops!', error.toString(), [{text:'ok'}]);
+          Alert.alert('Oops!', error.toString().substring(6), [{text:'ok'}]);
         })
         
       } catch (error) {

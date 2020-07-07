@@ -31,10 +31,10 @@ export default class App extends Component
     try{
         if (password==confirmPassword) {
           // await AsyncStorage.setItem('userToken', 'abc');
-          this.props.navigation.navigate('App');
-            firebase.auth().createUserWithEmailAndPassword(email.toString(), password.toString()).
-                then(console.log('signup')).catch(function(error) {
-                  Alert.alert('Oops!', error.toString(), [{text:'ok'}]);
+          
+            firebase.auth().createUserWithEmailAndPassword(email, password).
+                then(this.props.navigation.navigate('App')).catch(function(error) {
+                  Alert.alert('Oops!', error.toString().substring(6), [{text:'ok'}]);
                 })
         } else {
             console.log('passwords dont match')
