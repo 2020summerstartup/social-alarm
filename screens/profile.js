@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Button, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Button, View, Text, TouchableOpacity, AsyncStorage } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as firebase from 'firebase';
 
@@ -14,17 +14,20 @@ export default function Profile ({navigation})
 
   // signOutUser - navigates user to login screen/stack, signs out user via firebase
   // DEBUGGING NOW - NOT FUNCTIONAL
-  // navigation problems, but conce
-  const signOutUser = async () => {
+  // navigation problems, but async storage stuff works (just reload app)
+  signOutUser = async () => {
     //navigation.navigate('Auth');
+    await AsyncStorage.removeItem('userToken');
+    /*
     firebase.auth().signOut().then(function(user) {
+      // await AsyncStorage.removeItem(userToken);
       navigation.navigate('Auth');
       // sign out successful
       
         
     }).catch(function(error) {
       // errors
-    })
+    }) */
 
   }
   return (
@@ -35,7 +38,7 @@ export default function Profile ({navigation})
       <Text style={styles.logo}>Location: </Text>
       {/*<Text style={styles.logo}>Email: {user.email}</Text>*/}
 
-      <TouchableOpacity style={styles.loginBtn}  onPress={ () => navigation.navigate('Auth', {screen: 'Login'}) } >
+      <TouchableOpacity style={styles.loginBtn}  onPress={ () => this.signOutUser() } >
         <Text style={styles.loginText}>Sign Out</Text>
       </TouchableOpacity>
 

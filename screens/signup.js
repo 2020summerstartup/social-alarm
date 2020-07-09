@@ -30,10 +30,12 @@ export default class App extends Component
   signUpUser = async (email, password, confirmPassword) => {
     try{
         if (password==confirmPassword) {
-          // await AsyncStorage.setItem('userToken', 'abc');
+          await AsyncStorage.setItem('userToken', email);
           
             firebase.auth().createUserWithEmailAndPassword(email, password).
-                then(this.props.navigation.navigate('App')).catch(function(error) {
+                then( function(user) {
+                  //await AsyncStorage.setItem('userToken', 'abc')
+                  this.props.navigation.navigate('App')}).catch(function(error) {
                   Alert.alert('Oops!', error.toString().substring(6), [{text:'ok'}]);
                 })
         } else {

@@ -50,11 +50,13 @@ export default function Login({navigation})
   loginUser = async (email, password) => {
     console.log('login');
     
-    // await AsyncStorage.setItem('userToken', 'abc');
+    
 
     console.log({email});
     try {
+      await AsyncStorage.setItem('userToken', email);
       firebase.auth().signInWithEmailAndPassword(email, password).then(function(user){
+        
         navigation.navigate('App');
         console.log(user);
         }).catch(function(error) {

@@ -11,11 +11,13 @@ import Navigator from './navigation';
 
 const SwitchNavigator = createAppContainer(createSwitchNavigator(
     {
-        //AuthLoading:AuthLoadingScreen,
+        AuthLoading:AuthLoadingScreen,
         Auth:StackNavigator,
         App:Navigator,
-    }, {
-        initialRouteName: 'Auth', //'AuthLoading',
-}))
+    }, 
+    {
+        initialRouteName: 'AuthLoading',
+    }
+))
 
 export default SwitchNavigator;
