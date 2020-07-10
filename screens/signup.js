@@ -1,5 +1,5 @@
 // signup.js
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import 'react-native-gesture-handler';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage, Alert } from 'react-native';
@@ -16,27 +16,38 @@ import Navigator from './navigation';
  */
 
 
-export default class App extends Component
+export default function SignUp({navigation})
 {
-  state={
-    email:'',
-    password:'',
-    confirmPassword:'',
-  }
+
+  //const firebase = require("firebase");
+  // Required for side-effects
+  require("firebase/firestore");
+
+  var db = firebase.firestore();
+
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState('');
+
+  
 
   // signUpUser - called when user presses sign up button
   // if passwords match, signs user up (and logs them in) and navigates to App
   // TODO: if passwords don't match, some kind of alert
-  signUpUser = async (email, password, confirmPassword) => {
+  signUpUser = async (email, password, confirmPassword, name) => {
     try{
         if (password==confirmPassword) {
           await AsyncStorage.setItem('userToken', email);
           
             firebase.auth().createUserWithEmailAndPassword(email, password).
                 then( function(user) {
-                  //await AsyncStorage.setItem('userToken', 'abc')
-                  this.props.navigation.navigate('App')}).catch(function(error) {
-                  Alert.alert('Oops!', error.toString().substring(6), [{text:'ok'}]);
+                  db.collection('users').doc(user.user.uid).set({
+                    name: name,
+                  }).then(
+                  navigation.navigate('App')).catch(console.log('idk'))}).catch(function(error) {
+                  Alert.alert('Oops!', error.toString(), [{text:'ok'}]);
                 })
         } else {
             console.log('passwords dont match')
@@ -50,7 +61,6 @@ export default class App extends Component
 
   }
 
-  render(){
     if (!firebase.apps.length) {
       firebase.initializeApp({});
     }
@@ -64,8 +74,7 @@ export default class App extends Component
             style={styles.inputText}
             placeholder="Email..."
             placeholderTextColor="#003f5c"
-            onChangeText={(text) => {
-              this.setState({email: text})}}/>
+            onChangeText={(text) => {setEmail(text)}}/>
         </View>
 
         <View style={styles.inputView}>
@@ -74,7 +83,7 @@ export default class App extends Component
             style={styles.inputText}
             placeholder="Password..."
             placeholderTextColor="#003f5c"
-            onChangeText={(text) => this.setState({password: text})}/>
+            onChangeText={(text) => {setPassword(text)}}/>
         </View>
 
         <View style={styles.inputView}>
@@ -83,18 +92,26 @@ export default class App extends Component
             style={styles.inputText}
             placeholder="Confirm password..."
             placeholderTextColor="#003f5c" 
-            onChangeText={(text) => this.setState({confirmPassword: text})} />
+            onChangeText={(text) => {setConfirmPassword(text)}} />
+        </View>
+
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.inputText}
+            placeholder="Name..."
+            placeholderTextColor="#003f5c" 
+            onChangeText={(text) => {setName(text)}} />
         </View>
         
         {/* sign up button */}
-        <TouchableOpacity  style={styles.loginBtn} onPress={ () => this.signUpUser(this.state.email, this.state.password, this.state.confirmPassword)} >
+        <TouchableOpacity  style={styles.loginBtn} onPress={ () => this.signUpUser(email, password, confirmPassword, name)} >
           <Text style={styles.loginText}>SIGN UP</Text>
         </TouchableOpacity>
 
       </View>
     );
   }
-}
+
 
 const styles = StyleSheet.create({
   container: {
