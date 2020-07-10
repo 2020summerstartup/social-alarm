@@ -12,7 +12,9 @@ export default class App extends React.Component
   render() {
     return (
       <View style={styles.container}>
+        {/*
         <Text>{this.state.switchValue ? 'Switch is ON' : 'Switch is OFF'}</Text>
+        */}
 
         <Switch
           // style={{ marginTop: 30 }, color = "#000000"}
@@ -24,6 +26,7 @@ export default class App extends React.Component
     );
   }
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -32,7 +35,7 @@ const styles = StyleSheet.create({
   },
 
   Switch: {
-    marginTop: 30, 
+    marginTop: 0, 
     color: "#FFFFFF"
   }
 });

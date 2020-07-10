@@ -10,20 +10,20 @@ export default class HomeContainer extends Component
     
     render() {
        return (
-          <View style={styles.container}>
-             <SwitchExample />
-          </View>
+         <View style={styles.container}>
+            <SwitchExample />
+         </View>
        );
     }
  }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fafafa',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+   container: {
+      flex: 1,
+      backgroundColor: '#fafafa',
+      alignItems: 'center',
+      justifyContent: 'center',
+   },
 })
 
 

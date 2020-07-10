@@ -40,7 +40,7 @@ function RoundButton({ title, color, background, onPress, disabled }) {
       style ={[styles.button, {backgroundColor: background}]}
       activeOpacity={disabled ? 1.0: 0.5} // means if disabled then 1.0, otherwise 0.5
     >
-      <View style = {styles. buttonBorder}> 
+      <View style = {styles.buttonBorder}> 
         <Text style ={[ styles.buttonTitle, {color} ]}>{title}</Text>
       </View>
     </TouchableOpacity>
@@ -180,12 +180,12 @@ export default class Alarms extends Component {
 
     return (
       <View style={styles.container}>
-        {/*<Text style={styles.timeText}>
+        {/* <Text style={styles.timeText}>
           {this.state.time}
         </Text>
         <Text style={styles.dateText}>
           {this.state.date}
-        </Text>*/}
+        </Text> */}
 
         <Timer 
           interval={laps.reduce((total, curr) => total + curr, 0) + timer} 

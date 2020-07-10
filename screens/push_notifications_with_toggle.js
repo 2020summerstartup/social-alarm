@@ -1,13 +1,71 @@
 import React, { useState, useEffect, Component } from 'react';
-import { StyleSheet, Button, View, Switch, Text, Platform, TouchableOpacity } from 'react-native';
+import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import SwitchExample from '../components/toggleSwitch';
+import SwitchExample, {switchValue} from '../components/toggleSwitch';
 // import { createAlarm } from '../node_modules/react-native-simple-alarm';
-import moment from 'moment'
+import Moment from 'moment';
+
+import {APPBACKGROUNDCOLOR} from './constants';
 
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
+
+const moment = require("moment");
+
+function Timer({ interval, style }) {
+  const pad = (n) => n < 10 ? '0' + n : n // no zero hanging on left side if value less than 10
+  const duration = moment.duration(interval)
+  const centiseconds = Math.floor(duration.milliseconds()/10)
+  return (
+    <View style = {styles.timerContainer}>
+      <Text style={style}>{pad(duration.minutes())}:</Text>
+      <Text style={style}>{pad(duration.seconds())}:</Text>
+      <Text style={style}>{pad(centiseconds)}</Text>
+    </View>
+  )
+};
+
+function AlarmBanner({ children }){
+  return(
+    <View style = {styles.alarmBanner}>{children}</View>
+  )
+};
+
+function AlarmDetails({title}){
+  return (
+    <View style={styles.alarmDetails}>
+      <Text style={styles.alarmTime}>
+        {alarm_hour}:{alarm_minute}:{alarm_second}
+      </Text>
+      <Text style={styles.alarmText}>
+        {title}
+      </Text>
+    </View>
+  )
+};
+
+function AlarmsTable(){
+  var theSwitchIsOn = 'false'
+  if(switchValue == true){
+    theSwitchIsOn = 'true'
+  }
+  return(
+    <ScrollView style = {styles.scrollView}>
+      <AlarmBanner>
+        <AlarmDetails title='Alarm Title 1'/>
+        <SwitchExample/>
+        <Text>{theSwitchIsOn}</Text>
+      </AlarmBanner>
+
+      <AlarmBanner>
+        <AlarmDetails title='Alarm Title 2'/>
+        <SwitchExample/>
+        <Text>{theSwitchIsOn}</Text>
+      </AlarmBanner>
+    </ScrollView>
+  )
+}
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -17,39 +75,30 @@ Notifications.setNotificationHandler({
   }),
 });
 
+var alarm_hour = 4
+var alarm_minute = 31
+var alarm_second = 0
+
 const trigger = new Date(Date.now());
-// trigger.setHours(5);
-trigger.setMinutes(56);
-trigger.setSeconds(0);
+trigger.setHours(alarm_hour);
+trigger.setMinutes(alarm_minute);
+trigger.setSeconds(alarm_second);
 
 Notifications.scheduleNotificationAsync({
   content: {
-    title: 'Its 5:56!',
+    title: 'Its' + alarm_minute + ':' + alarm_second+ '!',
   },
   trigger,
 });
 
-/*export default class HomeContainer extends Component 
-{
-    
-    render() {
-       return (
-          <View style={styles.container}>
-             <SwitchExample />
-          </View>
-       );
-    }
- }
- */
-
-function RoundButton({ title, color, background, onPress, disabled }) {
+function AddAlarmButton({title, color, background, onPress, disabled }) {
   return (
     <TouchableOpacity 
       onPress ={() => !disabled && onPress()} //when not disabled
       style ={[styles.button, {backgroundColor: background}]}
       activeOpacity={disabled ? 1.0: 0.5} // means if disabled then 1.0, otherwise 0.5
     >
-      <View style = {styles. buttonBorder}> 
+      <View style = {styles.buttonBorder}> 
         <Text style ={[ styles.buttonTitle, {color} ]}>{title}</Text>
       </View>
     </TouchableOpacity>
@@ -72,37 +121,51 @@ export default function App() {
     /* return () => {
       Notifications.removeAllNotificationListeners();
     };*/
-  });
+  })
 
   return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center', // 'space-around',
-      }}>
-      {/* <Text>Your expo push token: {expoPushToken}</Text>*/}
-      {/*<View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Title: {notification && notification.request.content.title} </Text>
-        <Text>Body: {notification && notification.request.content.body}</Text>
-        <Text>Data: {notification && JSON.stringify(notification.request.content.data.body)}</Text>
-        
-      </View>*/}
-      {/* <View style={styles.container}>
-             <SwitchExample />
-      </View>*/}
-      <Button
-        title="Send a notification now"
-        onPress={async () => {
-          await sendPushNotification(expoPushToken);
-        }}
-      />
-      <Button
-        title="Send a notification in 5 seconds"
-        onPress={async () => {
-          await sendPushNotification(expoPushToken);
-        }}
-      />
+    <View style={styles.container}>
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.inputText}
+          placeholder="Set your alarm hour"
+          placeholderTextColor="#ffffff"
+          // onChangeText={this.alarm_hour}
+        />
+      </View>
+
+      <AddAlarmButton 
+          title = "Add Alarm" 
+          color = "white"
+          background = '#858585'
+        />
+
+      <Text style={styles.alarmText}>You have an alarm set for {alarm_hour}:{alarm_minute}:{alarm_second}</Text>
+
+      <View style={styles.container}>
+        {/* <Text>Your expo push token: {expoPushToken}</Text>*/}
+        {/*<View style={{ alignItems: 'center', justifyContent: 'center' }}>
+          <Text>Title: {notification && notification.request.content.title} </Text>
+          <Text>Body: {notification && notification.request.content.body}</Text>
+          <Text>Data: {notification && JSON.stringify(notification.request.content.data.body)}</Text>
+        </View>*/}
+
+        <AlarmsTable/>
+
+        <Text style={styles.alarmText}>You have an alarm set for + alarm_minute + ":" alarm_second</Text>
+        <Button
+          title="Send a notification now"
+          onPress={async () => {
+            await sendPushNotification(expoPushToken);
+          }}
+        />
+        {/* <Button
+          title="Send a notification in 5 seconds"
+          onPress={async () => {
+            await sendPushNotification(expoPushToken);
+          }}
+        /> */}
+      </View>
     </View>
   );
 }
@@ -161,9 +224,104 @@ async function registerForPushNotificationsAsync() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0,
-    backgroundColor: '#f786f3',
+    flex: 1,
+    backgroundColor: APPBACKGROUNDCOLOR,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 70,
+    paddingBottom: 10
+  },
+
+  timerContainer: {
+    flexDirection: "row",
+  },
+
+  lapTimer:{
+    width: 25,
+  },
+
+  inputText:{
+    height:50,
+    color: "#ffffff",
+    fontSize: 16
+  },
+
+  inputView:{
+    width:"50%",
+    backgroundColor:"#465881",
+    borderRadius:25,
+    height:50,
+    marginBottom:20,
+    justifyContent:"center",
+    padding:20
+  },
+
+  alarmTime: {
+    color: "#ffffff",
+    fontSize: 45,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+  },
+
+  alarmText: {
+    color: "#ffffff",
+    fontSize: 16,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+  },
+
+  alarmBanner: {
+    flex: 1,
+    flexDirection : "row",
+    backgroundColor: "#fb5b5a",
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: "space-between",
+    marginTop: 0,
+    marginBottom: 10,
+    paddingTop: 0,
+    paddingBottom: 0,
+    width: "95%",
+    borderRadius: 15
+  },
+
+  alarmDetails: {
+    flex: 1,
+    backgroundColor: "#fb5b5a",
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: "100%",
+    borderRadius: 15
+  },
+
+  scrollView: {
+    alignSelf: 'stretch',
+    alignContent: 'center',
+  }, 
+
+  button: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }, 
+
+  buttonTitle: {
+    color: "#ffffff",
+    fontSize: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
+
+  buttonBorder: {
+    color: "#ffffff",
+    width: 56, 
+    height: 56, 
+    borderRadius: 28, 
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 })
+
