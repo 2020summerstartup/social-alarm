@@ -29,6 +29,8 @@ export default function Profile ({navigation})
       // errors
     }) */
 
+    // {firebase.firestore().collection('users').doc(user.uid).get()}
+
   }
   return (
     
