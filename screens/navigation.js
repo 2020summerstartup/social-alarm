@@ -1,11 +1,12 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import HomeScreen from './login';
+import GroupScreen from './groups';
 import AlarmScreen from './alarms';
 import ProfileScreen from './profile';
 import StopwatchScreen from './stopwatch';
 import { NavigationContainer } from '@react-navigation/native';
+import { Group } from 'react-native';
 
 /* navigation.js
  * bottom tab navigator for signed in user
@@ -41,7 +42,7 @@ function MyTabs() {
       }}>
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={GroupScreen}
         options={{
           tabBarLabel: 'Home',
           tabBarIcon: ({ color, size }) => (
