@@ -12,12 +12,32 @@ import {
   Alert,
   Modal,
 } from "react-native";
-import { render } from "react-dom";
 import * as firebase from "firebase";
 import { MaterialIcons } from "@expo/vector-icons";
 
 export default function Groups({ navigation }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [groupName, setGroupName] = useState('');
+  
+  var db = firebase.firestore();
+  var user = firebase.auth().currentUser;
+
+  createGroup = (name) => {
+    // firebase handling
+    if (name.length < 3) {
+        Alert.alert("Oops!", 'Group name must be at least 3 characters long', [{ text: "ok" }]);
+    } else{
+        db.collection('groups')
+              .add({
+                groupName: name,
+                adminId: user.uid,
+                adminEmail: user.email,
+                members: ['hi', 'pls'],
+              })
+              .then(setModalOpen(false))
+              .catch(console.log("idk"));
+          } 
+    }
 
   if (!firebase.apps.length) {
     firebase.initializeApp({});
@@ -33,17 +53,20 @@ export default function Groups({ navigation }) {
             style={{ ...styles.modalToggle, ...styles.modalClose }}
             onPress={() => setModalOpen(false)}
           />
-          <Text style={styles.loginText}>modallll</Text>
+          <Text style={styles.text}>Create Group</Text>
           <View style={styles.inputView}>
             <TextInput
               style={styles.inputText}
-              placeholder="Email..."
+              placeholder="Group name..."
               placeholderTextColor="#003f5c"
               onChangeText={(text) => {
-                setEmail(text);
+                setGroupName(text);
               }}
             />
           </View>
+          <TouchableOpacity style={styles.loginBtn} onPress={() => createGroup(groupName)}>
+            <Text style={styles.buttonText}> Create group </Text>
+          </TouchableOpacity>
         </View>
       </Modal>
 
@@ -79,7 +102,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#465881",
     borderRadius: 25,
     height: 50,
-    marginBottom: 20,
+    marginBottom: 10,
     justifyContent: "center",
     padding: 20,
   },
@@ -89,14 +112,16 @@ const styles = StyleSheet.create({
     color: "white",
   },
 
-  forgot: {
+  text: {
     color: "white",
-    fontSize: 13,
+    fontSize: 28,
+    padding: 10,
   },
 
-  loginText: {
+  buttonText: {
     color: "white",
-    fontSize: 15,
+    fontSize: 16,
+    padding: 10,
   },
 
   loginBtn: {
@@ -124,11 +149,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#003f5c",
     flex: 1,
     alignItems: "center",
-    //justifyContent: "center",
   },
 
   modalClose: {
-    marginTop: 20,
+    marginTop: 30,
     marginBottom: 0,
   },
 });
