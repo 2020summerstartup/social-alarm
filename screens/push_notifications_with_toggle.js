@@ -11,6 +11,8 @@ import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 
+import {createAlarm} from '../helpers/createAlarm';
+
 const moment = require("moment");
 
 function Timer({ interval, style }) {
@@ -57,15 +59,15 @@ function AlarmsTable(){
         <SwitchExample/>
         <Text>{theSwitchIsOn}</Text>
       </AlarmBanner>
-
-      <AlarmBanner>
-        <AlarmDetails title='Alarm Title 2'/>
-        <SwitchExample/>
-        <Text>{theSwitchIsOn}</Text>
-      </AlarmBanner>
     </ScrollView>
   )
 }
+
+function TopBanner({ children }){
+  return(
+    <View style = {styles.topBanner}>{children}</View>
+  )
+};
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -76,7 +78,7 @@ Notifications.setNotificationHandler({
 });
 
 var alarm_hour = 4
-var alarm_minute = 31
+var alarm_minute = 45
 var alarm_second = 0
 
 const trigger = new Date(Date.now());
@@ -84,12 +86,12 @@ trigger.setHours(alarm_hour);
 trigger.setMinutes(alarm_minute);
 trigger.setSeconds(alarm_second);
 
-Notifications.scheduleNotificationAsync({
+/*Notifications.scheduleNotificationAsync({
   content: {
     title: 'Its' + alarm_minute + ':' + alarm_second+ '!',
   },
   trigger,
-});
+});*/
 
 function AddAlarmButton({title, color, background, onPress, disabled }) {
   return (
@@ -105,7 +107,83 @@ function AddAlarmButton({title, color, background, onPress, disabled }) {
   )
 };
 
-export default function App() {
+export default function AppAlarmsPage() {
+
+  class Alarm extends Component{
+    state = {
+      alarm_title: "This is the alarm title",
+      alarm_hour: 0,
+      alarm_minute: 0,
+      alarm_second: 0
+    };
+
+    addAlarm = async () => {
+      let {alarm_title, alarm_hour, alarm_minute, alarm_second} = this.state;
+
+      if (!alarm_hour) {
+        alert('Please enter an hour for the alarm');
+      } 
+      else {
+        let newDate = date;
+        if (moment(date).isBefore(moment().startOf('minute'))) {
+          date = moment(date).add(1, 'days').startOf('minute').format();
+        }
+  
+        await createAlarm({
+          alarm_title
+        });
+      }
+      
+      var new_alarm = new Alarm()
+      console.log("new_alarm before", new_alarm)
+      new_alarm.state.alarm_title = "new_alarm_title"
+      console.log("new_alarm after", new_alarm)
+      /*new_alarm.alarm_hour = hour
+      new_alarm.alarm_minute = minute
+      new_alarm.alarm_second = second */
+      const [rest_of_list] = this.state.alarm_list
+      console.log("rest_of_list", rest_of_list)
+
+      this.state.alarm_list = [new_alarm.state.alarm_title, rest_of_list]
+
+      console.log("alarm added")
+      console.log("this is the alarm_list:", this.state.alarm_list)
+      console.log("end of print statements", "\n")
+    }
+  }
+
+  class AlarmList extends Component{
+    constructor(props) {
+      super(props);
+  
+      this.state = {
+        alarm_list: ["1st element of alarm_list"]
+      }
+    }
+
+    addAlarm_alarmList = () => {
+      let {title, hour, minute, second} = this.state;
+
+      var new_alarm = new Alarm()
+      console.log("new_alarm before", new_alarm)
+      new_alarm.state.alarm_title = "new_alarm_title"
+      console.log("new_alarm after", new_alarm)
+      /*new_alarm.alarm_hour = hour
+      new_alarm.alarm_minute = minute
+      new_alarm.alarm_second = second */
+      const [rest_of_list] = this.state.alarm_list
+      console.log("rest_of_list", rest_of_list)
+
+      this.state.alarm_list = [new_alarm.state.alarm_title, rest_of_list]
+
+      console.log("alarm added")
+      console.log("this is the alarm_list:", this.state.alarm_list)
+      console.log("end of print statements", "\n")
+    }
+  }
+
+  var my_alarms_list = new AlarmList();
+
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
 
@@ -125,22 +203,34 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputView}>
+      {/*<View style={styles.inputView}>
         <TextInput
           style={styles.inputText}
           placeholder="Set your alarm hour"
           placeholderTextColor="#ffffff"
-          // onChangeText={this.alarm_hour}
         />
-      </View>
+      </View>*/}
+
+      {/*<TopBanner>
+        {/*<AddAlarmButton 
+            title = "+" 
+            color = "white"
+            background = '#858585'
+        />*/}
+        {/*<Text style={styles.alarmText}>
+          You have an alarm set for {alarm_hour}:{alarm_minute}:{alarm_second}
+        </Text>
+      </TopBanner> */}
+
+      {/*<Text style={styles.alarmText}>You have an alarm set for + alarm_minute + ":" alarm_second</Text>*/}
+      <Text style={styles.alarmText}>{my_alarms_list.state.alarm_list}</Text>
 
       <AddAlarmButton 
-          title = "Add Alarm" 
+          title = "+" 
           color = "white"
           background = '#858585'
-        />
-
-      <Text style={styles.alarmText}>You have an alarm set for {alarm_hour}:{alarm_minute}:{alarm_second}</Text>
+          onPress = {my_alarms_list.addAlarm_alarmList}
+      />
 
       <View style={styles.container}>
         {/* <Text>Your expo push token: {expoPushToken}</Text>*/}
@@ -152,13 +242,13 @@ export default function App() {
 
         <AlarmsTable/>
 
-        <Text style={styles.alarmText}>You have an alarm set for + alarm_minute + ":" alarm_second</Text>
         <Button
           title="Send a notification now"
           onPress={async () => {
             await sendPushNotification(expoPushToken);
           }}
         />
+
         {/* <Button
           title="Send a notification in 5 seconds"
           onPress={async () => {
@@ -228,7 +318,7 @@ const styles = StyleSheet.create({
     backgroundColor: APPBACKGROUNDCOLOR,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 70,
+    paddingTop: 50,
     paddingBottom: 10
   },
 
@@ -238,6 +328,21 @@ const styles = StyleSheet.create({
 
   lapTimer:{
     width: 25,
+  },
+
+  topBanner:{
+    flex: 1,
+    flexDirection : "row",
+    width:"100%",
+    backgroundColor:"white",
+    // borderRadius:25,
+    height: 10,
+    // marginBottom:20,
+    paddingTop: 10, 
+    padding: 10,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: "space-between",
   },
 
   inputText:{
@@ -309,9 +414,7 @@ const styles = StyleSheet.create({
 
   buttonTitle: {
     color: "#ffffff",
-    fontSize: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    fontSize: 40,
   },
 
   buttonBorder: {

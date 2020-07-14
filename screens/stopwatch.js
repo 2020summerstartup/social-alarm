@@ -67,7 +67,7 @@ function Lap({ number, interval, fastest, slowest }){
   )
 };
 
-function LapsTable({ laps, timer }){ // single parameter is array of laps
+function LapsTable({ laps, timer }){ // first parameter is array of laps
   const finishedLaps = laps.slice(1) // only mark completed laps
   let min = Number.MAX_SAFE_INTEGER // initializing min value
   let max = Number.MIN_SAFE_INTEGER // initializing max values. Usin let because not a const. Could get changed in following if statement. 
