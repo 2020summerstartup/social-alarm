@@ -1,15 +1,21 @@
-import React, { Component } from 'react';
-import { StyleSheet, Button, View, Text, TouchableOpacity, AsyncStorage } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import * as firebase from 'firebase';
+import React, { Component } from "react";
+import {
+  StyleSheet,
+  Button,
+  View,
+  Text,
+  TouchableOpacity,
+  AsyncStorage,
+} from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import * as firebase from "firebase";
 
 /* profile.js
  * Profile screen
  * contains sign out button
  */
 
-export default function Profile ({navigation})
-{
+export default function Profile({ navigation }) {
   var user = firebase.auth().currentUser;
 
   // signOutUser - navigates user to login screen/stack, signs out user via firebase
@@ -17,7 +23,7 @@ export default function Profile ({navigation})
   // navigation problems, but async storage stuff works (just reload app)
   signOutUser = async () => {
     //navigation.navigate('Auth');
-    await AsyncStorage.removeItem('userToken');
+    await AsyncStorage.removeItem("userToken");
     /*
     firebase.auth().signOut().then(function(user) {
       // await AsyncStorage.removeItem(userToken);
@@ -30,61 +36,58 @@ export default function Profile ({navigation})
     }) */
 
     // {firebase.firestore().collection('users').doc(user.uid).get()}
-
-  }
+  };
   return (
-    
     <View style={styles.container}>
       <Text style={styles.name}>Name: </Text>
       <Text style={styles.logo}>Age: </Text>
       <Text style={styles.logo}>Location: </Text>
       {/*<Text style={styles.logo}>Email: {user.email}</Text>*/}
 
-      <TouchableOpacity style={styles.loginBtn}  onPress={ () => this.signOutUser() } >
+      <TouchableOpacity
+        style={styles.loginBtn}
+        onPress={() => this.signOutUser()}
+      >
         <Text style={styles.loginText}>Sign Out</Text>
       </TouchableOpacity>
-
     </View>
-
-  )
+  );
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fafafa',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
+    backgroundColor: "#fafafa",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
   },
 
-  name:{
-    fontWeight:"bold",
-    fontSize:20,
-    color:"#003f5c",
-    marginBottom:5,
-    marginTop:35,
-    marginLeft:20,
+  name: {
+    fontWeight: "bold",
+    fontSize: 20,
+    color: "#003f5c",
+    marginBottom: 5,
+    marginTop: 35,
+    marginLeft: 20,
   },
 
-  logo:{
-    fontWeight:"bold",
-    fontSize:20,
-    color:"#003f5c",
-    marginBottom:5,
-    marginTop:5,
-    marginLeft:20,
+  logo: {
+    fontWeight: "bold",
+    fontSize: 20,
+    color: "#003f5c",
+    marginBottom: 5,
+    marginTop: 5,
+    marginLeft: 20,
   },
 
-  loginBtn:{
-    width:"80%",
-    backgroundColor:"#fb5b5a",
-    borderRadius:25,
-    height:50,
-    alignItems:"center",
-    justifyContent:"center",
-    marginTop:40,
-    marginBottom:10
+  loginBtn: {
+    width: "80%",
+    backgroundColor: "#fb5b5a",
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+    marginBottom: 10,
   },
-})
+});
