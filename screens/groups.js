@@ -13,31 +13,36 @@ import {
   Modal,
 } from "react-native";
 import * as firebase from "firebase";
+
 import { MaterialIcons } from "@expo/vector-icons";
 
 export default function Groups({ navigation }) {
   const [modalOpen, setModalOpen] = useState(false);
-  const [groupName, setGroupName] = useState('');
-  
+  const [groupName, setGroupName] = useState("");
+
   var db = firebase.firestore();
   var user = firebase.auth().currentUser;
 
   createGroup = (name) => {
     // firebase handling
     if (name.length < 3) {
-        Alert.alert("Oops!", 'Group name must be at least 3 characters long', [{ text: "ok" }]);
-    } else{
-        db.collection('groups')
-              .add({
-                groupName: name,
-                adminId: user.uid,
-                adminEmail: user.email,
-                members: ['hi', 'pls'],
-              })
-              .then(setModalOpen(false))
-              .catch(console.log("idk"));
-          } 
+      Alert.alert("Oops!", "Group name must be at least 3 characters long", [
+        { text: "ok" },
+      ]);
+    } else {
+      db.collection("groups")
+        .add({
+          groupName: name,
+          adminId: user.uid,
+          adminEmail: user.email,
+          members: ["hi", "pls"],
+        })
+        .then(setModalOpen(false))
+        .catch(function(error) {
+            console.log(error.toString())
+        });
     }
+  };
 
   if (!firebase.apps.length) {
     firebase.initializeApp({});
@@ -64,7 +69,10 @@ export default function Groups({ navigation }) {
               }}
             />
           </View>
-          <TouchableOpacity style={styles.loginBtn} onPress={() => createGroup(groupName)}>
+          <TouchableOpacity
+            style={styles.loginBtn}
+            onPress={() => createGroup(groupName)}
+          >
             <Text style={styles.buttonText}> Create group </Text>
           </TouchableOpacity>
         </View>

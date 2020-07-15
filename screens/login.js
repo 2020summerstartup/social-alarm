@@ -5,6 +5,7 @@ import 'react-native-gesture-handler';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage,Alert } from 'react-native';
 import { render } from 'react-dom';
 import * as firebase from 'firebase';
+import 'firebase/firestore';
 import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
 // import Navigator from './navigation';
 // import { NavigationContainer } from '@react-navigation/native';

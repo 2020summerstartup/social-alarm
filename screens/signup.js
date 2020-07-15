@@ -50,6 +50,9 @@ export default function SignUp({ navigation }) {
               .doc(user.user.uid)
               .set({
                 name: name,
+                email: email,
+                alarms: [],
+                groups: [],
               })
               .then(navigation.navigate("App"))
               .catch(console.log("idk"));
