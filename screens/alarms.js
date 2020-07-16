@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react';
 import { StyleSheet, Button, View, Switch, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -25,5 +26,4 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
    },
 })
-
 

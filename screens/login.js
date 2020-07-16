@@ -1,13 +1,22 @@
 // home.js
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import 'react-native-gesture-handler';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage,Alert } from 'react-native';
 import { render } from 'react-dom';
 import * as firebase from 'firebase';
+import 'firebase/firestore';
 import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
 import {APPBACKGROUNDCOLOR} from './constants';
+
+/* login.js
+ * Login screen
+ * also contains firebase configs
+ * 
+ */
+
+// firebase stuff
 
 var firebaseConfig = {
   apiKey: "AIzaSyA2J1UBQxi63ZHx3-WN7C2pTOZRh1MJ3bI",
@@ -22,40 +31,44 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-export default class App extends Component
+export default function Login({navigation})
 {
-  state={
-    email:"",
-    password:""
-  }
+  // states - contains info that user entered
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  signUpUser = (email, password) => {
-    console.log('signup')
-    try{
-      firebase.auth().createUserWithEmailAndPassword(email,  password);
+  // signUpUser - called when user presses sign up button, 
+  // navigates to sign up page
+  signUpUser = () => {
+    navigation.navigate('SignUp')
 
-    } 
-    catch(error) {
-      console.log(error.toString())
-    }
+  };
+  // loginUser - called when user presses login button
+  // logs user in via firebase, navigates to App page (bottom tab navigator)
+  // TODO: add AsyncStorage so user stays signed in
+  loginUser = async (email, password) => {
+    console.log('login');
+    
+    
 
-  }
-
-  loginUser = (email, password) => {
-    console.log('login')
+    console.log({email});
     try {
+      await AsyncStorage.setItem('userToken', email);
       firebase.auth().signInWithEmailAndPassword(email, password).then(function(user){
-        console.log(user)
-      })
-
-
-    } catch (error) {
+        
+        navigation.navigate('App');
+        console.log(user);
+        }).catch(function(error) {
+          Alert.alert('Oops!', error.toString().substring(6), [{text:'ok'}]);
+        })
+        
+      } catch (error) {
       console.log(error.toString())
+      //Alert.alert('Oops!', error.toString(), [{text:'ok'}]);
     }
     
   }
 
-  render(){
     if (!firebase.apps.length) {
       firebase.initializeApp({});
     }
@@ -63,12 +76,13 @@ export default class App extends Component
     return (
       <View style={styles.container}>
         <Text style={styles.logo}>Group Alarm</Text>
+        {/* text input fields (email, password) */}
         <View style={styles.inputView}>
           <TextInput
             style={styles.inputText}
             placeholder="Email..."
             placeholderTextColor="#003f5c"
-            onChangeText={text => this.setState({email:text})}/>
+            onChangeText={(text) => {setEmail(text)}}/>
         </View>
 
         <View style={styles.inputView}>
@@ -77,25 +91,28 @@ export default class App extends Component
             style={styles.inputText}
             placeholder="Password..."
             placeholderTextColor="#003f5c"
-            onChangeText={text => this.setState({password:text})}/>
+            onChangeText={(text) => setPassword(text)}/>
         </View>
 
-        <TouchableOpacity>
+        {/* forgot password button */}
+        <TouchableOpacity onPress={ () => navigation.navigate('ForgotPassword')}>
           <Text style={styles.forgot}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginBtn}  onPress={ this.onLogin } >
+        {/* login button */}
+        <TouchableOpacity style={styles.loginBtn}  onPress={ () => this.loginUser(email, password) } >
           <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity  onPress={ () => this.signUpUser(this.state.email, this.state.password)} >
+        {/* signup button */}
+        <TouchableOpacity  onPress={ () => this.signUpUser()} >
           <Text style={styles.loginText}>Signup</Text>
         </TouchableOpacity>
 
       </View>
     );
   }
-}
+
 
 const styles = StyleSheet.create({
   container: {
