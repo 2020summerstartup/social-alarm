@@ -2,13 +2,23 @@
 import React, { Component, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import 'react-native-gesture-handler';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage,Alert } from 'react-native';
 import { render } from 'react-dom';
 import * as firebase from 'firebase';
+import 'firebase/firestore';
 import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
 // import Navigator from './navigation';
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
+
+
+/* login.js
+ * Login screen
+ * also contains firebase configs
+ * 
+ */
+
+// firebase stuff
 
 var firebaseConfig = {
   apiKey: "AIzaSyA2J1UBQxi63ZHx3-WN7C2pTOZRh1MJ3bI",
@@ -25,33 +35,38 @@ firebase.initializeApp(firebaseConfig);
 
 export default function Login({navigation})
 {
+  // states - contains info that user entered
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-/*
-  state={
-    email:'',
-    password:'',
-  }*/
 
+  // signUpUser - called when user presses sign up button, 
+  // navigates to sign up page
   signUpUser = () => {
     navigation.navigate('SignUp')
 
   };
-
+  // loginUser - called when user presses login button
+  // logs user in via firebase, navigates to App page (bottom tab navigator)
+  // TODO: add AsyncStorage so user stays signed in
   loginUser = async (email, password) => {
     console.log('login');
     
-    // await AsyncStorage.setItem('userToken', 'abc');
     
-    navigation.navigate('App');
+
     console.log({email});
     try {
+      await AsyncStorage.setItem('userToken', email);
       firebase.auth().signInWithEmailAndPassword(email, password).then(function(user){
+        
+        navigation.navigate('App');
         console.log(user);
+        }).catch(function(error) {
+          Alert.alert('Oops!', error.toString().substring(6), [{text:'ok'}]);
         })
-      }
-      catch (error) {
+        
+      } catch (error) {
       console.log(error.toString())
+      //Alert.alert('Oops!', error.toString(), [{text:'ok'}]);
     }
     
   }
@@ -63,6 +78,7 @@ export default function Login({navigation})
     return (
       <View style={styles.container}>
         <Text style={styles.logo}>Group Alarm</Text>
+        {/* text input fields (email, password) */}
         <View style={styles.inputView}>
           <TextInput
             style={styles.inputText}
@@ -80,14 +96,17 @@ export default function Login({navigation})
             onChangeText={(text) => setPassword(text)}/>
         </View>
 
+        {/* forgot password button */}
         <TouchableOpacity onPress={ () => navigation.navigate('ForgotPassword')}>
           <Text style={styles.forgot}>Forgot Password?</Text>
         </TouchableOpacity>
 
+        {/* login button */}
         <TouchableOpacity style={styles.loginBtn}  onPress={ () => this.loginUser(email, password) } >
           <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity>
 
+        {/* signup button */}
         <TouchableOpacity  onPress={ () => this.signUpUser()} >
           <Text style={styles.loginText}>Signup</Text>
         </TouchableOpacity>

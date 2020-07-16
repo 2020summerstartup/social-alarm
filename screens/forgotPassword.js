@@ -1,52 +1,60 @@
 // home.js
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import 'react-native-gesture-handler';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, } from 'react-native';
 import { render } from 'react-dom';
 import * as firebase from 'firebase';
 import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
 
+/* forgotPassword.js
+ * Forgot password screen
+ * when user enters email, sends them an email to reset their password
+ * 
+ */
 
-
-export default class App extends Component
+export default function Login({navigation})
 {
-  state={
-    email:'',
-  }
+  // states - contains info that user entered
+  const [email, setEmail] = useState('');
 
+  // forgotPass - called when user hits forgot password button
+  // sends reset password email to email in text box
   forgotPass = (email) => {
-    firebase.auth().sendPasswordResetEmail(this.state.email).then(function(){
-        /* email sent */}).catch(function(error) { /* error */})
+    firebase.auth().sendPasswordResetEmail(email).then(function(){
+      Alert.alert('Great!', 'An email has been sent to your account', [{text:'ok', 
+      onPress: () => navigation.pop()}]);}).catch(function(error) {
+          Alert.alert('Oops!', error.toString().substring(6), [{text:'ok'}]);
+        })
   }
 
-
-  render(){
     if (!firebase.apps.length) {
       firebase.initializeApp({});
     }
 
-    return (
-      <View style={styles.container}>
-        <Text style={styles.logoTop}>Forgot</Text>
-        <Text style={styles.logo}>Password?</Text>
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.inputText}
-            placeholder="Email..."
-            placeholderTextColor="#003f5c"
-            onChangeText={(text) => {
-              this.setState({email: text})}}/>
-        </View>
-
-        <TouchableOpacity style={styles.loginBtn} onPress={ this.forgotPass(this.state.email)}>
-          <Text style={styles.forgot}>Send password reset email</Text>
-        </TouchableOpacity>
-
+  return (
+    <View style={styles.container}>
+      <Text style={styles.logoTop}>Forgot</Text>
+      <Text style={styles.logo}>Password?</Text>
+      <View style={styles.inputView}>
+      {/* email text input */}
+        <TextInput
+          style={styles.inputText}
+          placeholder="Email..."
+          placeholderTextColor="#003f5c"
+          onChangeText={(text) => {
+            setEmail(text)}}/>
       </View>
-    );
-  }
+        
+      {/* forgot pass button */}
+      <TouchableOpacity style={styles.loginBtn} onPress={ () => this.forgotPass(email)}>
+        <Text style={styles.forgot}>Send password reset email</Text>
+      </TouchableOpacity>
+
+    </View>
+  );
 }
+
 
 const styles = StyleSheet.create({
   container: {
