@@ -1,14 +1,12 @@
-
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GroupScreen from "./groups";
-import AlarmScreen from './push_notifications_with_toggle';
+import AlarmScreen from "./alarms";
 import ProfileScreen from "./profile";
 import StopwatchScreen from "./stopwatch";
 import { NavigationContainer } from "@react-navigation/native";
 import { Group } from "react-native";
-
 
 /* navigation.js
  * bottom tab navigator for signed in user
