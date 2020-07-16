@@ -23,6 +23,15 @@ export default function Groups({ navigation }) {
   var db = firebase.firestore();
   var user = firebase.auth().currentUser;
 
+  var data = []
+
+  populateData = () => {
+  firebase.firestore().collection('users').doc(user.email).get().then(function(doc) {
+      for(var i=0; i < doc.data().groups.length; i++) {
+        data.push(doc.data().groups[i])
+      }
+  })}
+
   createGroup = (name) => {
     // firebase handling
     if (name.length < 3) {
@@ -35,9 +44,15 @@ export default function Groups({ navigation }) {
           groupName: name,
           adminId: user.uid,
           adminEmail: user.email,
-          members: ["hi", "pls"],
+          members: [user.email],
+          alarms: [],
         })
-        .then(setModalOpen(false))
+        .then(function(docRef) {
+            setModalOpen(false)
+            db.collection('users').doc(user.email).update({
+                groups: firebase.firestore.FieldValue.arrayUnion({name: name, id: docRef})
+            })
+            })
         .catch(function(error) {
             console.log(error.toString())
         });
@@ -49,6 +64,7 @@ export default function Groups({ navigation }) {
   }
 
   return (
+    // populateData(),
     <View style={styles.container}>
       <Modal visible={modalOpen} animationType="slide">
         <View style={styles.modalContainer}>
@@ -86,6 +102,8 @@ export default function Groups({ navigation }) {
         style={styles.modalToggle}
         onPress={() => setModalOpen(true)}
       />
+      <Text style={styles.buttonText}>hi</Text>
+
     </View>
   );
 }

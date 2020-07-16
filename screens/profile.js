@@ -42,7 +42,6 @@ export default function Profile({ navigation }) {
       <Text style={styles.name}>Name: </Text>
       <Text style={styles.logo}>Age: </Text>
       <Text style={styles.logo}>Location: </Text>
-      {/*<Text style={styles.logo}>Email: {user.email}</Text>*/}
 
       <TouchableOpacity
         style={styles.loginBtn}

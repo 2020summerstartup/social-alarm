@@ -47,10 +47,11 @@ export default function SignUp({ navigation }) {
           .createUserWithEmailAndPassword(email, password)
           .then(function (user) {
             db.collection("users")
-              .doc(user.user.uid)
+              .doc(email)
               .set({
                 name: name,
                 email: email,
+                uid: user.user.uid,
                 alarms: [],
                 groups: [],
               })
