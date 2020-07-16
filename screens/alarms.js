@@ -8,14 +8,13 @@ import moment from 'moment'
 
 export default class HomeContainer extends Component 
 {
-    
-    render() {
-       return (
-         <View style={styles.container}>
-            <SwitchExample />
-         </View>
-       );
-    }
+   render() {
+      return (
+      <View style={styles.container}>
+         <SwitchExample />
+      </View>
+      );
+   }
  }
 
 const styles = StyleSheet.create({
