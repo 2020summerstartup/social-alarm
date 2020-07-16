@@ -6,6 +6,7 @@ import SwitchExample, {switchValue} from '../components/toggleSwitch';
 import Moment from 'moment';
 
 import {APPBACKGROUNDCOLOR} from './constants';
+import { appStyles } from './stylesheet';
 
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
@@ -228,34 +229,37 @@ export default function AppAlarmsPage() {
 
       {/*<Text style={styles.alarmText}>You have an alarm set for + alarm_minute + ":" alarm_second</Text>*/}
       <Modal visible={modalOpen} animationType="slide">
-        <View style={styles.modalContainer}>
+        <View style={appStyles.modalContainer}>
           <Text>This is the modal</Text>
           <MaterialIcons
             name="close"
             size={24}
-            style={{ ...styles.modalToggle, ...styles.modalClose }}
+            style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
             onPress={() => setModalOpen(false)}
           />
+          <Text style={styles.Text}>
+            DateTimePicker will go here
+          </Text>
         </View>
       </Modal> 
 
       <MaterialIcons
         name="add"
         size={24}
-        style={styles.modalToggle}
+        style={appStyles.modalToggle}
         onPress={() => setModalOpen(true)}
       />
 
       <Text style={styles.alarmText}>{my_alarms_list.state.alarm_list}</Text>
 
-      <AddAlarmButton 
+      {/* <AddAlarmButton 
           title = "+" 
           color = "white"
           background = '#858585'
           onPress = {my_alarms_list.addAlarm_alarmList}
-      />
+      /> */}
 
-      <View style={styles.container}>
+      <View style={styles.scrollViewContainer}>
         {/* <Text>Your expo push token: {expoPushToken}</Text>*/}
         {/*<View style={{ alignItems: 'center', justifyContent: 'center' }}>
           <Text>Title: {notification && notification.request.content.title} </Text>
@@ -342,7 +346,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 50,
-    paddingBottom: 10
+    paddingBottom: 10,
+    padding: 15
+  },
+
+  scrollViewContainer: {
+    flex: 1,
+    backgroundColor: APPBACKGROUNDCOLOR,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 50,
+    paddingBottom: 10,
+    padding: 0
   },
 
   timerContainer: {
@@ -366,6 +381,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: "space-between",
+  },
+
+  Text:{
+    height:50,
+    color: "#ffffff",
+    fontSize: 16
   },
 
   inputText:{
@@ -409,7 +430,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingTop: 0,
     paddingBottom: 0,
-    width: "95%",
+    width: "100%",
     borderRadius: 15
   },
 
@@ -449,26 +470,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
-  modalToggle: {
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#fb5b5a",
-    padding: 10,
-    borderRadius: 10,
-    alignSelf: "flex-end",
-    color: "#fb5b5a",
-  },
-  
-  modalContainer: {
-    backgroundColor: "#003f5c",
-    flex: 1,
-    alignItems: "center",
-  },
-
-  modalClose: {
-    marginTop: 50,
-    marginBottom: 0,
-  },
 })
-
