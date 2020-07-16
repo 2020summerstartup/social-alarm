@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component } from 'react';
-import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SwitchExample, {switchValue} from '../components/toggleSwitch';
 // import { createAlarm } from '../node_modules/react-native-simple-alarm';
@@ -12,6 +12,7 @@ import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 
 import {createAlarm} from '../helpers/createAlarm';
+import { MaterialIcons } from "@expo/vector-icons";
 
 const moment = require("moment");
 
@@ -108,6 +109,9 @@ function AddAlarmButton({title, color, background, onPress, disabled }) {
 };
 
 export default function AppAlarmsPage() {
+
+  const [modalOpen, setModalOpen] = useState(false);
+
 
   class Alarm extends Component{
     state = {
@@ -223,6 +227,25 @@ export default function AppAlarmsPage() {
       </TopBanner> */}
 
       {/*<Text style={styles.alarmText}>You have an alarm set for + alarm_minute + ":" alarm_second</Text>*/}
+      <Modal visible={modalOpen} animationType="slide">
+        <View style={styles.modalContainer}>
+          <Text>This is the modal</Text>
+          <MaterialIcons
+            name="close"
+            size={24}
+            style={{ ...styles.modalToggle, ...styles.modalClose }}
+            onPress={() => setModalOpen(false)}
+          />
+        </View>
+      </Modal> 
+
+      <MaterialIcons
+        name="add"
+        size={24}
+        style={styles.modalToggle}
+        onPress={() => setModalOpen(true)}
+      />
+
       <Text style={styles.alarmText}>{my_alarms_list.state.alarm_list}</Text>
 
       <AddAlarmButton 
@@ -425,6 +448,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  modalToggle: {
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#fb5b5a",
+    padding: 10,
+    borderRadius: 10,
+    alignSelf: "flex-end",
+    color: "#fb5b5a",
+  },
+  
+  modalContainer: {
+    backgroundColor: "#003f5c",
+    flex: 1,
+    alignItems: "center",
+  },
+
+  modalClose: {
+    marginTop: 50,
+    marginBottom: 0,
   },
 })
 
