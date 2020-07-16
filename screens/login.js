@@ -7,10 +7,8 @@ import { render } from 'react-dom';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 import  {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
-// import Navigator from './navigation';
-// import { NavigationContainer } from '@react-navigation/native';
-// import NavigationContainer from './navigation';
-
+import { NavigationContainer } from '@react-navigation/native';
+import {APPBACKGROUNDCOLOR} from './constants';
 
 /* login.js
  * Login screen
@@ -119,7 +117,7 @@ export default function Login({navigation})
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#003f5c',
+    backgroundColor: APPBACKGROUNDCOLOR,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -166,5 +164,4 @@ const styles = StyleSheet.create({
     marginTop:40,
     marginBottom:10
   },
-
 });
