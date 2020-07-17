@@ -27,6 +27,8 @@ const appStyles = StyleSheet.create({
         backgroundColor: "#003f5c",
         flex: 1,
         alignItems: "center",
+        padding: 15,
+        paddingTop: 0
     },
 
     modalClose: {

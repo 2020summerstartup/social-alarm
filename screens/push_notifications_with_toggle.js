@@ -2,10 +2,9 @@ import React, { useState, useEffect, Component } from 'react';
 import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SwitchExample, {switchValue} from '../components/toggleSwitch';
-// import { createAlarm } from '../node_modules/react-native-simple-alarm';
 import Moment from 'moment';
 
-import {APPBACKGROUNDCOLOR} from './constants';
+import { APPBACKGROUNDCOLOR } from './constants';
 import { appStyles } from './stylesheet';
 
 import Constants from 'expo-constants';
@@ -208,82 +207,56 @@ export default function AppAlarmsPage() {
 
   return (
     <View style={styles.container}>
-      {/*<View style={styles.inputView}>
-        <TextInput
-          style={styles.inputText}
-          placeholder="Set your alarm hour"
-          placeholderTextColor="#ffffff"
-        />
-      </View>*/}
+      <TopBanner>
+        <Text style={styles.pageTitle}>Alarms</Text>
+        <MaterialIcons
+            name="add"
+            size={24}
+            style={appStyles.modalToggle}
+            onPress={() => setModalOpen(true)}
+          />
+        <Modal visible={modalOpen} animationType="slide">
+          <View style={appStyles.modalContainer}>
+            <MaterialIcons
+              name="close"
+              size={24}
+              style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
+              onPress={() => setModalOpen(false)}
+            />
+            <Text style={styles.Text}>
+              DateTimePicker will go here
+            </Text>
+          </View>
+        </Modal>
+      </TopBanner>
 
-      {/*<TopBanner>
-        {/*<AddAlarmButton 
+        {/*<Text style={styles.alarmText}>You have an alarm set for + alarm_minute + ":" alarm_second</Text>*/}
+
+        {/*<Text style={styles.alarmText}>{my_alarms_list.state.alarm_list}</Text>*/}    
+        {/* <AddAlarmButton 
             title = "+" 
             color = "white"
             background = '#858585'
-        />*/}
-        {/*<Text style={styles.alarmText}>
-          You have an alarm set for {alarm_hour}:{alarm_minute}:{alarm_second}
-        </Text>
-      </TopBanner> */}
-
-      {/*<Text style={styles.alarmText}>You have an alarm set for + alarm_minute + ":" alarm_second</Text>*/}
-      <Modal visible={modalOpen} animationType="slide">
-        <View style={appStyles.modalContainer}>
-          <Text>This is the modal</Text>
-          <MaterialIcons
-            name="close"
-            size={24}
-            style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
-            onPress={() => setModalOpen(false)}
-          />
-          <Text style={styles.Text}>
-            DateTimePicker will go here
-          </Text>
-        </View>
-      </Modal> 
-
-      <MaterialIcons
-        name="add"
-        size={24}
-        style={appStyles.modalToggle}
-        onPress={() => setModalOpen(true)}
-      />
-
-      <Text style={styles.alarmText}>{my_alarms_list.state.alarm_list}</Text>
-
-      {/* <AddAlarmButton 
-          title = "+" 
-          color = "white"
-          background = '#858585'
-          onPress = {my_alarms_list.addAlarm_alarmList}
-      /> */}
-
-      <View style={styles.scrollViewContainer}>
-        {/* <Text>Your expo push token: {expoPushToken}</Text>*/}
-        {/*<View style={{ alignItems: 'center', justifyContent: 'center' }}>
-          <Text>Title: {notification && notification.request.content.title} </Text>
-          <Text>Body: {notification && notification.request.content.body}</Text>
-          <Text>Data: {notification && JSON.stringify(notification.request.content.data.body)}</Text>
-        </View>*/}
-
-        <AlarmsTable/>
-
-        <Button
-          title="Send a notification now"
-          onPress={async () => {
-            await sendPushNotification(expoPushToken);
-          }}
-        />
-
-        {/* <Button
-          title="Send a notification in 5 seconds"
-          onPress={async () => {
-            await sendPushNotification(expoPushToken);
-          }}
+            onPress = {my_alarms_list.addAlarm_alarmList}
         /> */}
-      </View>
+        
+        <View style={styles.scrollViewContainer}>
+          {/* <Text>Your expo push token: {expoPushToken}</Text>*/}
+          {/*<View style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Text>Title: {notification && notification.request.content.title} </Text>
+            <Text>Body: {notification && notification.request.content.body}</Text>
+            <Text>Data: {notification && JSON.stringify(notification.request.content.data.body)}</Text>
+          </View>*/}
+          <AlarmsTable/>
+          <Button
+            title="Send a notification now"
+            onPress={async () => {
+              await sendPushNotification(expoPushToken);
+            }}
+          />
+        </View>
     </View>
+
   );
 }
 
@@ -343,11 +316,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: APPBACKGROUNDCOLOR,
+    // backgroundColor: "black",
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 50,
-    paddingBottom: 10,
-    padding: 15
+    height: 100,
   },
 
   scrollViewContainer: {
@@ -355,7 +327,7 @@ const styles = StyleSheet.create({
     backgroundColor: APPBACKGROUNDCOLOR,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 50,
+    paddingTop: 10,
     paddingBottom: 10,
     padding: 0
   },
@@ -369,15 +341,14 @@ const styles = StyleSheet.create({
   },
 
   topBanner:{
-    flex: 1,
     flexDirection : "row",
     width:"100%",
-    backgroundColor:"white",
-    // borderRadius:25,
-    height: 10,
-    // marginBottom:20,
-    paddingTop: 10, 
-    padding: 10,
+    backgroundColor: "white",
+    // backgroundColor: APPBACKGROUNDCOLOR,
+    height: 110,
+    paddingTop: 30,
+    paddingBottom: 0,
+    padding: 15,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: "space-between",
@@ -385,8 +356,18 @@ const styles = StyleSheet.create({
 
   Text:{
     height:50,
-    color: "#ffffff",
+    color: "white",
     fontSize: 16
+  },
+
+  pageTitle:{
+    padding: 20,
+    color: "#fb5b5a",
+    fontSize: 40,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
   },
 
   inputText:{
@@ -423,6 +404,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection : "row",
     backgroundColor: "#fb5b5a",
+    // backgroundColor: "black",
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: "space-between",
@@ -430,7 +412,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingTop: 0,
     paddingBottom: 0,
-    width: "100%",
+    width: "95%",
     borderRadius: 15
   },
 
