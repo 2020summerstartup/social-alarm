@@ -35,12 +35,10 @@ function AlarmBanner({ children }){
   )
 };
 
-function AlarmDetails({title}){
+function AlarmDetails({title, time}){
   return (
     <View style={styles.alarmDetails}>
-      <Text style={styles.alarmTime}>
-        {alarm_hour}:{alarm_minute}:{alarm_second}
-      </Text>
+      <Text style={styles.alarmTime}>{time}</Text>
       <Text style={styles.alarmText}>
         {title}
       </Text>
@@ -49,20 +47,32 @@ function AlarmDetails({title}){
 };
 
 function AlarmsTable(){
+  const [alarms, setAlarms] = useState([
+      {name: 'First Alarm', time: '5:15', switch: 'false', key: '1'},
+      {name: 'Second Alarm', time: '4:15', switch: 'false', key: '2'},
+      {name: 'Third Alarm', time: '3:15', switch: 'true', key: '3'},
+  ]);
+
   var theSwitchIsOn = 'false'
   if(switchValue == true){
     theSwitchIsOn = 'true'
   }
+
   return(
-    <ScrollView style = {styles.scrollView}>
-      <AlarmBanner>
-        <AlarmDetails title='Alarm Title 1'/>
-        <SwitchExample/>
-        <Text>{theSwitchIsOn}</Text>
-      </AlarmBanner>
-    </ScrollView>
+  <ScrollView style = {styles.scrollView}>
+      {alarms.map((list_item) => (
+          <View key={list_item.key}>
+              <AlarmBanner>
+                  <AlarmDetails title={list_item.name} time={list_item.time}/>
+                  <SwitchExample/>
+                  <Text>{theSwitchIsOn}</Text>
+              </AlarmBanner>
+          </View>
+          )
+      )}
+  </ScrollView>
   )
-}
+};
 
 function TopBanner({ children }){
   return(

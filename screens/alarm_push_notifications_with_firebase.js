@@ -41,21 +41,13 @@ function AlarmsTable(){
 
     return(
     <ScrollView style = {styles.scrollView}>
-
-        {/*<AlarmBanner>
-            <AlarmDetails title='Alarm Title 1'/>
-            <SwitchExample/>
-            <Text>{theSwitchIsOn}</Text>
-        </AlarmBanner>*/}
-
         {alarms.map((list_item) => (
             <View key={list_item.key}>
                 <AlarmBanner>
-                    <AlarmDetails title={list_item.name}/>
+                    <AlarmDetails title={list_item.name} time={list_item.time}/>
                     <SwitchExample/>
                     <Text>{theSwitchIsOn}</Text>
                 </AlarmBanner>
-                <Text>{list_item.time}</Text>
             </View>
             )
         )}
@@ -69,16 +61,16 @@ function AlarmBanner({ children }) {
     )
 };
 
-function AlarmDetails({title}){
+function AlarmDetails({title, time}){
     return (
       <View style={styles.alarmDetails}>
-        <Text style={styles.alarmTime}>0:00:00</Text>
+        <Text style={styles.alarmTime}>{time}</Text>
         <Text style={styles.alarmText}>
           {title}
         </Text>
       </View>
     )
-  };
+};
 
 export default class Alarm extends Component {
 
