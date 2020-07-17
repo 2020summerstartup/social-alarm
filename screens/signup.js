@@ -78,6 +78,7 @@ export default function SignUp({ navigation }) {
           style={styles.inputText}
           placeholder="Email..."
           placeholderTextColor="#003f5c"
+          keyboardType='email-address'
           onChangeText={(text) => {
             setEmail(text);
           }}
