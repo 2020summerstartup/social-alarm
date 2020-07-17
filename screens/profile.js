@@ -14,6 +14,9 @@ import {auth, db} from './firebase';
  * contains sign out button
  */
 
+
+ 
+
 export default function Profile({ navigation }) {
   var user = auth.currentUser;
 

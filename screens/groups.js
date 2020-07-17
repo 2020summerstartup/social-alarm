@@ -1,5 +1,5 @@
 // home.js
-import React, { useState } from "react";
+import React, { Component, useState } from "react";
 import "react-native-gesture-handler";
 import {
   StyleSheet,
@@ -15,23 +15,34 @@ import {db, auth} from './firebase';
 
 
 import { MaterialIcons } from "@expo/vector-icons";
+import { debug } from "react-native-reanimated";
+// import { DebugInstructions } from "react-native/Libraries/NewAppScreen";
 
-export default function Groups({ navigation }) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [groupName, setGroupName] = useState("");
 
-  var user = auth.currentUser;
+export default class Groups extends Component {
 
-  var data = []
+  constructor(props) {
+    super(props);
+
+    this.state={
+      modalOpen: false,
+      groupName: '',
+    }
+  }
+  
+
+  user = auth.currentUser;
+
+  data = []
 
   populateData = () => {
-  db.collection('users').doc(user.email).get().then(function(doc) {
+  db.collection('users').doc(this.user.email).get().then(function(doc) {
       for(var i=0; i < doc.data().groups.length; i++) {
         data.push(doc.data().groups[i])
       }
   })}
 
-  createGroup = (name) => {
+  createGroup = (name, user) => {
     // firebase handling
     if (name.length < 3) {
       Alert.alert("Oops!", "Group name must be at least 3 characters long", [
@@ -46,12 +57,13 @@ export default function Groups({ navigation }) {
           members: [user.email],
           alarms: [],
         })
-        .then(function(docRef) {
-            setModalOpen(false)
+        .then(docRef =>  {
+          this.setState({modalOpen: false})
+          
             db.collection('users').doc(user.email).update({
-                groups: firebase.firestore.FieldValue.arrayUnion({name: name, id: docRef})
-            })
-            })
+              groups: firebase.firestore.FieldValue.arrayUnion({name: name, id: docRef})
+          })
+          })
         .catch(function(error) {
             console.log(error.toString())
         });
@@ -63,122 +75,131 @@ export default function Groups({ navigation }) {
   }
   */
 
-  return (
-    // populateData(),
-    <View style={styles.container}>
-      <Modal visible={modalOpen} animationType="slide">
-        <View style={styles.modalContainer}>
-          <MaterialIcons
-            name="close"
-            size={24}
-            style={{ ...styles.modalToggle, ...styles.modalClose }}
-            onPress={() => setModalOpen(false)}
-          />
-          <Text style={styles.text}>Create Group</Text>
-          <View style={styles.inputView}>
-            <TextInput
-              style={styles.inputText}
-              placeholder="Group name..."
-              placeholderTextColor="#003f5c"
-              onChangeText={(text) => {
-                setGroupName(text);
-              }}
+  render() {
+
+    return (
+      // populateData(),
+      <View style={styles.container}>
+        <Modal visible={this.state.modalOpen} animationType="slide">
+          <View style={styles.modalContainer}>
+            <MaterialIcons
+              name="close"
+              size={24}
+              style={{ ...styles.modalToggle, ...styles.modalClose }}
+              onPress={() => this.setState({modalOpen: false})}
             />
+            <Text style={styles.text}>Create Group</Text>
+            <View style={styles.inputView}>
+              <TextInput
+                style={styles.inputText}
+                placeholder="Group name..."
+                placeholderTextColor="#003f5c"
+                onChangeText={(text) => {
+                  this.setState({groupName: text})
+                }}
+              />
+            </View>
+            <TouchableOpacity
+              style={styles.loginBtn}
+              onPress={() => this.createGroup(this.state.groupName, this.user)}
+            >
+              <Text style={styles.buttonText}> Create group </Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={styles.loginBtn}
-            onPress={() => createGroup(groupName)}
-          >
-            <Text style={styles.buttonText}> Create group </Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
+        </Modal>
+  
+        <Text style={styles.logo}>Groups</Text>
+  
+        <MaterialIcons
+          name="add"
+          size={24}
+          style={styles.modalToggle}
+          onPress={()=> this.setState({modalOpen: true})}
+        />
+        <Text style={styles.buttonText}>hi</Text>
+  
+      </View>
+    );
+  };
+};
+  
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: "#003f5c",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+  
+    logo: {
+      fontWeight: "bold",
+      fontSize: 50,
+      color: "#fb5b5a",
+      marginBottom: 18,
+    },
+  
+    inputView: {
+      width: "80%",
+      backgroundColor: "#465881",
+      borderRadius: 25,
+      height: 50,
+      marginBottom: 10,
+      justifyContent: "center",
+      padding: 20,
+    },
+  
+    inputText: {
+      height: 50,
+      color: "white",
+    },
+  
+    text: {
+      color: "white",
+      fontSize: 28,
+      padding: 10,
+    },
+  
+    buttonText: {
+      color: "white",
+      fontSize: 16,
+      padding: 10,
+    },
+  
+    loginBtn: {
+      width: "80%",
+      backgroundColor: "#fb5b5a",
+      borderRadius: 25,
+      height: 50,
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: 40,
+      marginBottom: 10,
+    },
+  
+    modalToggle: {
+      marginBottom: 20,
+      borderWidth: 1,
+      borderColor: "#fb5b5a",
+      padding: 10,
+      borderRadius: 10,
+      alignSelf: "center",
+      color: "#fb5b5a",
+    },
+  
+    modalContainer: {
+      backgroundColor: "#003f5c",
+      flex: 1,
+      alignItems: "center",
+    },
+  
+    modalClose: {
+      marginTop: 30,
+      marginBottom: 0,
+    },
+  });
+  
 
-      <Text style={styles.logo}>Groups</Text>
 
-      <MaterialIcons
-        name="add"
-        size={24}
-        style={styles.modalToggle}
-        onPress={() => setModalOpen(true)}
-      />
-      <Text style={styles.buttonText}>hi</Text>
 
-    </View>
-  );
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#003f5c",
-    alignItems: "center",
-    justifyContent: "center",
-  },
 
-  logo: {
-    fontWeight: "bold",
-    fontSize: 50,
-    color: "#fb5b5a",
-    marginBottom: 18,
-  },
-
-  inputView: {
-    width: "80%",
-    backgroundColor: "#465881",
-    borderRadius: 25,
-    height: 50,
-    marginBottom: 10,
-    justifyContent: "center",
-    padding: 20,
-  },
-
-  inputText: {
-    height: 50,
-    color: "white",
-  },
-
-  text: {
-    color: "white",
-    fontSize: 28,
-    padding: 10,
-  },
-
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    padding: 10,
-  },
-
-  loginBtn: {
-    width: "80%",
-    backgroundColor: "#fb5b5a",
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 10,
-  },
-
-  modalToggle: {
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#fb5b5a",
-    padding: 10,
-    borderRadius: 10,
-    alignSelf: "center",
-    color: "#fb5b5a",
-  },
-
-  modalContainer: {
-    backgroundColor: "#003f5c",
-    flex: 1,
-    alignItems: "center",
-  },
-
-  modalClose: {
-    marginTop: 30,
-    marginBottom: 0,
-  },
-});
