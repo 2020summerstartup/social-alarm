@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   AsyncStorage,
 } from "react-native";
-import * as firebase from "firebase";
+import {auth, db} from './firebase';
 
 /* profile.js
  * Profile screen
@@ -15,7 +15,7 @@ import * as firebase from "firebase";
  */
 
 export default function Profile({ navigation }) {
-  var user = firebase.auth().currentUser;
+  var user = auth.currentUser;
 
   // signOutUser - navigates user to login screen/stack, signs out user via firebase
   // DEBUGGING NOW - NOT FUNCTIONAL
@@ -24,7 +24,7 @@ export default function Profile({ navigation }) {
     //navigation.navigate('Auth');
     await AsyncStorage.removeItem("userToken");
     /*
-    firebase.auth().signOut().then(function(user) {
+    auth.signOut().then(function(user) {
       // await AsyncStorage.removeItem(userToken);
       navigation.navigate('Auth');
       // sign out successful
@@ -34,7 +34,7 @@ export default function Profile({ navigation }) {
       // errors
     }) */
 
-    // {firebase.firestore().collection('users').doc(user.uid).get()}
+    // {db.collection('users').doc(user.uid).get()}
   };
   return (
     <View style={styles.container}>

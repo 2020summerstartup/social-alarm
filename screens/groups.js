@@ -11,6 +11,7 @@ import {
   Modal,
 } from "react-native";
 import * as firebase from "firebase";
+import {db, auth} from './firebase';
 
 
 import { MaterialIcons } from "@expo/vector-icons";
@@ -19,13 +20,12 @@ export default function Groups({ navigation }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [groupName, setGroupName] = useState("");
 
-  var db = firebase.firestore();
-  var user = firebase.auth().currentUser;
+  var user = auth.currentUser;
 
   var data = []
 
   populateData = () => {
-  firebase.firestore().collection('users').doc(user.email).get().then(function(doc) {
+  db.collection('users').doc(user.email).get().then(function(doc) {
       for(var i=0; i < doc.data().groups.length; i++) {
         data.push(doc.data().groups[i])
       }
@@ -57,10 +57,11 @@ export default function Groups({ navigation }) {
         });
     }
   };
-
+/*
   if (!firebase.apps.length) {
     firebase.initializeApp({});
   }
+  */
 
   return (
     // populateData(),

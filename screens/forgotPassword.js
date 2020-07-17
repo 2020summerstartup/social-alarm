@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import 'react-native-gesture-handler';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, } from 'react-native';
-import * as firebase from 'firebase';
+import {auth} from './firebase';
 
 /* forgotPassword.js
  * Forgot password screen
@@ -18,17 +18,17 @@ export default function Login({navigation})
   // forgotPass - called when user hits forgot password button
   // sends reset password email to email in text box
   forgotPass = (email) => {
-    firebase.auth().sendPasswordResetEmail(email).then(function(){
+    auth.sendPasswordResetEmail(email).then(function(){
       Alert.alert('Great!', 'An email has been sent to your account', [{text:'ok', 
       onPress: () => navigation.pop()}]);}).catch(function(error) {
           Alert.alert('Oops!', error.toString().substring(6), [{text:'ok'}]);
         })
   }
-
+/*
     if (!firebase.apps.length) {
       firebase.initializeApp({});
     }
-
+*/
   return (
     <View style={styles.container}>
       <Text style={styles.logoTop}>Forgot</Text>

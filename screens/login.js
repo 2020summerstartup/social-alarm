@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import 'react-native-gesture-handler';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage,Alert } from 'react-native';
-import * as firebase from 'firebase';
-import 'firebase/firestore';
+import {auth} from './firebase';
+
 // import Navigator from './navigation';
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
@@ -15,20 +15,7 @@ import 'firebase/firestore';
  * 
  */
 
-// firebase stuff
 
-var firebaseConfig = {
-  apiKey: "AIzaSyA2J1UBQxi63ZHx3-WN7C2pTOZRh1MJ3bI",
-  authDomain: "social-alarm-2b903.firebaseapp.com",
-  databaseURL: "https://social-alarm-2b903.firebaseio.com",
-  projectId: "social-alarm-2b903",
-  storageBucket: "social-alarm-2b903.appspot.com",
-  /*messagingSenderId: "828360870887",
-  appId: "1:828360870887:web:8d203554e5b469c1dd8b42",
-  measurementId: "G-KXCXV485FZ"*/
-};
-
-firebase.initializeApp(firebaseConfig);
 
 export default function Login({navigation})
 {
@@ -53,7 +40,7 @@ export default function Login({navigation})
     console.log({email});
     try {
       await AsyncStorage.setItem('userToken', email);
-      firebase.auth().signInWithEmailAndPassword(email, password).then(function(user){
+      auth.signInWithEmailAndPassword(email, password).then(function(user){
         
         navigation.navigate('App');
         console.log(user);
@@ -67,11 +54,11 @@ export default function Login({navigation})
     }
     
   }
-
+/*
     if (!firebase.apps.length) {
       firebase.initializeApp({});
     }
-
+*/
     return (
       <View style={styles.container}>
         <Text style={styles.logo}>Group Alarm</Text>

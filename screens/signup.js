@@ -10,7 +10,7 @@ import {
   AsyncStorage,
   Alert,
 } from "react-native";
-import * as firebase from "firebase";
+import {db, auth} from './firebase';
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
 
@@ -22,9 +22,8 @@ import * as firebase from "firebase";
 export default function SignUp({ navigation }) {
   //const firebase = require("firebase");
   // Required for side-effects
-  require("firebase/firestore");
+  // require("firebase/firestore");
 
-  var db = firebase.firestore();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,9 +38,7 @@ export default function SignUp({ navigation }) {
       if (password == confirmPassword) {
         await AsyncStorage.setItem("userToken", email);
 
-        firebase
-          .auth()
-          .createUserWithEmailAndPassword(email, password)
+          auth.createUserWithEmailAndPassword(email, password)
           .then(function (user) {
             db.collection("users")
               .doc(email)
@@ -67,10 +64,10 @@ export default function SignUp({ navigation }) {
       console.log(error.toString());
     }
   };
-
+/*
   if (!firebase.apps.length) {
     firebase.initializeApp({});
-  }
+  } */
 
   return (
     <View style={styles.container}>
