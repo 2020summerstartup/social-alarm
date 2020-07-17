@@ -1,6 +1,5 @@
 // signup.js
 import React, { useState } from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import "react-native-gesture-handler";
 import {
   StyleSheet,
@@ -11,9 +10,7 @@ import {
   AsyncStorage,
   Alert,
 } from "react-native";
-import { render } from "react-dom";
 import * as firebase from "firebase";
-import Navigator from "./navigation";
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
 

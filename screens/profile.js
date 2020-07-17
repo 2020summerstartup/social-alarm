@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   AsyncStorage,
 } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import * as firebase from "firebase";
 
 /* profile.js

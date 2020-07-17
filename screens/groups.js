@@ -1,6 +1,5 @@
 // home.js
-import React, { Component, useState } from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import React, { useState } from "react";
 import "react-native-gesture-handler";
 import {
   StyleSheet,
@@ -8,11 +7,11 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  AsyncStorage,
   Alert,
   Modal,
 } from "react-native";
 import * as firebase from "firebase";
+
 
 import { MaterialIcons } from "@expo/vector-icons";
 

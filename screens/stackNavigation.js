@@ -4,7 +4,6 @@ import {createStackNavigator} from 'react-navigation-stack';
 import Login from "./login";
 import SignUp from "./signup";
 import ForgotPassword from './forgotPassword';
-import React from 'react';
 
 /* stackNavigation.js
  * stack navigator for not signed in user

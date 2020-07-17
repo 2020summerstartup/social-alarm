@@ -7,10 +7,7 @@
 
 import React, { Component } from 'react';
 import { Button, View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { createAppContainer } from 'react-navigation'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator, HeaderBackground } from 'react-navigation-stack';
-import Moment from 'moment';
+
 
 const moment = require("moment");
 /*const DATA = {

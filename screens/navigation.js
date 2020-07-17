@@ -6,7 +6,6 @@ import AlarmScreen from "./alarms";
 import ProfileScreen from "./profile";
 import StopwatchScreen from "./stopwatch";
 import { NavigationContainer } from "@react-navigation/native";
-import { Group } from "react-native";
 
 /* navigation.js
  * bottom tab navigator for signed in user
