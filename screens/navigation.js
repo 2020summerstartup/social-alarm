@@ -3,7 +3,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GroupScreen from "./groups";
-import AlarmScreen from './push_notifications_with_toggle';
+import AlarmScreen from './alarms';
 // import AlarmScreen from './alarm_push_notifications_with_firebase';
 import ProfileScreen from "./profile";
 import StopwatchScreen from "./stopwatch";
