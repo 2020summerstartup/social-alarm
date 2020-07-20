@@ -1,3 +1,5 @@
+// https://www.youtube.com/watch?v=jX5axGXJBa4
+
 import React, { useState, useEffect, Component } from 'react';
 // import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { StyleSheet, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, Listview, FlatList} from 'react-native';
@@ -15,45 +17,12 @@ import { appStyles } from './stylesheet';
 import Constants from 'expo-constants';
 
 import * as firebase from 'firebase';
-import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
+// import * as Notifications from 'expo-notifications';
+// import * as Permissions from 'expo-permissions';
+import { Permissions, Notifications } from 'expo';
 
 import {createAlarm} from '../helpers/createAlarm';
 import { MaterialIcons } from "@expo/vector-icons";
-
-function TopBanner({ children }){
-    return(
-      <View style = {styles.topBanner}>{children}</View>
-    )
-};
-
-function AlarmsTable(){
-    const [alarms, setAlarms] = useState([
-        {name: 'First Alarm', time: '5:15', switch: 'false', key: '1'},
-        {name: 'Second Alarm', time: '4:15', switch: 'false', key: '2'},
-        {name: 'Third Alarm', time: '3:15', switch: 'true', key: '3'},
-    ]);
-
-    var theSwitchIsOn = 'false'
-    if(switchValue == true){
-      theSwitchIsOn = 'true'
-    }
-
-    return(
-    <ScrollView style = {styles.scrollView}>
-        {alarms.map((list_item) => (
-            <View key={list_item.key}>
-                <AlarmBanner>
-                    <AlarmDetails title={list_item.name} time={list_item.time}/>
-                    <SwitchExample/>
-                    <Text>{theSwitchIsOn}</Text>
-                </AlarmBanner>
-            </View>
-            )
-        )}
-    </ScrollView>
-    )
-};
 
 function AlarmBanner({ children }) {
     return(
@@ -69,6 +38,36 @@ function AlarmDetails({title, time}){
           {title}
         </Text>
       </View>
+    )
+};
+
+function AlarmsTable(){
+    const [alarms, setAlarms] = useState([
+        {name: 'First Alarm', time: '3:15', switch: 'false',  id: '1'},
+        {name: 'Second Alarm', time: '4:15', switch: 'false', id: '2'},
+        {name: 'Third Alarm', time: '5:15', switch: 'true',   id: '3'},
+    ]);
+  
+    return(
+       <View>  
+        <FlatList
+           keyExtractor ={(item) => item.id} // specifying id as the key to prevent the key warning
+           data = {alarms}
+           renderItem={({ item }) => (
+              <AlarmBanner>
+                    <AlarmDetails title={item.name} time={item.time}/>
+                    <SwitchExample/>
+                    <Text>{item.switch}</Text>
+              </AlarmBanner>
+           )}
+        />
+        </View>
+    )
+};
+
+function TopBanner({ children }){
+    return(
+      <View style = {styles.topBanner}>{children}</View>
     )
 };
 
@@ -121,23 +120,7 @@ export default class Alarm extends Component {
 
     render() {
         return (
-            <View>
-                <Header>
-                    <Content>
-                        <Item>
-                            <Input
-                            placeholder = "Add Alarm"
-                            />
-                            <Button>
-                                <Icon name ="add" />
-                            </Button>
-                        </Item>
-                    </Content>
-                </Header>
-                <AlarmsTable/>
-            </View>
-
-            /* <View style={styles.container}>
+            <View style={styles.container}>
                 <TopBanner>
                     <Text style={styles.pageTitle}>Alarms</Text>
                     <MaterialIcons
@@ -168,7 +151,7 @@ export default class Alarm extends Component {
                         }}
                     />
                 </View>
-            </View> */
+            </View>
         );
     }
 }
@@ -188,7 +171,7 @@ const styles = StyleSheet.create({
     backgroundColor: APPBACKGROUNDCOLOR,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 10,
+    paddingTop: 30,
     paddingBottom: 10,
     padding: 0
   },

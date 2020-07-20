@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component } from 'react';
-import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SwitchExample, {switchValue} from '../components/toggleSwitch';
 import Moment from 'moment';
@@ -48,28 +48,37 @@ function AlarmDetails({title, time}){
 
 function AlarmsTable(){
   const [alarms, setAlarms] = useState([
-      {name: 'First Alarm', time: '5:15', switch: 'false', key: '1'},
-      {name: 'Second Alarm', time: '4:15', switch: 'false', key: '2'},
-      {name: 'Third Alarm', time: '3:15', switch: 'true', key: '3'},
+      {name: 'First Alarm', time: '5:15', switch: 'false',  id: '1'},
+      {name: 'Second Alarm', time: '4:15', switch: 'false', id: '2'},
+      {name: 'Third Alarm', time: '3:15', switch: 'true',   id: '3'},
   ]);
 
-  var theSwitchIsOn = 'false'
-  if(switchValue == true){
-    theSwitchIsOn = 'true'
-  }
-
   return(
-  <ScrollView style = {styles.scrollView}>
-      {alarms.map((list_item) => (
-          <View key={list_item.key}>
-              <AlarmBanner>
-                  <AlarmDetails title={list_item.name} time={list_item.time}/>
+     <View>
+      {/*<ScrollView style = {styles.scrollView}>
+            {alarms.map((list_item) => (
+               <View key={list_item.key}>
+                  <AlarmBanner>
+                        <AlarmDetails title={list_item.name} time={list_item.time}/>
+                        <SwitchExample/>
+                        <Text>{list_item.switch}</Text>
+                  </AlarmBanner>
+               </View>
+            ))}
+      </ScrollView>*/}
+
+      <FlatList
+         keyExtractor ={(item) => item.id} // specifying id as the key to prevent the key warning
+         data = {alarms}
+         renderItem={({ item }) => (
+            <AlarmBanner>
+                  <AlarmDetails title={item.name} time={item.time}/>
                   <SwitchExample/>
-                  <Text>{theSwitchIsOn}</Text>
-              </AlarmBanner>
-          </View>
-      ))}
-  </ScrollView>
+                  <Text>{item.switch}</Text>
+            </AlarmBanner>
+         )}
+      />
+      </View>
   )
 };
 
