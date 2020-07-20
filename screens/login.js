@@ -33,17 +33,11 @@ export default function Login({navigation})
   // logs user in via firebase, navigates to App page (bottom tab navigator)
   // TODO: add AsyncStorage so user stays signed in
   loginUser = async (email, password) => {
-    console.log('login');
-    
-    
-
-    console.log({email});
     try {
       await AsyncStorage.setItem('userToken', email);
       auth.signInWithEmailAndPassword(email, password).then(function(user){
         
         navigation.navigate('App');
-        console.log(user);
         }).catch(function(error) {
           Alert.alert('Oops!', error.toString().substring(6), [{text:'ok'}]);
         })

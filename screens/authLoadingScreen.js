@@ -5,6 +5,7 @@ import {
   StatusBar,
   View,
 } from 'react-native';
+import { auth } from './firebase';
 /* authLoadingScreen.js
  * Auth loading screen
  * this is not used/does not work yet
@@ -28,7 +29,7 @@ class AuthLoadingScreen extends React.Component {
 
     // This will switch to the App screen or Auth screen and this loading
     // screen will be unmounted and thrown away.
-    this.props.navigation.navigate(userToken ? 'App' : 'Auth');
+    this.props.navigation.navigate(userToken && auth.currentUser ? 'App' : 'Auth');
 
     
   }; 
