@@ -54,27 +54,24 @@ function AlarmsTable(){
     ]);
 
     alarms.forEach(list_item => {
-        console.log("inside maps function");
-        const trigger = new Date(Date.now() + 60*60);
-        trigger.setHours(list_item.alarm_hour);
-        trigger.setMinutes(list_item.alarm_minute);
-        trigger.setSeconds(list_item.alarm_second);
+        if (list_item.switch == true){
+            console.log("inside maps function");
 
-        let promise;
-        promise = Notifications.scheduleNotificationAsync({
-            identifier: list_item.name,
-            content: {title: 'Its' + list_item.alarm_hour + ':' + list_item.alarm_minute + '!'},
-            // DailyTriggerInput
-            trigger: {
-                hour: 16,
-                minute: 16,
-                // seconds: 0,
-                repeats: false
-            }
-        });
-
-        console.log("identifier:", list_item.name)
-        console.log("promise:", promise)
+            let promise;
+            promise = Notifications.scheduleNotificationAsync({
+                identifier: list_item.name,
+                content: {title: 'Its' + list_item.alarm_hour + ':' + list_item.alarm_minute + '!'},
+                // DailyTriggerInput
+                trigger: {
+                    hour: list_item.alarm_hour,
+                    minute: list_item.alarm_minute,
+                    // seconds: 0,
+                    repeats: false
+                }
+            });
+            console.log("identifier:", list_item.name)
+            console.log("promise:", promise)
+        }
     });
 
     return(
