@@ -29,6 +29,7 @@ export default class Groups extends Component {
       groupNameClicked: "",
       groupIdClicked: "",
       groupMembers: [],
+      addUser: '',
     };
   }
 
@@ -94,6 +95,24 @@ export default class Groups extends Component {
         this.setState({ groupMembers: groupMem });
       });
   };
+
+  addUser = (userName, groupId) => {
+    const groupMem = this.state.groupMembers
+      groupMem.push(userName)
+      this.setState({groupMembers: groupMem});
+    db.collection('groups').doc(groupId).update({members: this.state.groupMembers});
+    if(db.collection('users').doc(userName).exists) {
+      db.collection('users').doc(userName).get().then((doc) => {
+        const usersGroups = [];
+        for(var i = 0; i < doc.data().groups.length; i++) {
+          usersGroups.push(doc.data().groups[i]);
+        }
+        db.collection('users').doc(userName).update({groups: usersGroups})
+      })
+      
+    }
+
+  }
 
   componentDidMount() {
     // this.state.user.email instead of my email (not working for some reason)
@@ -180,13 +199,13 @@ export default class Groups extends Component {
                 placeholder="add friends ..."
                 placeholderTextColor="#003f5c"
                 onChangeText={(text) => {
-                  this.setState({ groupName: text });
+                  this.setState({ addUser: text });
                 }}
               />
             </View>
             <TouchableOpacity
               style={styles.loginBtn}
-              onPress={() => this.createGroup(this.state.groupName, this.user)}
+              onPress={() => this.addUser(this.state.addUser, this.state.groupIdClicked)}
             >
               <Text style={styles.buttonText}> add friendssss</Text>
             </TouchableOpacity>
