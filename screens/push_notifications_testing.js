@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, Component } from 'react';
-import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList } from 'react-native';
+import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList, AsyncStorage } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SwitchExample, {switchValue} from '../components/toggleSwitch';
 import Moment from 'moment';
@@ -46,19 +46,14 @@ function AlarmDetails({title, hour, minute, second}){
   )
 };
 
-function AlarmsTable(){
-    const [alarms, setAlarms] = useState([
-        {name: 'First Alarm',  alarm_hour: 3, alarm_minute: 15, alarm_second: 0, switch: true,  id: '1'},
-        {name: 'Second Alarm', alarm_hour: 10, alarm_minute: 49, alarm_second: 0, switch: true,  id: '2'},
-        {name: 'Third Alarm',  alarm_hour: 10, alarm_minute: 50, alarm_second: 0, switch: true,  id: '3'},
-    ]);
-
-    alarms.forEach(list_item => {
+async function makeAlarms(alarm_array){
+    alarm_array.forEach(list_item => {
         if (list_item.switch == true){
             console.log("inside maps function");
 
-            let promise;
-            promise = Notifications.scheduleNotificationAsync({
+            // let promise;
+            // promise = Notifications.scheduleNotificationAsync({
+            Notifications.scheduleNotificationAsync({
                 identifier: list_item.name,
                 content: {title: 'Its ' + list_item.alarm_hour + ':' + list_item.alarm_minute + '!'},
                 
@@ -70,13 +65,21 @@ function AlarmsTable(){
                 }
             });
             console.log("identifier:", list_item.name)
-            console.log("promise:", promise)
+            // console.log("promise:", promise)
         }
     });
+    list = (await Notifications.getAllScheduledNotificationsAsync());
+    return list;
+}
 
-    // Notifications.getAllScheduledNotificationsAsync().resolve()
-    // Notifications.getAllScheduledNotificationsAsync().then(console.log("getAllScheduledNotificationsAsync"));
-    // console.log("getAll:", getAll)
+function AlarmsTable(){
+    const [alarms, setAlarms] = useState([
+        {name: 'First Alarm',  alarm_hour: 3, alarm_minute: 15, alarm_second: 0, switch: true,  id: '1'},
+        {name: 'Second Alarm', alarm_hour: 10, alarm_minute: 49, alarm_second: 0, switch: true,  id: '2'},
+        {name: 'Third Alarm',  alarm_hour: 10, alarm_minute: 50, alarm_second: 0, switch: true,  id: '3'},
+    ]);
+
+    makeAlarms(alarms).then(list => {console.log("list:", list)})
 
     return(
         <View>
@@ -142,6 +145,26 @@ export default function AppAlarmsPage() {
     const [notification, setNotification] = useState(false); // false is the initial state so it's passed into useState()
     const notificationListener = useRef();
     const responseListener = useRef();
+    const [name, setName] = useState();
+
+
+    const save = async() => {
+        try {
+            await AsyncStorage.setItem("MyName", name)
+        }
+        catch(err){
+            alert(err);
+        }
+    };
+
+    const load = async() => {
+        try{
+            await AsyncStorage.getItem("MyName")
+        }
+        catch(err){
+            alert(err);
+        }
+    }
 
     useEffect(() => { // useEffect is similar to componentDidMount and componentDidUpdate
         // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
