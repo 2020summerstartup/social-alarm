@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, { useState, useEffect, useRef, Component } from 'react';
 import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SwitchExample, {switchValue} from '../components/toggleSwitch';
@@ -48,9 +48,9 @@ function AlarmDetails({title, hour, minute, second}){
 
 function AlarmsTable(){
     const [alarms, setAlarms] = useState([
-        {name: 'First Alarm',  alarm_hour: 3, alarm_minute: 15, alarm_second: 0, switch: 'false',  id: '1'},
-        {name: 'Second Alarm', alarm_hour: 10, alarm_minute: 53, alarm_second: 0, switch: 'false',  id: '2'},
-        {name: 'Third Alarm',  alarm_hour: 11, alarm_minute: 1, alarm_second: 0, switch: 'true',  id: '3'},
+        {name: 'First Alarm',  alarm_hour: 3, alarm_minute: 15, alarm_second: 0, switch: true,  id: '1'},
+        {name: 'Second Alarm', alarm_hour: 10, alarm_minute: 49, alarm_second: 0, switch: true,  id: '2'},
+        {name: 'Third Alarm',  alarm_hour: 10, alarm_minute: 50, alarm_second: 0, switch: true,  id: '3'},
     ]);
 
     alarms.forEach(list_item => {
@@ -60,12 +60,12 @@ function AlarmsTable(){
             let promise;
             promise = Notifications.scheduleNotificationAsync({
                 identifier: list_item.name,
-                content: {title: 'Its' + list_item.alarm_hour + ':' + list_item.alarm_minute + '!'},
+                content: {title: 'Its ' + list_item.alarm_hour + ':' + list_item.alarm_minute + '!'},
+                
                 // DailyTriggerInput
                 trigger: {
                     hour: list_item.alarm_hour,
                     minute: list_item.alarm_minute,
-                    // seconds: 0,
                     repeats: false
                 }
             });
@@ -73,6 +73,10 @@ function AlarmsTable(){
             console.log("promise:", promise)
         }
     });
+
+    // Notifications.getAllScheduledNotificationsAsync().resolve()
+    // Notifications.getAllScheduledNotificationsAsync().then(console.log("getAllScheduledNotificationsAsync"));
+    // console.log("getAll:", getAll)
 
     return(
         <View>
@@ -123,171 +127,105 @@ function AddAlarmButton({title, color, background, onPress, disabled }) {
   )
 };
 
-export default function AppAlarmsPage() {
-
-  const [modalOpen, setModalOpen] = useState(false);
-
-
-//   class Alarm extends Component{
-//     state = {
-//       alarm_title: "This is the alarm title",
-//       alarm_hour: 10,
-//       alarm_minute: 18,
-//       alarm_second: 0
-//     };
-
-//     // addAlarm = async () => {
-//     //   let {alarm_title, alarm_hour, alarm_minute, alarm_second} = this.state;
-
-//     //   if (!alarm_hour) {
-//     //     alert('Please enter an hour for the alarm');
-//     //   } 
-//     //   else {
-//     //     let newDate = date;
-//     //     if (moment(date).isBefore(moment().startOf('minute'))) {
-//     //       date = moment(date).add(1, 'days').startOf('minute').format();
-//     //     }
-  
-//     //     await createAlarm({
-//     //       alarm_title
-//     //     });
-//     //   }
-      
-//     //   var new_alarm = new Alarm()
-//     //   console.log("new_alarm before", new_alarm)
-//     //   new_alarm.state.alarm_title = "new_alarm_title"
-//     //   console.log("new_alarm after", new_alarm)
-//     //   /*new_alarm.alarm_hour = hour
-//     //   new_alarm.alarm_minute = minute
-//     //   new_alarm.alarm_second = second */
-//     //   const [rest_of_list] = this.state.alarm_list
-//     //   console.log("rest_of_list", rest_of_list)
-
-//     //   this.state.alarm_list = [new_alarm.state.alarm_title, rest_of_list]
-
-//     //   console.log("alarm added")
-//     //   console.log("this is the alarm_list:", this.state.alarm_list)
-//     //   console.log("end of print statements", "\n")
-//     // }
-//   }
-
-  // var my_alarms_list = new AlarmList();
-
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(false); // false is the initial state so it's passed into useState()
-
-  useEffect(() => {
-    // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-    registerForPushNotificationsAsync()
-        .then(token => setExpoPushToken(token))
-        .catch(console.log(".catch"));
-
-    let the_subscription;
-    the_subscription = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
-      console.log("the_subscription:", the_subscription)
-    });
-    // console.log("the_subscription:", the_subscription)
-
-    Notifications.addNotificationResponseReceivedListener(response => {
-      console.log("hi", response);
-    });
-
-    // return () => {
-    //   Notifications.removeAllNotificationListeners();
-    // };
-
-    // Notifications.removeAllNotificationListeners();
-
-    // return () => subscription.remove();
-
-    // Notifications.cancelAllScheduledNotificationsAsync();
-    let all_info;
-    all_info = Notifications.getPresentedNotificationsAsync();
-    console.log("all_info_before:", all_info)
-
-    Notifications.dismissAllNotificationsAsync();
-
-    all_info = Notifications.getPresentedNotificationsAsync();
-    console.log("all_info_after:", all_info)
-
-  })
-
-  Notifications.setNotificationHandler({
+Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowAlert: true,
         shouldPlaySound: true,
         shouldSetBadge: true,
     }),
-  });
-  
-  var the_alarm_hour = 10
-  var the_alarm_minute = 44
-  var the_alarm_second = 0
-  
-//   let trigger = new Date(Date.now());
-//   let trigger;
-//   trigger.setHours(the_alarm_hour);
-//   trigger.setMinutes(the_alarm_minute);
-//   trigger.setSeconds(the_alarm_second);
-  
-//   let main_promise;
-//   main_promise = Notifications.scheduleNotificationAsync({
-//     content: {
-//       title: 'Its' + the_alarm_hour + ':' + the_alarm_minute+ '!',
-//     },
-//     trigger
-//     // trigger: 
-//     // {
-//     //     seconds: 60,
-//     //     repeats: false
-//     // },
-//   });
-  
-//   console.log("main_promise:", main_promise)
+});
 
-  return (
-    <View style={styles.container}>
-      <TopBanner>
-        <Text style={styles.pageTitle}>Alarms_Testing</Text>
-        <MaterialIcons
-            name="add"
-            size={24}
-            style={appStyles.modalToggle}
-            onPress={() => setModalOpen(true)}
-          />
-        <Modal visible={modalOpen} animationType="slide">
-          <View style={appStyles.modalContainer}>
+export default function AppAlarmsPage() {
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [expoPushToken, setExpoPushToken] = useState('');
+    const [notification, setNotification] = useState(false); // false is the initial state so it's passed into useState()
+    const notificationListener = useRef();
+    const responseListener = useRef();
+
+    useEffect(() => { // useEffect is similar to componentDidMount and componentDidUpdate
+        // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+        registerForPushNotificationsAsync()
+            .then(token => setExpoPushToken(token))
+            .catch(console.log(".catch"))
+            // .catch(error => {
+            //     console.log(".catch", error)
+            // })
+
+        // registerForPushNotificationsAsync().then(console.log(".then")).catch(console.log(".catch"));
+
+        // let the_subscription;
+        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+            setNotification(notification);
+            console.log("addNotificationReceivedListener");
+        });
+
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+            console.log("hi", response);
+        });
+
+        // let info_promise;
+        // info_promise = Notifications.getPresentedNotificationsAsync(list => {
+        //     console.log("list:", list)
+        //     console.log("inside")
+        // });
+        // console.log("info_promise_before:", info_promise)
+
+        return () => {
+            Notifications.removeNotificationSubscription(notificationListener);
+            Notifications.removeNotificationSubscription(responseListener);
+        };
+
+        // return () => {
+        //   Notifications.removeAllNotificationListeners();
+        // };
+
+        // Notifications.cancelAllScheduledNotificationsAsync();
+        // Notifications.dismissAllNotificationsAsync();
+    }, []);
+
+    return (
+        <View style={styles.container}>
+        <TopBanner>
+            <Text style={styles.pageTitle}>Alarms_Testing</Text>
             <MaterialIcons
-              name="close"
-              size={24}
-              style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
-              onPress={() => setModalOpen(false)}
+                name="add"
+                size={24}
+                style={appStyles.modalToggle}
+                onPress={() => setModalOpen(true)}
             />
-            <Text style={styles.Text}>
-              DateTimePicker will go here
-            </Text>
-          </View>
-        </Modal>
-      </TopBanner>
+            <Modal visible={modalOpen} animationType="slide">
+            <View style={appStyles.modalContainer}>
+                <MaterialIcons
+                name="close"
+                size={24}
+                style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
+                onPress={() => setModalOpen(false)}
+                />
+                <Text style={styles.Text}>
+                DateTimePicker will go here
+                </Text>
+            </View>
+            </Modal>
+        </TopBanner>
 
-      <View style={styles.scrollViewContainer}>
-        <Button
-          title="Send a notification now"
-          onPress={async () => {
-            await sendPushNotification(expoPushToken);
-          }}
-        />
-        <Text>Your expo push token: {expoPushToken}</Text>
-        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-          <Text>Title: {notification && notification.request.content.title} </Text>
-          <Text>Body: {notification && notification.request.content.body}</Text>
-          <Text>Data: {notification && JSON.stringify(notification.request.content.data.body)}</Text>
+        <View style={styles.scrollViewContainer}>
+            <Button
+            title="Send a notification now"
+            onPress={async () => {
+                await sendPushNotification(expoPushToken);
+            }}
+            />
+            <Text>Your expo push token: {expoPushToken}</Text>
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Text>Title: {notification && notification.request.content.title} </Text>
+            <Text>Body: {notification && notification.request.content.body}</Text>
+            <Text>Data: {notification && JSON.stringify(notification.request.content.data.body)}</Text>
+            </View>
+            <AlarmsTable/>
         </View>
-        <AlarmsTable/>
-      </View>
-    </View>
-  );
+        </View>
+    );
 }
 
 // Can use this function below, OR use Expo's Push Notification Tool-> https://expo.io/dashboard/notifications
@@ -312,41 +250,43 @@ async function sendPushNotification(expoPushToken) {
 }
 
 async function registerForPushNotificationsAsync() {
-  let token;
-  if (Constants.isDevice) {
-    // Check for existing permissions
-    const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-    console.log("existingStatus: ", existingStatus);
-    let finalStatus = existingStatus;
+    let token;
+    if (Constants.isDevice) {
+        // Check for existing permissions
+        const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+        console.log("existingStatus: ", existingStatus);
+        let finalStatus = existingStatus;
 
-    // If no existing permissions, ask user for permission
-    if (existingStatus !== 'granted') {
-      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-      finalStatus = status;
+        // If no existing permissions, ask user for permission
+        if (existingStatus !== 'granted') {
+        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        finalStatus = status;
+        }
+
+        // If no permission, exit the function
+        if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+        }
+
+        // Get push notification token
+        token = (await Notifications.getExpoPushTokenAsync()).data;
+        console.log("token: ", token);
+    } 
+    else {
+        alert('Must use physical device for Push Notifications');
     }
 
-    // If no permission, exit the function
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
+    if (Platform.OS === 'android') {
+        Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+        });
     }
-
-    // Get push notification token
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log("token: ", token);
-  } else {
-    alert('Must use physical device for Push Notifications');
-  }
-
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-  return token;
+    
+    return token;
 }
 
 const styles = StyleSheet.create({
