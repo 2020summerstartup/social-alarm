@@ -47,27 +47,53 @@ function AlarmDetails({title, hour, minute, second}){
 };
 
 async function makeAlarms(alarm_array){
-    alarm_array.forEach(list_item => {
+    alarm_array.forEach(async(list_item) => {
         if (list_item.switch == true){
             console.log("inside maps function");
 
-            // let promise;
-            // promise = Notifications.scheduleNotificationAsync({
-            Notifications.scheduleNotificationAsync({
+            promise = (await Notifications.scheduleNotificationAsync({
+            // Notifications.scheduleNotificationAsync({
                 identifier: list_item.name,
-                content: {title: 'Its ' + list_item.alarm_hour + ':' + list_item.alarm_minute + '!'},
-                
+                content: {
+                    title: 'Its ' + list_item.alarm_hour + ':' + list_item.alarm_minute + '!',
+                    subtitle: "This is the subtitle",
+                },
                 // DailyTriggerInput
                 trigger: {
                     hour: list_item.alarm_hour,
                     minute: list_item.alarm_minute,
                     repeats: false
                 }
-            });
-            console.log("identifier:", list_item.name)
-            // console.log("promise:", promise)
+            }));
+            // console.log("identifier:", list_item.name)
+            console.log("promise:", promise)
+            if (promise === list_item.name){ // checking for equality without type conversion
+                console.log("promise === list_item.name")
+            }
         }
     });
+    list = (await Notifications.getAllScheduledNotificationsAsync());
+    return list;
+}
+
+async function removeAlarm(identifier){ // identifier should be a string
+    // promise = (await Notifications.cancelScheduledNotificationAsync(identifier))
+    console.log("identifier:", identifier)
+    Notifications.cancelScheduledNotificationAsync(identifier)
+    console.log("cancelled", identifier)
+
+    list = (await Notifications.getAllScheduledNotificationsAsync());
+
+    var print_list_new
+    for (var i = 0; i < 3; i++) {
+        print_list_new += list[i].identifier
+        print_list_new += " "
+    }
+    console.log("list after:", print_list_new)
+    return list;
+}
+
+async function showAlarms(alarm_array){
     list = (await Notifications.getAllScheduledNotificationsAsync());
     return list;
 }
@@ -79,7 +105,24 @@ function AlarmsTable(){
         {name: 'Third Alarm',  alarm_hour: 10, alarm_minute: 50, alarm_second: 0, switch: true,  id: '3'},
     ]);
 
-    makeAlarms(alarms).then(list => {console.log("list:", list)})
+    // makeAlarms(alarms)
+    makeAlarms(alarms).then(list => {
+        var print_list;
+        for (var i = 0; i < alarms.length; i++) {
+            print_list += list[i].identifier
+            print_list += " "
+        }
+        console.log("list before:", print_list)})
+
+    // console.log("First element of alarms array:", alarms[0].name)
+    removeAlarm(alarms[0].name)
+    // removeAlarm(alarms[0].name).then(list => {
+    //     var print_list_new
+    //     for (var i = 0; i < alarms.length; i++) {
+    //         print_list_new += list[i].identifier
+    //         print_list_new += " "
+    //     }
+    //     console.log("list after:", print_list_new)})
 
     return(
         <View>
@@ -145,32 +188,32 @@ export default function AppAlarmsPage() {
     const [notification, setNotification] = useState(false); // false is the initial state so it's passed into useState()
     const notificationListener = useRef();
     const responseListener = useRef();
-    const [name, setName] = useState();
+    // const [name, setName] = useState();
 
 
-    const save = async() => {
-        try {
-            await AsyncStorage.setItem("MyName", name)
-        }
-        catch(err){
-            alert(err);
-        }
-    };
+    // const save = async() => {
+    //     try {
+    //         await AsyncStorage.setItem("MyName", name)
+    //     }
+    //     catch(err){
+    //         alert(err);
+    //     }
+    // };
 
-    const load = async() => {
-        try{
-            await AsyncStorage.getItem("MyName")
-        }
-        catch(err){
-            alert(err);
-        }
-    }
+    // const load = async() => {
+    //     try{
+    //         await AsyncStorage.getItem("MyName")
+    //     }
+    //     catch(err){
+    //         alert(err);
+    //     }
+    // }
 
     useEffect(() => { // useEffect is similar to componentDidMount and componentDidUpdate
         // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
         registerForPushNotificationsAsync()
             .then(token => setExpoPushToken(token))
-            .catch(console.log(".catch"))
+            // .catch(console.log(".catch"))
             // .catch(error => {
             //     console.log(".catch", error)
             // })
