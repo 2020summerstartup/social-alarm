@@ -16,25 +16,19 @@ import { db, auth } from "./firebase";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 
-
 export default class Groups extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      modalOpen: false,
+      createModalOpen: false,
+      groupModalOpen: false,
       groupName: "",
-      groups: [
-        {
-          name: "number  1",
-          key: "12345",
-        },
-        {
-          name: "22222",
-          key: "0832",
-        },
-      ],
+      groups: [],
       user: auth.currentUser,
+      groupNameClicked: "",
+      groupIdClicked: "",
+      groupMembers: [],
     };
   }
 
@@ -56,7 +50,7 @@ export default class Groups extends Component {
           alarms: [],
         })
         .then((docRef) => {
-          this.setState({ modalOpen: false });
+          this.setState({ createModalOpen: false });
 
           db.collection("users")
             .doc(user.email)
@@ -70,9 +64,9 @@ export default class Groups extends Component {
           groupData.push({
             name: name,
             id: docRef,
-            key: this.state.groups.length + 1
-          })
-          this.setState({groups: groupData})
+            key: this.state.groups.length + 1,
+          });
+          this.setState({ groups: groupData });
         })
         .catch(function (error) {
           console.log(error.toString());
@@ -84,6 +78,22 @@ export default class Groups extends Component {
     firebase.initializeApp({});
   }
   */
+
+  groupModal = (groupName, groupId) => {
+    this.setState({ groupModalOpen: true });
+    this.setState({ groupNameClicked: groupName });
+    this.setState({ groupIdClicked: groupId.id });
+    db.collection("groups")
+      .doc(groupId.id)
+      .get()
+      .then((doc) => {
+        const groupMem = [];
+        for (var i = 0; i < doc.data().members.length; i++) {
+          groupMem.push(doc.data().members[i]);
+        }
+        this.setState({ groupMembers: groupMem });
+      });
+  };
 
   componentDidMount() {
     // this.state.user.email instead of my email (not working for some reason)
@@ -103,6 +113,7 @@ export default class Groups extends Component {
           }
           //this.setState({groups: doc.data().groups})
           this.setState({ groups: groupsData });
+          //console.log(this.state.groups[0].id.id)
         }
       })
       .catch(function (error) {
@@ -112,15 +123,15 @@ export default class Groups extends Component {
 
   render() {
     return (
-      // populateData(),
       <View style={styles.container}>
-        <Modal visible={this.state.modalOpen} animationType="slide">
+        {/* create group modal */}
+        <Modal visible={this.state.createModalOpen} animationType="slide">
           <View style={styles.modalContainer}>
             <MaterialIcons
               name="close"
               size={24}
               style={{ ...styles.modalToggle, ...styles.modalClose }}
-              onPress={() => this.setState({ modalOpen: false })}
+              onPress={() => this.setState({ createModalOpen: false })}
             />
             <Text style={styles.logo}>Create Group</Text>
             <View style={styles.inputView}>
@@ -141,6 +152,49 @@ export default class Groups extends Component {
             </TouchableOpacity>
           </View>
         </Modal>
+
+        {/* individual group modal */}
+        <Modal visible={this.state.groupModalOpen} animationType="slide">
+          <View style={styles.modalContainer}>
+            <MaterialIcons
+              name="close"
+              size={24}
+              style={{ ...styles.modalToggle, ...styles.modalClose }}
+              onPress={() => this.setState({ groupModalOpen: false })}
+            />
+            <Text style={styles.logo}>{this.state.groupNameClicked}</Text>
+            <Text>Members:</Text>
+            <ScrollView>
+              {this.state.groupMembers &&
+                this.state.groupMembers.map((person) => {
+                  return (
+                    <TouchableOpacity style={styles.groups} key={person}>
+                      <Text style={styles.groupCard}>{person}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+            </ScrollView>
+            <View style={styles.inputView}>
+              <TextInput
+                style={styles.inputText}
+                placeholder="add friends ..."
+                placeholderTextColor="#003f5c"
+                onChangeText={(text) => {
+                  this.setState({ groupName: text });
+                }}
+              />
+            </View>
+            <TouchableOpacity
+              style={styles.loginBtn}
+              onPress={() => this.createGroup(this.state.groupName, this.user)}
+            >
+              <Text style={styles.buttonText}> add friendssss</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+
+        {/* actual page */}
+
         <View style={styles.center}>
           <Text style={styles.logo}>Groups</Text>
         </View>
@@ -149,13 +203,17 @@ export default class Groups extends Component {
           name="add"
           size={24}
           style={styles.modalToggle}
-          onPress={() => this.setState({ modalOpen: true })}
+          onPress={() => this.setState({ createModalOpen: true })}
         />
         <ScrollView>
           {this.state.groups &&
             this.state.groups.map((group) => {
               return (
-                <TouchableOpacity style={styles.groups} key={group.key}>
+                <TouchableOpacity
+                  style={styles.groups}
+                  key={group.key}
+                  onPress={() => this.groupModal(group.name, group.id)}
+                >
                   <Text style={styles.groupCard}>{group.name}</Text>
                 </TouchableOpacity>
               );
