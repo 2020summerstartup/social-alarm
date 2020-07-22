@@ -85,16 +85,37 @@ async function removeAlarm(identifier){ // identifier should be a string
     // promise = (await Notifications.cancelAllScheduledNotificationsAsync());
     // console.log("cancelled all alarms")
 
+    // list = (await Notifications.getAllScheduledNotificationsAsync());
+
+    // if (list.length == 0) {
+    //     console.log("list.length == 0")
+    //     return list;
+    // }
+    // else {
+    //     var print_list_new
+    //     for (var i = 0; i < list.length; i++) {
+    //         print_list_new += list[i].identifier
+    //         print_list_new += " "
+    //     }
+    //     console.log("list after:", print_list_new)
+    //     return list;
+    // }
+}
+
+async function showAlarms(){
     list = (await Notifications.getAllScheduledNotificationsAsync());
+    // console.log("showAlarms list:", list)
 
     if (list.length == 0) {
+    // if (list == " ") {
         console.log("list.length == 0")
         return list;
     }
     else {
         var print_list_new
-        for (var i = 0; i < list.length; i++) {
-            print_list_new += list[i].identifier
+        for (var i = 0; i < 3; i++) {
+            // print_list_new += list[i].identifier
+            print_list_new += list[i]
             print_list_new += " "
         }
         console.log("list after:", print_list_new)
@@ -102,32 +123,33 @@ async function removeAlarm(identifier){ // identifier should be a string
     }
 }
 
-async function showAlarms(alarm_array){
-    list = (await Notifications.getAllScheduledNotificationsAsync());
-    return list;
-}
-
 function AlarmsTable(){
     const [alarms, setAlarms] = useState([
-        {name: 'First Alarm',  alarm_hour: 3, alarm_minute: 15, alarm_second: 0, switch: true,  id: '1'},
-        {name: 'Second Alarm', alarm_hour: 10, alarm_minute: 49, alarm_second: 0, switch: true,  id: '2'},
-        {name: 'Third Alarm',  alarm_hour: 10, alarm_minute: 50, alarm_second: 0, switch: true,  id: '3'},
+        {name: 'First Alarm',  alarm_hour: 10, alarm_minute: 42, alarm_second: 0, switch: true,  id: '1'},
+        {name: 'Second Alarm', alarm_hour: 10, alarm_minute: 43, alarm_second: 0, switch: true,  id: '2'},
+        {name: 'Third Alarm',  alarm_hour: 10, alarm_minute: 44, alarm_second: 0, switch: true,  id: '3'},
     ]);
 
     // makeAlarms(alarms)
-    makeAlarms(alarms).then(list => {
+    makeAlarms(alarms)
+    .then(list => {
         var print_list;
         for (var i = 0; i < alarms.length; i++) {
             print_list += list[i].identifier
             print_list += " "
         }
         console.log("list before:", print_list)})
+    // .then(Notifications.cancelScheduledNotificationAsync(alarms[1].name))
+    // .then(showAlarms())
+
+    removeAlarm(alarms[1].name)
+    showAlarms()
 
     // setTimeout(function(){ alert("Waiting 3 seconds"); }, 3000);
     // setTimeout(console.log("Waiting 3 seconds"), 3000);
 
     // console.log("First element of alarms array:", alarms[0].name)
-    removeAlarm(alarms[0].name)
+    // removeAlarm(alarms[0].name)
     // removeAlarm(alarms[0].name).then(list => {
     //     var print_list_new
     //     for (var i = 0; i < alarms.length; i++) {
