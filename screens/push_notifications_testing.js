@@ -305,12 +305,12 @@ export default function AppAlarmsPage() {
                 await sendPushNotification(expoPushToken);
             }}
             />
-            <Text>Your expo push token: {expoPushToken}</Text>
+            {/* <Text>Your expo push token: {expoPushToken}</Text>
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
             <Text>Title: {notification && notification.request.content.title} </Text>
             <Text>Body: {notification && notification.request.content.body}</Text>
             <Text>Data: {notification && JSON.stringify(notification.request.content.data.body)}</Text>
-            </View>
+            </View> */}
             <AlarmsTable/>
         </View>
         </View>
@@ -409,8 +409,8 @@ const styles = StyleSheet.create({
   topBanner:{
     flexDirection : "row",
     width:"100%",
-    backgroundColor: "black",
-    // backgroundColor: "white",
+    // backgroundColor: "black",
+    backgroundColor: "white",
     // backgroundColor: APPBACKGROUNDCOLOR,
     height: 110,
     paddingTop: 30,
