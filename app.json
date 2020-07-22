@@ -10,9 +10,6 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "notification":{
-      "image": "./assets/logo9696.png"
-    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
