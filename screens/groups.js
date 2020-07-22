@@ -43,6 +43,7 @@ export default class Groups extends Component {
         { text: "ok" },
       ]);
     } else {
+
       db.collection("groups")
         .add({
           groupName: name,
@@ -85,22 +86,34 @@ export default class Groups extends Component {
     this.setState({ groupModalOpen: true });
     this.setState({ groupNameClicked: groupName });
     this.setState({ groupIdClicked: groupId.id });
-    db.collection("groups")
+
+    if (typeof (groupId) =='string') {
+      db.collection('groups').doc(groupId).get().then((doc) => {
+        const groupMem = [];
+      for (var i = 0; i < doc.data().members.length; i++) {
+        groupMem.push(doc.data().members[i]);
+      }
+      this.setState({ groupMembers: groupMem });
+
+    } )} else {
+      db.collection("groups")
       .doc(groupId.id)
       .get()
       .then((doc) => {
-        const groupMem = [];
+          const groupMem = [];
         for (var i = 0; i < doc.data().members.length; i++) {
           groupMem.push(doc.data().members[i]);
         }
         this.setState({ groupMembers: groupMem });
+        
       });
+
+    }
+    
   };
 
   addUser = (userName, groupId) => {
     var  success = false;
-    console.log(userName)
-    console.log(db.collection('users').doc('annadsinger@gmail.com').exists)
 
     db.collection('users').doc(userName).get().then(function(doc) {
       if(doc.exists) {
@@ -114,8 +127,6 @@ export default class Groups extends Component {
 
 
           db.collection('groups').doc(groupId).get().then(function(doc2) {
-            console.log('penis')
-            console.log(doc2.data().groupName)
             db.collection('users').doc(userName).update({
               
               groups: firebase.firestore.FieldValue.arrayUnion({
@@ -150,7 +161,6 @@ export default class Groups extends Component {
       .get()
       .then((doc) => {
         if (doc.exists) {
-          //console.log(doc.data().groups[1].name)
           const groupsData = [];
           for (var i = 0; i < doc.data().groups.length; i++) {
             groupsData.push({
@@ -161,7 +171,6 @@ export default class Groups extends Component {
           }
           //this.setState({groups: doc.data().groups})
           this.setState({ groups: groupsData });
-          //console.log(this.state.groups[0].id.id)
         }
       })
       .catch(function (error) {
