@@ -76,33 +76,24 @@ async function makeAlarms(alarm_array){
     return list;
 }
 
-async function removeAlarm(identifier){ // identifier should be a string
+async function removeAlarm(identifier, alarm_array){ // identifier should be a string
     // promise = (await Notifications.cancelScheduledNotificationAsync(identifier))
     console.log("identifier inside removeAlarm:", identifier)
     Notifications.cancelScheduledNotificationAsync(identifier)
     console.log("cancelled", identifier)
 
-    // promise = (await Notifications.cancelAllScheduledNotificationsAsync());
-    // console.log("cancelled all alarms")
-
-    // list = (await Notifications.getAllScheduledNotificationsAsync());
-
-    // if (list.length == 0) {
-    //     console.log("list.length == 0")
-    //     return list;
-    // }
-    // else {
-    //     var print_list_new
-    //     for (var i = 0; i < list.length; i++) {
-    //         print_list_new += list[i].identifier
-    //         print_list_new += " "
-    //     }
-    //     console.log("list after:", print_list_new)
-    //     return list;
-    // }
+    // Remove the alarm from the array
+    for (var i = 0; i < alarm_array.length; i++) {
+        if (alarm_array[i].name == identifier){
+            alarm_array.splice(i, 1)
+        }
+    }
 }
 
 async function showAlarms(){
+    // promise = (await Notifications.cancelAllScheduledNotificationsAsync());
+    // console.log("cancelled all alarms")
+
     list = (await Notifications.getAllScheduledNotificationsAsync());
     // console.log("showAlarms list:", list)
 
@@ -142,11 +133,9 @@ function AlarmsTable(){
     // .then(Notifications.cancelScheduledNotificationAsync(alarms[1].name))
     // .then(showAlarms())
 
-    removeAlarm(alarms[1].name)
+    // removeAlarm(alarms[1].name, alarms)
+    // removeAlarm("Second Alarm", alarms)
     showAlarms()
-
-    // setTimeout(function(){ alert("Waiting 3 seconds"); }, 3000);
-    // setTimeout(console.log("Waiting 3 seconds"), 3000);
 
     // console.log("First element of alarms array:", alarms[0].name)
     // removeAlarm(alarms[0].name)
