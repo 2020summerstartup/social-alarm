@@ -125,7 +125,7 @@ async function showAlarms(){
 
 function AlarmsTable(){
     const [alarms, setAlarms] = useState([
-        {name: 'First Alarm',  alarm_hour: 10, alarm_minute: 42, alarm_second: 0, switch: true,  id: '1'},
+        {name: 'First Alarm',  alarm_hour: 10, alarm_minute: 59, alarm_second: 0, switch: true,  id: '1'},
         {name: 'Second Alarm', alarm_hour: 10, alarm_minute: 43, alarm_second: 0, switch: true,  id: '2'},
         {name: 'Third Alarm',  alarm_hour: 10, alarm_minute: 44, alarm_second: 0, switch: true,  id: '3'},
     ]);

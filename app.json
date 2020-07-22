@@ -4,11 +4,14 @@
     "slug": "Alarm",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo9696.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/logoiPhone.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
+    },
+    "notification":{
+      "image": "./assets/logo9696.png"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -17,7 +20,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "icon": "./assets/logo9696.png"
     },
     "web": {
       "favicon": "./assets/favicon.png"
