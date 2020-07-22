@@ -78,19 +78,28 @@ async function makeAlarms(alarm_array){
 
 async function removeAlarm(identifier){ // identifier should be a string
     // promise = (await Notifications.cancelScheduledNotificationAsync(identifier))
-    console.log("identifier:", identifier)
+    console.log("identifier inside removeAlarm:", identifier)
     Notifications.cancelScheduledNotificationAsync(identifier)
     console.log("cancelled", identifier)
 
+    // promise = (await Notifications.cancelAllScheduledNotificationsAsync());
+    // console.log("cancelled all alarms")
+
     list = (await Notifications.getAllScheduledNotificationsAsync());
 
-    var print_list_new
-    for (var i = 0; i < 3; i++) {
-        print_list_new += list[i].identifier
-        print_list_new += " "
+    if (list.length == 0) {
+        console.log("list.length == 0")
+        return list;
     }
-    console.log("list after:", print_list_new)
-    return list;
+    else {
+        var print_list_new
+        for (var i = 0; i < list.length; i++) {
+            print_list_new += list[i].identifier
+            print_list_new += " "
+        }
+        console.log("list after:", print_list_new)
+        return list;
+    }
 }
 
 async function showAlarms(alarm_array){
@@ -113,6 +122,9 @@ function AlarmsTable(){
             print_list += " "
         }
         console.log("list before:", print_list)})
+
+    // setTimeout(function(){ alert("Waiting 3 seconds"); }, 3000);
+    // setTimeout(console.log("Waiting 3 seconds"), 3000);
 
     // console.log("First element of alarms array:", alarms[0].name)
     removeAlarm(alarms[0].name)
