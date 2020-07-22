@@ -10,6 +10,7 @@ import {
   Alert,
   Modal,
 } from "react-native";
+// TODO: can i make this  less things??
 import * as firebase from "firebase";
 import { db, auth } from "./firebase";
 
@@ -97,21 +98,49 @@ export default class Groups extends Component {
   };
 
   addUser = (userName, groupId) => {
-    const groupMem = this.state.groupMembers
-      groupMem.push(userName)
-      this.setState({groupMembers: groupMem});
-    db.collection('groups').doc(groupId).update({members: this.state.groupMembers});
-    if(db.collection('users').doc(userName).exists) {
-      db.collection('users').doc(userName).get().then((doc) => {
-        const usersGroups = [];
-        for(var i = 0; i < doc.data().groups.length; i++) {
-          usersGroups.push(doc.data().groups[i]);
+    var  success = false;
+    console.log(userName)
+    console.log(db.collection('users').doc('annadsinger@gmail.com').exists)
+
+    db.collection('users').doc(userName).get().then(function(doc) {
+      if(doc.exists) {
+        success= true
+        
+        
+      db.collection('groups').doc(groupId).update({members: firebase.firestore.FieldValue.arrayUnion(
+        userName),})
+
+        //this.setState({groupMembers: groupMem})
+
+
+          db.collection('groups').doc(groupId).get().then(function(doc2) {
+            console.log('penis')
+            console.log(doc2.data().groupName)
+            db.collection('users').doc(userName).update({
+              
+              groups: firebase.firestore.FieldValue.arrayUnion({
+                name: doc2.data().groupName,
+                id: doc2.id,
+              }),
+            })
+
+          })
+          
+        
+      }
+
+    })
+    if (success) {
+      const groupMem = []
+        for(var i = 0; i < this.state.groupMembers.length; i++) {
+          groupMem.push(this.state.groupMembers[i])
         }
-        db.collection('users').doc(userName).update({groups: usersGroups})
-      })
-      
+        groupMem.push(userName) 
+        this.setState({groupMembers: groupMem}); 
+
     }
 
+    
   }
 
   componentDidMount() {
