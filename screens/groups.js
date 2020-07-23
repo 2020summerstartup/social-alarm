@@ -30,7 +30,7 @@ export default class Groups extends Component {
       groupNameClicked: "",
       groupIdClicked: "",
       groupMembers: [],
-      addUser: '',
+      addUser: "",
     };
   }
 
@@ -43,7 +43,6 @@ export default class Groups extends Component {
         { text: "ok" },
       ]);
     } else {
-
       db.collection("groups")
         .add({
           groupName: name,
@@ -87,75 +86,74 @@ export default class Groups extends Component {
     this.setState({ groupNameClicked: groupName });
     this.setState({ groupIdClicked: groupId.id });
 
-    if (typeof (groupId) =='string') {
-      db.collection('groups').doc(groupId).get().then((doc) => {
-        const groupMem = [];
-      for (var i = 0; i < doc.data().members.length; i++) {
-        groupMem.push(doc.data().members[i]);
-      }
-      this.setState({ groupMembers: groupMem });
-
-    } )} else {
+    if (typeof groupId == "string") {
       db.collection("groups")
-      .doc(groupId.id)
-      .get()
-      .then((doc) => {
+        .doc(groupId)
+        .get()
+        .then((doc) => {
           const groupMem = [];
-        for (var i = 0; i < doc.data().members.length; i++) {
-          groupMem.push(doc.data().members[i]);
-        }
-        this.setState({ groupMembers: groupMem });
-        
-      });
-
+          for (var i = 0; i < doc.data().members.length; i++) {
+            groupMem.push(doc.data().members[i]);
+          }
+          this.setState({ groupMembers: groupMem });
+        });
+    } else {
+      db.collection("groups")
+        .doc(groupId.id)
+        .get()
+        .then((doc) => {
+          const groupMem = [];
+          for (var i = 0; i < doc.data().members.length; i++) {
+            groupMem.push(doc.data().members[i]);
+          }
+          this.setState({ groupMembers: groupMem });
+        });
     }
-    
   };
 
   addUser = (userName, groupId) => {
-    var  success = false;
+    var self = this;
 
-    db.collection('users').doc(userName).get().then(function(doc) {
-      if(doc.exists) {
-        success= true
-        
-        
-      db.collection('groups').doc(groupId).update({members: firebase.firestore.FieldValue.arrayUnion(
-        userName),})
-
-        //this.setState({groupMembers: groupMem})
-
-
-          db.collection('groups').doc(groupId).get().then(function(doc2) {
-            db.collection('users').doc(userName).update({
-              
-              groups: firebase.firestore.FieldValue.arrayUnion({
-                name: doc2.data().groupName,
-                id: doc2.id,
-              }),
+    db.collection("users")
+      .doc(userName)
+      .get()
+      .then(function (doc) {
+        if (doc.exists) {
+          db.collection("groups")
+            .doc(groupId)
+            .update({
+              members: firebase.firestore.FieldValue.arrayUnion(userName),
+            });
+          db.collection("groups")
+            .doc(groupId)
+            .get()
+            .then(function (doc2) {
+              db.collection("users")
+                .doc(userName)
+                .update({
+                  groups: firebase.firestore.FieldValue.arrayUnion({
+                    name: doc2.data().groupName,
+                    id: doc2.id,
+                  }),
+                })
+                .then(function () {
+                  self.textInput.clear();
+                  const groupMem = [];
+                  for (var i = 0; i < self.state.groupMembers.length; i++) {
+                    groupMem.push(self.state.groupMembers[i]);
+                  }
+                  groupMem.push(userName);
+                  self.setState({ groupMembers: groupMem });
+                })
+                .catch((error) => console.log(error));
             })
-
-          })
-          
-        
-      }
-
-    })
-    if (success) {
-      const groupMem = []
-        for(var i = 0; i < this.state.groupMembers.length; i++) {
-          groupMem.push(this.state.groupMembers[i])
+            .catch((error) => console.log(error));
         }
-        groupMem.push(userName) 
-        this.setState({groupMembers: groupMem}); 
-
-    }
-
-    
-  }
+      })
+      .catch((error) => console.log(error));
+  };
 
   componentDidMount() {
-    // this.state.user.email instead of my email (not working for some reason)
     db.collection("users")
       .doc(auth.currentUser.email)
       .get()
@@ -233,9 +231,13 @@ export default class Groups extends Component {
             </ScrollView>
             <View style={styles.inputView}>
               <TextInput
+                ref={(input) => {
+                  this.textInput = input;
+                }}
                 style={styles.inputText}
                 placeholder="add friends ..."
                 placeholderTextColor="#003f5c"
+                keyboardType="email-address"
                 onChangeText={(text) => {
                   this.setState({ addUser: text });
                 }}
@@ -243,7 +245,9 @@ export default class Groups extends Component {
             </View>
             <TouchableOpacity
               style={styles.loginBtn}
-              onPress={() => this.addUser(this.state.addUser, this.state.groupIdClicked)}
+              onPress={() =>
+                this.addUser(this.state.addUser, this.state.groupIdClicked)
+              }
             >
               <Text style={styles.buttonText}> add friendssss</Text>
             </TouchableOpacity>
