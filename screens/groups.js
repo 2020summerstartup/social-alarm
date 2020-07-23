@@ -93,11 +93,14 @@ export default class Groups extends Component {
   // called when user presses one of the group buttons 
   // opens group modal and sets it all  up
   groupModal = (groupName, groupId) => {
+    // opens modal, stores some info in some state
     this.setState({ groupModalOpen: true });
     this.setState({ groupNameClicked: groupName });
     this.setState({ groupIdClicked: groupId.id });
 
+    // groupId  might be a string or a doc reference, so it does something different for each case
     if (typeof groupId == "string") {
+      // gets group members,  stores them in state
       db.collection("groups")
         .doc(groupId)
         .get()
@@ -109,6 +112,7 @@ export default class Groups extends Component {
           this.setState({ groupMembers: groupMem });
         });
     } else {
+      // gets group members,  stores them in state
       db.collection("groups")
         .doc(groupId.id)
         .get()
@@ -122,19 +126,26 @@ export default class Groups extends Component {
     }
   };
 
+
   addUser = (userName, groupId) => {
+    //  this is needed - talk to anna to explain more
+    // https://stackoverflow.com/questions/39191001/setstate-with-firebase-promise-in-react 
     var self = this;
 
+    // find's user's doc 
     db.collection("users")
       .doc(userName)
       .get()
       .then(function (doc) {
+        // if that is a  real user in our system
         if (doc.exists) {
           db.collection("groups")
             .doc(groupId)
             .get()
             .then(function (doc2) {
+              // if the user is not already in the group
               if (doc2.data().members.indexOf(userName) == -1) {
+                // update user's document so it contains new group info
                 db.collection("users")
                   .doc(userName)
                   .update({
@@ -144,6 +155,7 @@ export default class Groups extends Component {
                     }),
                   })
                   .then(function () {
+                    // update group doc so it contains added user
                     db.collection("groups")
                       .doc(groupId)
                       .update({
@@ -151,6 +163,7 @@ export default class Groups extends Component {
                           userName
                         ),
                       });
+                    // clear texr input screen, add user to screen via state
                     self.textInput.clear();
                     const groupMem = [];
                     for (var i = 0; i < self.state.groupMembers.length; i++) {
@@ -161,6 +174,7 @@ export default class Groups extends Component {
                   })
                   .catch((error) => console.log(error));
               } else {
+                // if the user is already in the  group - alert
                 Alert.alert("Oops!", "This user is already in the group", [
                   { text: "ok" },
                 ]);
@@ -168,18 +182,24 @@ export default class Groups extends Component {
             })
             .catch((error) => console.log(error));
         } else {
+          // id the  user is not in our database - alert
           Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
         }
       })
       .catch((error) => console.log(error));
   };
 
+  // called when the component launches/mounts
+  // this is like a react native method that automatically gets called
+  //  when the component  mounts
   componentDidMount() {
+    // get the user's document from collection
     db.collection("users")
       .doc(auth.currentUser.email)
       .get()
       .then((doc) => {
         if (doc.exists) {
+          // get the  groups from the user's doc - store in some state to display
           const groupsData = [];
           for (var i = 0; i < doc.data().groups.length; i++) {
             groupsData.push({
@@ -188,7 +208,6 @@ export default class Groups extends Component {
               key: i,
             });
           }
-          //this.setState({groups: doc.data().groups})
           this.setState({ groups: groupsData });
         }
       })
@@ -200,7 +219,7 @@ export default class Groups extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {/* create group modal */}
+        {/* CREATE NEW GROUP MODAL */}
         <Modal visible={this.state.createModalOpen} animationType="slide">
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={styles.modalContainer}>
@@ -233,7 +252,7 @@ export default class Groups extends Component {
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* individual group modal */}
+        {/* INDIVIDUAL GROUP MODAL */}
         <Modal visible={this.state.groupModalOpen} animationType="slide">
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={styles.modalContainer}>
@@ -283,7 +302,7 @@ export default class Groups extends Component {
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* actual page */}
+        {/* ACTUAL PAGE */}
 
         <View style={styles.center}>
           <Text style={styles.logo}>Groups</Text>
