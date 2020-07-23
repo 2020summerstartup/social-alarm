@@ -218,17 +218,7 @@ export default class Groups extends Component {
               onPress={() => this.setState({ groupModalOpen: false })}
             />
             <Text style={styles.logo}>{this.state.groupNameClicked}</Text>
-            <Text>Members:</Text>
-            <ScrollView>
-              {this.state.groupMembers &&
-                this.state.groupMembers.map((person) => {
-                  return (
-                    <TouchableOpacity style={styles.groups} key={person}>
-                      <Text style={styles.groupCard}>{person}</Text>
-                    </TouchableOpacity>
-                  );
-                })}
-            </ScrollView>
+
             <View style={styles.inputView}>
               <TextInput
                 ref={(input) => {
@@ -251,6 +241,19 @@ export default class Groups extends Component {
             >
               <Text style={styles.buttonText}> add friendssss</Text>
             </TouchableOpacity>
+
+            <Text>Members:</Text>
+            <ScrollView>
+              {this.state.groupMembers &&
+                this.state.groupMembers.map((person) => {
+                  return (
+                    <TouchableOpacity style={styles.groups} key={person}>
+                      <Text style={styles.groupCard}>{person}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+            </ScrollView>
+            
           </View>
         </Modal>
 
