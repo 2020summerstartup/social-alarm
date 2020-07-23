@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   AsyncStorage,
   Alert,
+  TouchableWithoutFeedback, 
+  Keyboard
 } from "react-native";
 import {db, auth} from './firebase';
 // import { NavigationContainer } from '@react-navigation/native';
@@ -70,6 +72,7 @@ export default function SignUp({ navigation }) {
   } */
 
   return (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
     <View style={styles.container}>
       <Text style={styles.logo}>Sign Up</Text>
       <View style={styles.inputView}>
@@ -128,6 +131,7 @@ export default function SignUp({ navigation }) {
         <Text style={styles.loginText}>SIGN UP</Text>
       </TouchableOpacity>
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 

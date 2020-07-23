@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   Alert,
   Modal,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 // TODO: can i make this  less things??
 import * as firebase from "firebase";
@@ -181,6 +183,7 @@ export default class Groups extends Component {
       <View style={styles.container}>
         {/* create group modal */}
         <Modal visible={this.state.createModalOpen} animationType="slide">
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <View style={styles.modalContainer}>
             <MaterialIcons
               name="close"
@@ -206,10 +209,12 @@ export default class Groups extends Component {
               <Text style={styles.buttonText}> Create group </Text>
             </TouchableOpacity>
           </View>
+          </TouchableWithoutFeedback>
         </Modal>
 
         {/* individual group modal */}
         <Modal visible={this.state.groupModalOpen} animationType="slide">
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <View style={styles.modalContainer}>
             <MaterialIcons
               name="close"
@@ -255,6 +260,7 @@ export default class Groups extends Component {
             </ScrollView>
             
           </View>
+          </TouchableWithoutFeedback>
         </Modal>
 
         {/* actual page */}

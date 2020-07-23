@@ -1,7 +1,7 @@
 // home.js
 import React, { useState } from 'react';
 import 'react-native-gesture-handler';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, Keyboard, TouchableWithoutFeedback} from 'react-native';
 import {auth} from './firebase';
 
 /* forgotPassword.js
@@ -30,6 +30,7 @@ export default function Login({navigation})
     }
 */
   return (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}> 
     <View style={styles.container}>
       <Text style={styles.logoTop}>Forgot</Text>
       <Text style={styles.logo}>Password?</Text>
@@ -50,6 +51,7 @@ export default function Login({navigation})
       </TouchableOpacity>
 
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 

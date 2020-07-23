@@ -1,7 +1,7 @@
 // home.js
 import React, { useState } from 'react';
 import 'react-native-gesture-handler';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage,Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, AsyncStorage, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import {auth} from './firebase';
 
 // import Navigator from './navigation';
@@ -54,6 +54,7 @@ export default function Login({navigation})
     }
 */
     return (
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}> 
       <View style={styles.container}>
         <Text style={styles.logo}>Group Alarm</Text>
         {/* text input fields (email, password) */}
@@ -91,6 +92,7 @@ export default function Login({navigation})
         </TouchableOpacity>
 
       </View>
+      </TouchableWithoutFeedback>
     );
   }
 
