@@ -6,15 +6,12 @@ import {
   TouchableOpacity,
   AsyncStorage,
 } from "react-native";
-import {auth, db} from './firebase';
+import { auth, db } from "./firebase";
 
 /* profile.js
  * Profile screen
  * contains sign out button
  */
-
-
- 
 
 export default function Profile({ navigation }) {
   var user = auth.currentUser;

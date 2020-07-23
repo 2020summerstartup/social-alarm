@@ -4,18 +4,17 @@ import Groups from "./groups";
 //import GroupDetails from "./groupDetails";
 
 const GroupStack = createStackNavigator({
-    Groups: {
-        screen: Groups,
-    }, 
-    /*GroupDetails: {
+  Groups: {
+    screen: Groups,
+  },
+  /*GroupDetails: {
         screen: GroupDetails,
     }*/
-}) 
+});
 
 //const StackNavigator = createAppContainer(GroupStack);
 
 export default GroupStack;
-
 
 /*
 const GroupStack = createStackNavigator();

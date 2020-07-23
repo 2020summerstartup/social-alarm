@@ -183,83 +183,84 @@ export default class Groups extends Component {
       <View style={styles.container}>
         {/* create group modal */}
         <Modal visible={this.state.createModalOpen} animationType="slide">
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-          <View style={styles.modalContainer}>
-            <MaterialIcons
-              name="close"
-              size={24}
-              style={{ ...styles.modalToggle, ...styles.modalClose }}
-              onPress={() => this.setState({ createModalOpen: false })}
-            />
-            <Text style={styles.logo}>Create Group</Text>
-            <View style={styles.inputView}>
-              <TextInput
-                style={styles.inputText}
-                placeholder="Group name..."
-                placeholderTextColor="#003f5c"
-                onChangeText={(text) => {
-                  this.setState({ groupName: text });
-                }}
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View style={styles.modalContainer}>
+              <MaterialIcons
+                name="close"
+                size={24}
+                style={{ ...styles.modalToggle, ...styles.modalClose }}
+                onPress={() => this.setState({ createModalOpen: false })}
               />
+              <Text style={styles.logo}>Create Group</Text>
+              <View style={styles.inputView}>
+                <TextInput
+                  style={styles.inputText}
+                  placeholder="Group name..."
+                  placeholderTextColor="#003f5c"
+                  onChangeText={(text) => {
+                    this.setState({ groupName: text });
+                  }}
+                />
+              </View>
+              <TouchableOpacity
+                style={styles.loginBtn}
+                onPress={() =>
+                  this.createGroup(this.state.groupName, this.user)
+                }
+              >
+                <Text style={styles.buttonText}> Create group </Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={styles.loginBtn}
-              onPress={() => this.createGroup(this.state.groupName, this.user)}
-            >
-              <Text style={styles.buttonText}> Create group </Text>
-            </TouchableOpacity>
-          </View>
           </TouchableWithoutFeedback>
         </Modal>
 
         {/* individual group modal */}
         <Modal visible={this.state.groupModalOpen} animationType="slide">
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-          <View style={styles.modalContainer}>
-            <MaterialIcons
-              name="close"
-              size={24}
-              style={{ ...styles.modalToggle, ...styles.modalClose }}
-              onPress={() => this.setState({ groupModalOpen: false })}
-            />
-            <Text style={styles.logo}>{this.state.groupNameClicked}</Text>
-
-            <View style={styles.inputView}>
-              <TextInput
-                ref={(input) => {
-                  this.textInput = input;
-                }}
-                style={styles.inputText}
-                placeholder="add friends ..."
-                placeholderTextColor="#003f5c"
-                keyboardType="email-address"
-                onChangeText={(text) => {
-                  this.setState({ addUser: text });
-                }}
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View style={styles.modalContainer}>
+              <MaterialIcons
+                name="close"
+                size={24}
+                style={{ ...styles.modalToggle, ...styles.modalClose }}
+                onPress={() => this.setState({ groupModalOpen: false })}
               />
-            </View>
-            <TouchableOpacity
-              style={styles.loginBtn}
-              onPress={() =>
-                this.addUser(this.state.addUser, this.state.groupIdClicked)
-              }
-            >
-              <Text style={styles.buttonText}> add friendssss</Text>
-            </TouchableOpacity>
+              <Text style={styles.logo}>{this.state.groupNameClicked}</Text>
 
-            <Text>Members:</Text>
-            <ScrollView>
-              {this.state.groupMembers &&
-                this.state.groupMembers.map((person) => {
-                  return (
-                    <TouchableOpacity style={styles.groups} key={person}>
-                      <Text style={styles.groupCard}>{person}</Text>
-                    </TouchableOpacity>
-                  );
-                })}
-            </ScrollView>
-            
-          </View>
+              <View style={styles.inputView}>
+                <TextInput
+                  ref={(input) => {
+                    this.textInput = input;
+                  }}
+                  style={styles.inputText}
+                  placeholder="add friends ..."
+                  placeholderTextColor="#003f5c"
+                  keyboardType="email-address"
+                  onChangeText={(text) => {
+                    this.setState({ addUser: text });
+                  }}
+                />
+              </View>
+              <TouchableOpacity
+                style={styles.loginBtn}
+                onPress={() =>
+                  this.addUser(this.state.addUser, this.state.groupIdClicked)
+                }
+              >
+                <Text style={styles.buttonText}> add friendssss</Text>
+              </TouchableOpacity>
+
+              <Text>Members:</Text>
+              <ScrollView>
+                {this.state.groupMembers &&
+                  this.state.groupMembers.map((person) => {
+                    return (
+                      <TouchableOpacity style={styles.groups} key={person}>
+                        <Text style={styles.groupCard}>{person}</Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+              </ScrollView>
+            </View>
           </TouchableWithoutFeedback>
         </Modal>
 

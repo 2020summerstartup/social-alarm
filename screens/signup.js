@@ -9,10 +9,10 @@ import {
   TouchableOpacity,
   AsyncStorage,
   Alert,
-  TouchableWithoutFeedback, 
-  Keyboard
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
-import {db, auth} from './firebase';
+import { db, auth } from "./firebase";
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
 
@@ -25,7 +25,6 @@ export default function SignUp({ navigation }) {
   //const firebase = require("firebase");
   // Required for side-effects
   // require("firebase/firestore");
-
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,7 +39,8 @@ export default function SignUp({ navigation }) {
       if (password == confirmPassword) {
         await AsyncStorage.setItem("userToken", email);
 
-          auth.createUserWithEmailAndPassword(email, password)
+        auth
+          .createUserWithEmailAndPassword(email, password)
           .then(function (user) {
             db.collection("users")
               .doc(email)
@@ -66,71 +66,73 @@ export default function SignUp({ navigation }) {
       console.log(error.toString());
     }
   };
-/*
+  /*
   if (!firebase.apps.length) {
     firebase.initializeApp({});
   } */
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-    <View style={styles.container}>
-      <Text style={styles.logo}>Sign Up</Text>
-      <View style={styles.inputView}>
-        {/* text inputs - email, password, confirm password */}
-        <TextInput
-          style={styles.inputText}
-          placeholder="Email..."
-          placeholderTextColor="#003f5c"
-          keyboardType='email-address'
-          onChangeText={(text) => {
-            setEmail(text);
-          }}
-        />
-      </View>
+      <View style={styles.container}>
+        <Text style={styles.logo}>Sign Up</Text>
+        <View style={styles.inputView}>
+          {/* text inputs - email, password, confirm password */}
+          <TextInput
+            style={styles.inputText}
+            placeholder="Email..."
+            placeholderTextColor="#003f5c"
+            keyboardType="email-address"
+            onChangeText={(text) => {
+              setEmail(text);
+            }}
+          />
+        </View>
 
-      <View style={styles.inputView}>
-        <TextInput
-          secureTextEntry
-          style={styles.inputText}
-          placeholder="Password..."
-          placeholderTextColor="#003f5c"
-          onChangeText={(text) => {
-            setPassword(text);
-          }}
-        />
-      </View>
+        <View style={styles.inputView}>
+          <TextInput
+            secureTextEntry
+            style={styles.inputText}
+            placeholder="Password..."
+            placeholderTextColor="#003f5c"
+            onChangeText={(text) => {
+              setPassword(text);
+            }}
+          />
+        </View>
 
-      <View style={styles.inputView}>
-        <TextInput
-          secureTextEntry
-          style={styles.inputText}
-          placeholder="Confirm password..."
-          placeholderTextColor="#003f5c"
-          onChangeText={(text) => {
-            setConfirmPassword(text);
-          }}
-        />
-      </View>
+        <View style={styles.inputView}>
+          <TextInput
+            secureTextEntry
+            style={styles.inputText}
+            placeholder="Confirm password..."
+            placeholderTextColor="#003f5c"
+            onChangeText={(text) => {
+              setConfirmPassword(text);
+            }}
+          />
+        </View>
 
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.inputText}
-          placeholder="Name..."
-          placeholderTextColor="#003f5c"
-          onChangeText={(text) => {
-            setName(text);
-          }}
-        />
-      </View>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.inputText}
+            placeholder="Name..."
+            placeholderTextColor="#003f5c"
+            onChangeText={(text) => {
+              setName(text);
+            }}
+          />
+        </View>
 
-      {/* sign up button */}
-      <TouchableOpacity
-        style={styles.loginBtn}
-        onPress={() => this.signUpUser(email, password, confirmPassword, name)}
-      >
-        <Text style={styles.loginText}>SIGN UP</Text>
-      </TouchableOpacity>
-    </View>
+        {/* sign up button */}
+        <TouchableOpacity
+          style={styles.loginBtn}
+          onPress={() =>
+            this.signUpUser(email, password, confirmPassword, name)
+          }
+        >
+          <Text style={styles.loginText}>SIGN UP</Text>
+        </TouchableOpacity>
+      </View>
     </TouchableWithoutFeedback>
   );
 }

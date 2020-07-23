@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { StyleSheet, Button, View, Switch, Text } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SwitchExample from "../components/toggleSwitch";
 
 export default class HomeContainer extends Component {
