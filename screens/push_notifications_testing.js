@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, Component } from 'react';
-import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList, AsyncStorage } from 'react-native';
+import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList, AsyncStorage, Animated, Image, TouchableHighlight } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { SwipeListView } from 'react-native-swipe-list-view';
 
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
@@ -10,6 +11,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 import SwitchExample, {switchValue} from '../components/toggleSwitch';
 import { APPBACKGROUNDCOLOR } from './constants';
 import { appStyles } from './stylesheet';
+
+
+// const rowSwipeAnimatedValues = {};
 
 function AlarmBanner({ children }){
     return(
@@ -45,6 +49,7 @@ async function makeAlarms(alarm_array){
             }));
         }
       });
+      // rowSwipeAnimatedValues[`${list_item.id}`] = new Animated.Value(0);
     list = (await Notifications.getAllScheduledNotificationsAsync());
     return list;
 }
@@ -82,36 +87,105 @@ async function showAlarms(){
 
 function AlarmsTable(){
     const [alarms, setAlarms] = useState([
-        {name: 'First Alarm',  alarm_hour: 9, alarm_minute: 15, alarm_second: 0, switch: true,  id: '1'},
-        {name: 'Second Alarm', alarm_hour: 9, alarm_minute: 16, alarm_second: 0, switch: true,  id: '2'},
-        {name: 'Third Alarm',  alarm_hour: 9, alarm_minute: 17, alarm_second: 0, switch: true,  id: '3'},
+        {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 48, alarm_second: 0, switch: true,  id: "1"},
+        {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 49, alarm_second: 0, switch: true,  id: "2"},
+        {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 50, alarm_second: 0, switch: true,  id: "3"},
+        {name: 'Fourth Alarm',  alarm_hour: 13, alarm_minute: 51, alarm_second: 0, switch: true,  id: "4"},
     ]);
 
     makeAlarms(alarms).then(list => {
-        var print_list;
-        for (var i = 0; i < alarms.length; i++) {
-            print_list += list[i].identifier
-            print_list += " "
-        }
-      })
+      var print_list;
+      for (var i = 0; i < alarms.length; i++) {
+          print_list += list[i].identifier
+          print_list += " "
+      }
+    })
 
     // removeAlarm(alarms[1].name, alarms)
-    removeAlarm("Second Alarm", alarms)
+    // removeAlarm("Second Alarm", alarms)
 
     showAlarms()
 
+    const closeRow = (rowMap, rowKey) => {
+      if (rowMap[rowKey]) {
+          rowMap[rowKey].closeRow();
+      }
+    };
+
+    const deleteRow = (rowMap, rowKey) => {
+      closeRow(rowMap, rowKey);
+      const newData = [...alarms];
+      const prevIndex = alarms.findIndex(item => item.id === rowKey);
+      newData.splice(prevIndex, 1);
+      setAlarms(newData);
+    };
+
+    const onRowDidOpen = rowKey => {
+      console.log('This row opened', rowKey);
+    };
+
+    const onSwipeValueChange = swipeData => {
+      const { key, value } = swipeData;
+      // rowSwipeAnimatedValues[key].setValue(Math.abs(value));
+    };
+
+    const renderItem = data => (
+      <TouchableHighlight
+          onPress={() => console.log('You touched me')}
+          style={styles.rowFront}
+          underlayColor={'#AAA'}
+      >
+          <View>
+              <Text>I am {data.item.title} in a SwipeListView</Text>
+          </View>
+      </TouchableHighlight>
+    );
+
+    const renderHiddenItem = (data, rowMap) => (
+      <View style={styles.rowBack}>
+          <TouchableOpacity
+              style={[styles.backRightBtn, styles.backRightBtnLeft]}
+              onPress={() => closeRow(rowMap, data.item.id)}
+          >
+            <Text style={styles.backTextWhite}>Close</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+              style={[styles.backRightBtn, styles.backRightBtnRight]}
+              onPress={() => deleteRow(rowMap, data.item.id)}
+          >
+            <Animated.View style={[styles.trash]}>
+                <Image
+                    source={require('../assets/trash.png')}
+                    style={styles.trash}
+                />
+            </Animated.View>
+          </TouchableOpacity>
+      </View>
+    );
+
     return(
         <View>
-        <FlatList
-            keyExtractor ={(item) => item.id} // specifying id as the key to prevent the key warning
-            data = {alarms}
-            renderItem={({ item }) => (
-            <AlarmBanner>
-                <AlarmDetails title={item.name} hour={item.alarm_hour} minute={item.alarm_minute} second={item.alarm_second}/>
-                <SwitchExample/>
-                <Text>{item.switch}</Text>
-            </AlarmBanner>
-            )}
+          <SwipeListView
+            // <FlatList
+                keyExtractor ={(item) => item.id} // specifying id as the key to prevent the key warning
+                data = {alarms}
+                renderItem={({ item }) => (
+                <AlarmBanner>
+                    <AlarmDetails title={item.name} hour={item.alarm_hour} minute={item.alarm_minute} second={item.alarm_second}/>
+                    <SwitchExample/>
+                    <Text>{item.switch}</Text>
+                </AlarmBanner>
+                )}
+                renderHiddenItem={renderHiddenItem}
+                leftOpenValue={0}
+                rightOpenValue={-150}
+                previewRowKey={'0'}
+                previewOpenValue={-40}
+                previewOpenDelay={3000}
+                onRowDidOpen={onRowDidOpen}
+                onSwipeValueChange={onSwipeValueChange}
+            // />
         />
         </View>
     )
@@ -197,13 +271,14 @@ export default function AppAlarmsPage() {
             </Modal>
         </TopBanner>
 
+        <Button
+          title="Send a notification now"
+          onPress={async () => {
+              await sendPushNotification(expoPushToken);
+          }}
+        />
+
         <View style={styles.scrollViewContainer}>
-            <Button
-            title="Send a notification now"
-            onPress={async () => {
-                await sendPushNotification(expoPushToken);
-            }}
-            />
             {/* <Text>Your expo push token: {expoPushToken}</Text>
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
             <Text>Title: {notification && notification.request.content.title} </Text>
@@ -220,7 +295,8 @@ export default function AppAlarmsPage() {
 async function sendPushNotification(expoPushToken) {
   const message = {
     to: expoPushToken,
-    sound: 'default',
+    sound: 'custom',
+    // sound: "../sounds/piano1.mp4",
     title: 'Hello Sidney',
     body: 'This is a notification for you!',
     data: { data: 'This is the data' },
@@ -417,5 +493,60 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  rowFront: {
+    alignItems: 'center',
+    backgroundColor: '#CCC',
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    justifyContent: 'center',
+    height: 50,
+  },
+
+  backTextWhite: {
+    color: '#FFF',
+  },
+
+  rowBack: {
+      alignItems: 'center',
+      // backgroundColor: '#DDD',
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingLeft: 15,
+      width: "95%"
+  },
+
+  backRightBtn: {
+      alignItems: 'center',
+      bottom: 0,
+      justifyContent: 'center',
+      position: 'absolute',
+      top: 0,
+      width: 75,
+  },
+  backRightBtnLeft: {
+      backgroundColor: 'blue',
+      right: 75,
+      marginTop: 0,
+      marginBottom: 10,
+      paddingTop: 0,
+      paddingBottom: 0,
+      borderTopLeftRadius: 15,
+      borderBottomLeftRadius: 15,
+  },
+  backRightBtnRight: {
+      backgroundColor: 'red',
+      right: 0,
+      marginTop: 0,
+      marginBottom: 10,
+      paddingTop: 0,
+      paddingBottom: 0,
+      borderTopRightRadius: 15,
+      borderBottomRightRadius: 15,
+  },
+  trash: {
+      height: 25,
+      width: 25,
   },
 })
