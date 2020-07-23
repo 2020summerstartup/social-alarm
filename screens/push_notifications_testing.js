@@ -72,7 +72,7 @@ async function showAlarms(){
 
     if (list.length == 0) {
         console.log("list.length == 0")
-        return list;
+        // return list;
     }
     else {
         var print_list_new
@@ -275,6 +275,7 @@ export default function AppAlarmsPage() {
           title="Send a notification now"
           onPress={async () => {
               await sendPushNotification(expoPushToken);
+              console.log("Sending notification");
           }}
         />
 
@@ -295,8 +296,8 @@ export default function AppAlarmsPage() {
 async function sendPushNotification(expoPushToken) {
   const message = {
     to: expoPushToken,
-    sound: 'custom',
-    // sound: "../sounds/piano1.mp4",
+    sound: 'default',
+    // sound: "../sounds/piano1.wav",
     title: 'Hello Sidney',
     body: 'This is a notification for you!',
     data: { data: 'This is the data' },
