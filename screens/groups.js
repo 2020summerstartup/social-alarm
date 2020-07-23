@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-// TODO: can i make this  less things??
+// TODO: can i make this less things?? - possibly import the default fromfirebase file
 import * as firebase from "firebase";
 import { db, auth } from "./firebase";
 
@@ -24,27 +24,35 @@ export default class Groups extends Component {
     super(props);
 
     this.state = {
+      // modal states
       createModalOpen: false,
       groupModalOpen: false,
+      // the text input box in create group modal
       groupName: "",
+      // array of groups the user is in
       groups: [],
+      // current user - doesn't change, idk why it's a state 
       user: auth.currentUser,
+      // info for group specific modal
       groupNameClicked: "",
       groupIdClicked: "",
       groupMembers: [],
+      // the text input in add user field of group specific modal
       addUser: "",
     };
   }
 
   user = auth.currentUser;
 
+  // called when user hits create group button in create group modal
   createGroup = (name, user) => {
-    // firebase handling
+    // if group length is too small - no group made, instead alert
     if (name.length < 3) {
       Alert.alert("Oops!", "Group name must be at least 3 characters long", [
         { text: "ok" },
       ]);
     } else {
+      // add group to group collection with relevant info
       db.collection("groups")
         .add({
           groupName: name,
@@ -54,8 +62,10 @@ export default class Groups extends Component {
           alarms: [],
         })
         .then((docRef) => {
+          // modal closes
           this.setState({ createModalOpen: false });
 
+          // add  group to user's doc
           db.collection("users")
             .doc(user.email)
             .update({
@@ -64,6 +74,7 @@ export default class Groups extends Component {
                 id: docRef,
               }),
             });
+          //  update user's groups in state
           groupData = this.state.groups;
           groupData.push({
             name: name,
@@ -77,12 +88,10 @@ export default class Groups extends Component {
         });
     }
   };
-  /*
-  if (!firebase.apps.length) {
-    firebase.initializeApp({});
-  }
-  */
 
+
+  // called when user presses one of the group buttons 
+  // opens group modal and sets it all  up
   groupModal = (groupName, groupId) => {
     this.setState({ groupModalOpen: true });
     this.setState({ groupNameClicked: groupName });
@@ -123,33 +132,43 @@ export default class Groups extends Component {
         if (doc.exists) {
           db.collection("groups")
             .doc(groupId)
-            .update({
-              members: firebase.firestore.FieldValue.arrayUnion(userName),
-            });
-          db.collection("groups")
-            .doc(groupId)
             .get()
             .then(function (doc2) {
-              db.collection("users")
-                .doc(userName)
-                .update({
-                  groups: firebase.firestore.FieldValue.arrayUnion({
-                    name: doc2.data().groupName,
-                    id: doc2.id,
-                  }),
-                })
-                .then(function () {
-                  self.textInput.clear();
-                  const groupMem = [];
-                  for (var i = 0; i < self.state.groupMembers.length; i++) {
-                    groupMem.push(self.state.groupMembers[i]);
-                  }
-                  groupMem.push(userName);
-                  self.setState({ groupMembers: groupMem });
-                })
-                .catch((error) => console.log(error));
+              if (doc2.data().members.indexOf(userName) == -1) {
+                db.collection("users")
+                  .doc(userName)
+                  .update({
+                    groups: firebase.firestore.FieldValue.arrayUnion({
+                      name: doc2.data().groupName,
+                      id: doc2.id,
+                    }),
+                  })
+                  .then(function () {
+                    db.collection("groups")
+                      .doc(groupId)
+                      .update({
+                        members: firebase.firestore.FieldValue.arrayUnion(
+                          userName
+                        ),
+                      });
+                    self.textInput.clear();
+                    const groupMem = [];
+                    for (var i = 0; i < self.state.groupMembers.length; i++) {
+                      groupMem.push(self.state.groupMembers[i]);
+                    }
+                    groupMem.push(userName);
+                    self.setState({ groupMembers: groupMem });
+                  })
+                  .catch((error) => console.log(error));
+              } else {
+                Alert.alert("Oops!", "This user is already in the group", [
+                  { text: "ok" },
+                ]);
+              }
             })
             .catch((error) => console.log(error));
+        } else {
+          Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
         }
       })
       .catch((error) => console.log(error));
