@@ -6,6 +6,7 @@ import GroupScreen from "./groups";
 // import AlarmScreen from './alarms';
 // import AlarmScreen from './alarm_push_notifications_with_firebase';
 import AlarmScreen from './push_notifications_testing';
+// import AlarmScreen from './swipeListViewExample';
 import ProfileScreen from "./profile";
 import StopwatchScreen from "./stopwatch";
 import { NavigationContainer } from "@react-navigation/native";

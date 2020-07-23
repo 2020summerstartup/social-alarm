@@ -1,58 +1,36 @@
 import React, { useState, useEffect, useRef, Component } from 'react';
 import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList, AsyncStorage } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import SwitchExample, {switchValue} from '../components/toggleSwitch';
-import Moment from 'moment';
-
-import { APPBACKGROUNDCOLOR } from './constants';
-import { appStyles } from './stylesheet';
 
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
-
-import {createAlarm} from '../helpers/createAlarm';
 import { MaterialIcons } from "@expo/vector-icons";
 
-const moment = require("moment");
-
-// function Timer({ interval, style }) {
-//   const pad = (n) => n < 10 ? '0' + n : n // no zero hanging on left side if value less than 10
-//   const duration = moment.duration(interval)
-//   const centiseconds = Math.floor(duration.milliseconds()/10)
-//   return (
-//     <View style = {styles.timerContainer}>
-//       <Text style={style}>{pad(duration.minutes())}:</Text>
-//       <Text style={style}>{pad(duration.seconds())}:</Text>
-//       <Text style={style}>{pad(centiseconds)}</Text>
-//     </View>
-//   )
-// };
+import SwitchExample, {switchValue} from '../components/toggleSwitch';
+import { APPBACKGROUNDCOLOR } from './constants';
+import { appStyles } from './stylesheet';
 
 function AlarmBanner({ children }){
-  return(
-    <View style = {styles.alarmBanner}>{children}</View>
-  )
+    return(
+        <View style = {styles.alarmBanner}>{children}</View>
+    )
 };
 
 function AlarmDetails({title, hour, minute, second}){
-  return (
-    <View style={styles.alarmDetails}>
-      <Text style={styles.alarmTime}>{hour}:{minute}:{second}</Text>
-      <Text style={styles.alarmText}>
-        {title}
-      </Text>
-    </View>
-  )
+    return (
+        <View style={styles.alarmDetails}>
+            <Text style={styles.alarmTime}>{hour}:{minute}:{second}</Text>
+            <Text style={styles.alarmText}>{title}</Text>
+        </View>
+    )
 };
 
 async function makeAlarms(alarm_array){
     alarm_array.forEach(async(list_item) => {
         if (list_item.switch == true){
-            console.log("inside maps function");
-
+            // console.log("inside maps function");
             promise = (await Notifications.scheduleNotificationAsync({
-            // Notifications.scheduleNotificationAsync({
                 identifier: list_item.name,
                 content: {
                     title: 'Its ' + list_item.alarm_hour + ':' + list_item.alarm_minute + '!',
@@ -65,20 +43,14 @@ async function makeAlarms(alarm_array){
                     repeats: false
                 }
             }));
-            // console.log("identifier:", list_item.name)
-            console.log("promise:", promise)
-            if (promise === list_item.name){ // checking for equality without type conversion
-                console.log("promise === list_item.name")
-            }
         }
-    });
+      });
     list = (await Notifications.getAllScheduledNotificationsAsync());
     return list;
 }
 
 async function removeAlarm(identifier, alarm_array){ // identifier should be a string
     // promise = (await Notifications.cancelScheduledNotificationAsync(identifier))
-    console.log("identifier inside removeAlarm:", identifier)
     Notifications.cancelScheduledNotificationAsync(identifier)
     console.log("cancelled", identifier)
 
@@ -91,76 +63,45 @@ async function removeAlarm(identifier, alarm_array){ // identifier should be a s
 }
 
 async function showAlarms(){
-    // promise = (await Notifications.cancelAllScheduledNotificationsAsync());
-    // console.log("cancelled all alarms")
-
     list = (await Notifications.getAllScheduledNotificationsAsync());
-    // console.log("showAlarms list:", list)
 
     if (list.length == 0) {
-    // if (list == " ") {
         console.log("list.length == 0")
         return list;
     }
     else {
         var print_list_new
-        for (var i = 0; i < 3; i++) {
-            // print_list_new += list[i].identifier
-            print_list_new += list[i]
+        for (var i = 0; i < list.length; i++) {
+            print_list_new += list[i].identifier
             print_list_new += " "
         }
-        console.log("list after:", print_list_new)
+        console.log("showAlarms:", print_list_new)
         return list;
     }
 }
 
 function AlarmsTable(){
     const [alarms, setAlarms] = useState([
-        {name: 'First Alarm',  alarm_hour: 10, alarm_minute: 59, alarm_second: 0, switch: true,  id: '1'},
-        {name: 'Second Alarm', alarm_hour: 10, alarm_minute: 43, alarm_second: 0, switch: true,  id: '2'},
-        {name: 'Third Alarm',  alarm_hour: 10, alarm_minute: 44, alarm_second: 0, switch: true,  id: '3'},
+        {name: 'First Alarm',  alarm_hour: 9, alarm_minute: 15, alarm_second: 0, switch: true,  id: '1'},
+        {name: 'Second Alarm', alarm_hour: 9, alarm_minute: 16, alarm_second: 0, switch: true,  id: '2'},
+        {name: 'Third Alarm',  alarm_hour: 9, alarm_minute: 17, alarm_second: 0, switch: true,  id: '3'},
     ]);
 
-    // makeAlarms(alarms)
-    makeAlarms(alarms)
-    .then(list => {
+    makeAlarms(alarms).then(list => {
         var print_list;
         for (var i = 0; i < alarms.length; i++) {
             print_list += list[i].identifier
             print_list += " "
         }
-        console.log("list before:", print_list)})
-    // .then(Notifications.cancelScheduledNotificationAsync(alarms[1].name))
-    // .then(showAlarms())
+      })
 
     // removeAlarm(alarms[1].name, alarms)
-    // removeAlarm("Second Alarm", alarms)
-    showAlarms()
+    removeAlarm("Second Alarm", alarms)
 
-    // console.log("First element of alarms array:", alarms[0].name)
-    // removeAlarm(alarms[0].name)
-    // removeAlarm(alarms[0].name).then(list => {
-    //     var print_list_new
-    //     for (var i = 0; i < alarms.length; i++) {
-    //         print_list_new += list[i].identifier
-    //         print_list_new += " "
-    //     }
-    //     console.log("list after:", print_list_new)})
+    showAlarms()
 
     return(
         <View>
-        {/*<ScrollView style = {styles.scrollView}>
-                {alarms.map((list_item) => (
-                <View key={list_item.key}>
-                    <AlarmBanner>
-                            <AlarmDetails title={list_item.name} time={list_item.time}/>
-                            <SwitchExample/>
-                            <Text>{list_item.switch}</Text>
-                    </AlarmBanner>
-                </View>
-                ))}
-        </ScrollView>*/}
-
         <FlatList
             keyExtractor ={(item) => item.id} // specifying id as the key to prevent the key warning
             data = {alarms}
@@ -211,37 +152,9 @@ export default function AppAlarmsPage() {
     const [notification, setNotification] = useState(false); // false is the initial state so it's passed into useState()
     const notificationListener = useRef();
     const responseListener = useRef();
-    // const [name, setName] = useState();
-
-
-    // const save = async() => {
-    //     try {
-    //         await AsyncStorage.setItem("MyName", name)
-    //     }
-    //     catch(err){
-    //         alert(err);
-    //     }
-    // };
-
-    // const load = async() => {
-    //     try{
-    //         await AsyncStorage.getItem("MyName")
-    //     }
-    //     catch(err){
-    //         alert(err);
-    //     }
-    // }
 
     useEffect(() => { // useEffect is similar to componentDidMount and componentDidUpdate
-        // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-        registerForPushNotificationsAsync()
-            .then(token => setExpoPushToken(token))
-            // .catch(console.log(".catch"))
-            // .catch(error => {
-            //     console.log(".catch", error)
-            // })
-
-        // registerForPushNotificationsAsync().then(console.log(".then")).catch(console.log(".catch"));
+        registerForPushNotificationsAsync().then(token => setExpoPushToken(token)).catch(console.log(".catch"))
 
         // let the_subscription;
         notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
@@ -253,24 +166,10 @@ export default function AppAlarmsPage() {
             console.log("hi", response);
         });
 
-        // let info_promise;
-        // info_promise = Notifications.getPresentedNotificationsAsync(list => {
-        //     console.log("list:", list)
-        //     console.log("inside")
-        // });
-        // console.log("info_promise_before:", info_promise)
-
-        return () => {
-            Notifications.removeNotificationSubscription(notificationListener);
-            Notifications.removeNotificationSubscription(responseListener);
-        };
-
         // return () => {
-        //   Notifications.removeAllNotificationListeners();
+        //     Notifications.removeNotificationSubscription(notificationListener);
+        //     Notifications.removeNotificationSubscription(responseListener);
         // };
-
-        // Notifications.cancelAllScheduledNotificationsAsync();
-        // Notifications.dismissAllNotificationsAsync();
     }, []);
 
     return (
@@ -324,7 +223,7 @@ async function sendPushNotification(expoPushToken) {
     sound: 'default',
     title: 'Hello Sidney',
     body: 'This is a notification for you!',
-    data: { data: 'goes here' },
+    data: { data: 'This is the data' },
   };
 
   await fetch('https://exp.host/--/api/v2/push/send', {
@@ -343,7 +242,7 @@ async function registerForPushNotificationsAsync() {
     if (Constants.isDevice) {
         // Check for existing permissions
         const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-        console.log("existingStatus: ", existingStatus);
+        console.log("existingStatus:", existingStatus);
         let finalStatus = existingStatus;
 
         // If no existing permissions, ask user for permission
@@ -360,7 +259,7 @@ async function registerForPushNotificationsAsync() {
 
         // Get push notification token
         token = (await Notifications.getExpoPushTokenAsync()).data;
-        console.log("token: ", token);
+        console.log("token:", token);
     } 
     else {
         alert('Must use physical device for Push Notifications');

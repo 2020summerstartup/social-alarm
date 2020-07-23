@@ -102,7 +102,6 @@ export default function Groups({ navigation }) {
         style={styles.modalToggle}
         onPress={() => setModalOpen(true)}
       />
-      <Text style={styles.buttonText}>hi</Text>
 
     </View>
   );
