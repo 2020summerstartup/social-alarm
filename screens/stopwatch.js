@@ -1,19 +1,19 @@
-// code from tutorial: https://www.youtube.com/watch?v=XaJb4pP5phk
-// Stopwatch features from https://www.youtube.com/watch?v=gWegskGYCtA
+// Date and Time code from tutorial: https://www.youtube.com/watch?v=XaJb4pP5phk
+// Stopwatch code from tutorial (youtube: Marcin Mieszek) https://www.youtube.com/watch?v=gWegskGYCtA
 // Using https://momentjs.com/
 // Using https://www.npmjs.com/package/react-moment
 // Not yet using https://www.npmjs.com/package/react-native-alarm-notification
 // Not yet using https://github.com/smartliang/react-native-alarm
 
-import React, { Component } from "react";
-import {
-  Button,
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import React, { Component } from 'react';
+import { Button, View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { createAppContainer } from 'react-navigation'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator, HeaderBackground } from 'react-navigation-stack';
+import Moment from 'moment';
+import {APPBACKGROUNDCOLOR} from './constants';
+
+
 
 const moment = require("moment");
 /*const DATA = {
@@ -41,8 +41,10 @@ function RoundButton({ title, color, background, onPress, disabled }) {
       style={[styles.button, { backgroundColor: background }]}
       activeOpacity={disabled ? 1.0 : 0.5} // means if disabled then 1.0, otherwise 0.5
     >
-      <View style={styles.buttonBorder}>
-        <Text style={[styles.buttonTitle, { color }]}>{title}</Text>
+
+      <View style = {styles.buttonBorder}> 
+        <Text style ={[ styles.buttonTitle, {color} ]}>{title}</Text>
+
       </View>
     </TouchableOpacity>
   );
@@ -63,19 +65,20 @@ function Lap({ number, interval, fastest, slowest }) {
       <Text style={lapStyle}>Lap {number}</Text>
       <Timer style={[lapStyle, styles.lapTimer]} interval={interval} />
     </View>
-  );
-}
 
-function LapsTable({ laps, timer }) {
-  // single parameter is array of laps
-  const finishedLaps = laps.slice(1); // only mark completed laps
-  let min = Number.MAX_SAFE_INTEGER; // initializing min value
-  let max = Number.MIN_SAFE_INTEGER; // initializing max values. Usin let because not a const. Could get changed in following if statement.
-  if (finishedLaps.length >= 2) {
-    finishedLaps.forEach((lap) => {
-      if (lap < min) min = lap;
-      if (lap > max) max = lap;
-    });
+  )
+};
+
+function LapsTable({ laps, timer }){ // first parameter is array of laps
+  const finishedLaps = laps.slice(1) // only mark completed laps
+  let min = Number.MAX_SAFE_INTEGER // initializing min value
+  let max = Number.MIN_SAFE_INTEGER // initializing max values. Usin let because not a const. Could get changed in following if statement. 
+  if (finishedLaps.length >= 2){
+    finishedLaps.forEach(lap => {
+      if (lap < min) min = lap
+      if (lap > max) max = lap
+    })
+
   }
   return (
     <ScrollView style={styles.scrollView}>
@@ -108,8 +111,10 @@ export default class Alarms extends Component {
     };
   }
 
-  componentWillUnmount() {
-    clearInterval(this.timer);
+
+  componentWillUnmount(){
+    clearInterval(this.timer) // Sidney wants to look into this more
+
   }
 
   start = () => {
@@ -157,7 +162,7 @@ export default class Alarms extends Component {
   resume = () => {
     const now = new Date().getTime();
     this.setState({
-      // not touching laps array in resume bc don't need to
+      // not touching laps array in resume bc we don't need to
       start: now,
       now: now,
     });
@@ -179,15 +184,14 @@ export default class Alarms extends Component {
 
     return (
       <View style={styles.container}>
-        {/*<Text style={styles.timeText}>
+        {/* <Text style={styles.timeText}>
           {this.state.time}
         </Text>
         <Text style={styles.dateText}>
           {this.state.date}
-        </Text>*/}
 
-        <Text style={styles.timeText}>{this.state.time}</Text>
-        <Text style={styles.dateText}>{this.state.date}</Text>
+        </Text> */}
+
 
         <Timer
           interval={laps.reduce((total, curr) => total + curr, 0) + timer}
@@ -256,9 +260,10 @@ export default class Alarms extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: "#0D0D0D",
-    backgroundColor: "#C1C3C1",
-    alignItems: "center",
+
+    backgroundColor: APPBACKGROUNDCOLOR,
+    alignItems: 'center',
+
     paddingTop: 50,
     paddingHorizontal: 20,
     alignItems: "center",
@@ -283,7 +288,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     // justifyContent: 'flex-end',
     paddingTop: 10,
-    width: 125,
+
+    width: 100
+
   },
 
   timerContainer: {
@@ -335,8 +342,9 @@ const styles = StyleSheet.create({
     width: 35,
   },
 
-  lapTimer: {
-    width: 30,
+  lapTimer:{
+    width: 25,
+
   },
 
   scrollView: {
@@ -348,6 +356,8 @@ const styles = StyleSheet.create({
   },
 
   slowest: {
-    color: "#CC3551",
-  },
+
+    color: "#CC3551"
+  }
 });
+

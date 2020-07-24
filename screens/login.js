@@ -1,4 +1,5 @@
 // home.js
+
 import React, { useState } from "react";
 import "react-native-gesture-handler";
 import {
@@ -17,6 +18,10 @@ import { auth } from "./firebase";
 // import Navigator from './navigation';
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
+
+
+import {APPBACKGROUNDCOLOR} from './constants';
+
 
 /* login.js
  * Login screen
@@ -110,9 +115,9 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#003f5c",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: APPBACKGROUNDCOLOR,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   logo: {
@@ -157,4 +162,6 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 10,
   },
+
 });
+
