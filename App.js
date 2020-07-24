@@ -1,12 +1,12 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
 //import NavigationContainer from './screens/navigation';
 //import SignUp from './screens/signup';
 //import ForgotPassword from './screens/forgotPassword';
-import Login from "./screens/login";
-import StackNavigator from "./screens/stackNavigation";
+//import Login from "./screens/login";
+//import StackNavigator from "./screens/stackNavigation";
 import SwitchNavigator from "./screens/switchNavigation";
-import AuthLoadingScreen from "./screens/authLoadingScreen";
+//import AuthLoadingScreen from "./screens/authLoadingScreen";
+
 
 /* Color codes from coolors.co 
 Oxford Blue #0B132B

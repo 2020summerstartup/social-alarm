@@ -7,7 +7,6 @@ import AlarmScreen from './push_notifications_with_toggle';
 import ProfileScreen from "./profile";
 import StopwatchScreen from "./stopwatch";
 import { NavigationContainer } from "@react-navigation/native";
-import { Group } from "react-native";
 
 
 /* navigation.js
