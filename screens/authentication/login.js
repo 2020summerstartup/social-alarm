@@ -19,8 +19,7 @@ import { auth } from "../../firebase/firebase";
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
 
-
-import {APPBACKGROUNDCOLOR} from '../../style/constants';
+import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 
 
 /* login.js
@@ -123,7 +122,7 @@ const styles = StyleSheet.create({
   logo: {
     fontWeight: "bold",
     fontSize: 50,
-    color: "#fb5b5a",
+    color: APPTEXTRED,
     marginBottom: 40,
   },
 
@@ -139,22 +138,22 @@ const styles = StyleSheet.create({
 
   inputText: {
     height: 50,
-    color: "white",
+    color: APPTEXTWHITE,
   },
 
   forgot: {
-    color: "white",
+    color: APPTEXTWHITE,
     fontSize: 13,
   },
 
   loginText: {
-    color: "white",
+    color: APPTEXTWHITE,
     fontSize: 15,
   },
 
   loginBtn: {
     width: "80%",
-    backgroundColor: "#fb5b5a",
+    backgroundColor: APPTEXTRED,
     borderRadius: 25,
     height: 50,
     alignItems: "center",

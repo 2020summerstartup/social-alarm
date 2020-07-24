@@ -12,6 +12,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { auth } from "../../firebase/firebase";
+import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 
 /* forgotPassword.js
  * Forgot password screen
@@ -75,21 +76,21 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#003f5c",
+    backgroundColor: APPBACKGROUNDCOLOR,
     alignItems: "center",
     justifyContent: "center",
   },
   logoTop: {
     fontWeight: "bold",
     fontSize: 50,
-    color: "#fb5b5a",
+    color: APPTEXTRED,
     marginBottom: 0,
   },
 
   logo: {
     fontWeight: "bold",
     fontSize: 50,
-    color: "#fb5b5a",
+    color: APPTEXTRED,
     marginBottom: 40,
   },
 
@@ -105,22 +106,22 @@ const styles = StyleSheet.create({
 
   inputText: {
     height: 50,
-    color: "white",
+    color: APPTEXTWHITE,
   },
 
   forgot: {
-    color: "white",
+    color: APPTEXTWHITE,
     fontSize: 13,
   },
 
   loginText: {
-    color: "white",
+    color: APPTEXTWHITE,
     fontSize: 15,
   },
 
   loginBtn: {
     width: "80%",
-    backgroundColor: "#fb5b5a",
+    backgroundColor: APPTEXTRED,
     borderRadius: 25,
     height: 50,
     alignItems: "center",
