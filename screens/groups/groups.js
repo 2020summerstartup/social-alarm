@@ -19,6 +19,8 @@ import { db, auth } from "../../firebase/firebase";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 
+import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
+
 export default class Groups extends Component {
   constructor(props) {
     super(props);
@@ -336,7 +338,7 @@ export default class Groups extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#003f5c",
+    backgroundColor: APPBACKGROUNDCOLOR,
     //alignItems: "center",
     justifyContent: "center",
   },
@@ -345,7 +347,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     fontWeight: "bold",
     fontSize: 50,
-    color: "#fb5b5a",
+    color: APPTEXTRED,
     marginBottom: 18,
     alignItems: "center",
   },
@@ -362,18 +364,18 @@ const styles = StyleSheet.create({
 
   inputText: {
     height: 50,
-    color: "white",
+    color: APPTEXTWHITE,
   },
 
   buttonText: {
-    color: "white",
+    color: APPTEXTWHITE,
     fontSize: 16,
     padding: 10,
   },
 
   loginBtn: {
     width: "80%",
-    backgroundColor: "#fb5b5a",
+    backgroundColor: APPTEXTRED,
     borderRadius: 25,
     height: 50,
     alignItems: "center",
@@ -385,7 +387,7 @@ const styles = StyleSheet.create({
   modalToggle: {
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: "#fb5b5a",
+    borderColor: APPTEXTRED,
     padding: 10,
     borderRadius: 10,
     alignSelf: "center",
@@ -393,7 +395,7 @@ const styles = StyleSheet.create({
   },
 
   modalContainer: {
-    backgroundColor: "#003f5c",
+    backgroundColor: APPBACKGROUNDCOLOR,
     flex: 1,
     alignItems: "center",
   },
@@ -406,11 +408,10 @@ const styles = StyleSheet.create({
   groupCard: {
     //marginBottom: 20,
     //borderWidth: 1,
-    borderColor: "#fb5b5a",
+    borderColor: APPTEXTRED,
     padding: 10,
-
     alignSelf: "center",
-    color: "#fb5b5a",
+    color: APPTEXTRED,
     fontSize: 24,
     alignItems: "flex-start",
   },
@@ -424,7 +425,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginLeft: 16,
     elevation: 3,
-    backgroundColor: "#003f5c",
+    backgroundColor: APPBACKGROUNDCOLOR,
     shadowOffset: { width: 1, height: 1 },
     shadowColor: "#031821",
     shadowOpacity: 0.7,

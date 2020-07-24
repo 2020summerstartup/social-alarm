@@ -7,6 +7,7 @@ import {
   AsyncStorage,
 } from "react-native";
 import { auth, db } from "../../firebase/firebase";
+import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 
 /* profile.js
  * Profile screen
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
   name: {
     fontWeight: "bold",
     fontSize: 20,
-    color: "#003f5c",
+    color: APPBACKGROUNDCOLOR,
     marginBottom: 5,
     marginTop: 35,
     marginLeft: 20,
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
   logo: {
     fontWeight: "bold",
     fontSize: 20,
-    color: "#003f5c",
+    color: APPBACKGROUNDCOLOR,
     marginBottom: 5,
     marginTop: 5,
     marginLeft: 20,
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
 
   loginBtn: {
     width: "80%",
-    backgroundColor: "#fb5b5a",
+    backgroundColor: APPTEXTRED,
     borderRadius: 25,
     height: 50,
     alignItems: "center",

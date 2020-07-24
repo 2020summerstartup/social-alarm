@@ -8,6 +8,7 @@ import AlarmScreen from '../screens/alarms/push_notifications_testing';
 import ProfileScreen from "../screens/profile/profile";
 import StopwatchScreen from "../screens/stopwatch/stopwatch";
 import { NavigationContainer } from "@react-navigation/native";
+import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../style/constants'
 
 
 /* navigation.js
@@ -34,9 +35,9 @@ function MyTabs() {
     <Tab.Navigator
       initialRoutename="Alarms" // After user signs in, go to alarms page
       tabBarOptions={{
-        activeTintColor: "#fb5b5a", // This makes the button pink when you're on that page
-        activeBackgroundColor: "#003f5c",
-        inactiveBackgroundColor: "#003f5c",
+        activeTintColor: APPTEXTRED, // This makes the button pink when you're on that page
+        activeBackgroundColor: APPBACKGROUNDCOLOR,
+        inactiveBackgroundColor: APPBACKGROUNDCOLOR,
       }}
     >
       <Tab.Screen

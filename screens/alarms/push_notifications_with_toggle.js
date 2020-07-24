@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 import Moment from 'moment';
 
-import { APPBACKGROUNDCOLOR } from '../constants';
+import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 import { appStyles } from '../stylesheet';
 
 import Constants from 'expo-constants';
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   topBanner:{
     flexDirection : "row",
     width:"100%",
-    backgroundColor: "white",
+    backgroundColor: APPTEXTWHITE,
     // backgroundColor: APPBACKGROUNDCOLOR,
     height: 110,
     paddingTop: 30,
@@ -364,13 +364,13 @@ const styles = StyleSheet.create({
 
   Text:{
     height:50,
-    color: "white",
+    color: APPTEXTWHITE,
     fontSize: 16
   },
 
   pageTitle:{
     padding: 20,
-    color: "#fb5b5a",
+    color: APPTEXTRED,
     fontSize: 40,
     alignSelf: 'center',
     alignItems: 'center',
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
 
   inputText:{
     height:50,
-    color: "#ffffff",
+    color: APPTEXTWHITE,
     fontSize: 16
   },
 
@@ -395,14 +395,14 @@ const styles = StyleSheet.create({
   },
 
   alarmTime: {
-    color: "#ffffff",
+    color: APPTEXTWHITE,
     fontSize: 45,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
   },
 
   alarmText: {
-    color: "#ffffff",
+    color: APPTEXTWHITE,
     fontSize: 16,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
   alarmBanner: {
     flex: 1,
     flexDirection : "row",
-    backgroundColor: "#fb5b5a",
+    backgroundColor: APPTEXTRED,
     // backgroundColor: "black",
     alignSelf: 'center',
     alignItems: 'center',
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
 
   alarmDetails: {
     flex: 1,
-    backgroundColor: "#fb5b5a",
+    backgroundColor: APPTEXTRED,
     alignItems: 'center',
     justifyContent: 'center',
     width: "100%",
@@ -447,12 +447,12 @@ const styles = StyleSheet.create({
   }, 
 
   buttonTitle: {
-    color: "#ffffff",
+    color: APPTEXTWHITE,
     fontSize: 40,
   },
 
   buttonBorder: {
-    color: "#ffffff",
+    color: APPTEXTWHITE,
     width: 56, 
     height: 56, 
     borderRadius: 28, 
