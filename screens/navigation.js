@@ -11,7 +11,6 @@ import AlarmScreen from './soundsTest';
 import ProfileScreen from "./profile";
 import StopwatchScreen from "./stopwatch";
 import { NavigationContainer } from "@react-navigation/native";
-import { Group } from "react-native";
 
 
 /* navigation.js
