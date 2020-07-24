@@ -13,14 +13,14 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { auth } from "./firebase";
+import { auth } from "../../firebase/firebase";
 
 // import Navigator from './navigation';
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
 
 
-import {APPBACKGROUNDCOLOR} from './constants';
+import {APPBACKGROUNDCOLOR} from '../../style/constants';
 
 
 /* login.js

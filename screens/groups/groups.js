@@ -14,7 +14,7 @@ import {
 } from "react-native";
 // TODO: can i make this less things?? - possibly import the default fromfirebase file
 import * as firebase from "firebase";
-import { db, auth } from "./firebase";
+import { db, auth } from "../../firebase/firebase";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";

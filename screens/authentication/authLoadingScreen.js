@@ -1,6 +1,6 @@
 import React from "react";
 import { ActivityIndicator, AsyncStorage, StatusBar, View } from "react-native";
-import { auth } from "./firebase";
+import { auth } from "../../firebase/firebase";
 
 
 /* authLoadingScreen.js

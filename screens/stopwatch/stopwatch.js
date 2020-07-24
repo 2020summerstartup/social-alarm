@@ -11,9 +11,7 @@ import { createAppContainer } from 'react-navigation'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator, HeaderBackground } from 'react-navigation-stack';
 import Moment from 'moment';
-import {APPBACKGROUNDCOLOR} from './constants';
-
-
+import {APPBACKGROUNDCOLOR} from '../../style/constants';
 
 const moment = require("moment");
 /*const DATA = {

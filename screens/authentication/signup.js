@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { db, auth } from "./firebase";
+import { db, auth } from "../../firebase/firebase";
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
 

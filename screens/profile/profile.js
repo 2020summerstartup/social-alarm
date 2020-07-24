@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   AsyncStorage,
 } from "react-native";
-import { auth, db } from "./firebase";
+import { auth, db } from "../../firebase/firebase";
 
 /* profile.js
  * Profile screen

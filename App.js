@@ -1,12 +1,5 @@
 import React from "react";
-//import NavigationContainer from './screens/navigation';
-//import SignUp from './screens/signup';
-//import ForgotPassword from './screens/forgotPassword';
-//import Login from "./screens/login";
-//import StackNavigator from "./screens/stackNavigation";
-import SwitchNavigator from "./screens/switchNavigation";
-//import AuthLoadingScreen from "./screens/authLoadingScreen";
-
+import SwitchNavigator from "./navigation/switchNavigation";
 
 /* Color codes from coolors.co 
 Oxford Blue #0B132B

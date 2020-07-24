@@ -5,14 +5,14 @@ import React, { useState, useEffect, Component } from 'react';
 import { StyleSheet, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, Listview, FlatList} from 'react-native';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import SwitchExample, {switchValue} from '../components/toggleSwitch';
+import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 import Moment from 'moment';
 
 // import  {Container, Content, Header, Form, Input, Item, Label} from 'native-base';
 import  {Container, Content, Header, Form, Input, Item, Button, Label, Icon, List} from 'native-base';
 
-import { APPBACKGROUNDCOLOR } from './constants';
-import { appStyles } from './stylesheet';
+import { APPBACKGROUNDCOLOR } from '../constants';
+import { appStyles } from '../stylesheet';
 
 import Constants from 'expo-constants';
 
@@ -21,7 +21,7 @@ import * as firebase from 'firebase';
 // import * as Permissions from 'expo-permissions';
 import { Permissions, Notifications } from 'expo';
 
-import {createAlarm} from '../helpers/createAlarm';
+import {createAlarm} from '../../helpers/createAlarm';
 import { MaterialIcons } from "@expo/vector-icons";
 
 function AlarmBanner({ children }) {

@@ -11,7 +11,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { auth } from "./firebase";
+import { auth } from "../../firebase/firebase";
 
 /* forgotPassword.js
  * Forgot password screen

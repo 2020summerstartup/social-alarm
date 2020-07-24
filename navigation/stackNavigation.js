@@ -1,9 +1,9 @@
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
-import Login from "./login";
-import SignUp from "./signup";
-import ForgotPassword from "./forgotPassword";
+import Login from "../screens/authentication/login";
+import SignUp from "../screens/authentication/signup";
+import ForgotPassword from "../screens/authentication/forgotPassword";
 
 /* stackNavigation.js
  * stack navigator for not signed in user

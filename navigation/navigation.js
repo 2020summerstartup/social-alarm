@@ -2,14 +2,11 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import GroupScreen from "./groups";
-// import AlarmScreen from './alarms';
-// import AlarmScreen from './alarm_push_notifications_with_firebase';
-// import AlarmScreen from './push_notifications_testing';
-// import AlarmScreen from './swipeListViewExample';
-import AlarmScreen from './soundsTest';
-import ProfileScreen from "./profile";
-import StopwatchScreen from "./stopwatch";
+import GroupScreen from "../screens/groups/groups";
+// import AlarmScreen from '../screens/alarms/alarms';
+import AlarmScreen from '../screens/alarms/push_notifications_testing';
+import ProfileScreen from "../screens/profile/profile";
+import StopwatchScreen from "../screens/stopwatch/stopwatch";
 import { NavigationContainer } from "@react-navigation/native";
 
 

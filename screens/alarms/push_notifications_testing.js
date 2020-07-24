@@ -8,9 +8,9 @@ import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 import { MaterialIcons } from "@expo/vector-icons";
 
-import SwitchExample, {switchValue} from '../components/toggleSwitch';
-import { APPBACKGROUNDCOLOR } from './constants';
-import { appStyles } from './stylesheet';
+import SwitchExample, {switchValue} from '../../components/toggleSwitch';
+import { APPBACKGROUNDCOLOR } from '../../style/constants';
+import { appStyles } from '../../style/stylesheet';
 
 
 // const rowSwipeAnimatedValues = {};
@@ -156,7 +156,7 @@ function AlarmsTable(){
           >
             <Animated.View style={[styles.trash]}>
                 <Image
-                    source={require('../assets/trash.png')}
+                    source={require('../../assets/trash.png')}
                     style={styles.trash}
                 />
             </Animated.View>
