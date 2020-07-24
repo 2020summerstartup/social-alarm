@@ -1,17 +1,18 @@
 import React, { useState, useEffect, Component } from 'react';
-import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SwitchExample, {switchValue} from '../components/toggleSwitch';
-// import { createAlarm } from '../node_modules/react-native-simple-alarm';
 import Moment from 'moment';
 
-import {APPBACKGROUNDCOLOR} from './constants';
+import { APPBACKGROUNDCOLOR } from './constants';
+import { appStyles } from './stylesheet';
 
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 
 import {createAlarm} from '../helpers/createAlarm';
+import { MaterialIcons } from "@expo/vector-icons";
 
 const moment = require("moment");
 
@@ -34,12 +35,10 @@ function AlarmBanner({ children }){
   )
 };
 
-function AlarmDetails({title}){
+function AlarmDetails({title, time}){
   return (
     <View style={styles.alarmDetails}>
-      <Text style={styles.alarmTime}>
-        {alarm_hour}:{alarm_minute}:{alarm_second}
-      </Text>
+      <Text style={styles.alarmTime}>{time}</Text>
       <Text style={styles.alarmText}>
         {title}
       </Text>
@@ -48,20 +47,40 @@ function AlarmDetails({title}){
 };
 
 function AlarmsTable(){
-  var theSwitchIsOn = 'false'
-  if(switchValue == true){
-    theSwitchIsOn = 'true'
-  }
+  const [alarms, setAlarms] = useState([
+      {name: 'First Alarm',  time: '3:15',  switch: 'false',  id: '1'},
+      {name: 'Second Alarm', time: '4:15',  switch: 'false',  id: '2'},
+      {name: 'Third Alarm',  time: '5:15',  switch: 'true',   id: '3'},
+  ]);
+
   return(
-    <ScrollView style = {styles.scrollView}>
-      <AlarmBanner>
-        <AlarmDetails title='Alarm Title 1'/>
-        <SwitchExample/>
-        <Text>{theSwitchIsOn}</Text>
-      </AlarmBanner>
-    </ScrollView>
+     <View>
+      {/*<ScrollView style = {styles.scrollView}>
+            {alarms.map((list_item) => (
+               <View key={list_item.key}>
+                  <AlarmBanner>
+                        <AlarmDetails title={list_item.name} time={list_item.time}/>
+                        <SwitchExample/>
+                        <Text>{list_item.switch}</Text>
+                  </AlarmBanner>
+               </View>
+            ))}
+      </ScrollView>*/}
+
+      <FlatList
+         keyExtractor ={(item) => item.id} // specifying id as the key to prevent the key warning
+         data = {alarms}
+         renderItem={({ item }) => (
+            <AlarmBanner>
+                  <AlarmDetails title={item.name} time={item.time}/>
+                  <SwitchExample/>
+                  <Text>{item.switch}</Text>
+            </AlarmBanner>
+         )}
+      />
+      </View>
   )
-}
+};
 
 function TopBanner({ children }){
   return(
@@ -108,6 +127,9 @@ function AddAlarmButton({title, color, background, onPress, disabled }) {
 };
 
 export default function AppAlarmsPage() {
+
+  const [modalOpen, setModalOpen] = useState(false);
+
 
   class Alarm extends Component{
     state = {
@@ -203,60 +225,46 @@ export default function AppAlarmsPage() {
 
   return (
     <View style={styles.container}>
-      {/*<View style={styles.inputView}>
-        <TextInput
-          style={styles.inputText}
-          placeholder="Set your alarm hour"
-          placeholderTextColor="#ffffff"
-        />
-      </View>*/}
+      <TopBanner>
+        <Text style={styles.pageTitle}>Alarms</Text>
+        <MaterialIcons
+            name="add"
+            size={24}
+            style={appStyles.modalToggle}
+            onPress={() => setModalOpen(true)}
+          />
+        <Modal visible={modalOpen} animationType="slide">
+          <View style={appStyles.modalContainer}>
+            <MaterialIcons
+              name="close"
+              size={24}
+              style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
+              onPress={() => setModalOpen(false)}
+            />
+            <Text style={styles.Text}>
+              DateTimePicker will go here
+            </Text>
+          </View>
+        </Modal>
+      </TopBanner>
 
-      {/*<TopBanner>
-        {/*<AddAlarmButton 
-            title = "+" 
-            color = "white"
-            background = '#858585'
-        />*/}
-        {/*<Text style={styles.alarmText}>
-          You have an alarm set for {alarm_hour}:{alarm_minute}:{alarm_second}
-        </Text>
-      </TopBanner> */}
-
-      {/*<Text style={styles.alarmText}>You have an alarm set for + alarm_minute + ":" alarm_second</Text>*/}
-      <Text style={styles.alarmText}>{my_alarms_list.state.alarm_list}</Text>
-
-      <AddAlarmButton 
-          title = "+" 
-          color = "white"
-          background = '#858585'
-          onPress = {my_alarms_list.addAlarm_alarmList}
-      />
-
-      <View style={styles.container}>
+      <View style={styles.scrollViewContainer}>
         {/* <Text>Your expo push token: {expoPushToken}</Text>*/}
         {/*<View style={{ alignItems: 'center', justifyContent: 'center' }}>
           <Text>Title: {notification && notification.request.content.title} </Text>
           <Text>Body: {notification && notification.request.content.body}</Text>
           <Text>Data: {notification && JSON.stringify(notification.request.content.data.body)}</Text>
         </View>*/}
-
         <AlarmsTable/>
-
         <Button
           title="Send a notification now"
           onPress={async () => {
             await sendPushNotification(expoPushToken);
           }}
         />
-
-        {/* <Button
-          title="Send a notification in 5 seconds"
-          onPress={async () => {
-            await sendPushNotification(expoPushToken);
-          }}
-        /> */}
       </View>
     </View>
+
   );
 }
 
@@ -316,10 +324,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: APPBACKGROUNDCOLOR,
+    // backgroundColor: "black",
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 50,
-    paddingBottom: 10
+    height: 100,
+  },
+
+  scrollViewContainer: {
+    flex: 1,
+    backgroundColor: APPBACKGROUNDCOLOR,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 30,
+    paddingBottom: 10,
+    padding: 0
   },
 
   timerContainer: {
@@ -331,18 +349,33 @@ const styles = StyleSheet.create({
   },
 
   topBanner:{
-    flex: 1,
     flexDirection : "row",
     width:"100%",
-    backgroundColor:"white",
-    // borderRadius:25,
-    height: 10,
-    // marginBottom:20,
-    paddingTop: 10, 
-    padding: 10,
+    backgroundColor: "white",
+    // backgroundColor: APPBACKGROUNDCOLOR,
+    height: 110,
+    paddingTop: 30,
+    paddingBottom: 0,
+    padding: 15,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: "space-between",
+  },
+
+  Text:{
+    height:50,
+    color: "white",
+    fontSize: 16
+  },
+
+  pageTitle:{
+    padding: 20,
+    color: "#fb5b5a",
+    fontSize: 40,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
   },
 
   inputText:{
@@ -379,9 +412,10 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection : "row",
     backgroundColor: "#fb5b5a",
+    // backgroundColor: "black",
     alignSelf: 'center',
     alignItems: 'center',
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
     marginTop: 0,
     marginBottom: 10,
     paddingTop: 0,
@@ -427,4 +461,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 })
-
