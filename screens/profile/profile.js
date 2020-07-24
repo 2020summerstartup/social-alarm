@@ -22,7 +22,9 @@ export default function Profile({ navigation }) {
   // navigation problems, but async storage stuff works (just reload app)
   signOutUser = async () => {
     //navigation.navigate('Auth');
-    await AsyncStorage.removeItem("userToken");
+    await AsyncStorage.removeItem("email");
+    await AsyncStorage.removeItem("password");
+    auth.signOut().catch((error) => console.log(error))
     /*
     auth.signOut().then(function(user) {
       // await AsyncStorage.removeItem(userToken);

@@ -43,7 +43,8 @@ export default function Login({ navigation }) {
   // TODO: add AsyncStorage so user stays signed in
   loginUser = async (email, password) => {
     try {
-      await AsyncStorage.setItem("userToken", email);
+      await AsyncStorage.setItem("email", email);
+      await AsyncStorage.setItem("password", password);
       auth
         .signInWithEmailAndPassword(email, password)
         .then(function (user) {

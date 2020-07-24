@@ -1,4 +1,4 @@
-// Feel free to add to this style sheet so we can make the screens  consistent throughout our app 
+// Feel free to add to this style sheet so we can make the screens consistent throughout our app 
 
 import { StyleSheet } from 'react-native';
 import {APPBACKGROUNDCOLOR} from './constants';

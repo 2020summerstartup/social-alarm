@@ -38,7 +38,8 @@ export default function SignUp({ navigation }) {
   signUpUser = async (email, password, confirmPassword, name) => {
     try {
       if (password == confirmPassword) {
-        await AsyncStorage.setItem("userToken", email);
+        await AsyncStorage.setItem("email", email);
+        await AsyncStorage.setItem("password", password);
 
         auth
           .createUserWithEmailAndPassword(email, password)
