@@ -12,8 +12,7 @@ import { NavigationContainer } from "@react-navigation/native";
 
 /* navigation.js
  * bottom tab navigator for signed in user
- * contains: home, alarms, profile, and stopwatch
- * TODO: add friend page
+ * contains: alarms, groups, stopwatch and profile
  *
  */
 
@@ -33,7 +32,7 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
-      initialRoutename="Home"
+      initialRoutename="Alarms" // After user signs in, go to alarms page
       tabBarOptions={{
         activeTintColor: "#fb5b5a", // This makes the button pink when you're on that page
         activeBackgroundColor: "#003f5c",
@@ -41,12 +40,26 @@ function MyTabs() {
       }}
     >
       <Tab.Screen
-        name="Home"
+        name="Alarms"
+        component={AlarmScreen}
+        options={{
+          tabBarLabel: "Alarms",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="alarm-multiple"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Groups"
         component={GroupScreen}
         options={{
-          tabBarLabel: "Home",
+          tabBarLabel: "Groups",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home" color={color} size={size} /> // Default color and size: white and 20
+            <MaterialCommunityIcons name="account-group" color={color} size={size} /> // Default color and size: white and 20
           ),
           //tabBarVisible: false,
         }}
@@ -59,20 +72,6 @@ function MyTabs() {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="clock-fast"
-              color={color}
-              size={size}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Alarms"
-        component={AlarmScreen}
-        options={{
-          tabBarLabel: "Alarms",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="alarm-multiple"
               color={color}
               size={size}
             />
