@@ -32,7 +32,8 @@
     "react-navigation-native": "0.0.0",
     "react-navigation-stack": "^2.8.2",
     "react-native-paper": "3.1.1",
-    "react-native-swipe-list-view": "*"
+    "react-native-swipe-list-view": "*",
+    "expo-av": "~8.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",

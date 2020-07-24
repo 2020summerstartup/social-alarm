@@ -23,8 +23,8 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 //                 previewRowKey={'0'}
 //                 previewOpenValue={-40}
 //                 previewOpenDelay={3000}
-//                 // onRowDidOpen={onRowDidOpen}
-//                 // onSwipeValueChange={onSwipeValueChange}
+//                 onRowDidOpen={onRowDidOpen}
+//                 onSwipeValueChange={onSwipeValueChange}
 //             />
 //             <Text>Hello world</Text>
 //         </View>
