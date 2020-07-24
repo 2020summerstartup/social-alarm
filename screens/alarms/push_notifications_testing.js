@@ -12,6 +12,8 @@ import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 import { appStyles } from '../../style/stylesheet';
 
+import DatePicker from 'react-native-modern-datepicker';
+
 
 // const rowSwipeAnimatedValues = {};
 
@@ -227,6 +229,18 @@ export default function AppAlarmsPage() {
     const notificationListener = useRef();
     const responseListener = useRef();
 
+    const TimePicker = () => {
+      const [time, setTime] = useState('');
+    
+      return (
+        <DatePicker
+          mode="time"
+          minuteInterval={1}
+          onTimeChange={selectedTime => setTime(selectedTime)}
+        />
+      );
+    };
+
     useEffect(() => { // useEffect is similar to componentDidMount and componentDidUpdate
         registerForPushNotificationsAsync().then(token => setExpoPushToken(token)).catch(console.log(".catch"))
 
@@ -264,9 +278,9 @@ export default function AppAlarmsPage() {
                 style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                 onPress={() => setModalOpen(false)}
                 />
-                <Text style={styles.Text}>
-                DateTimePicker will go here
-                </Text>
+
+              <Text style={styles.logo}>Set the time for your alarm</Text>
+              <TimePicker/>
             </View>
             </Modal>
         </TopBanner>
@@ -411,6 +425,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
+  },
+
+  logo: {
+    marginTop: 80,
+    fontWeight: "bold",
+    fontSize: 30,
+    color: APPTEXTRED,
+    marginBottom: 18,
+    alignItems: "center",
   },
 
   inputText:{
