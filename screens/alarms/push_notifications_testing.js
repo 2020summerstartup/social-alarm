@@ -237,6 +237,13 @@ export default function AppAlarmsPage() {
           mode="time"
           minuteInterval={1}
           onTimeChange={selectedTime => setTime(selectedTime)}
+          options={{
+            backgroundColor: APPBACKGROUNDCOLOR,
+            textDefaultColor: APPTEXTWHITE,
+            selectedTextColor: '#fff',
+            mainColor: APPTEXTRED,
+            textFontSize:17
+          }}
         />
       );
     };
@@ -279,7 +286,7 @@ export default function AppAlarmsPage() {
                 onPress={() => setModalOpen(false)}
                 />
 
-              <Text style={styles.logo}>Set the time for your alarm</Text>
+              <Text style={styles.logo}>Add Alarm</Text>
               <TimePicker/>
             </View>
             </Modal>
