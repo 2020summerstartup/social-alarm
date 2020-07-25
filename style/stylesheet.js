@@ -28,7 +28,10 @@ const appStyles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         padding: 15,
-        paddingTop: 0
+        paddingTop: 0,
+        width:420,
+        height:500,
+        margin:0
     },
 
     modalClose: {
