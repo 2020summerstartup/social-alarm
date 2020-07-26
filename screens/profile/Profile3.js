@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
-import { ScrollView, Switch, StyleSheet, Dimensions, Text, View } from 'react-native'
+import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking } from 'react-native'
 import { Avatar, ListItem } from 'react-native-elements'
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 
 // chevron is the greater than sign that's on the right of everything on the profile page
-import Chevron from './Chevron'
+import Chevron from './chevron'
 
 // sets the styles for all the icons
-import BaseIcon from './Icon'
+import BaseIcon from './icon'
 
 const styles = StyleSheet.create({
   scroll: {
@@ -98,6 +98,7 @@ class SettingsScreen extends Component {
             title="Birthday"
             rightTitle="05/01/2001" 
             rightTitleStyle={{ fontSize: 15 }}
+            onPress={ ()=>{ Linking.openURL('https://www.google.com')}}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
@@ -130,6 +131,7 @@ class SettingsScreen extends Component {
             title="Language"
             rightTitle="English"
             rightTitleStyle={{ fontSize: 15 }}
+            onPress={ ()=>{ Linking.openURL('https://www.google.com')}}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
@@ -148,6 +150,7 @@ class SettingsScreen extends Component {
           <ListItem
             title="About Us"
             containerStyle={styles.listItemContainer}
+            onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}}
             leftIcon={
               <BaseIcon
                 containerStyle={{ backgroundColor: '#A4C8F0' }}
@@ -161,6 +164,7 @@ class SettingsScreen extends Component {
           />
           <ListItem
             title="Terms and Policies"
+            onPress={ ()=>{ Linking.openURL('https://www.google.com')}}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
@@ -175,6 +179,7 @@ class SettingsScreen extends Component {
           />
           <ListItem
             title="Share our App"
+            onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
@@ -191,6 +196,7 @@ class SettingsScreen extends Component {
           />
           <ListItem
             title="Rate Us"
+            onPress={ ()=>{ Linking.openURL('https://www.google.com')}}
             containerStyle={styles.listItemContainer}
             badge={{
               value: 5,
@@ -212,6 +218,7 @@ class SettingsScreen extends Component {
           />
           <ListItem
             title="Send Feedback"
+            onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
