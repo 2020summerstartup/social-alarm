@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { auth, db } from "../../firebase/firebase";
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
+import Profile3 from './Profile3';
 
 /* profile.js
  * Profile screen
@@ -38,6 +39,7 @@ export default function Profile({ navigation }) {
   };
   return (
     <View style={styles.container}>
+      {/*
       <Text style={styles.name}>Name: </Text>
       <Text style={styles.logo}>Age: </Text>
       <Text style={styles.logo}>Location: </Text>
@@ -47,7 +49,9 @@ export default function Profile({ navigation }) {
         onPress={() => this.signOutUser()}
       >
         <Text style={styles.loginText}>Sign Out</Text>
-      </TouchableOpacity>
+      </TouchableOpacity>*/}
+      
+      <Profile3/>
     </View>
   );
 }
@@ -56,7 +60,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fafafa",
-    alignItems: "flex-start",
+    alignItems: "center",
     justifyContent: "flex-start",
   },
 
