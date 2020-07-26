@@ -1,9 +1,12 @@
 import React, { Component } from 'react'
 import { ScrollView, Switch, StyleSheet, Dimensions, Text, View } from 'react-native'
 import { Avatar, ListItem } from 'react-native-elements'
-import PropTypes from 'prop-types'
+import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 
+// chevron is the greater than sign that's on the right of everything on the profile page
 import Chevron from './Chevron'
+
+// sets the styles for all the icons
 import BaseIcon from './Icon'
 
 const styles = StyleSheet.create({
@@ -15,16 +18,16 @@ const styles = StyleSheet.create({
   userRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    paddingBottom: 8,
+    paddingBottom: 60,
     paddingLeft: 15,
     paddingRight: 15,
-    paddingTop: 15,
+    paddingTop: 60,
   },
   userImage: {
     marginRight: 12,
   },
   listItemContainer: {
-    height: 70,
+    height: 56,
     borderWidth: 0.5,
     borderColor: '#ECECEC',
   },
@@ -34,10 +37,6 @@ class SettingsScreen extends Component {
 
   state = {
     pushNotifications: true,
-  }
-
-  onPressOptions = () => {
-    this.props.navigation.navigate('options')
   }
 
   onChangePushNotifications = () => {
@@ -60,11 +59,11 @@ class SettingsScreen extends Component {
             />
             </View>*/}
           <View>
-            <Text style={{ fontSize: 16 }}>Shifa Somji</Text>
+            <Text style={{ fontSize: 30 }}>Shifa Somji</Text>
             <Text
               style={{
                 color: 'gray',
-                fontSize: 16,
+                fontSize: 25,
               }}
             >
               shifamsomji@gmail.com {/* TO DO: figure out how to get name and email from firebase */}
@@ -99,7 +98,6 @@ class SettingsScreen extends Component {
             title="Birthday"
             rightTitle="05/01/2001" 
             rightTitleStyle={{ fontSize: 15 }}
-            onPress={() => this.onPressOptions()}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
@@ -116,7 +114,6 @@ class SettingsScreen extends Component {
             title="Time Zone"
             rightTitle="PST"
             rightTitleStyle={{ fontSize: 15 }}
-            onPress={() => this.onPressOptions()}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
@@ -133,7 +130,6 @@ class SettingsScreen extends Component {
             title="Language"
             rightTitle="English"
             rightTitleStyle={{ fontSize: 15 }}
-            onPress={() => this.onPressOptions()}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
@@ -151,7 +147,6 @@ class SettingsScreen extends Component {
         <View>
           <ListItem
             title="About Us"
-            onPress={() => this.onPressOptions()}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
@@ -166,7 +161,6 @@ class SettingsScreen extends Component {
           />
           <ListItem
             title="Terms and Policies"
-            onPress={() => this.onPressOptions()}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
@@ -181,7 +175,6 @@ class SettingsScreen extends Component {
           />
           <ListItem
             title="Share our App"
-            onPress={() => this.onPressOptions()}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
@@ -198,7 +191,6 @@ class SettingsScreen extends Component {
           />
           <ListItem
             title="Rate Us"
-            onPress={() => this.onPressOptions()}
             containerStyle={styles.listItemContainer}
             badge={{
               value: 5,
@@ -220,7 +212,6 @@ class SettingsScreen extends Component {
           />
           <ListItem
             title="Send Feedback"
-            onPress={() => this.onPressOptions()}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
