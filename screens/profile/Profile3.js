@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking } from 'react-native'
 import { Avatar, ListItem } from 'react-native-elements'
+import TimezonePicker from 'react-timezone-picker';
+
+// TO DO: add our app colors to the profile page
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 
 // chevron is the greater than sign that's on the right of everything on the profile page
@@ -8,6 +11,7 @@ import Chevron from './chevron'
 
 // sets the styles for all the icons
 import BaseIcon from './icon'
+import { color } from 'react-native-reanimated';
 
 const styles = StyleSheet.create({
   scroll: {
@@ -48,6 +52,7 @@ class SettingsScreen extends Component {
   render() {
     return (
       <ScrollView style={styles.scroll}>
+        {/* TO DO: figure out if we want a profile picture & how to import it */}
         <View style={styles.userRow}>
           {/*<View style={styles.userImage}>
             <Avatar
@@ -59,10 +64,10 @@ class SettingsScreen extends Component {
             />
             </View>*/}
           <View>
-            <Text style={{ fontSize: 30 }}>Shifa Somji</Text>
+            <Text style={{ fontSize: 30, color: APPBACKGROUNDCOLOR }}>Shifa Somji</Text>
             <Text
               style={{
-                color: 'gray',
+                color: APPBACKGROUNDCOLOR,
                 fontSize: 25,
               }}
             >
@@ -70,6 +75,7 @@ class SettingsScreen extends Component {
             </Text>
           </View>
         </View>
+        {/* Not really sure if we want this, was in the tutorial so I kept it, maybe change to sign out button? */}
         <View>
           <ListItem
             hideChevron
@@ -98,7 +104,6 @@ class SettingsScreen extends Component {
             title="Birthday"
             rightTitle="05/01/2001" 
             rightTitleStyle={{ fontSize: 15 }}
-            onPress={ ()=>{ Linking.openURL('https://www.google.com')}}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
@@ -127,6 +132,7 @@ class SettingsScreen extends Component {
             }
             rightIcon={<Chevron />}
           />
+          {/* Not really sure if we want this, was in the tutorial so I kept it */}
           <ListItem
             title="Language"
             rightTitle="English"
@@ -198,11 +204,6 @@ class SettingsScreen extends Component {
             title="Rate Us"
             onPress={ ()=>{ Linking.openURL('https://www.google.com')}}
             containerStyle={styles.listItemContainer}
-            badge={{
-              value: 5,
-              textStyle: { color: 'white' },
-              containerStyle: { backgroundColor: 'gray', marginTop: 0 },
-            }}
             leftIcon={
               <BaseIcon
                 containerStyle={{
