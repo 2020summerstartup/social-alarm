@@ -69,7 +69,7 @@ const appStyles = StyleSheet.create({
     borderColor: APPTEXTRED,
     padding: 10,
     borderRadius: 10,
-    alignSelf: "flex-end",
+    
     color: APPTEXTRED,
   },
 
@@ -82,8 +82,15 @@ const appStyles = StyleSheet.create({
   },
 
   modalClose: {
+    alignSelf: "flex-end",
     marginTop: 50,
     marginBottom: 0,
+  },
+
+  buttonText: {
+    color: APPTEXTWHITE,
+    fontSize: 16,
+    padding: 10,
   },
 });
 

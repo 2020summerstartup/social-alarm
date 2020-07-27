@@ -20,6 +20,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
+import { appStyles } from '../../style/stylesheet';
 
 export default class Groups extends Component {
   constructor(props) {
@@ -220,21 +221,21 @@ export default class Groups extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={appStyles.loginContainer}>
         {/* CREATE NEW GROUP MODAL */}
         <Modal visible={this.state.createModalOpen} animationType="slide">
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View style={styles.modalContainer}>
+            <View style={appStyles.modalContainer}>
               <MaterialIcons
                 name="close"
                 size={24}
-                style={{ ...styles.modalToggle, ...styles.modalClose }}
+                style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                 onPress={() => this.setState({ createModalOpen: false })}
               />
               <Text style={styles.logo}>Create Group</Text>
-              <View style={styles.inputView}>
+              <View style={appStyles.inputView}>
                 <TextInput
-                  style={styles.inputText}
+                  style={appStyles.inputText}
                   placeholder="Group name..."
                   placeholderTextColor="#003f5c"
                   onChangeText={(text) => {
@@ -243,12 +244,12 @@ export default class Groups extends Component {
                 />
               </View>
               <TouchableOpacity
-                style={styles.loginBtn}
+                style={appStyles.loginBtn}
                 onPress={() =>
                   this.createGroup(this.state.groupName, this.user)
                 }
               >
-                <Text style={styles.buttonText}> Create group </Text>
+                <Text style={appStyles.buttonText}> Create group </Text>
               </TouchableOpacity>
             </View>
           </TouchableWithoutFeedback>
@@ -257,21 +258,21 @@ export default class Groups extends Component {
         {/* INDIVIDUAL GROUP MODAL */}
         <Modal visible={this.state.groupModalOpen} animationType="slide">
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View style={styles.modalContainer}>
+            <View style={appStyles.modalContainer}>
               <MaterialIcons
                 name="close"
                 size={24}
-                style={{ ...styles.modalToggle, ...styles.modalClose }}
+                style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                 onPress={() => this.setState({ groupModalOpen: false })}
               />
               <Text style={styles.logo}>{this.state.groupNameClicked}</Text>
 
-              <View style={styles.inputView}>
+              <View style={appStyles.inputView}>
                 <TextInput
                   ref={(input) => {
                     this.textInput = input;
                   }}
-                  style={styles.inputText}
+                  style={appStyles.inputText}
                   placeholder="add friends ..."
                   placeholderTextColor="#003f5c"
                   keyboardType="email-address"
@@ -281,15 +282,15 @@ export default class Groups extends Component {
                 />
               </View>
               <TouchableOpacity
-                style={styles.loginBtn}
+                style={appStyles.loginBtn}
                 onPress={() =>
                   this.addUser(this.state.addUser, this.state.groupIdClicked)
                 }
               >
-                <Text style={styles.buttonText}> add friendssss</Text>
+                <Text style={appStyles.buttonText}> add friendssss</Text>
               </TouchableOpacity>
 
-              <Text>Members:</Text>
+              <Text style={appStyles.forgot}>Members:</Text>
               <ScrollView>
                 {this.state.groupMembers &&
                   this.state.groupMembers.map((person) => {
@@ -313,7 +314,7 @@ export default class Groups extends Component {
         <MaterialIcons
           name="add"
           size={24}
-          style={styles.modalToggle}
+          style={appStyles.modalToggle}
           onPress={() => this.setState({ createModalOpen: true })}
         />
         <ScrollView>
@@ -336,12 +337,6 @@ export default class Groups extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
-    //alignItems: "center",
-    justifyContent: "center",
-  },
 
   logo: {
     marginTop: 30,
@@ -350,59 +345,6 @@ const styles = StyleSheet.create({
     color: APPTEXTRED,
     marginBottom: 18,
     alignItems: "center",
-  },
-
-  inputView: {
-    width: "80%",
-    backgroundColor: "#465881",
-    borderRadius: 25,
-    height: 50,
-    marginBottom: 10,
-    justifyContent: "center",
-    padding: 20,
-  },
-
-  inputText: {
-    height: 50,
-    color: APPTEXTWHITE,
-  },
-
-  buttonText: {
-    color: APPTEXTWHITE,
-    fontSize: 16,
-    padding: 10,
-  },
-
-  loginBtn: {
-    width: "80%",
-    backgroundColor: APPTEXTRED,
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 10,
-  },
-
-  modalToggle: {
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: APPTEXTRED,
-    padding: 10,
-    borderRadius: 10,
-    alignSelf: "center",
-    color: "#fb5b5a",
-  },
-
-  modalContainer: {
-    backgroundColor: APPBACKGROUNDCOLOR,
-    flex: 1,
-    alignItems: "center",
-  },
-
-  modalClose: {
-    marginTop: 30,
-    marginBottom: 0,
   },
 
   groupCard: {
