@@ -3,7 +3,6 @@ import { StyleSheet, Button, View, Switch, Text, Platform, TouchableOpacity, Mod
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 import Moment from 'moment';
 
-import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 import { alarmStyles } from '../../style/stylesheet';
 
 import Constants from 'expo-constants';
@@ -54,7 +53,7 @@ function AlarmsTable(){
 
   return(
      <View>
-      {/*<ScrollView style = {styles.scrollView}>
+      {/*<ScrollView style = {alarmStyles.scrollView}>
             {alarms.map((list_item) => (
                <View key={list_item.key}>
                   <AlarmBanner>
@@ -240,7 +239,7 @@ export default function AppAlarmsPage() {
               style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
               onPress={() => setModalOpen(false)}
             />
-            <Text style={styles.Text}>
+            <Text style={alarmStyles.Text}>
               DateTimePicker will go here
             </Text>
           </View>
@@ -318,124 +317,3 @@ async function registerForPushNotificationsAsync() {
 
   return token;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
-    // backgroundColor: "black",
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 100,
-  },
-
-  scrollViewContainer: {
-    flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 30,
-    paddingBottom: 10,
-    padding: 0
-  },
-
-  timerContainer: {
-    flexDirection: "row",
-  },
-
-  topBanner:{
-    flexDirection : "row",
-    width:"100%",
-    backgroundColor: APPTEXTWHITE,
-    // backgroundColor: APPBACKGROUNDCOLOR,
-    height: 110,
-    paddingTop: 30,
-    paddingBottom: 0,
-    padding: 15,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: "space-between",
-  },
-
-  Text:{
-    height:50,
-    color: APPTEXTWHITE,
-    fontSize: 16
-  },
-
-  pageTitle:{
-    padding: 20,
-    color: APPTEXTRED,
-    fontSize: 40,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-
-  alarmTime: {
-    color: APPTEXTWHITE,
-    fontSize: 45,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-  },
-
-  alarmText: {
-    color: APPTEXTWHITE,
-    fontSize: 16,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-  },
-
-  alarmBanner: {
-    flex: 1,
-    flexDirection : "row",
-    backgroundColor: APPTEXTRED,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 0,
-    marginBottom: 10,
-    paddingTop: 0,
-    paddingBottom: 0,
-    width: "95%",
-    borderRadius: 15
-  },
-
-  alarmDetails: {
-    flex: 1,
-    backgroundColor: APPTEXTRED,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: "100%",
-    borderRadius: 15
-  },
-
-  scrollView: {
-    alignSelf: 'stretch',
-    alignContent: 'center',
-  }, 
-
-  button: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }, 
-
-  buttonTitle: {
-    color: APPTEXTWHITE,
-    fontSize: 40,
-  },
-
-  buttonBorder: {
-    color: APPTEXTWHITE,
-    width: 56, 
-    height: 56, 
-    borderRadius: 28, 
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-})
