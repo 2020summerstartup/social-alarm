@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   AsyncStorage,
 } from "react-native";
-import { auth, db } from "../../firebase/firebase";
+import { auth } from "../../firebase/firebase";
+import { appStyles } from '../../style/stylesheet';
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 
 /* profile.js
@@ -41,14 +42,14 @@ export default function Profile({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.name}>Name: </Text>
-      <Text style={styles.logo}>Age: </Text>
-      <Text style={styles.logo}>Location: </Text>
+      <Text style={styles.text}>Age: </Text>
+      <Text style={styles.text}>Location: </Text>
 
       <TouchableOpacity
-        style={styles.loginBtn}
+        style={appStyles.loginBtn}
         onPress={() => this.signOutUser()}
       >
-        <Text style={styles.loginText}>Sign Out</Text>
+        <Text style={appStyles.loginText}>Sign Out</Text>
       </TouchableOpacity>
     </View>
   );
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
 
-  logo: {
+  text: {
     fontWeight: "bold",
     fontSize: 20,
     color: APPBACKGROUNDCOLOR,
@@ -80,14 +81,4 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
 
-  loginBtn: {
-    width: "80%",
-    backgroundColor: APPTEXTRED,
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 10,
-  },
 });
