@@ -99,11 +99,13 @@ const appStyles = StyleSheet.create({
   },
 });
 
+
+// ********** NEW STYLESHEET **********
+
 const alarmStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: APPBACKGROUNDCOLOR,
-    // backgroundColor: "black",
     alignItems: "center",
     justifyContent: "center",
     height: 100,
@@ -171,7 +173,6 @@ const alarmStyles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     backgroundColor: APPTEXTRED,
-    // backgroundColor: "black",
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "space-between",
@@ -214,6 +215,7 @@ const alarmStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  
   rowFront: {
     alignItems: "center",
     backgroundColor: "#CCC",

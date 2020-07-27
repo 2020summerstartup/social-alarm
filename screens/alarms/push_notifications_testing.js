@@ -9,22 +9,22 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
-import { appStyles } from '../../style/stylesheet';
+import { appStyles, alarmStyles } from '../../style/stylesheet';
 
 
 // const rowSwipeAnimatedValues = {};
 
 function AlarmBanner({ children }){
     return(
-        <View style = {styles.alarmBanner}>{children}</View>
+        <View style = {alarmStyles.alarmBanner}>{children}</View>
     )
 };
 
 function AlarmDetails({title, hour, minute, second}){
     return (
-        <View style={styles.alarmDetails}>
-            <Text style={styles.alarmTime}>{hour}:{minute}:{second}</Text>
-            <Text style={styles.alarmText}>{title}</Text>
+        <View style={alarmStyles.alarmDetails}>
+            <Text style={alarmStyles.alarmTime}>{hour}:{minute}:{second}</Text>
+            <Text style={alarmStyles.alarmText}>{title}</Text>
         </View>
     )
 };
@@ -131,7 +131,7 @@ function AlarmsTable(){
     const renderItem = data => (
       <TouchableHighlight
           onPress={() => console.log('You touched me')}
-          style={styles.rowFront}
+          style={alarmStyles.rowFront}
           underlayColor={'#AAA'}
       >
           <View>
@@ -141,22 +141,22 @@ function AlarmsTable(){
     );
 
     const renderHiddenItem = (data, rowMap) => (
-      <View style={styles.rowBack}>
+      <View style={alarmStyles.rowBack}>
           <TouchableOpacity
-              style={[styles.backRightBtn, styles.backRightBtnLeft]}
+              style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnLeft]}
               onPress={() => closeRow(rowMap, data.item.id)}
           >
-            <Text style={styles.backTextWhite}>Close</Text>
+            <Text style={alarmStyles.backTextWhite}>Close</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-              style={[styles.backRightBtn, styles.backRightBtnRight]}
+              style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnRight]}
               onPress={() => deleteRow(rowMap, data.item.id)}
           >
-            <Animated.View style={[styles.trash]}>
+            <Animated.View style={[alarmStyles.trash]}>
                 <Image
                     source={require('../../assets/trash.png')}
-                    style={styles.trash}
+                    style={alarmStyles.trash}
                 />
             </Animated.View>
           </TouchableOpacity>
@@ -192,7 +192,7 @@ function AlarmsTable(){
 
 function TopBanner({ children }){
   return(
-    <View style = {styles.topBanner}>{children}</View>
+    <View style = {alarmStyles.topBanner}>{children}</View>
   )
 };
 
@@ -200,11 +200,11 @@ function AddAlarmButton({title, color, background, onPress, disabled }) {
   return (
     <TouchableOpacity 
       onPress ={() => !disabled && onPress()} //when not disabled
-      style ={[styles.button, {backgroundColor: background}]}
+      style ={[alarmStyles.button, {backgroundColor: background}]}
       activeOpacity={disabled ? 1.0: 0.5} // means if disabled then 1.0, otherwise 0.5
     >
-      <View style = {styles.buttonBorder}> 
-        <Text style ={[ styles.buttonTitle, {color} ]}>{title}</Text>
+      <View style = {alarmStyles.buttonBorder}> 
+        <Text style ={[ alarmStyles.buttonTitle, {color} ]}>{title}</Text>
       </View>
     </TouchableOpacity>
   )
@@ -246,9 +246,9 @@ export default function AppAlarmsPage() {
     }, []);
 
     return (
-        <View style={styles.container}>
+        <View style={alarmStyles.container}>
         <TopBanner>
-            <Text style={styles.pageTitle}>Alarms_Testing</Text>
+            <Text style={alarmStyles.pageTitle}>Alarms_Testing</Text>
             <MaterialIcons
                 name="add"
                 size={24}
@@ -263,7 +263,7 @@ export default function AppAlarmsPage() {
                 style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                 onPress={() => setModalOpen(false)}
                 />
-                <Text style={styles.Text}>
+                <Text style={alarmStyles.Text}>
                 DateTimePicker will go here
                 </Text>
             </View>
@@ -278,7 +278,7 @@ export default function AppAlarmsPage() {
           }}
         />
 
-        <View style={styles.scrollViewContainer}>
+        <View style={alarmStyles.scrollViewContainer}>
             {/* <Text>Your expo push token: {expoPushToken}</Text>
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
             <Text>Title: {notification && notification.request.content.title} </Text>
@@ -353,171 +353,3 @@ async function registerForPushNotificationsAsync() {
     return token;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
-    // backgroundColor: "black",
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 100,
-  },
-
-  scrollViewContainer: {
-    flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 30,
-    paddingBottom: 10,
-    padding: 0
-  },
-
-  topBanner:{
-    flexDirection : "row",
-    width:"100%",
-    // backgroundColor: "black",
-    backgroundColor: APPTEXTWHITE,
-    // backgroundColor: APPBACKGROUNDCOLOR,
-    height: 110,
-    paddingTop: 30,
-    paddingBottom: 0,
-    padding: 15,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: "space-between",
-  },
-
-  Text:{
-    height:50,
-    color: APPTEXTWHITE,
-    fontSize: 16
-  },
-
-  pageTitle:{
-    padding: 20,
-    color: APPTEXTRED,
-    fontSize: 40,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-
-  alarmTime: {
-    color: APPTEXTWHITE,
-    fontSize: 45,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-  },
-
-  alarmText: {
-    color: APPTEXTWHITE,
-    fontSize: 16,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-  },
-
-  alarmBanner: {
-    flex: 1,
-    flexDirection : "row",
-    backgroundColor: APPTEXTRED,
-    // backgroundColor: "black",
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 0,
-    marginBottom: 10,
-    paddingTop: 0,
-    paddingBottom: 0,
-    width: "95%",
-    borderRadius: 15
-  },
-
-  alarmDetails: {
-    flex: 1,
-    backgroundColor: APPTEXTRED,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: "100%",
-    borderRadius: 15
-  },
-
-  button: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }, 
-
-  buttonTitle: {
-    color: APPTEXTWHITE,
-    fontSize: 40,
-  },
-
-  buttonBorder: {
-    color: APPTEXTWHITE,
-    width: 56, 
-    height: 56, 
-    borderRadius: 28, 
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  rowFront: {
-    alignItems: 'center',
-    backgroundColor: '#CCC',
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
-    justifyContent: 'center',
-    height: 50,
-  },
-
-  backTextWhite: {
-    color: '#FFF',
-  },
-
-  rowBack: {
-      alignItems: 'center',
-      // backgroundColor: '#DDD',
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingLeft: 15,
-      width: "95%"
-  },
-
-  backRightBtn: {
-      alignItems: 'center',
-      bottom: 0,
-      justifyContent: 'center',
-      position: 'absolute',
-      top: 0,
-      width: 75,
-  },
-  backRightBtnLeft: {
-      backgroundColor: 'blue',
-      right: 75,
-      marginTop: 0,
-      marginBottom: 10,
-      paddingTop: 0,
-      paddingBottom: 0,
-      borderTopLeftRadius: 15,
-      borderBottomLeftRadius: 15,
-  },
-  backRightBtnRight: {
-      backgroundColor: 'red',
-      right: 0,
-      marginTop: 0,
-      marginBottom: 10,
-      paddingTop: 0,
-      paddingBottom: 0,
-      borderTopRightRadius: 15,
-      borderBottomRightRadius: 15,
-  },
-  trash: {
-      height: 25,
-      width: 25,
-  },
-})
