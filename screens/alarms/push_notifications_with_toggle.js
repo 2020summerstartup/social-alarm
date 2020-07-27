@@ -4,7 +4,7 @@ import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 import Moment from 'moment';
 
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
-import { appStyles } from '../stylesheet';
+import { alarmStyles } from '../../style/stylesheet';
 
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
@@ -20,7 +20,7 @@ function Timer({ interval, style }) {
   const duration = moment.duration(interval)
   const centiseconds = Math.floor(duration.milliseconds()/10)
   return (
-    <View style = {styles.timerContainer}>
+    <View style = {alarmStyles.timerContainer}>
       <Text style={style}>{pad(duration.minutes())}:</Text>
       <Text style={style}>{pad(duration.seconds())}:</Text>
       <Text style={style}>{pad(centiseconds)}</Text>
@@ -30,15 +30,15 @@ function Timer({ interval, style }) {
 
 function AlarmBanner({ children }){
   return(
-    <View style = {styles.alarmBanner}>{children}</View>
+    <View style = {alarmStyles.alarmBanner}>{children}</View>
   )
 };
 
 function AlarmDetails({title, time}){
   return (
-    <View style={styles.alarmDetails}>
-      <Text style={styles.alarmTime}>{time}</Text>
-      <Text style={styles.alarmText}>
+    <View style={alarmStyles.alarmDetails}>
+      <Text style={alarmStyles.alarmTime}>{time}</Text>
+      <Text style={alarmStyles.alarmText}>
         {title}
       </Text>
     </View>
@@ -83,7 +83,7 @@ function AlarmsTable(){
 
 function TopBanner({ children }){
   return(
-    <View style = {styles.topBanner}>{children}</View>
+    <View style = {alarmStyles.topBanner}>{children}</View>
   )
 };
 
@@ -115,11 +115,11 @@ function AddAlarmButton({title, color, background, onPress, disabled }) {
   return (
     <TouchableOpacity 
       onPress ={() => !disabled && onPress()} //when not disabled
-      style ={[styles.button, {backgroundColor: background}]}
+      style ={[alarmStyles.button, {backgroundColor: background}]}
       activeOpacity={disabled ? 1.0: 0.5} // means if disabled then 1.0, otherwise 0.5
     >
-      <View style = {styles.buttonBorder}> 
-        <Text style ={[ styles.buttonTitle, {color} ]}>{title}</Text>
+      <View style = {alarmStyles.buttonBorder}> 
+        <Text style ={[ alarmStyles.buttonTitle, {color} ]}>{title}</Text>
       </View>
     </TouchableOpacity>
   )
@@ -223,9 +223,9 @@ export default function AppAlarmsPage() {
   })
 
   return (
-    <View style={styles.container}>
+    <View style={alarmStyles.container}>
       <TopBanner>
-        <Text style={styles.pageTitle}>Alarms</Text>
+        <Text style={alarmStyles.pageTitle}>Alarms</Text>
         <MaterialIcons
             name="add"
             size={24}
@@ -247,7 +247,7 @@ export default function AppAlarmsPage() {
         </Modal>
       </TopBanner>
 
-      <View style={styles.scrollViewContainer}>
+      <View style={alarmStyles.scrollViewContainer}>
         {/* <Text>Your expo push token: {expoPushToken}</Text>*/}
         {/*<View style={{ alignItems: 'center', justifyContent: 'center' }}>
           <Text>Title: {notification && notification.request.content.title} </Text>
@@ -373,22 +373,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 
-  inputText:{
-    height:50,
-    color: APPTEXTWHITE,
-    fontSize: 16
-  },
-
-  inputView:{
-    width:"50%",
-    backgroundColor:"#465881",
-    borderRadius:25,
-    height:50,
-    marginBottom:20,
-    justifyContent:"center",
-    padding:20
-  },
-
   alarmTime: {
     color: APPTEXTWHITE,
     fontSize: 45,
@@ -407,7 +391,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection : "row",
     backgroundColor: APPTEXTRED,
-    // backgroundColor: "black",
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'space-between',

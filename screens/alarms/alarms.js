@@ -354,10 +354,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
 
-  lapTimer:{
-    width: 25,
-  },
-
   topBanner:{
     flexDirection : "row",
     width:"100%",
@@ -387,23 +383,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-
-  inputText:{
-    height:50,
-    color: "#ffffff",
-    fontSize: 16
-  },
-
-  inputView:{
-    width:"50%",
-    backgroundColor:"#465881",
-    borderRadius:25,
-    height:50,
-    marginBottom:20,
-    justifyContent:"center",
-    padding:20
-  },
-
+  
   alarmTime: {
     color: "#ffffff",
     fontSize: 45,

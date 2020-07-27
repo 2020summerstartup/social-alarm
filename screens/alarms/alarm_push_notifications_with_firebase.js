@@ -4,9 +4,8 @@ import React, { useState, useEffect, Component } from 'react';
 // import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { StyleSheet, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, Listview, FlatList} from 'react-native';
 
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
-import Moment from 'moment';
+
 
 // import  {Container, Content, Header, Form, Input, Item, Label} from 'native-base';
 import  {Container, Content, Header, Form, Input, Item, Button, Label, Icon, List} from 'native-base';
@@ -176,14 +175,6 @@ const styles = StyleSheet.create({
     padding: 0
   },
 
-  timerContainer: {
-    flexDirection: "row",
-  },
-
-  lapTimer:{
-    width: 25,
-  },
-
   topBanner:{
     flexDirection : "row",
     width:"100%",
@@ -212,22 +203,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
-  },
-
-  inputText:{
-    height:50,
-    color: "#ffffff",
-    fontSize: 16
-  },
-
-  inputView:{
-    width:"50%",
-    backgroundColor:"#465881",
-    borderRadius:25,
-    height:50,
-    marginBottom:20,
-    justifyContent:"center",
-    padding:20
   },
 
   alarmTime: {
@@ -268,12 +243,7 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 15
   },
-
-  scrollView: {
-    alignSelf: 'stretch',
-    alignContent: 'center',
-  }, 
-
+  
   button: {
     width: 60,
     height: 60,
