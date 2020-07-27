@@ -158,10 +158,10 @@ async function showAlarms(){
 function AlarmsTable(){
 
     const [alarms, setAlarms] = useState([
-        {name: 'First Alarm',   alarm_hour: 11, alarm_minute: 1, switch: true, id: 1},
-        {name: 'Second Alarm',  alarm_hour: 11, alarm_minute: 0, switch: true,  id: 2},
-        {name: 'Third Alarm',   alarm_hour: 10, alarm_minute: 59, switch: true,  id: 3},
-        {name: 'Fourth Alarm',  alarm_hour: 11, alarm_minute: 2, switch: true,  id: 4},
+        {name: 'First Alarm',   alarm_hour: 11, alarm_minute: 4, switch: true, id: '1'},
+        {name: 'Second Alarm',  alarm_hour: 11, alarm_minute: 58, switch: true,  id: '2'},
+        {name: 'Third Alarm',   alarm_hour: 10, alarm_minute: 59, switch: true,  id: '3'},
+        {name: 'Fourth Alarm',  alarm_hour: 11, alarm_minute: 2, switch: true,  id: '4'},
     ]);
 
     makeAlarms(alarms)
@@ -251,22 +251,23 @@ function AlarmsTable(){
     function sortByTime(a, b) {
       const Ah = a.alarm_hour;
       const Bh = b.alarm_hour;
-
+  
       const Am = a.alarm_minute;
       const Bm = b.alarm_minute;
   
       let comparison = 0;
       if (Ah > Bh) {
+        comparison = 2;
+      } 
+      else if (Ah < Bh) {
+        comparison = -2;
+      } 
+      else if (Ah == Bh) {
+        console.log("same hour")
         if (Am > Bm) {
-          comparison = 2;
-        } else if (Am < Bm){
           comparison = 1;
-        }
-      } else if (Ah < Bh) {
-        if (Am > Bm) {
-          comparison = -1;
         } else if (Am < Bm){
-          comparison = -2;
+          comparison = -1;
         }
       }
       return comparison;
@@ -300,7 +301,8 @@ function AlarmsTable(){
             title="addAlarm"
             onPress={async () => {
               addAlarm("New Alarm", 10, 49, alarms.length + 1, alarms);
-              alarms.sort(sortByTime);
+              // alarms.sort(sortByTime);
+              // showAlarms();
             }}
         />
 
