@@ -13,7 +13,8 @@ import {
   Keyboard,
 } from "react-native";
 // TODO: can i make this less things?? - possibly import the default fromfirebase file
-import * as firebase from "firebase";
+// import * as firebase from "firebase";
+import Firebase from '../../firebase/firebase';
 import { db, auth } from "../../firebase/firebase";
 
 import { MaterialIcons } from "@expo/vector-icons";
@@ -72,7 +73,7 @@ export default class Groups extends Component {
           db.collection("users")
             .doc(user.email)
             .update({
-              groups: firebase.firestore.FieldValue.arrayUnion({
+              groups: Firebase.firestore.FieldValue.arrayUnion({
                 name: name,
                 id: docRef,
               }),
@@ -152,7 +153,7 @@ export default class Groups extends Component {
                 db.collection("users")
                   .doc(userName)
                   .update({
-                    groups: firebase.firestore.FieldValue.arrayUnion({
+                    groups: Firebase.firestore.FieldValue.arrayUnion({
                       name: doc2.data().groupName,
                       id: doc2.id,
                     }),
@@ -162,7 +163,7 @@ export default class Groups extends Component {
                     db.collection("groups")
                       .doc(groupId)
                       .update({
-                        members: firebase.firestore.FieldValue.arrayUnion(
+                        members: Firebase.firestore.FieldValue.arrayUnion(
                           userName
                         ),
                       });
