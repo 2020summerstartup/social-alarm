@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   AsyncStorage,
 } from "react-native";
-import { auth, db } from "../../firebase/firebase";
+import { auth } from "../../firebase/firebase";
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 
 /* profile.js

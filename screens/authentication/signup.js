@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { db, auth } from "../../firebase/firebase";
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
+import {appStyles} from '../../style/stylesheet';
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
 
@@ -75,12 +76,12 @@ export default function SignUp({ navigation }) {
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
-        <Text style={styles.logo}>Sign Up</Text>
-        <View style={styles.inputView}>
+      <View style={appStyles.loginContainer}>
+        <Text style={appStyles.logo}>Sign Up</Text>
+        <View style={appStyles.inputView}>
           {/* text inputs - email, password, confirm password */}
           <TextInput
-            style={styles.inputText}
+            style={appStyles.inputText}
             placeholder="Email..."
             placeholderTextColor="#003f5c"
             keyboardType="email-address"
@@ -90,10 +91,10 @@ export default function SignUp({ navigation }) {
           />
         </View>
 
-        <View style={styles.inputView}>
+        <View style={appStyles.inputView}>
           <TextInput
             secureTextEntry
-            style={styles.inputText}
+            style={appStyles.inputText}
             placeholder="Password..."
             placeholderTextColor="#003f5c"
             onChangeText={(text) => {
@@ -102,10 +103,10 @@ export default function SignUp({ navigation }) {
           />
         </View>
 
-        <View style={styles.inputView}>
+        <View style={appStyles.inputView}>
           <TextInput
             secureTextEntry
-            style={styles.inputText}
+            style={appStyles.inputText}
             placeholder="Confirm password..."
             placeholderTextColor="#003f5c"
             onChangeText={(text) => {
@@ -114,9 +115,9 @@ export default function SignUp({ navigation }) {
           />
         </View>
 
-        <View style={styles.inputView}>
+        <View style={appStyles.inputView}>
           <TextInput
-            style={styles.inputText}
+            style={appStyles.inputText}
             placeholder="Name..."
             placeholderTextColor="#003f5c"
             onChangeText={(text) => {
@@ -127,12 +128,12 @@ export default function SignUp({ navigation }) {
 
         {/* sign up button */}
         <TouchableOpacity
-          style={styles.loginBtn}
+          style={appStyles.loginBtn}
           onPress={() =>
             this.signUpUser(email, password, confirmPassword, name)
           }
         >
-          <Text style={styles.loginText}>SIGN UP</Text>
+          <Text style={appStyles.loginText}>SIGN UP</Text>
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
