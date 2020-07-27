@@ -11,7 +11,13 @@ import Chevron from './chevron'
 
 // sets the styles for all the icons
 import BaseIcon from './icon'
-import { color } from 'react-native-reanimated';
+
+/* profile3.js
+ * profile screen 
+ * has push notifications, birthday, time zone, language, about us, terms&policies, 
+ * share our app, rate us and send feedback
+ * feel free to change or delete any of these 
+ */
 
 const styles = StyleSheet.create({
   scroll: {
@@ -39,6 +45,8 @@ const styles = StyleSheet.create({
 
 class SettingsScreen extends Component {
 
+  // this is for the toggle switch for push notifications
+  // delete this code if we get rid of push notifications on profile page
   state = {
     pushNotifications: true,
   }
@@ -100,9 +108,8 @@ class SettingsScreen extends Component {
             }
           />
           <ListItem
-            // chevron
             title="Birthday"
-            rightTitle="05/01/2001" 
+            rightTitle="05/01/2001"  // TO DO: add text box or date picker here so users can pick their birthday
             rightTitleStyle={{ fontSize: 15 }}
             containerStyle={styles.listItemContainer}
             leftIcon={
@@ -118,7 +125,7 @@ class SettingsScreen extends Component {
           />
           <ListItem
             title="Time Zone"
-            rightTitle="PST"
+            rightTitle="PST" // TO DO: add time zone picker here
             rightTitleStyle={{ fontSize: 15 }}
             containerStyle={styles.listItemContainer}
             leftIcon={
@@ -137,7 +144,7 @@ class SettingsScreen extends Component {
             title="Language"
             rightTitle="English"
             rightTitleStyle={{ fontSize: 15 }}
-            onPress={ ()=>{ Linking.openURL('https://www.google.com')}}
+            onPress={ ()=>{ Linking.openURL('https://www.google.com')}} // navigate to some website
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
@@ -156,7 +163,7 @@ class SettingsScreen extends Component {
           <ListItem
             title="About Us"
             containerStyle={styles.listItemContainer}
-            onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}}
+            onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}} // we can change this later 
             leftIcon={
               <BaseIcon
                 containerStyle={{ backgroundColor: '#A4C8F0' }}
