@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking } from 'react-native'
+import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage } from 'react-native'
 import { Avatar, ListItem } from 'react-native-elements'
 import TimezonePicker from 'react-timezone-picker';
 
@@ -43,12 +43,28 @@ const styles = StyleSheet.create({
   },
 })
 
-class SettingsScreen extends Component {
+class ProfileScreen extends Component {
 
-  // this is for the toggle switch for push notifications
-  // delete this code if we get rid of push notifications on profile page
-  state = {
-    pushNotifications: true,
+  componentDidMount() {
+    this.getEmailName();
+  }
+
+  getEmailName = async () => {
+  
+    const userEmail = await AsyncStorage.getItem("email"); 
+    const userName = await AsyncStorage.getItem("name");
+    this.setState({name: userName});
+    this.setState({email: userEmail});
+  }
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      pushNotifications: true,
+      name: "",
+      email: "",
+    };
   }
 
   onChangePushNotifications = () => {
@@ -72,14 +88,14 @@ class SettingsScreen extends Component {
             />
             </View>*/}
           <View>
-            <Text style={{ fontSize: 30, color: APPBACKGROUNDCOLOR }}>Shifa Somji</Text>
+            <Text style={{ fontSize: 30, color: APPBACKGROUNDCOLOR }}>{this.state.name}</Text>
             <Text
               style={{
                 color: APPBACKGROUNDCOLOR,
                 fontSize: 25,
               }}
             >
-              shifamsomji@gmail.com {/* TO DO: figure out how to get name and email from firebase */}
+              {this.state.email} {/* TO DO: figure out how to get name and email from firebase */}
             </Text>
           </View>
         </View>
@@ -247,4 +263,4 @@ class SettingsScreen extends Component {
   }
 }
 
-export default SettingsScreen
+export default ProfileScreen
