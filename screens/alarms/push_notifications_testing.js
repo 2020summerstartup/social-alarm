@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef, Component } from 'react';
-import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList, AsyncStorage, Animated, Image, TouchableHighlight } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Button, View, Switch, Text, Platform, TouchableOpacity, Modal, Animated, Image, TouchableHighlight } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 import Constants from 'expo-constants';
@@ -374,14 +373,6 @@ const styles = StyleSheet.create({
     padding: 0
   },
 
-  timerContainer: {
-    flexDirection: "row",
-  },
-
-  lapTimer:{
-    width: 25,
-  },
-
   topBanner:{
     flexDirection : "row",
     width:"100%",
@@ -411,22 +402,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
-  },
-
-  inputText:{
-    height:50,
-    color: APPTEXTWHITE,
-    fontSize: 16
-  },
-
-  inputView:{
-    width:"50%",
-    backgroundColor:"#465881",
-    borderRadius:25,
-    height:50,
-    marginBottom:20,
-    justifyContent:"center",
-    padding:20
   },
 
   alarmTime: {
@@ -467,11 +442,6 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 15
   },
-
-  scrollView: {
-    alignSelf: 'stretch',
-    alignContent: 'center',
-  }, 
 
   button: {
     width: 60,

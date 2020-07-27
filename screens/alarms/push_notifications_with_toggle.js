@@ -1,6 +1,5 @@
 import React, { useState, useEffect, Component } from 'react';
-import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { StyleSheet, Button, View, Switch, Text, Platform, TouchableOpacity, Modal, FlatList } from 'react-native';
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 import Moment from 'moment';
 
@@ -342,10 +341,6 @@ const styles = StyleSheet.create({
 
   timerContainer: {
     flexDirection: "row",
-  },
-
-  lapTimer:{
-    width: 25,
   },
 
   topBanner:{
