@@ -1,12 +1,11 @@
 import React from "react";
-import { ActivityIndicator, AsyncStorage, StatusBar, View } from "react-native";
+import { ActivityIndicator, AsyncStorage, StatusBar, View , StyleSheet} from "react-native";
 import { auth } from "../../firebase/firebase";
 
 
 /* authLoadingScreen.js
  * Auth loading screen
- * this is not used/does not work yet
- * it's supposed to be called when app opens so user can be automatically
+ * it's called when app opens so user can be automatically
  * signed in to their account via local storage
  *
  * code from https://reactnavigation.org/docs/4.x/auth-flow (react navigation api docs example)
@@ -55,7 +54,7 @@ class AuthLoadingScreen extends React.Component {
   // Render any loading content that you like here
   render() {
     return (
-      <View>
+      <View style={styles.container}>
         <ActivityIndicator />
         <StatusBar barStyle="default" />
       </View>
@@ -64,3 +63,12 @@ class AuthLoadingScreen extends React.Component {
 }
 
 export default AuthLoadingScreen;
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
+})
