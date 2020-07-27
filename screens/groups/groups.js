@@ -65,7 +65,7 @@ export default class Groups extends Component {
           // modal closes
           this.setState({ createModalOpen: false });
 
-          // add  group to user's doc
+          // add group to user's doc
           db.collection("users")
             .doc(user.email)
             .update({

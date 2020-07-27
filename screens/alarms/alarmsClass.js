@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, Component } from 'react';
 import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList, AsyncStorage, Animated, Image, TouchableHighlight } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 import Constants from 'expo-constants';
@@ -15,7 +14,39 @@ import { appStyles } from '../../style/stylesheet';
 import * as firebase from "firebase";
 import { db, auth } from "../../firebase/firebase";
 
-// const rowSwipeAnimatedValues = {};
+// class Alarms extends Component {
+//     constructor(props) {
+//         super(props);
+
+//         this.state = {
+//             alarms: [
+//                 {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 48, switch: true,  id: "1"},
+//                 {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 49, switch: true,  id: "2"},
+//                 {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 50, switch: true,  id: "3"},
+//                 {name: 'Fourth Alarm',  alarm_hour: 13, alarm_minute: 51, switch: true,  id: "4"},
+//             ],
+//         }
+//     }
+
+//     AlarmBanner({ children }){
+//         return(
+//             <View style = {styles.alarmBanner}>{children}</View>
+//         )
+//     };
+
+//     AlarmDetails({title, hour, minute}){
+//         return (
+//             <View style={styles.alarmDetails}>
+//                 <Text style={styles.alarmTime}>{hour}:{minute}</Text>
+//                 <Text style={styles.alarmText}>{title}</Text>
+//             </View>
+//         )
+//     };
+// }
+
+// Class above
+// ======================================================================================
+// Function below
 
 function AlarmBanner({ children }){
     return(
@@ -23,10 +54,10 @@ function AlarmBanner({ children }){
     )
 };
 
-function AlarmDetails({title, hour, minute, second}){
+function AlarmDetails({title, hour, minute}){
     return (
         <View style={styles.alarmDetails}>
-            <Text style={styles.alarmTime}>{hour}:{minute}:{second}</Text>
+            <Text style={styles.alarmTime}>{hour}:{minute}</Text>
             <Text style={styles.alarmText}>{title}</Text>
         </View>
     )
@@ -69,6 +100,34 @@ async function removeAlarm(identifier, alarm_array){ // identifier should be a s
     }
 }
 
+async function addAlarm(name, alarm_hour, alarm_minute, id, alarm_array){
+  // Add new alarm data to the alarm_array
+  alarm_array.push(
+    {name: name, alarm_hour: alarm_hour, alarm_minute: alarm_minute, switch: true, id: id}
+  )
+
+  console.log("New id:", id)
+  
+  // Use the new alarm data to schedule a notification
+  promise = (await Notifications.scheduleNotificationAsync({
+      identifier: name,
+      content: {
+          title: 'Its ' + alarm_hour + ':' + alarm_minute + '!',
+          subtitle: "This is a new alarm",
+      },
+      // DailyTriggerInput
+      trigger: {
+          hour: alarm_hour,
+          minute: alarm_minute,
+          repeats: false
+      }
+  }));
+
+  // return the list of all the scheduled notifications
+  list = (await Notifications.getAllScheduledNotificationsAsync());
+  return list;
+}
+
 async function showAlarms(){
     list = (await Notifications.getAllScheduledNotificationsAsync());
 
@@ -90,30 +149,37 @@ async function showAlarms(){
 function AlarmsTable(){
 
     const [alarms, setAlarms] = useState([
-        {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 48, switch: true,  id: "1"},
-        {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 49, switch: true,  id: "2"},
-        {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 50, switch: true,  id: "3"},
-        {name: 'Fourth Alarm',  alarm_hour: 13, alarm_minute: 51, switch: true,  id: "4"},
+        {name: 'Wake Up',   alarm_hour: 15, alarm_minute: 20, switch: true, id: 1},
+        {name: 'Time for Class',  alarm_hour: 15, alarm_minute: 21, switch: true,  id: 2},
+        {name: 'Third Alarm',   alarm_hour: 15, alarm_minute: 22, switch: true,  id: 3},
+        {name: 'Fourth Alarm',  alarm_hour: 15, alarm_minute: 23, switch: true,  id: 4},
     ]);
 
-    makeAlarms(alarms)
-      .then(list => {
-        var print_list;
-        for (var i = 0; i < alarms.length; i++) {
-            print_list += list[i].identifier
-            print_list += " "
-        }
-      db.collection("users")
-      .doc("sidneyt9999@gmail.com")
-      .update({
-        alarms: firebase.firestore.FieldValue.arrayUnion({
-          alarms: alarms
-        }),
-      });
-    });
+    // makeAlarms(alarms)
+    //   .then(list => {
+    //     var print_list;
+    //     for (var i = 0; i < alarms.length; i++) {
+    //         print_list += list[i].identifier
+    //         print_list += " "
+    //     }
+    //   db.collection("users")
+    //     .doc(auth.currentUser.email)
+    //     .update({
+    //         alarms: firebase.firestore.FieldValue.arrayUnion({
+    //         alarms
+    //     }),
+    //   });
+    // });
+
+    console.log("length(alarms) + 1: ", alarms.length + 1)
+
+    // addAlarm("New Alarm", 10, 20, toString(alarms.length + 1), alarms)
+    // addAlarm("New Alarm", 10, 20, alarms.length + 1, alarms)
 
     // removeAlarm(alarms[1].name, alarms)
-    // removeAlarm("Second Alarm", alarms)
+    // removeAlarm("New Alarm", alarms)
+
+    console.log("Alarms array:", alarms)
 
     showAlarms()
 
@@ -171,7 +237,7 @@ function AlarmsTable(){
                 data = {alarms}
                 renderItem={({ item }) => (
                 <AlarmBanner>
-                    <AlarmDetails title={item.name} hour={item.alarm_hour} minute={item.alarm_minute} second={item.alarm_second}/>
+                    <AlarmDetails title={item.name} hour={item.alarm_hour} minute={item.alarm_minute}/>
                     <SwitchExample/>
                     <Text>{item.switch}</Text>
                 </AlarmBanner>
@@ -186,6 +252,14 @@ function AlarmsTable(){
                 onSwipeValueChange={onSwipeValueChange}
             // />
         />
+
+        <Button
+            title="addAlarm"
+            onPress={async () => {
+              addAlarm("New Alarm", 10, 20, alarms.length + 1, alarms)
+            }}
+        />
+        
         </View>
     )
 };
@@ -271,11 +345,11 @@ export default function AppAlarmsPage() {
         </TopBanner>
 
         <Button
-          title="Send a notification now"
-          onPress={async () => {
-              await sendPushNotification(expoPushToken);
-              console.log("Sending notification");
-          }}
+            title="Send a notification now"
+            onPress={async () => {
+                await sendPushNotification(expoPushToken);
+                console.log("Sending notification");
+            }}
         />
 
         <View style={styles.scrollViewContainer}>
@@ -285,7 +359,16 @@ export default function AppAlarmsPage() {
             <Text>Body: {notification && notification.request.content.body}</Text>
             <Text>Data: {notification && JSON.stringify(notification.request.content.data.body)}</Text>
             </View> */}
-            <AlarmsTable/>
+
+        <AlarmsTable/>
+
+        <Button
+            title="Refresh alarms"
+            onPress={async () => {
+                console.log("Loading alarms");
+            }}
+        />
+
         </View>
         </View>
     );
