@@ -146,32 +146,43 @@ async function showAlarms(){
     }
 }
 
+// function sortArray(old_array){
+
+//   var new_array;
+//   old_array.sort(function(a, b){return b - a})
+
+//   new_array = old_array;
+//   return new_array
+// }
+
 function AlarmsTable(){
 
     const [alarms, setAlarms] = useState([
-        {name: 'Wake Up',   alarm_hour: 15, alarm_minute: 20, switch: true, id: 1},
-        {name: 'Time for Class',  alarm_hour: 15, alarm_minute: 21, switch: true,  id: 2},
-        {name: 'Third Alarm',   alarm_hour: 15, alarm_minute: 22, switch: true,  id: 3},
-        {name: 'Fourth Alarm',  alarm_hour: 15, alarm_minute: 23, switch: true,  id: 4},
+        {name: 'First Alarm',   alarm_hour: 11, alarm_minute: 1, switch: true, id: 1},
+        {name: 'Second Alarm',  alarm_hour: 11, alarm_minute: 0, switch: true,  id: 2},
+        {name: 'Third Alarm',   alarm_hour: 10, alarm_minute: 59, switch: true,  id: 3},
+        {name: 'Fourth Alarm',  alarm_hour: 11, alarm_minute: 2, switch: true,  id: 4},
     ]);
 
-    // makeAlarms(alarms)
-    //   .then(list => {
-    //     var print_list;
-    //     for (var i = 0; i < alarms.length; i++) {
-    //         print_list += list[i].identifier
-    //         print_list += " "
-    //     }
-    //   db.collection("users")
-    //     .doc(auth.currentUser.email)
-    //     .update({
-    //         alarms: firebase.firestore.FieldValue.arrayUnion({
-    //         alarms
-    //     }),
-    //   });
-    // });
+    makeAlarms(alarms)
+      .then(list => {
+        var print_list;
+        for (var i = 0; i < alarms.length; i++) {
+            print_list += list[i].identifier
+            print_list += " "
+        }
+      db.collection("users")
+        .doc(auth.currentUser.email)
+        .update({
+            alarms: firebase.firestore.FieldValue.arrayUnion({
+            alarms
+        }),
+      });
+    });
 
     console.log("length(alarms) + 1: ", alarms.length + 1)
+
+    alarms.sort(sortByTime)
 
     // addAlarm("New Alarm", 10, 20, toString(alarms.length + 1), alarms)
     // addAlarm("New Alarm", 10, 20, alarms.length + 1, alarms)
@@ -195,6 +206,14 @@ function AlarmsTable(){
       const prevIndex = alarms.findIndex(item => item.id === rowKey);
       newData.splice(prevIndex, 1);
       setAlarms(newData);
+      // console.log("rowMap", rowMap)
+      console.log("rowKey", rowKey)
+
+      // console.log("alarms[1].name", alarms[1].name)
+      // console.log("typeof rowKey", typeof rowKey) // returns a number
+      // console.log("typeof 1", typeof 1) // returns a number
+      console.log("alarms[rowKey - 1].name", alarms[rowKey - 1].name)
+      // removeAlarm(alarms[rowKey].name, alarms);
     };
 
     const onRowDidOpen = rowKey => {
@@ -229,6 +248,30 @@ function AlarmsTable(){
       </View>
     );
 
+    function sortByTime(a, b) {
+      const Ah = a.alarm_hour;
+      const Bh = b.alarm_hour;
+
+      const Am = a.alarm_minute;
+      const Bm = b.alarm_minute;
+  
+      let comparison = 0;
+      if (Ah > Bh) {
+        if (Am > Bm) {
+          comparison = 2;
+        } else if (Am < Bm){
+          comparison = 1;
+        }
+      } else if (Ah < Bh) {
+        if (Am > Bm) {
+          comparison = -1;
+        } else if (Am < Bm){
+          comparison = -2;
+        }
+      }
+      return comparison;
+    }
+
     return(
         <View>
           <SwipeListView
@@ -256,10 +299,11 @@ function AlarmsTable(){
         <Button
             title="addAlarm"
             onPress={async () => {
-              addAlarm("New Alarm", 10, 20, alarms.length + 1, alarms)
+              addAlarm("New Alarm", 10, 49, alarms.length + 1, alarms);
+              alarms.sort(sortByTime);
             }}
         />
-        
+
         </View>
     )
 };
