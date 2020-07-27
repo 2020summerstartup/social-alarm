@@ -10,6 +10,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 import { APPBACKGROUNDCOLOR } from '../../style/constants';
 import { appStyles } from '../../style/stylesheet';
+import TimePicking from "../../components/timePicker";
+import DatePicker from 'react-native-datepicker';
 
 import * as firebase from "firebase";
 import { db, auth } from "../../firebase/firebase";
@@ -146,15 +148,6 @@ async function showAlarms(){
     }
 }
 
-// function sortArray(old_array){
-
-//   var new_array;
-//   old_array.sort(function(a, b){return b - a})
-
-//   new_array = old_array;
-//   return new_array
-// }
-
 function AlarmsTable(){
 
     const [alarms, setAlarms] = useState([
@@ -206,12 +199,7 @@ function AlarmsTable(){
       const prevIndex = alarms.findIndex(item => item.id === rowKey);
       newData.splice(prevIndex, 1);
       setAlarms(newData);
-      // console.log("rowMap", rowMap)
       console.log("rowKey", rowKey)
-
-      // console.log("alarms[1].name", alarms[1].name)
-      // console.log("typeof rowKey", typeof rowKey) // returns a number
-      // console.log("typeof 1", typeof 1) // returns a number
       console.log("alarms[rowKey - 1].name", alarms[rowKey - 1].name)
       // removeAlarm(alarms[rowKey].name, alarms);
     };
@@ -238,12 +226,12 @@ function AlarmsTable(){
               style={[styles.backRightBtn, styles.backRightBtnRight]}
               onPress={() => deleteRow(rowMap, data.item.id)}
           >
-            <Animated.View style={[styles.trash]}>
+            <View style={[styles.trash]}>
                 <Image
                     source={require('../../assets/trash.png')}
                     style={styles.trash}
                 />
-            </Animated.View>
+            </View>
           </TouchableOpacity>
       </View>
     );
@@ -297,14 +285,14 @@ function AlarmsTable(){
             // />
         />
 
-        <Button
-            title="addAlarm"
+        {/* <Button
+            title="+"
             onPress={async () => {
               addAlarm("New Alarm", 10, 49, alarms.length + 1, alarms);
               // alarms.sort(sortByTime);
               // showAlarms();
             }}
-        />
+        /> */}
 
         </View>
     )
@@ -343,6 +331,8 @@ export default function AppAlarmsPage() {
     const [modalOpen, setModalOpen] = useState(false);
     const [expoPushToken, setExpoPushToken] = useState('');
     const [notification, setNotification] = useState(false); // false is the initial state so it's passed into useState()
+    const [alarmTime, setAlarmTime] = useState();
+    const [alarmText, setAlarmText] = useState();
     const notificationListener = useRef();
     const responseListener = useRef();
 
@@ -365,6 +355,9 @@ export default function AppAlarmsPage() {
         // };
     }, []);
 
+    var TimePicker = new TimePicking();
+    // console.log("typeof timePicker", typeof timePicker)
+
     return (
         <View style={styles.container}>
         <TopBanner>
@@ -383,21 +376,72 @@ export default function AppAlarmsPage() {
                 style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                 onPress={() => setModalOpen(false)}
                 />
-                <Text style={styles.Text}>
-                DateTimePicker will go here
-                </Text>
+                {/* <Text style={styles.Text}>DateTimePicker will go here</Text> */}
+                <Text style={styles.pageTitle}> Set a new alarm </Text>
+
+                  <DatePicker
+                    style={{width: 200, color: "black"}}
+                    date= {alarmTime}
+                    mode="time"
+                    format="HH:mm"
+                    confirmBtnText="Confirm"
+                    cancelBtnText="Cancel"
+                    showIcon={false}
+                    minuteInterval={1}
+                    onDateChange={(time) => {setAlarmTime(time)}}
+                    customStyles={{
+                      dateInput:{
+                        color: "white"
+                      },
+                      btnTextConfirm:{
+                        color: "lightgreen"
+                      },
+                      btnCancel:{
+                        color: "red"
+                      }
+                    }}
+                    onPressMask={console.log("Pressed")}
+                    // hideText={true}
+                    hideText={false}
+                    allowFontScaling={true}
+                    // useNativeDriver: true
+                  />
+
+                <View style={styles.inputView}>
+                  <TextInput
+                    style={styles.inputText}
+                    placeholder="Alarm title..."
+                    placeholderTextColor="#003f5c"
+                    onChangeText={(text) => {setAlarmText(text)}}
+                  />
+                </View>
+
+                <Text style={styles.inputText}> time: {alarmTime}</Text>
+                <Text style={styles.inputText}> title: {alarmText}</Text>
+
+                <Button
+                  title="Set Alarm"
+                  onPress={async () => 
+                    setModalOpen(false)
+                    // addAlarm("New Alarm", 10, 49, alarms.length + 1, alarms)
+                  }
+                />
+
             </View>
             </Modal>
         </TopBanner>
 
-        <Button
+        {/* <Button
             title="Send a notification now"
             onPress={async () => {
                 await sendPushNotification(expoPushToken);
                 console.log("Sending notification");
             }}
-        />
+        /> */}
 
+        {/* <TimePicking/>
+        <Text style={styles.Text}>TimePicking time: {TimePicker.state.time}</Text> */}
+      
         <View style={styles.scrollViewContainer}>
             {/* <Text>Your expo push token: {expoPushToken}</Text>
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
