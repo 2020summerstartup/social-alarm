@@ -13,6 +13,8 @@ import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constant
 import { appStyles } from '../../style/stylesheet';
 
 import DatePicker from 'react-native-modern-datepicker';
+import TimePicking from '../../components/timePicker';
+import { db, auth } from "../../firebase/firebase";
 
 
 // const rowSwipeAnimatedValues = {};
@@ -229,22 +231,25 @@ export default function AppAlarmsPage() {
     const notificationListener = useRef();
     const responseListener = useRef();
 
+    // This is the time picker, has two rows for the hour and minute
     const TimePicker = () => {
       const [time, setTime] = useState('');
-    
+
       return (
         <DatePicker
           mode="time"
           minuteInterval={1}
-          onTimeChange={selectedTime => setTime(selectedTime)}
+          onTimeChange={selectedTime => setTime(selectedTime), console.log(time)}
           options={{
             backgroundColor: APPBACKGROUNDCOLOR,
             textDefaultColor: APPTEXTWHITE,
             selectedTextColor: '#fff',
             mainColor: APPTEXTRED,
-            textFontSize:17
+            textFontSize:16
           }}
         />
+        // <Text style={styles.logo}>time: {selectedTime}</Text>
+        // </View>
       );
     };
 
@@ -270,8 +275,9 @@ export default function AppAlarmsPage() {
     return (
         <View style={styles.container}>
         <TopBanner>
-            <Text style={styles.pageTitle}>Alarms_Testing</Text>
-            <MaterialIcons
+            {/* <Text style={styles.pageTitle}>Alarms_Testing</Text> */}
+            <TimePicking/> 
+            {/*<MaterialIcons
                 name="add"
                 size={24}
                 style={appStyles.modalToggle}
@@ -287,9 +293,8 @@ export default function AppAlarmsPage() {
                 />
 
               <Text style={styles.logo}>Add Alarm</Text>
-              <TimePicker/>
             </View>
-            </Modal>
+            </Modal>*/}
         </TopBanner>
 
         <Button
@@ -382,7 +387,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "black",
     alignItems: 'center',
     justifyContent: 'center',
-    height: 100,
+    //height: 100,
   },
 
   scrollViewContainer: {
@@ -421,7 +426,7 @@ const styles = StyleSheet.create({
   Text:{
     height:50,
     color: APPTEXTWHITE,
-    fontSize: 16
+    fontSize: 16,
   },
 
   pageTitle:{
@@ -439,7 +444,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 30,
     color: APPTEXTRED,
-    marginBottom: 18,
+    marginBottom: 10,
     alignItems: "center",
   },
 
