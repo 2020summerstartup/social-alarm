@@ -10,12 +10,12 @@ import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 // import  {Container, Content, Header, Form, Input, Item, Label} from 'native-base';
 import  {Container, Content, Header, Form, Input, Item, Button, Label, Icon, List} from 'native-base';
 
-import { APPBACKGROUNDCOLOR } from '../constants';
-import { appStyles } from '../stylesheet';
+
+import { appStyles, alarmStyles } from '../../style/stylesheet';
 
 import Constants from 'expo-constants';
 
-import * as firebase from 'firebase';
+// import * as firebase from 'firebase';
 // import * as Notifications from 'expo-notifications';
 // import * as Permissions from 'expo-permissions';
 import { Permissions, Notifications } from 'expo';
@@ -25,15 +25,15 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 function AlarmBanner({ children }) {
     return(
-      <View style = {styles.alarmBanner}>{children}</View>
+      <View style = {alarmStyles.alarmBanner}>{children}</View>
     )
 };
 
 function AlarmDetails({title, time}){
     return (
-      <View style={styles.alarmDetails}>
-        <Text style={styles.alarmTime}>{time}</Text>
-        <Text style={styles.alarmText}>
+      <View style={alarmStyles.alarmDetails}>
+        <Text style={alarmStyles.alarmTime}>{time}</Text>
+        <Text style={alarmStyles.alarmText}>
           {title}
         </Text>
       </View>
@@ -66,7 +66,7 @@ function AlarmsTable(){
 
 function TopBanner({ children }){
     return(
-      <View style = {styles.topBanner}>{children}</View>
+      <View style = {alarmStyles.topBanner}>{children}</View>
     )
 };
 
@@ -119,9 +119,9 @@ export default class Alarm extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <View style={alarmStyles.container}>
                 <TopBanner>
-                    <Text style={styles.pageTitle}>Alarms</Text>
+                    <Text style={alarmStyles.pageTitle}>Alarms</Text>
                     <MaterialIcons
                         name="add"
                         size={24}
@@ -136,12 +136,12 @@ export default class Alarm extends Component {
                                 style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                                 // onPress={() => this.setState({modalOpen:false})}
                             />
-                            <Text style={styles.Text}>DateTimePicker will go here</Text>
+                            <Text style={alarmStyles.Text}>DateTimePicker will go here</Text>
                         </View>
                     </Modal>
                 </TopBanner>
                 
-                <View style={styles.scrollViewContainer}>
+                <View style={alarmStyles.scrollViewContainer}>
                     <AlarmsTable/>
                     <Button
                         title="Send a notification now"
@@ -154,116 +154,3 @@ export default class Alarm extends Component {
         );
     }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
-    // backgroundColor: "black",
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 100,
-  },
-
-  scrollViewContainer: {
-    flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 30,
-    paddingBottom: 10,
-    padding: 0
-  },
-
-  topBanner:{
-    flexDirection : "row",
-    width:"100%",
-    backgroundColor: "white",
-    // backgroundColor: APPBACKGROUNDCOLOR,
-    height: 110,
-    paddingTop: 30,
-    paddingBottom: 0,
-    padding: 15,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: "space-between",
-  },
-
-  Text:{
-    height:50,
-    color: "white",
-    fontSize: 16
-  },
-
-  pageTitle:{
-    padding: 20,
-    color: "#fb5b5a",
-    fontSize: 40,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-
-  alarmTime: {
-    color: "#ffffff",
-    fontSize: 45,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-  },
-
-  alarmText: {
-    color: "#ffffff",
-    fontSize: 16,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-  },
-
-  alarmBanner: {
-    flex: 1,
-    flexDirection : "row",
-    backgroundColor: "#fb5b5a",
-    // backgroundColor: "black",
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: "space-between",
-    marginTop: 0,
-    marginBottom: 10,
-    paddingTop: 0,
-    paddingBottom: 0,
-    width: "95%",
-    borderRadius: 15
-  },
-
-  alarmDetails: {
-    flex: 1,
-    backgroundColor: "#fb5b5a",
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: "100%",
-    borderRadius: 15
-  },
-  
-  button: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }, 
-
-  buttonTitle: {
-    color: "#ffffff",
-    fontSize: 40,
-  },
-
-  buttonBorder: {
-    color: "#ffffff",
-    width: 56, 
-    height: 56, 
-    borderRadius: 28, 
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-})
