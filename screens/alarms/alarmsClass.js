@@ -60,9 +60,9 @@ export default class Alarms extends Component {
         this.state = {
             alarms: [
                 {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  id: "1"},
-                {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  id: "2"},
-                {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  id: "3"},
-                {name: 'Fourth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  id: "4"},
+                // {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  id: "2"},
+                // {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  id: "3"},
+                // {name: 'Fourth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  id: "4"},
             ],
             // alarms: [],
             newAlarmModalOpen: false,
@@ -158,6 +158,27 @@ export default class Alarms extends Component {
       }
     }
 
+    updateFirebaseUsersDoc(){
+      db.collection("users")
+        .doc(auth.currentUser.email)
+        .update({
+            alarms: firebase.firestore.FieldValue.arrayUnion({
+            // alarms : "test"
+            alarms: this.state.alarms
+        }),
+      });
+    }
+
+    updateFirebaseGroupsDoc(){
+      db.collection("groups")
+        .doc("7Ek2dYinSXsmIiZuFPZB")
+        .update({
+            alarms: firebase.firestore.FieldValue.arrayUnion({
+              alarms: this.state.alarms
+        }),
+      });
+    }
+
     splitTime(){
       var variable = this.state.newAlarmTime
       var splitArray
@@ -219,7 +240,6 @@ export default class Alarms extends Component {
 
       return(
         <View>
-          {/* <Text>"props.alarms:" {props.alarms[1].name}</Text> */}
           <SwipeListView
                 keyExtractor ={(item) => item.id} // specifying id as the key to prevent the key warning
                 data = {props.alarms}
@@ -344,6 +364,7 @@ export default class Alarms extends Component {
       console.log("Initialize alarms")
       this.makeAlarms(this.state.alarms)
       this.state.alarms.sort(this.sortByTime)
+      this.updateFirebaseUsersDoc()
 
       return(
         <View style={styles.container}>
@@ -367,7 +388,7 @@ export default class Alarms extends Component {
                   <Text style={styles.pageTitle}> Set a new alarm </Text>
 
                     <DatePicker
-                      style={{width: 200, color: "black"}}
+                      style={{height: 75, width: 200, color: "black"}}
                       date= {this.state.newAlarmTime}
                       mode="time"
                       format="HH:mm"
@@ -416,13 +437,15 @@ export default class Alarms extends Component {
                   <Text style={styles.inputText}> title:{this.state.newAlarmText}</Text>
 
 
-                  <Button
-                    title="Set Alarm"
-                    onPress={ async() =>
-                      this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.alarms.length + 1, this.state.alarms)
-                      .then(this.setState({ newAlarmModalOpen: false }))
-                    }
-                  />
+                  {/* <View style={styles.inputView}> */}
+                      <Button style={styles.button}
+                      title="Set Alarm"
+                      onPress={ async() =>
+                        this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.alarms.length + 1, this.state.alarms)
+                        .then(this.setState({ newAlarmModalOpen: false }))
+                      }
+                      />
+                  {/* </View> */}
 
                   <Button
                     title="Close Modal"
@@ -446,6 +469,24 @@ export default class Alarms extends Component {
             <this.AlarmsTable alarms={this.state.alarms}/>
 
           </View>
+
+          <Text style={styles.Text}> Share alarm with a group</Text>
+
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.inputText}
+              placeholder="Group name..."
+              placeholderTextColor="#003f5c"
+            />
+          </View>
+
+          <Button
+            title="Share alarms with a group"
+            onPress={ async() =>
+              this.updateFirebaseGroupsDoc()
+            }
+          />
+
         </View>
       );
     };
@@ -525,7 +566,7 @@ const styles = StyleSheet.create({
   },
 
   inputView:{
-    width:"50%",
+    width:"75%",
     backgroundColor:"#465881",
     borderRadius:25,
     height:50,
@@ -581,9 +622,12 @@ const styles = StyleSheet.create({
   button: {
     width: 60,
     height: 60,
-    borderRadius: 30,
-    justifyContent: 'center',
+    backgroundColor:"#465881",
     alignItems: 'center',
+    justifyContent:"center",
+    borderRadius: 30,
+    marginBottom: 20,
+    padding:20
   }, 
 
   buttonTitle: {
