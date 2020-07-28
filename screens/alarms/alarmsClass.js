@@ -22,81 +22,6 @@ function TopBanner({ children }){
   )
 };
 
-// function AlarmsTable(props){
-//   const closeRow = (rowMap, rowKey) => {
-//     if (rowMap[rowKey]) {
-//         rowMap[rowKey].closeRow();
-//     }
-//   };
-
-//   const deleteRow = (rowMap, rowKey) => {
-//     closeRow(rowMap, rowKey);
-//     const newData = [...props.alarms];
-//     const prevIndex = props.alarms.findIndex(item => item.id === rowKey);
-//     newData.splice(prevIndex, 1);
-//     setAlarms(newData);
-//     // props.setState({ props.alarms: newData});
-//     console.log("rowKey", rowKey)
-//     console.log("alarms[rowKey - 1].name", props.alarms[rowKey - 1].name)
-//     // removeAlarm(alarms[rowKey].name, alarms);
-//   };
-
-//   const onRowDidOpen = rowKey => {
-//     console.log('This row opened', rowKey);
-//   };
-
-//   const onSwipeValueChange = swipeData => {
-//     const { key, value } = swipeData;
-//     // rowSwipeAnimatedValues[key].setValue(Math.abs(value));
-//   };
-
-//   const renderHiddenItem = (data, rowMap) => (
-//     <View style={styles.rowBack}>
-//         <TouchableOpacity
-//             style={[styles.backRightBtn, styles.backRightBtnLeft]}
-//             onPress={() => closeRow(rowMap, data.item.id)}
-//         >
-//           <Text style={styles.backTextWhite}>Close</Text>
-//         </TouchableOpacity>
-
-//         <TouchableOpacity
-//             style={[styles.backRightBtn, styles.backRightBtnRight]}
-//             onPress={() => deleteRow(rowMap, data.item.id)}
-//         >
-//           <View style={[styles.trash]}>
-//               <Image
-//                   source={require('../../assets/trash.png')}
-//                   style={styles.trash}
-//               />
-//           </View>
-//         </TouchableOpacity>
-//     </View>
-//   );
-
-//   return(
-//     <View>
-//       <SwipeListView
-//             keyExtractor ={(item) => item.id} // specifying id as the key to prevent the key warning
-//             data = {props.alarms}
-//             renderItem={({ item }) => (
-//             <AlarmBanner>
-//                 <AlarmDetails title={item.name} hour={item.alarm_hour} minute={item.alarm_minute}/>
-//                 <SwitchExample/>
-//                 <Text>{item.switch}</Text>
-//             </AlarmBanner>
-//             )}
-//             renderHiddenItem={renderHiddenItem}
-//             leftOpenValue={0}
-//             rightOpenValue={-150}
-//             previewRowKey={'0'}
-//             previewOpenValue={-40}
-//             previewOpenDelay={3000}
-//             onRowDidOpen={onRowDidOpen}
-//             onSwipeValueChange={onSwipeValueChange}
-//     />
-//     </View>
-//   )
-// };
 
 function AlarmBanner({ children }){
   return(
@@ -130,15 +55,16 @@ function AlarmDetails({title, hour, minute}){
 export default class Alarms extends Component {
     constructor(props) {
         super(props);
+        this.AlarmsTable = this.AlarmsTable.bind(this) // This is the magical line that gets rid of "this" errors inside AlarmsTable
 
         this.state = {
-            // alarms: [
-            //     {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  id: "1"},
-            //     {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  id: "2"},
-            //     {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  id: "3"},
-            //     {name: 'Fourth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  id: "4"},
-            // ],
-            alarms: [],
+            alarms: [
+                {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  id: "1"},
+                {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  id: "2"},
+                {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  id: "3"},
+                {name: 'Fourth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  id: "4"},
+            ],
+            // alarms: [],
             newAlarmModalOpen: false,
             expoPushToken: "",
             notification: false,
@@ -157,8 +83,8 @@ export default class Alarms extends Component {
               promise = (await Notifications.scheduleNotificationAsync({
                   identifier: list_item.name,
                   content: {
-                      title: 'Its ' + list_item.alarm_hour + ':' + list_item.alarm_minute + '!',
-                      subtitle: "This is the subtitle",
+                      title: list_item.name,
+                      subtitle: 'Its ' + list_item.alarm_hour + ':' + list_item.alarm_minute + '!',
                   },
                   // DailyTriggerInput
                   trigger: {
@@ -198,8 +124,8 @@ export default class Alarms extends Component {
       promise = (await Notifications.scheduleNotificationAsync({
           identifier: name,
           content: {
-              title: 'Its ' + alarm_hour + ':' + alarm_minute + '!',
-              subtitle: "This is a new alarm",
+              title: list_item.name,
+              subtitle: 'Its ' + list_item.alarm_hour + ':' + list_item.alarm_minute + '!',
           },
           // DailyTriggerInput
           trigger: {
@@ -517,11 +443,6 @@ export default class Alarms extends Component {
               <Text>Data: {notification && JSON.stringify(notification.request.content.data.body)}</Text>
               </View> */}
 
-            {/* <Text>Test</Text>  */}
-
-            {/* <AlarmsTable/> */}
-
-            {/* <this.AlarmsTable alarms={this.state.alarms}/> */}
             <this.AlarmsTable alarms={this.state.alarms}/>
 
           </View>
