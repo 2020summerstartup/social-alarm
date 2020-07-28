@@ -3,8 +3,9 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GroupScreen from "../screens/groups/groups";
-// import AlarmScreen from '../screens/alarms/push_notifications_testing';
+// import AlarmScreen from '../screens/alarms/push_notifications_testing'; // old
 import AlarmScreen from '../screens/alarms/alarmsClass';
+// import AlarmScreen from '../screens/alarms/alarms';
 import ProfileScreen from "../screens/profile/profile";
 import StopwatchScreen from "../screens/stopwatch/stopwatch";
 import { NavigationContainer } from "@react-navigation/native";

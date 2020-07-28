@@ -16,17 +16,11 @@ import DatePicker from 'react-native-datepicker';
 import * as firebase from "firebase";
 import { db, auth } from "../../firebase/firebase";
 
-// function TopBanner({ children }){
-//   return(
-//     <View style = {styles.topBanner}>{children}</View>
-//   )
-// };
-
-class TopBanner extends Component {
-  TopBanner({ children }){
-        return(<View style = {styles.topBanner}>{children}</View>)
-    };
-}
+function TopBanner({ children }){
+  return(
+    <View style = {styles.topBanner}>{children}</View>
+  )
+};
 
 export default class Alarms extends Component {
     constructor(props) {
@@ -48,12 +42,6 @@ export default class Alarms extends Component {
             responseListener: ""
         }
     }
-
-    // TopBanner({ children }){
-    //   // render() {
-    //     return(<View style = {styles.topBanner}>{children}</View>)
-    //   // }
-    // };
 
     AlarmBanner({ children }){
         return(
@@ -251,85 +239,77 @@ export default class Alarms extends Component {
       return comparison;
     };
 
-    // TopBanner({ children }){
-    //   return(
-    //     <View style = {styles.topBanner}>{children}</View>
-    //   )
-    // };
+    // Can use this function below, OR use Expo's Push Notification Tool-> https://expo.io/dashboard/notifications
+    async sendPushNotification(expoPushToken) {
+      const message = {
+        to: expoPushToken,
+        sound: 'default',
+        // sound: "../sounds/piano1.wav",
+        title: 'Hello Sidney',
+        body: 'This is a notification for you!',
+        data: { data: 'This is the data' },
+      };
+
+      await fetch('https://exp.host/--/api/v2/push/send', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(message),
+      });
+    }
+
+    async registerForPushNotificationsAsync() {
+      let token;
+      if (Constants.isDevice) {
+          // Check for existing permissions
+          const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+          console.log("existingStatus:", existingStatus);
+          let finalStatus = existingStatus;
+
+          // If no existing permissions, ask user for permission
+          if (existingStatus !== 'granted') {
+          const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+          finalStatus = status;
+          }
+
+          // If no permission, exit the function
+          if (finalStatus !== 'granted') {
+          alert('Failed to get push token for push notification!');
+          return;
+          }
+
+          // Get push notification token
+          token = (await Notifications.getExpoPushTokenAsync()).data;
+          console.log("token:", token);
+      } 
+      else {
+          alert('Must use physical device for Push Notifications');
+      }
+
+      if (Platform.OS === 'android') {
+          Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FF231F7C',
+          });
+      }
+      return token;
+    }
 
     componentDidMount(){
-      registerForPushNotificationsAsync().then(token => setExpoPushToken(token)).catch(console.log(".catch"))
+      this.registerForPushNotificationsAsync().then(token => this.setState({ expoPushToken: token })).catch(console.log(".catch"))
 
       // let the_subscription;
-      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-          setNotification(notification);
-      });
+      this.state.notificationListener = Notifications.addNotificationReceivedListener(notification => this.setState({ notification: notification}))
 
-      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-          console.log("hi", response);
+      this.state.responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log("hi", response);
       });
     };
-
-    // Can use this function below, OR use Expo's Push Notification Tool-> https://expo.io/dashboard/notifications
-  async sendPushNotification(expoPushToken) {
-    const message = {
-      to: expoPushToken,
-      sound: 'default',
-      // sound: "../sounds/piano1.wav",
-      title: 'Hello Sidney',
-      body: 'This is a notification for you!',
-      data: { data: 'This is the data' },
-    };
-
-    await fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Accept-encoding': 'gzip, deflate',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(message),
-    });
-  }
-
-  async registerForPushNotificationsAsync() {
-    let token;
-    if (Constants.isDevice) {
-        // Check for existing permissions
-        const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-        console.log("existingStatus:", existingStatus);
-        let finalStatus = existingStatus;
-
-        // If no existing permissions, ask user for permission
-        if (existingStatus !== 'granted') {
-        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-        finalStatus = status;
-        }
-
-        // If no permission, exit the function
-        if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!');
-        return;
-        }
-
-        // Get push notification token
-        token = (await Notifications.getExpoPushTokenAsync()).data;
-        console.log("token:", token);
-    } 
-    else {
-        alert('Must use physical device for Push Notifications');
-    }
-
-    if (Platform.OS === 'android') {
-        Notifications.setNotificationChannelAsync('default', {
-        name: 'default',
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FF231F7C',
-        });
-    }
-    return token;
-  }
 
     render(){
       console.log("Initialize alarms")
@@ -415,7 +395,9 @@ export default class Alarms extends Component {
               <Text>Data: {notification && JSON.stringify(notification.request.content.data.body)}</Text>
               </View> */}
 
-          <AlarmsTable/>
+            {/* <Text>Test</Text>  */}
+
+          {/* <AlarmsTable/> */}
 
           </View>
         </View>
