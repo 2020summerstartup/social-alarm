@@ -7,6 +7,7 @@ import GroupScreen from "../screens/groups/groups";
 import AlarmScreen from '../screens/alarms/push_notifications_testing';
 import ProfileScreen from "../screens/profile/profile";
 import StopwatchScreen from "../screens/stopwatch/stopwatch";
+import ChatScreen from "../screens/messaging/chat"
 import { NavigationContainer } from "@react-navigation/native";
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../style/constants'
 
@@ -28,7 +29,6 @@ export default function Navigation() {
 }
 
 const Tab = createBottomTabNavigator();
-
 
 // Add more screens as necessary
 function MyTabs() {
@@ -78,6 +78,17 @@ function MyTabs() {
               size={size}
             />
           ),
+        }}
+      />
+      <Tab.Screen
+        name="Chat"
+        component={ChatScreen}
+        options={{
+          tabBarLabel: "Chat",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="chat" color={color} size={size} /> // Default color and size: white and 20
+          ),
+          //tabBarVisible: false,
         }}
       />
       <Tab.Screen
