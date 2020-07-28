@@ -132,17 +132,20 @@ export default class Alarms extends Component {
         super(props);
 
         this.state = {
-            alarms: [
-                {name: 'First Alarm',   alarm_hour: 10, alarm_minute: 26, switch: true,  id: "1"},
-                {name: 'Second Alarm',  alarm_hour: 10, alarm_minute: 25, switch: true,  id: "2"},
-                {name: 'Third Alarm',   alarm_hour: 10, alarm_minute: 28, switch: true,  id: "3"},
-                {name: 'Fourth Alarm',  alarm_hour: 10, alarm_minute: 27, switch: true,  id: "4"},
-            ],
+            // alarms: [
+            //     {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  id: "1"},
+            //     {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  id: "2"},
+            //     {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  id: "3"},
+            //     {name: 'Fourth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  id: "4"},
+            // ],
+            alarms: [],
             newAlarmModalOpen: false,
             expoPushToken: "",
             notification: false,
-            newAlarmTime: "",
-            newAlarmText:"",
+            newAlarmTime: 0,
+            newAlarmHour: 0,
+            newAlarmMinute: 0,
+            newAlarmText:"New Alarm",
             notificationListener: "",
             responseListener: ""
         }
@@ -227,6 +230,15 @@ export default class Alarms extends Component {
           console.log("showAlarms:", print_list_new)
           return list;
       }
+    }
+
+    splitTime(){
+      var variable = this.state.newAlarmTime
+      var splitArray
+      splitArray = variable.split(":")
+      console.log("splitArray", splitArray)
+      this.setState( {newAlarmHour: Number(splitArray[0]) })
+      this.setState( {newAlarmMinute: Number(splitArray[1]) })
     }
 
     AlarmsTable(props){
@@ -465,15 +477,31 @@ export default class Alarms extends Component {
                     />
                   </View>
 
-                  <Text style={styles.inputText}> time: {this.state.newAlarmTime}</Text>
-                  <Text style={styles.inputText}> title: {this.state.newAlarmText}</Text>
+                  <Button
+                    title="Split the time"
+                    onPress={ async() =>
+                      this.splitTime()
+                    }
+                  />
+
+                  <Text style={styles.inputText}> time:{this.state.newAlarmTime} </Text>
+                  <Text style={styles.inputText}> hour:{this.state.newAlarmHour} </Text>
+                  <Text style={styles.inputText}> minute:{this.state.newAlarmMinute}</Text>
+                  <Text style={styles.inputText}> title:{this.state.newAlarmText}</Text>
+
 
                   <Button
                     title="Set Alarm"
                     onPress={ async() =>
+                      this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.alarms.length + 1, this.state.alarms)
+                      .then(this.setState({ newAlarmModalOpen: false }))
+                    }
+                  />
+
+                  <Button
+                    title="Close Modal"
+                    onPress={ async() =>
                       this.setState({ newAlarmModalOpen: false })
-                      .then(addAlarm(this.state.newAlarmText, 11, 33, this.state.alarms.length + 1, this.state.alarms))
-                      .then(showAlarms())
                     }
                   />
 
