@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, Header } from 'react-native'
+import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, TouchableOpacity, DevSettings } from 'react-native'
 import { Avatar, ListItem } from 'react-native-elements'
-// import TimezonePicker from 'react-timezone-picker';
+import { auth } from "../../firebase/firebase";
 
 // TO DO: add our app colors to the profile page
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
@@ -37,14 +37,48 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   listItemContainer: {
-    height: 56,
+    height: 60,
     borderWidth: 0.5,
-    borderColor: '#ECECEC',
+    borderColor: APPBACKGROUNDCOLOR,
+  },
+  logo: {
+    fontWeight: "bold",
+    fontSize: 20,
+    color: APPBACKGROUNDCOLOR,
+    marginBottom: 5,
+    marginTop: 5,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  loginBtn: {
+    width: "80%",
+    backgroundColor: APPTEXTRED,
+    borderRadius: 15,
+    height: 40,
+    marginLeft: 20,
+    width: 0.9 * Dimensions.get('screen').width,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+    marginBottom: 10,
   },
 })
 
 class ProfileScreen extends Component {
 
+  signOutUser = async () => {
+     await AsyncStorage.removeItem("email");
+     await AsyncStorage.removeItem("password");
+     //navigation.navigate("Auth");
+     auth
+       .signOut()
+       .then(() => {
+         // this reloads the page
+         DevSettings.reload();
+       })
+       .catch((error) => console.log(error));
+   };
+  
   componentDidMount() {
     this.getEmailName();
   }
@@ -136,7 +170,6 @@ class ProfileScreen extends Component {
                 }}
               />
             }
-            rightIcon={<Chevron />}
           />
           <ListItem
             title="Time Zone"
@@ -152,7 +185,6 @@ class ProfileScreen extends Component {
                 }}
               />
             }
-            rightIcon={<Chevron />}
           />
           {/* Not really sure if we want this, was in the tutorial so I kept it */}
           <ListItem
@@ -225,6 +257,12 @@ class ProfileScreen extends Component {
             rightIcon={<Chevron />}
           />
         </View>
+        <TouchableOpacity
+          style={styles.loginBtn}
+          onPress={() => this.signOutUser()}
+        >
+          <Text style={styles.logo}>Sign Out</Text>
+        </TouchableOpacity>
       </ScrollView>
     )
   }
