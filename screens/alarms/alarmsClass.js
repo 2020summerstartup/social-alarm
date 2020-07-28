@@ -22,16 +22,121 @@ function TopBanner({ children }){
   )
 };
 
+// function AlarmsTable(props){
+//   const closeRow = (rowMap, rowKey) => {
+//     if (rowMap[rowKey]) {
+//         rowMap[rowKey].closeRow();
+//     }
+//   };
+
+//   const deleteRow = (rowMap, rowKey) => {
+//     closeRow(rowMap, rowKey);
+//     const newData = [...props.alarms];
+//     const prevIndex = props.alarms.findIndex(item => item.id === rowKey);
+//     newData.splice(prevIndex, 1);
+//     setAlarms(newData);
+//     // props.setState({ props.alarms: newData});
+//     console.log("rowKey", rowKey)
+//     console.log("alarms[rowKey - 1].name", props.alarms[rowKey - 1].name)
+//     // removeAlarm(alarms[rowKey].name, alarms);
+//   };
+
+//   const onRowDidOpen = rowKey => {
+//     console.log('This row opened', rowKey);
+//   };
+
+//   const onSwipeValueChange = swipeData => {
+//     const { key, value } = swipeData;
+//     // rowSwipeAnimatedValues[key].setValue(Math.abs(value));
+//   };
+
+//   const renderHiddenItem = (data, rowMap) => (
+//     <View style={styles.rowBack}>
+//         <TouchableOpacity
+//             style={[styles.backRightBtn, styles.backRightBtnLeft]}
+//             onPress={() => closeRow(rowMap, data.item.id)}
+//         >
+//           <Text style={styles.backTextWhite}>Close</Text>
+//         </TouchableOpacity>
+
+//         <TouchableOpacity
+//             style={[styles.backRightBtn, styles.backRightBtnRight]}
+//             onPress={() => deleteRow(rowMap, data.item.id)}
+//         >
+//           <View style={[styles.trash]}>
+//               <Image
+//                   source={require('../../assets/trash.png')}
+//                   style={styles.trash}
+//               />
+//           </View>
+//         </TouchableOpacity>
+//     </View>
+//   );
+
+//   return(
+//     <View>
+//       <SwipeListView
+//             keyExtractor ={(item) => item.id} // specifying id as the key to prevent the key warning
+//             data = {props.alarms}
+//             renderItem={({ item }) => (
+//             <AlarmBanner>
+//                 <AlarmDetails title={item.name} hour={item.alarm_hour} minute={item.alarm_minute}/>
+//                 <SwitchExample/>
+//                 <Text>{item.switch}</Text>
+//             </AlarmBanner>
+//             )}
+//             renderHiddenItem={renderHiddenItem}
+//             leftOpenValue={0}
+//             rightOpenValue={-150}
+//             previewRowKey={'0'}
+//             previewOpenValue={-40}
+//             previewOpenDelay={3000}
+//             onRowDidOpen={onRowDidOpen}
+//             onSwipeValueChange={onSwipeValueChange}
+//     />
+//     </View>
+//   )
+// };
+
+function AlarmBanner({ children }){
+  return(
+      <View style = {styles.alarmBanner}>{children}</View>
+  )
+};
+
+function AlarmDetails({title, hour, minute}){
+  var new_hour = hour;
+  if (hour > 12){
+    new_hour = hour - 12
+  }
+  if (minute < 10) {
+    return (
+      <View style={styles.alarmDetails}>
+          <Text style={styles.alarmTime}>{new_hour}:0{minute}</Text>
+          <Text style={styles.alarmText}>{title}</Text>
+      </View>
+    )
+  }
+  else{
+    return (
+      <View style={styles.alarmDetails}>
+          <Text style={styles.alarmTime}>{new_hour}:{minute}</Text>
+          <Text style={styles.alarmText}>{title}</Text>
+      </View>
+    )
+  }
+};
+
 export default class Alarms extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             alarms: [
-                {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 48, switch: true,  id: "1"},
-                {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 49, switch: true,  id: "2"},
-                {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 50, switch: true,  id: "3"},
-                {name: 'Fourth Alarm',  alarm_hour: 13, alarm_minute: 51, switch: true,  id: "4"},
+                {name: 'First Alarm',   alarm_hour: 10, alarm_minute: 26, switch: true,  id: "1"},
+                {name: 'Second Alarm',  alarm_hour: 10, alarm_minute: 25, switch: true,  id: "2"},
+                {name: 'Third Alarm',   alarm_hour: 10, alarm_minute: 28, switch: true,  id: "3"},
+                {name: 'Fourth Alarm',  alarm_hour: 10, alarm_minute: 27, switch: true,  id: "4"},
             ],
             newAlarmModalOpen: false,
             expoPushToken: "",
@@ -42,21 +147,6 @@ export default class Alarms extends Component {
             responseListener: ""
         }
     }
-
-    AlarmBanner({ children }){
-        return(
-            <View style = {styles.alarmBanner}>{children}</View>
-        )
-    };
-
-    AlarmDetails({title, hour, minute}){
-        return (
-            <View style={styles.alarmDetails}>
-                <Text style={styles.alarmTime}>{hour}:{minute}</Text>
-                <Text style={styles.alarmText}>{title}</Text>
-            </View>
-        )
-    };
 
     async makeAlarms(alarm_array){
       alarm_array.forEach(async(list_item) => {
@@ -139,7 +229,7 @@ export default class Alarms extends Component {
       }
     }
 
-    AlarmsTable(){
+    AlarmsTable(props){
       const closeRow = (rowMap, rowKey) => {
         if (rowMap[rowKey]) {
             rowMap[rowKey].closeRow();
@@ -148,12 +238,13 @@ export default class Alarms extends Component {
   
       const deleteRow = (rowMap, rowKey) => {
         closeRow(rowMap, rowKey);
-        const newData = [...alarms];
-        const prevIndex = alarms.findIndex(item => item.id === rowKey);
+        const newData = [...props.alarms];
+        const prevIndex = props.alarms.findIndex(item => item.id === rowKey);
         newData.splice(prevIndex, 1);
-        setAlarms(newData);
+        // setAlarms(newData);
+        this.setState({ alarms: newData }),
         console.log("rowKey", rowKey)
-        console.log("alarms[rowKey - 1].name", alarms[rowKey - 1].name)
+        // console.log("alarms[rowKey - 1].name", props.alarms[rowKey - 1].name)
         // removeAlarm(alarms[rowKey].name, alarms);
       };
   
@@ -163,7 +254,6 @@ export default class Alarms extends Component {
   
       const onSwipeValueChange = swipeData => {
         const { key, value } = swipeData;
-        // rowSwipeAnimatedValues[key].setValue(Math.abs(value));
       };
   
       const renderHiddenItem = (data, rowMap) => (
@@ -191,9 +281,10 @@ export default class Alarms extends Component {
 
       return(
         <View>
+          {/* <Text>"props.alarms:" {props.alarms[1].name}</Text> */}
           <SwipeListView
                 keyExtractor ={(item) => item.id} // specifying id as the key to prevent the key warning
-                data = {alarms}
+                data = {props.alarms}
                 renderItem={({ item }) => (
                 <AlarmBanner>
                     <AlarmDetails title={item.name} hour={item.alarm_hour} minute={item.alarm_minute}/>
@@ -313,6 +404,8 @@ export default class Alarms extends Component {
 
     render(){
       console.log("Initialize alarms")
+      this.makeAlarms(this.state.alarms)
+      this.state.alarms.sort(this.sortByTime)
 
       return(
         <View style={styles.container}>
@@ -368,7 +461,7 @@ export default class Alarms extends Component {
                       style={styles.inputText}
                       placeholder="Alarm title..."
                       placeholderTextColor="#003f5c"
-                      onChangeText={(text) => {setAlarmText(text)}}
+                      onChangeText={(text) => this.setState({newAlarmText: text})}
                     />
                   </View>
 
@@ -377,9 +470,10 @@ export default class Alarms extends Component {
 
                   <Button
                     title="Set Alarm"
-                    onPress={async() => 
+                    onPress={ async() =>
                       this.setState({ newAlarmModalOpen: false })
-                      // addAlarm("New Alarm", 10, 49, alarms.length + 1, alarms)
+                      .then(addAlarm(this.state.newAlarmText, 11, 33, this.state.alarms.length + 1, this.state.alarms))
+                      .then(showAlarms())
                     }
                   />
 
@@ -397,7 +491,10 @@ export default class Alarms extends Component {
 
             {/* <Text>Test</Text>  */}
 
-          {/* <AlarmsTable/> */}
+            {/* <AlarmsTable/> */}
+
+            {/* <this.AlarmsTable alarms={this.state.alarms}/> */}
+            <this.AlarmsTable alarms={this.state.alarms}/>
 
           </View>
         </View>
