@@ -3,7 +3,6 @@ import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncS
 import { Avatar, ListItem } from 'react-native-elements'
 import { auth } from "../../firebase/firebase";
 
-// TO DO: add our app colors to the profile page
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 
 // chevron is the greater than sign that's on the right of everything on the profile page
@@ -257,6 +256,8 @@ class ProfileScreen extends Component {
             rightIcon={<Chevron />}
           />
         </View>
+        
+        {/* Sign out button */}
         <TouchableOpacity
           style={styles.loginBtn}
           onPress={() => this.signOutUser()}
