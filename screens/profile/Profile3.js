@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage } from 'react-native'
+import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, Header } from 'react-native'
 import { Avatar, ListItem } from 'react-native-elements'
-import TimezonePicker from 'react-timezone-picker';
+// import TimezonePicker from 'react-timezone-picker';
 
 // TO DO: add our app colors to the profile page
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
@@ -14,8 +14,8 @@ import BaseIcon from './icon'
 
 /* profile3.js
  * profile screen 
- * has push notifications, birthday, time zone, language, about us, terms&policies, 
- * share our app, rate us and send feedback
+ * has push notifications, birthday, time zone, language, about us,  
+ * share our app, and send feedback
  * feel free to change or delete any of these 
  */
 
@@ -49,6 +49,7 @@ class ProfileScreen extends Component {
     this.getEmailName();
   }
 
+  // gets user email and name from async storage
   getEmailName = async () => {
   
     const userEmail = await AsyncStorage.getItem("email"); 
@@ -75,18 +76,8 @@ class ProfileScreen extends Component {
 
   render() {
     return (
-      <ScrollView style={styles.scroll}>
-        {/* TO DO: figure out if we want a profile picture & how to import it */}
+      <ScrollView style={styles.scroll}>  
         <View style={styles.userRow}>
-          {/*<View style={styles.userImage}>
-            <Avatar
-              rounded
-              size="large"
-              source={{
-                uri: avatar,
-              }}
-            />
-            </View>*/}
           <View>
             <Text style={{ fontSize: 30, color: APPBACKGROUNDCOLOR }}>{this.state.name}</Text>
             <Text
@@ -95,10 +86,18 @@ class ProfileScreen extends Component {
                 fontSize: 25,
               }}
             >
-              {this.state.email} {/* TO DO: figure out how to get name and email from firebase */}
+              {this.state.email} 
             </Text>
           </View>
         </View>
+
+        {/* This is supposed to show an avatar but it doesn't show up, styling issues?
+        <Avatar
+          rounded
+          icon={{name: 'user', type: 'font-awesome'}}
+          activeOpacity={0.7}
+          containerStyle={{flex: 2, marginLeft: 20, marginTop: 115}}
+        />*/}
         {/* Not really sure if we want this, was in the tutorial so I kept it, maybe change to sign out button? */}
         <View>
           <ListItem
@@ -192,21 +191,6 @@ class ProfileScreen extends Component {
             rightIcon={<Chevron />}
           />
           <ListItem
-            title="Terms and Policies"
-            onPress={ ()=>{ Linking.openURL('https://www.google.com')}}
-            containerStyle={styles.listItemContainer}
-            leftIcon={
-              <BaseIcon
-                containerStyle={{ backgroundColor: '#C6C7C6' }}
-                icon={{
-                  type: 'entypo',
-                  name: 'light-bulb',
-                }}
-              />
-            }
-            rightIcon={<Chevron />}
-          />
-          <ListItem
             title="Share our App"
             onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}}
             containerStyle={styles.listItemContainer}
@@ -218,23 +202,6 @@ class ProfileScreen extends Component {
                 icon={{
                   type: 'entypo',
                   name: 'share',
-                }}
-              />
-            }
-            rightIcon={<Chevron />}
-          />
-          <ListItem
-            title="Rate Us"
-            onPress={ ()=>{ Linking.openURL('https://www.google.com')}}
-            containerStyle={styles.listItemContainer}
-            leftIcon={
-              <BaseIcon
-                containerStyle={{
-                  backgroundColor: '#FECE44',
-                }}
-                icon={{
-                  type: 'entypo',
-                  name: 'star',
                 }}
               />
             }
