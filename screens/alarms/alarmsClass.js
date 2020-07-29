@@ -407,7 +407,7 @@ export default class Alarms extends Component {
                       onDateChange={(time) => this.setState({ newAlarmTime: time })}
                       customStyles={{
                         dateInput:{
-                          color: "white"
+                          color: "black"
                         },
                         btnTextConfirm:{
                           color: "lightgreen"
