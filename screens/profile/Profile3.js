@@ -21,6 +21,8 @@ import BaseIcon from './icon'
 const styles = StyleSheet.create({
   scroll: {
     backgroundColor: 'white',
+
+    // these lines fit the container to the entire screen
     height: Dimensions.get('window').height,
     width: Dimensions.get('window').width,
   },
@@ -55,7 +57,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     height: 40,
     marginLeft: 20,
-    width: 0.9 * Dimensions.get('screen').width,
+    width: 0.9 * Dimensions.get('screen').width, // sign out button is 90% of the screen's width
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
@@ -65,6 +67,7 @@ const styles = StyleSheet.create({
 
 class ProfileScreen extends Component {
 
+  // sign out functionality 
   signOutUser = async () => {
      await AsyncStorage.removeItem("email");
      await AsyncStorage.removeItem("password");
@@ -84,7 +87,6 @@ class ProfileScreen extends Component {
 
   // gets user email and name from async storage
   getEmailName = async () => {
-  
     const userEmail = await AsyncStorage.getItem("email"); 
     const userName = await AsyncStorage.getItem("name");
     this.setState({name: userName});
@@ -96,11 +98,12 @@ class ProfileScreen extends Component {
 
     this.state = {
       pushNotifications: true,
-      name: "",
-      email: "",
+      name: "", // this is the user's name
+      email: "", // this is the user's email
     };
   }
 
+  // changes the toggle switch whenever the user clicks it
   onChangePushNotifications = () => {
     this.setState(state => ({
       pushNotifications: !state.pushNotifications,
@@ -110,6 +113,7 @@ class ProfileScreen extends Component {
   render() {
     return (
       <ScrollView style={styles.scroll}>  
+        {/* this part shows the user's name and email */}
         <View style={styles.userRow}>
           <View>
             <Text style={{ fontSize: 30, color: APPBACKGROUNDCOLOR }}>{this.state.name}</Text>
@@ -131,7 +135,7 @@ class ProfileScreen extends Component {
           activeOpacity={0.7}
           containerStyle={{flex: 2, marginLeft: 20, marginTop: 115}}
         />*/}
-        {/* Not really sure if we want this, was in the tutorial so I kept it, maybe change to sign out button? */}
+        {/* Not really sure if we want this, was in the tutorial so I kept it */}
         <View>
           <ListItem
             hideChevron
@@ -172,7 +176,7 @@ class ProfileScreen extends Component {
           />
           <ListItem
             title="Time Zone"
-            rightTitle="PST" // TO DO: add time zone picker here
+            rightTitle="PST" // TO DO: add time zone picker or a text box here
             rightTitleStyle={{ fontSize: 15 }}
             containerStyle={styles.listItemContainer}
             leftIcon={
@@ -204,7 +208,6 @@ class ProfileScreen extends Component {
             rightIcon={<Chevron />}
           />
         </View>
-        {/*<InfoText text="More" />*/}
         <View>
           <ListItem
             title="About Us"

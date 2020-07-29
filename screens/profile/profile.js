@@ -9,8 +9,8 @@ import Profile3 from './Profile3';
 
 /* profile.js
  * Profile screen
+ * TO DO: delete this file? all the code is in Profile3.js
  */
-
 
 export default function Profile({ navigation }) {
   return (
