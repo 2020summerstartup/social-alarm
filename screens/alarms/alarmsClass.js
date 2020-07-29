@@ -14,23 +14,26 @@ import { APPBACKGROUNDCOLOR } from '../../style/constants';
 import { appStyles } from '../../style/stylesheet';
 import TimePicking from "../../components/timePicker";
 import DatePicker from 'react-native-datepicker';
+import RNPickerSelect from 'react-native-picker-select';
 
 import * as firebase from "firebase";
 import { db, auth } from "../../firebase/firebase";
 
+// TopBanner formats the title and modal button along the top of the screen
 function TopBanner({ children }){
   return(
     <View style = {styles.topBanner}>{children}</View>
   )
 };
 
-
+// An AlarmBanner is one alarm displayed in the list of alarms
 function AlarmBanner({ children }){
   return(
       <View style = {styles.alarmBanner}>{children}</View>
   )
 };
 
+// AlarmDetails specifies the layout within an AlarmBanner 
 function AlarmDetails({title, hour, minute}){
   var new_hour = hour;
   if (hour > 12){
@@ -68,6 +71,7 @@ export default class Alarms extends Component {
             ],
             // alarms: [],
             newAlarmModalOpen: false,
+            groupPickerModalOpen: false,
             expoPushToken: "",
             notification: false,
             newAlarmTime: 0,
@@ -75,7 +79,9 @@ export default class Alarms extends Component {
             newAlarmMinute: 0,
             newAlarmText:"New Alarm",
             notificationListener: "",
-            responseListener: ""
+            responseListener: "",
+            newGroupName: "",
+            groupsArray: [],
         }
     }
 
@@ -181,6 +187,43 @@ export default class Alarms extends Component {
       });
     }
 
+    getFirebaseUsersGroups(){
+      db.collection("users")
+      .doc(auth.currentUser.email)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          // get the groups from the user's doc - store in some state to display
+          const groupsData = [];
+          for (var i = 0; i < doc.data().groups.length; i++) {
+            groupsData.push({
+              name: doc.data().groups[i].name,
+              id: doc.data().groups[i].id,
+              key: i,
+            });
+          }
+          this.setState({ groupsArray: groupsData });
+          // console.log("The user's groups:", this.state.groupsArray)
+
+          // Adds label and value keys to the groupsArray for the picker to work
+          this.state.groupsArray.forEach( element => {
+            // console.log("element before", element)
+            // var obj = {label: element.name, value: element.name}
+            element.label = element.name;
+            element.value = element.name;
+            element.key = element.name;
+            // console.log("element after", element);
+          })
+
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+      this.setState({ groupPickerModalOpen: true })
+    }
+
     splitTime(){
       var variable = this.state.newAlarmTime
       var splitArray
@@ -220,16 +263,16 @@ export default class Alarms extends Component {
         <View style={styles.rowBack}>
             <TouchableOpacity
                 style={[styles.backLeftBtn]}
-                onPress={() => console.log("Pressed share alarm with group button")}
+                onPress={() => this.getFirebaseUsersGroups()}
             >
-              <Text style={styles.backTextWhite}>+ Group</Text>
+              <Text style={styles.backTextWhite}>+Group</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
                 style={[styles.backRightBtn, styles.backRightBtnCenter]}
                 onPress={() => closeRow(rowMap, data.item.id)}
             >
-              <Text style={styles.backTextWhite}>Close</Text>
+              <Text style={styles.backTextWhite}>Edit</Text>
             </TouchableOpacity>
   
             <TouchableOpacity
@@ -259,10 +302,10 @@ export default class Alarms extends Component {
                 </AlarmBanner>
                 )}
                 renderHiddenItem={renderHiddenItem}
-                leftOpenValue={75}
-                rightOpenValue={-160}
-                previewRowKey={'0'}
-                previewOpenValue={-80}
+                leftOpenValue={90}
+                rightOpenValue={-145}
+                previewRowKey={'1'}
+                previewOpenValue={-50}
                 previewOpenDelay={500}
                 onRowDidOpen={onRowDidOpen}
                 onSwipeValueChange={onSwipeValueChange}
@@ -323,7 +366,7 @@ export default class Alarms extends Component {
       if (Constants.isDevice) {
           // Check for existing permissions
           const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-          console.log("existingStatus:", existingStatus);
+          // console.log("existingStatus:", existingStatus);
           let finalStatus = existingStatus;
 
           // If no existing permissions, ask user for permission
@@ -340,7 +383,7 @@ export default class Alarms extends Component {
 
           // Get push notification token
           token = (await Notifications.getExpoPushTokenAsync()).data;
-          console.log("token:", token);
+          // console.log("token:", token);
       } 
       else {
           alert('Must use physical device for Push Notifications');
@@ -358,14 +401,12 @@ export default class Alarms extends Component {
     }
 
     componentDidMount(){
-      this.registerForPushNotificationsAsync().then(token => this.setState({ expoPushToken: token })).catch(console.log(".catch"))
+      this.registerForPushNotificationsAsync().then(token => this.setState({ expoPushToken: token }))//.catch(console.log(".catch"))
 
       // let the_subscription;
       this.state.notificationListener = Notifications.addNotificationReceivedListener(notification => this.setState({ notification: notification}))
 
-      this.state.responseListener = Notifications.addNotificationResponseReceivedListener(response => {
-        console.log("hi", response);
-      });
+      this.state.responseListener = Notifications.addNotificationResponseReceivedListener(response => {console.log("Response:", response)});
     };
 
     render(){
@@ -378,6 +419,8 @@ export default class Alarms extends Component {
         <View style={styles.container}>
           <TopBanner>
               <Text style={styles.pageTitle}>Alarms_Testing</Text>
+
+              {/*BEGINNING OF MODAL FOR ADD ALARM */}
               <MaterialIcons
                   name="add"
                   size={24}
@@ -397,7 +440,7 @@ export default class Alarms extends Component {
 
                     <DatePicker
                       style={{height: 75, width: 200, color: "black"}}
-                      date= {this.state.newAlarmTime}
+                      date= "20:00"
                       mode="time"
                       format="HH:mm"
                       confirmBtnText="Confirm"
@@ -405,22 +448,17 @@ export default class Alarms extends Component {
                       showIcon={false}
                       minuteInterval={1}
                       onDateChange={(time) => this.setState({ newAlarmTime: time })}
-                      customStyles={{
-                        dateInput:{
-                          color: "black"
-                        },
-                        btnTextConfirm:{
-                          color: "lightgreen"
-                        },
-                        btnCancel:{
-                          color: "red"
-                        }
-                      }}
-                      onPressMask={console.log("Pressed")}
-                      // hideText={true}
-                      hideText={false}
-                      allowFontScaling={true}
-                      // useNativeDriver: true
+                      // customStyles={{
+                      //   // dateInput:{
+                      //   //   color: "black"
+                      //   // },
+                      //   btnTextConfirm:{
+                      //     color: "lightgreen"
+                      //   },
+                      //   btnCancel:{
+                      //     color: "red"
+                      //   }
+                      // }}
                     />
 
                   <View style={styles.inputView}>
@@ -445,15 +483,13 @@ export default class Alarms extends Component {
                   <Text style={styles.inputText}> title:{this.state.newAlarmText}</Text>
 
 
-                  {/* <View style={styles.inputView}> */}
-                      <Button style={styles.button}
-                      title="Set Alarm"
-                      onPress={ async() =>
-                        this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.alarms.length + 1, this.state.alarms)
-                        .then(this.setState({ newAlarmModalOpen: false }))
-                      }
-                      />
-                  {/* </View> */}
+                  <Button style={styles.button}
+                  title="Set Alarm"
+                  onPress={ async() =>
+                    this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.alarms.length + 1, this.state.alarms)
+                    .then(this.setState({ newAlarmModalOpen: false }))
+                  }
+                  />
 
                   <Button
                     title="Close Modal"
@@ -464,6 +500,8 @@ export default class Alarms extends Component {
 
               </View>
               </Modal>
+              {/*END OF MODAL FOR ADD ALARM */}
+
           </TopBanner>
         
           <View style={styles.scrollViewContainer}>
@@ -478,13 +516,38 @@ export default class Alarms extends Component {
 
           </View>
 
-          <Text style={styles.Text}> Share alarm with a group</Text>
+          {/*BEGINNING OF MODAL FOR GROUP PICKER */}
+          <Modal visible={this.state.groupPickerModalOpen} animationType="slide">
+          <View style={appStyles.modalContainer}>
+              <MaterialIcons
+              name="close"
+              size={24}
+              style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
+              onPress={() => this.setState({ groupPickerModalOpen: false })}
+              />
+              <Text style={styles.pageTitle}> Select a group </Text>
 
-          <View style={styles.inputView}>
+              {/* https://github.com/lawnstarter/react-native-picker-select */} 
+              <RNPickerSelect
+                onValueChange={(label) => console.log(label)}
+                // items={[
+                //     { label: 'Option1', value: 'option1' },
+                //     { label: 'Option2', value: 'option2' },
+                // ]}
+                items={this.state.groupsArray}
+              />
+          </View>
+          </Modal>
+          {/*END OF MODAL FOR GROUP PICKER */}
+
+          {/* <Text style={styles.Text}> Share alarm with a group</Text> */}
+
+          {/* <View style={styles.inputView}>
             <TextInput
               style={styles.inputText}
               placeholder="Group name..."
               placeholderTextColor="#003f5c"
+              onChangeText={(text) => this.setState({newGroupName: text})}
             />
           </View>
 
@@ -493,7 +556,7 @@ export default class Alarms extends Component {
             onPress={ async() =>
               this.updateFirebaseGroupsDoc()
             }
-          />
+          /> */}
 
         </View>
       );
