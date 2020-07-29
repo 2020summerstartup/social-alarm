@@ -1,3 +1,5 @@
+// This is the most updated alarms page file as of 7/28/20
+ 
 import React, { useState, useEffect, useRef, Component } from 'react';
 import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList, AsyncStorage, Animated, Image, TouchableHighlight } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Component } from 'react';
 import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import SwitchExample, {switchValue} from '../../components/toggleSwitch';
+import SwitchExample, {switchValue} from '../../../components/toggleSwitch';
 import Moment from 'moment';
 
 import { APPBACKGROUNDCOLOR } from '../constants';
@@ -11,7 +11,7 @@ import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 
-import {createAlarm} from '../../helpers/createAlarm';
+import {createAlarm} from '../../../helpers/createAlarm';
 import { MaterialIcons } from "@expo/vector-icons";
 
 const moment = require("moment");

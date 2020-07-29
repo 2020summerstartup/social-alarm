@@ -7,14 +7,14 @@ import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 import { MaterialIcons } from "@expo/vector-icons";
 
-import SwitchExample, {switchValue} from '../../components/toggleSwitch';
-import { APPBACKGROUNDCOLOR } from '../../style/constants';
-import { appStyles } from '../../style/stylesheet';
-import TimePicking from "../../components/timePicker";
+import SwitchExample, {switchValue} from '../../../components/toggleSwitch';
+import { APPBACKGROUNDCOLOR } from '../../../style/constants';
+import { appStyles } from '../../../style/stylesheet';
+import TimePicking from "../../../components/timePicker";
 import DatePicker from 'react-native-datepicker';
 
 import * as firebase from "firebase";
-import { db, auth } from "../../firebase/firebase";
+import { db, auth } from "../../../firebase/firebase";
 
 function AlarmBanner({ children }){
     return(
