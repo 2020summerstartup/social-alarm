@@ -91,7 +91,7 @@ export default class Groups extends Component {
           }
           groupData.push({
             name: name,
-            id: docRef,
+            id: docRef.id,
             key: this.state.groups.length + 1,
           });
           
@@ -109,7 +109,7 @@ export default class Groups extends Component {
     // opens modal, stores some info in some state
     this.setState({ groupModalOpen: true });
     this.setState({ groupNameClicked: groupName });
-    this.setState({ groupIdClicked: groupId.id });
+    this.setState({ groupIdClicked: groupId });
 
     // groupId  might be a string or a doc reference, so it does something different for each case
     if (typeof groupId == "string") {
@@ -123,8 +123,10 @@ export default class Groups extends Component {
             groupMem.push(doc.data().members[i]);
           }
           this.setState({ groupMembers: groupMem });
+          console.log(this.state.groupMembers)
         });
-    } else {
+    } 
+    /* else {
       // gets group members,  stores them in state
       db.collection("groups")
         .doc(groupId.id)
@@ -136,7 +138,7 @@ export default class Groups extends Component {
           }
           this.setState({ groupMembers: groupMem });
         });
-    }
+    } */
   };
 
   addUser = (userName, groupId) => {
@@ -201,15 +203,35 @@ export default class Groups extends Component {
       .catch((error) => console.log(error));
   };
 
-  deleteGroup(group) {
+  deleteGroup(group, groupId) {
     console.log('delete ' + group)
-    /*
-    db.collection('users').doc(user.email).update({
+
+    console.log(this.state.groupIdClicked)
+    console.log(group)
+    console.log(groupId)
+    
+    db.collection('users').doc(this.state.user.email).update({
       groups: Firebase.firestore.FieldValue.arrayRemove({
-
+        id: this.state.groupIdClicked,
+        name: group
       })
-
-    })*/
+    }).then( ()  => {
+      console.log(group  + ' deleted')
+      db.collection('groups').doc(groupId).update({
+        members: Firebase.firestore.FieldValue.arrayRemove(this.state.user.email)
+      })
+    }).then(() => {
+      console.log('hi')
+      
+      // maybe look in to a better way of doing this?
+      db.collection('groups').doc(groupId).get().then( function(doc) {
+        if(doc.data().members.length < 1) {
+          console.log('0')
+          db.collection('groups').doc(groupId).delete().then( () => console.log('doc deleted'))
+        }
+      })
+    }) 
+    .catch((error) => console.log(error)).catch((error) => console.log(error))
     this.setState({groupModalOpen: false})
 
   }
@@ -289,7 +311,7 @@ export default class Groups extends Component {
               />
               <MaterialIcons name = 'delete' size={24} 
                 style={{ ...appStyles.modalToggle, ...appStyles.modalClose }} color='#333' 
-                onPress={() => this.deleteGroup(this.state.groupNameClicked)}
+                onPress={() => this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked)}
                 
               />
               <Text
