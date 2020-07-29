@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef, Component } from 'react';
-import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList, AsyncStorage, Animated, Image, TouchableHighlight } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Button, View, Switch, Text, Platform, TouchableOpacity, Modal, Animated, Image, TouchableHighlight } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 import Constants from 'expo-constants';
@@ -8,9 +7,15 @@ import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 import { MaterialIcons } from "@expo/vector-icons";
 
-import SwitchExample, {switchValue} from '../../../components/toggleSwitch';
 import { APPBACKGROUNDCOLOR } from '../../../style/constants';
-import { appStyles } from '../../../style/stylesheet';
+import SwitchExample, {switchValue} from '../../../components/toggleSwitch';
+import { appStyles, alarmStyles } from '../../../style/stylesheet';
+
+// import DatePicker from 'react-native-modern-datepicker'; 
+import TimePicking from '../../components/timePicker';
+import {time} from '../../components/timePicker';
+
+import { db, auth } from "../../firebase/firebase";
 
 import * as firebase from "firebase";
 import { db, auth } from "../../../firebase/firebase";
@@ -19,15 +24,15 @@ import { db, auth } from "../../../firebase/firebase";
 
 function AlarmBanner({ children }){
     return(
-        <View style = {styles.alarmBanner}>{children}</View>
+        <View style = {alarmStyles.alarmBanner}>{children}</View>
     )
 };
 
 function AlarmDetails({title, hour, minute, second}){
     return (
-        <View style={styles.alarmDetails}>
-            <Text style={styles.alarmTime}>{hour}:{minute}:{second}</Text>
-            <Text style={styles.alarmText}>{title}</Text>
+        <View style={alarmStyles.alarmDetails}>
+            <Text style={alarmStyles.alarmTime}>{hour}:{minute}:{second}</Text>
+            <Text style={alarmStyles.alarmText}>{title}</Text>
         </View>
     )
 };
@@ -141,22 +146,22 @@ function AlarmsTable(){
     };
 
     const renderHiddenItem = (data, rowMap) => (
-      <View style={styles.rowBack}>
+      <View style={alarmStyles.rowBack}>
           <TouchableOpacity
-              style={[styles.backRightBtn, styles.backRightBtnLeft]}
+              style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnLeft]}
               onPress={() => closeRow(rowMap, data.item.id)}
           >
-            <Text style={styles.backTextWhite}>Close</Text>
+            <Text style={alarmStyles.backTextWhite}>Close</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-              style={[styles.backRightBtn, styles.backRightBtnRight]}
+              style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnRight]}
               onPress={() => deleteRow(rowMap, data.item.id)}
           >
-            <Animated.View style={[styles.trash]}>
+            <Animated.View style={[alarmStyles.trash]}>
                 <Image
                     source={require('../../assets/trash.png')}
-                    style={styles.trash}
+                    style={alarmStyles.trash}
                 />
             </Animated.View>
           </TouchableOpacity>
@@ -192,7 +197,7 @@ function AlarmsTable(){
 
 function TopBanner({ children }){
   return(
-    <View style = {styles.topBanner}>{children}</View>
+    <View style = {alarmStyles.topBanner}>{children}</View>
   )
 };
 
@@ -200,11 +205,11 @@ function AddAlarmButton({title, color, background, onPress, disabled }) {
   return (
     <TouchableOpacity 
       onPress ={() => !disabled && onPress()} //when not disabled
-      style ={[styles.button, {backgroundColor: background}]}
+      style ={[alarmStyles.button, {backgroundColor: background}]}
       activeOpacity={disabled ? 1.0: 0.5} // means if disabled then 1.0, otherwise 0.5
     >
-      <View style = {styles.buttonBorder}> 
-        <Text style ={[ styles.buttonTitle, {color} ]}>{title}</Text>
+      <View style = {alarmStyles.buttonBorder}> 
+        <Text style ={[ alarmStyles.buttonTitle, {color} ]}>{title}</Text>
       </View>
     </TouchableOpacity>
   )
@@ -226,6 +231,28 @@ export default function AppAlarmsPage() {
     const notificationListener = useRef();
     const responseListener = useRef();
 
+    // This is the time picker, has two rows for the hour and minute
+    const TimePicker = () => {
+      const [time, setTime] = useState('');
+
+      return (
+        <DatePicker
+          mode="time"
+          minuteInterval={1}
+          onTimeChange={selectedTime => setTime(selectedTime), console.log(time)}
+          options={{
+            backgroundColor: APPBACKGROUNDCOLOR,
+            textDefaultColor: APPTEXTWHITE,
+            selectedTextColor: '#fff',
+            mainColor: APPTEXTRED,
+            textFontSize:16
+          }}
+        />
+        // <Text style={styles.logo}>time: {selectedTime}</Text>
+        // </View>
+      );
+    };
+
     useEffect(() => { // useEffect is similar to componentDidMount and componentDidUpdate
         registerForPushNotificationsAsync().then(token => setExpoPushToken(token)).catch(console.log(".catch"))
 
@@ -246,9 +273,9 @@ export default function AppAlarmsPage() {
     }, []);
 
     return (
-        <View style={styles.container}>
+        <View style={alarmStyles.container}>
         <TopBanner>
-            <Text style={styles.pageTitle}>Alarms_Testing</Text>
+            <Text style={alarmStyles.pageTitle}>Alarms_Testing</Text>
             <MaterialIcons
                 name="add"
                 size={24}
@@ -263,7 +290,7 @@ export default function AppAlarmsPage() {
                 style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                 onPress={() => setModalOpen(false)}
                 />
-                <Text style={styles.Text}>
+                <Text style={alarmStyles.Text}>
                 DateTimePicker will go here
                 </Text>
             </View>
@@ -278,7 +305,7 @@ export default function AppAlarmsPage() {
           }}
         />
 
-        <View style={styles.scrollViewContainer}>
+        <View style={alarmStyles.scrollViewContainer}>
             {/* <Text>Your expo push token: {expoPushToken}</Text>
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
             <Text>Title: {notification && notification.request.content.title} </Text>

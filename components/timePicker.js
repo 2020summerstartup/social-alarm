@@ -12,7 +12,8 @@ export default class datepicker extends Component {
     super(props);
 
     this.state = {
-      time: '20:00',
+      time: "20:00",
+      useNativeDriver: true
     };
   }
 

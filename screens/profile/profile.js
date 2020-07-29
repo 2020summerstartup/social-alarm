@@ -1,52 +1,21 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   StyleSheet,
   View,
-  Text,
-  TouchableOpacity,
-  AsyncStorage,
 } from "react-native";
-import { auth, db } from "../../firebase/firebase";
+import Profile3 from './Profile3';
+import { auth } from "../../firebase/firebase";
+import { appStyles } from "../../style/stylesheet";
 
 /* profile.js
  * Profile screen
- * contains sign out button
+ * TO DO: delete this file? all the code is in Profile3.js
  */
 
 export default function Profile({ navigation }) {
-  var user = auth.currentUser;
-
-  // signOutUser - navigates user to login screen/stack, signs out user via firebase
-  // DEBUGGING NOW - NOT FUNCTIONAL
-  // navigation problems, but async storage stuff works (just reload app)
-  signOutUser = async () => {
-    //navigation.navigate('Auth');
-    await AsyncStorage.removeItem("userToken");
-    /*
-    auth.signOut().then(function(user) {
-      // await AsyncStorage.removeItem(userToken);
-      navigation.navigate('Auth');
-      // sign out successful
-      
-        
-    }).catch(function(error) {
-      // errors
-    }) */
-
-    // {db.collection('users').doc(user.uid).get()}
-  };
   return (
     <View style={styles.container}>
-      <Text style={styles.name}>Name: </Text>
-      <Text style={styles.logo}>Age: </Text>
-      <Text style={styles.logo}>Location: </Text>
-
-      <TouchableOpacity
-        style={styles.loginBtn}
-        onPress={() => this.signOutUser()}
-      >
-        <Text style={styles.loginText}>Sign Out</Text>
-      </TouchableOpacity>
+      <Profile3/>
     </View>
   );
 }
@@ -55,36 +24,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fafafa",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-
-  name: {
-    fontWeight: "bold",
-    fontSize: 20,
-    color: "#003f5c",
-    marginBottom: 5,
-    marginTop: 35,
-    marginLeft: 20,
-  },
-
-  logo: {
-    fontWeight: "bold",
-    fontSize: 20,
-    color: "#003f5c",
-    marginBottom: 5,
-    marginTop: 5,
-    marginLeft: 20,
-  },
-
-  loginBtn: {
-    width: "80%",
-    backgroundColor: "#fb5b5a",
-    borderRadius: 25,
-    height: 50,
     alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 10,
+    justifyContent: "flex-start",
   },
 });

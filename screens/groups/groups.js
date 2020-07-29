@@ -13,11 +13,19 @@ import {
   Keyboard,
 } from "react-native";
 // TODO: can i make this less things?? - possibly import the default fromfirebase file
-import * as firebase from "firebase";
+// import * as firebase from "firebase";
+import Firebase from "../../firebase/firebase";
 import { db, auth } from "../../firebase/firebase";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
+
+import {
+  APPBACKGROUNDCOLOR,
+  APPTEXTRED,
+  APPTEXTWHITE,
+} from "../../style/constants";
+import { appStyles, alarmStyles } from "../../style/stylesheet";
 
 export default class Groups extends Component {
   constructor(props) {
@@ -31,7 +39,7 @@ export default class Groups extends Component {
       groupName: "",
       // array of groups the user is in
       groups: [],
-      // current user - doesn't change, idk why it's a state 
+      // current user - doesn't change, idk why it's a state
       user: auth.currentUser,
       // info for group specific modal
       groupNameClicked: "",
@@ -69,7 +77,7 @@ export default class Groups extends Component {
           db.collection("users")
             .doc(user.email)
             .update({
-              groups: firebase.firestore.FieldValue.arrayUnion({
+              groups: Firebase.firestore.FieldValue.arrayUnion({
                 name: name,
                 id: docRef,
               }),
@@ -89,8 +97,7 @@ export default class Groups extends Component {
     }
   };
 
-
-  // called when user presses one of the group buttons 
+  // called when user presses one of the group buttons
   // opens group modal and sets it all  up
   groupModal = (groupName, groupId) => {
     // opens modal, stores some info in some state
@@ -126,13 +133,12 @@ export default class Groups extends Component {
     }
   };
 
-
   addUser = (userName, groupId) => {
     //  this is needed - talk to anna to explain more
-    // https://stackoverflow.com/questions/39191001/setstate-with-firebase-promise-in-react 
+    // https://stackoverflow.com/questions/39191001/setstate-with-firebase-promise-in-react
     var self = this;
 
-    // find's user's doc 
+    // find's user's doc
     db.collection("users")
       .doc(userName)
       .get()
@@ -149,7 +155,7 @@ export default class Groups extends Component {
                 db.collection("users")
                   .doc(userName)
                   .update({
-                    groups: firebase.firestore.FieldValue.arrayUnion({
+                    groups: Firebase.firestore.FieldValue.arrayUnion({
                       name: doc2.data().groupName,
                       id: doc2.id,
                     }),
@@ -159,7 +165,7 @@ export default class Groups extends Component {
                     db.collection("groups")
                       .doc(groupId)
                       .update({
-                        members: firebase.firestore.FieldValue.arrayUnion(
+                        members: Firebase.firestore.FieldValue.arrayUnion(
                           userName
                         ),
                       });
@@ -219,20 +225,20 @@ export default class Groups extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {/* CREATE NEW GROUP MODAL */}
+        {/* *********** CREATE NEW GROUP MODAL *********** */}
         <Modal visible={this.state.createModalOpen} animationType="slide">
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View style={styles.modalContainer}>
+            <View style={appStyles.modalContainer}>
               <MaterialIcons
                 name="close"
                 size={24}
-                style={{ ...styles.modalToggle, ...styles.modalClose }}
+                style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                 onPress={() => this.setState({ createModalOpen: false })}
               />
               <Text style={styles.logo}>Create Group</Text>
-              <View style={styles.inputView}>
+              <View style={appStyles.inputView}>
                 <TextInput
-                  style={styles.inputText}
+                  style={appStyles.inputText}
                   placeholder="Group name..."
                   placeholderTextColor="#003f5c"
                   onChangeText={(text) => {
@@ -241,35 +247,41 @@ export default class Groups extends Component {
                 />
               </View>
               <TouchableOpacity
-                style={styles.loginBtn}
+                style={appStyles.loginBtn}
                 onPress={() =>
                   this.createGroup(this.state.groupName, this.user)
                 }
               >
-                <Text style={styles.buttonText}> Create group </Text>
+                <Text style={appStyles.buttonText}> Create group </Text>
               </TouchableOpacity>
             </View>
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* INDIVIDUAL GROUP MODAL */}
+        {/* *********** INDIVIDUAL GROUP MODAL *********** */}
         <Modal visible={this.state.groupModalOpen} animationType="slide">
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View style={styles.modalContainer}>
+            <View style={appStyles.modalContainer}>
               <MaterialIcons
                 name="close"
                 size={24}
-                style={{ ...styles.modalToggle, ...styles.modalClose }}
+                style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                 onPress={() => this.setState({ groupModalOpen: false })}
               />
-              <Text style={styles.logo}>{this.state.groupNameClicked}</Text>
+              <Text
+                adjustsFontSizeToFit
+                numberOfLines={1}
+                style={{ ...styles.logo, ...{ marginTop: 5 } }}
+              >
+                {this.state.groupNameClicked}
+              </Text>
 
-              <View style={styles.inputView}>
+              <View style={appStyles.inputView}>
                 <TextInput
                   ref={(input) => {
                     this.textInput = input;
                   }}
-                  style={styles.inputText}
+                  style={appStyles.inputText}
                   placeholder="add friends ..."
                   placeholderTextColor="#003f5c"
                   keyboardType="email-address"
@@ -279,21 +291,28 @@ export default class Groups extends Component {
                 />
               </View>
               <TouchableOpacity
-                style={styles.loginBtn}
+                style={{ ...appStyles.loginBtn, ...{ marginTop: 10 } }}
                 onPress={() =>
                   this.addUser(this.state.addUser, this.state.groupIdClicked)
                 }
               >
-                <Text style={styles.buttonText}> add friendssss</Text>
+                <Text style={appStyles.buttonText}> add member</Text>
               </TouchableOpacity>
 
-              <Text>Members:</Text>
-              <ScrollView>
+              <Text style={styles.wordText}>Members:</Text>
+              <ScrollView style={{ width: "95%" }}>
                 {this.state.groupMembers &&
                   this.state.groupMembers.map((person) => {
                     return (
-                      <TouchableOpacity style={styles.groups} key={person}>
-                        <Text style={styles.groupCard}>{person}</Text>
+                      <TouchableOpacity style={styles.alarmBanner} key={person}>
+                        <Text
+                          adjustsFontSizeToFit
+                          numberOfLines={1}
+                          // allowFontScaling
+                          style={styles.memberText}
+                        >
+                          {person}
+                        </Text>
                       </TouchableOpacity>
                     );
                   })}
@@ -302,7 +321,7 @@ export default class Groups extends Component {
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* ACTUAL PAGE */}
+        {/* *********** ACTUAL PAGE *********** */}
 
         <View style={styles.center}>
           <Text style={styles.logo}>Groups</Text>
@@ -311,19 +330,28 @@ export default class Groups extends Component {
         <MaterialIcons
           name="add"
           size={24}
-          style={styles.modalToggle}
+          style={appStyles.modalToggle}
           onPress={() => this.setState({ createModalOpen: true })}
         />
-        <ScrollView>
+        <ScrollView
+          //indicatorStyle='white'
+          style={{ width: "95%" }}
+        >
           {this.state.groups &&
             this.state.groups.map((group) => {
               return (
                 <TouchableOpacity
-                  style={styles.groups}
+                  style={styles.alarmBanner}
                   key={group.key}
                   onPress={() => this.groupModal(group.name, group.id)}
                 >
-                  <Text style={styles.groupCard}>{group.name}</Text>
+                  <Text
+                    adjustsFontSizeToFit
+                    numberOfLines={1}
+                    style={styles.alarmText}
+                  >
+                    {group.name}
+                  </Text>
                 </TouchableOpacity>
               );
             })}
@@ -336,81 +364,74 @@ export default class Groups extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#003f5c",
-    //alignItems: "center",
+    backgroundColor: APPBACKGROUNDCOLOR,
+    alignItems: "center",
     justifyContent: "center",
+  },
+
+  wordText: {
+    color: APPTEXTWHITE,
+    fontSize: 20,
+    padding: 10,
+  },
+
+  // the banner
+  alarmBanner: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: APPTEXTRED,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 0,
+    marginBottom: 10,
+    paddingTop: 0,
+    paddingBottom: 0,
+    width: "100%",
+    borderRadius: 15,
+  },
+
+  // lol bad name - the  button text
+  alarmText: {
+    color: APPTEXTWHITE,
+    fontSize: 30,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    padding: 5,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingVertical: 10,
+  },
+
+  //  text in indiv group modal - members
+  memberText: {
+    color: APPTEXTWHITE,
+    fontSize: 22,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    padding: 5,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingVertical: 10,
   },
 
   logo: {
     marginTop: 30,
     fontWeight: "bold",
     fontSize: 50,
-    color: "#fb5b5a",
+    color: APPTEXTRED,
     marginBottom: 18,
     alignItems: "center",
   },
 
-  inputView: {
-    width: "80%",
-    backgroundColor: "#465881",
-    borderRadius: 25,
-    height: 50,
-    marginBottom: 10,
-    justifyContent: "center",
-    padding: 20,
-  },
-
-  inputText: {
-    height: 50,
-    color: "white",
-  },
-
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    padding: 10,
-  },
-
-  loginBtn: {
-    width: "80%",
-    backgroundColor: "#fb5b5a",
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 10,
-  },
-
-  modalToggle: {
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#fb5b5a",
-    padding: 10,
-    borderRadius: 10,
-    alignSelf: "center",
-    color: "#fb5b5a",
-  },
-
-  modalContainer: {
-    backgroundColor: "#003f5c",
-    flex: 1,
-    alignItems: "center",
-  },
-
-  modalClose: {
-    marginTop: 30,
-    marginBottom: 0,
-  },
-
+  //  old  group card stuff
   groupCard: {
     //marginBottom: 20,
     //borderWidth: 1,
-    borderColor: "#fb5b5a",
+    borderColor: APPTEXTRED,
     padding: 10,
-
     alignSelf: "center",
-    color: "#fb5b5a",
+    color: APPTEXTRED,
     fontSize: 24,
     alignItems: "flex-start",
   },
@@ -419,12 +440,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
+  // old group card stuff
   groups: {
     alignItems: "flex-start",
     borderRadius: 6,
     marginLeft: 16,
     elevation: 3,
-    backgroundColor: "#003f5c",
+    backgroundColor: APPBACKGROUNDCOLOR,
     shadowOffset: { width: 1, height: 1 },
     shadowColor: "#031821",
     shadowOpacity: 0.7,

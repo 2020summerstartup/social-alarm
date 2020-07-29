@@ -12,6 +12,8 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { auth } from "../../firebase/firebase";
+import { APPTEXTRED } from '../../style/constants';
+import { appStyles } from '../../style/stylesheet';
 
 /* forgotPassword.js
  * Forgot password screen
@@ -44,13 +46,13 @@ export default function Login({ navigation }) {
 */
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
+      <View style={appStyles.loginContainer}>
         <Text style={styles.logoTop}>Forgot</Text>
-        <Text style={styles.logo}>Password?</Text>
-        <View style={styles.inputView}>
+        <Text style={appStyles.logo}>Password?</Text>
+        <View style={appStyles.inputView}>
           {/* email text input */}
           <TextInput
-            style={styles.inputText}
+            style={appStyles.inputText}
             placeholder="Email..."
             placeholderTextColor="#003f5c"
             keyboardType="email-address"
@@ -62,10 +64,10 @@ export default function Login({ navigation }) {
 
         {/* forgot pass button */}
         <TouchableOpacity
-          style={styles.loginBtn}
+          style={appStyles.loginBtn}
           onPress={() => this.forgotPass(email)}
         >
-          <Text style={styles.forgot}>Send password reset email</Text>
+          <Text style={appStyles.loginText}>Send password reset email</Text>
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
@@ -73,59 +75,12 @@ export default function Login({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#003f5c",
-    alignItems: "center",
-    justifyContent: "center",
-  },
+
   logoTop: {
     fontWeight: "bold",
     fontSize: 50,
-    color: "#fb5b5a",
+    color: APPTEXTRED,
     marginBottom: 0,
   },
 
-  logo: {
-    fontWeight: "bold",
-    fontSize: 50,
-    color: "#fb5b5a",
-    marginBottom: 40,
-  },
-
-  inputView: {
-    width: "80%",
-    backgroundColor: "#465881",
-    borderRadius: 25,
-    height: 50,
-    marginBottom: 20,
-    justifyContent: "center",
-    padding: 20,
-  },
-
-  inputText: {
-    height: 50,
-    color: "white",
-  },
-
-  forgot: {
-    color: "white",
-    fontSize: 13,
-  },
-
-  loginText: {
-    color: "white",
-    fontSize: 15,
-  },
-
-  loginBtn: {
-    width: "80%",
-    backgroundColor: "#fb5b5a",
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 10,
-  },
 });

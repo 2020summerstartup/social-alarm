@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import "react-native-gesture-handler";
 import {
-  StyleSheet,
   Text,
   View,
   TextInput,
@@ -19,8 +18,7 @@ import { auth } from "../../firebase/firebase";
 // import { NavigationContainer } from '@react-navigation/native';
 // import NavigationContainer from './navigation';
 
-
-import {APPBACKGROUNDCOLOR} from '../../style/constants';
+import {appStyles} from '../../style/stylesheet';
 
 
 /* login.js
@@ -44,7 +42,8 @@ export default function Login({ navigation }) {
   // TODO: add AsyncStorage so user stays signed in
   loginUser = async (email, password) => {
     try {
-      await AsyncStorage.setItem("userToken", email);
+      await AsyncStorage.setItem("email", email);
+      await AsyncStorage.setItem("password", password);
       auth
         .signInWithEmailAndPassword(email, password)
         .then(function (user) {
@@ -65,12 +64,12 @@ export default function Login({ navigation }) {
 */
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
-        <Text style={styles.logo}>Group Alarm</Text>
+      <View style={appStyles.loginContainer}>
+        <Text style={appStyles.logo}>Group Alarm</Text>
         {/* text input fields (email, password) */}
-        <View style={styles.inputView}>
+        <View style={appStyles.inputView}>
           <TextInput
-            style={styles.inputText}
+            style={appStyles.inputText}
             placeholder="Email..."
             placeholderTextColor="#003f5c"
             keyboardType="email-address"
@@ -80,10 +79,10 @@ export default function Login({ navigation }) {
           />
         </View>
 
-        <View style={styles.inputView}>
+        <View style={appStyles.inputView}>
           <TextInput
             secureTextEntry
-            style={styles.inputText}
+            style={appStyles.inputText}
             placeholder="Password..."
             placeholderTextColor="#003f5c"
             onChangeText={(text) => setPassword(text)}
@@ -92,76 +91,23 @@ export default function Login({ navigation }) {
 
         {/* forgot password button */}
         <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
-          <Text style={styles.forgot}>Forgot Password?</Text>
+          <Text style={appStyles.forgot}>Forgot Password?</Text>
         </TouchableOpacity>
 
         {/* login button */}
         <TouchableOpacity
-          style={styles.loginBtn}
+          style={appStyles.loginBtn}
           onPress={() => this.loginUser(email, password)}
         >
-          <Text style={styles.loginText}>LOGIN</Text>
+          <Text style={appStyles.loginText}>LOGIN</Text>
         </TouchableOpacity>
 
         {/* signup button */}
         <TouchableOpacity onPress={() => this.signUpUser()}>
-          <Text style={styles.loginText}>Signup</Text>
+          <Text style={appStyles.loginText}>Signup</Text>
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  logo: {
-    fontWeight: "bold",
-    fontSize: 50,
-    color: "#fb5b5a",
-    marginBottom: 40,
-  },
-
-  inputView: {
-    width: "80%",
-    backgroundColor: "#465881",
-    borderRadius: 25,
-    height: 50,
-    marginBottom: 20,
-    justifyContent: "center",
-    padding: 20,
-  },
-
-  inputText: {
-    height: 50,
-    color: "white",
-  },
-
-  forgot: {
-    color: "white",
-    fontSize: 13,
-  },
-
-  loginText: {
-    color: "white",
-    fontSize: 15,
-  },
-
-  loginBtn: {
-    width: "80%",
-    backgroundColor: "#fb5b5a",
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 10,
-  },
-
-});
 

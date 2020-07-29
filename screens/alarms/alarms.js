@@ -1,17 +1,18 @@
 import React, { useState, useEffect, Component } from 'react';
 import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import SwitchExample, {switchValue} from '../../../components/toggleSwitch';
+import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 import Moment from 'moment';
 
-import { alarmStyles } from '../../style/stylesheet';
+
 
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 
-import {createAlarm} from '../../../helpers/createAlarm';
+import {createAlarm} from '../../helpers/createAlarm';
 import { MaterialIcons } from "@expo/vector-icons";
+import { appStyles, alarmStyles } from '../../style/stylesheet';
+import { APPBACKGROUNDCOLOR } from '../../style/constants';
 
 const moment = require("moment");
 
@@ -47,14 +48,14 @@ function AlarmDetails({title, time}){
 
 function AlarmsTable(){
   const [alarms, setAlarms] = useState([
-      {name: 'First Alarm',  time: '3:15',  switch: 'false',  id: '1'},
-      {name: 'Second Alarm', time: '4:15',  switch: 'false',  id: '2'},
-      {name: 'Third Alarm',  time: '5:15',  switch: 'true',   id: '3'},
+      {name: 'First Alarm', time: '5:15', switch: 'false',  id: '1'},
+      {name: 'Second Alarm', time: '4:15', switch: 'false', id: '2'},
+      {name: 'Third Alarm', time: '3:15', switch: 'true',   id: '3'},
   ]);
 
   return(
      <View>
-      {/*<ScrollView style = {alarmStyles.scrollView}>
+      {/*<ScrollView style = {styles.scrollView}>
             {alarms.map((list_item) => (
                <View key={list_item.key}>
                   <AlarmBanner>
@@ -247,21 +248,31 @@ export default function AppAlarmsPage() {
         </Modal>
       </TopBanner>
 
-      <View style={alarmStyles.scrollViewContainer}>
-        {/* <Text>Your expo push token: {expoPushToken}</Text>*/}
-        {/*<View style={{ alignItems: 'center', justifyContent: 'center' }}>
-          <Text>Title: {notification && notification.request.content.title} </Text>
-          <Text>Body: {notification && notification.request.content.body}</Text>
-          <Text>Data: {notification && JSON.stringify(notification.request.content.data.body)}</Text>
-        </View>*/}
-        <AlarmsTable/>
-        <Button
-          title="Send a notification now"
-          onPress={async () => {
-            await sendPushNotification(expoPushToken);
-          }}
-        />
-      </View>
+        {/*<Text style={alarmStyles.alarmText}>You have an alarm set for + alarm_minute + ":" alarm_second</Text>*/}
+
+        {/*<Text style={alarmStyles.alarmText}>{my_alarms_list.state.alarm_list}</Text>*/}    
+        {/* <AddAlarmButton 
+            title = "+" 
+            color = "white"
+            background = '#858585'
+            onPress = {my_alarms_list.addAlarm_alarmList}
+        /> */}
+        
+        <View style={styles.scrollViewContainer}>
+          {/* <Text>Your expo push token: {expoPushToken}</Text>*/}
+          {/*<View style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Text>Title: {notification && notification.request.content.title} </Text>
+            <Text>Body: {notification && notification.request.content.body}</Text>
+            <Text>Data: {notification && JSON.stringify(notification.request.content.data.body)}</Text>
+          </View>*/}
+          <AlarmsTable/>
+          <Button
+            title="Send a notification now"
+            onPress={async () => {
+              await sendPushNotification(expoPushToken);
+            }}
+          />
+        </View>
     </View>
 
   );
@@ -318,3 +329,20 @@ async function registerForPushNotificationsAsync() {
 
   return token;
 }
+
+const styles = StyleSheet.create({
+  scrollViewContainer: {
+    flex: 1,
+    backgroundColor: APPBACKGROUNDCOLOR,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 10,
+    paddingBottom: 10,
+    padding: 0
+  },
+
+  scrollView: {
+    alignSelf: 'stretch',
+    alignContent: 'center',
+  },
+})
