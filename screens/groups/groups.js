@@ -92,7 +92,7 @@ export default class Groups extends Component {
           groupData.push({
             name: name,
             id: docRef.id,
-            key: this.state.groups.length + 1,
+            //key: this.state.groups.length + 1,
           });
           
           this.setState({ groups: groupData });
@@ -204,29 +204,34 @@ export default class Groups extends Component {
   };
 
   deleteGroup(group, groupId) {
-    console.log('delete ' + group)
-
-    console.log(this.state.groupIdClicked)
-    console.log(group)
-    console.log(groupId)
     
     db.collection('users').doc(this.state.user.email).update({
       groups: Firebase.firestore.FieldValue.arrayRemove({
-        id: this.state.groupIdClicked,
+        id: groupId,
         name: group
       })
     }).then( ()  => {
-      console.log(group  + ' deleted')
       db.collection('groups').doc(groupId).update({
         members: Firebase.firestore.FieldValue.arrayRemove(this.state.user.email)
       })
     }).then(() => {
-      console.log('hi')
+      const newGroups = this.state.groups
+      console.log(groupId)
+      console.log(group)
+      console.log(newGroups[4])
+      console.log({id: groupId, name: group})
+      console.log(newGroups[4] == {id: groupId, name: group})
+      for(var i = 0; i < newGroups.length; i++) {
+        if(newGroups[i].id == groupId) {
+          newGroups.splice(i, 1)
+        }
+      }
+      this.setState({groups: newGroups})
+
       
       // maybe look in to a better way of doing this?
       db.collection('groups').doc(groupId).get().then( function(doc) {
         if(doc.data().members.length < 1) {
-          console.log('0')
           db.collection('groups').doc(groupId).delete().then( () => console.log('doc deleted'))
         }
       })
@@ -252,7 +257,7 @@ export default class Groups extends Component {
             groupsData.push({
               name: doc.data().groups[i].name,
               id: doc.data().groups[i].id,
-              key: i,
+              //key: i,
             });
           }
           this.setState({ groups: groupsData });
@@ -388,7 +393,7 @@ export default class Groups extends Component {
               return (
                 <TouchableOpacity
                   style={styles.alarmBanner}
-                  key={group.key}
+                  key={group.id}
                   onPress={() => this.groupModal(group.name, group.id)}
                 >
                   <Text
