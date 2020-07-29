@@ -286,7 +286,7 @@ export default class Groups extends Component {
                   this.addUser(this.state.addUser, this.state.groupIdClicked)
                 }
               >
-                <Text style={styles.buttonText}> add friendssss</Text>
+                <Text style={styles.buttonText}> add friends!</Text>
               </TouchableOpacity>
 
               <Text>Members:</Text>

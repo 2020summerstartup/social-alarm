@@ -12,8 +12,10 @@ import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 import { appStyles } from '../../style/stylesheet';
 
-import DatePicker from 'react-native-modern-datepicker';
+// import DatePicker from 'react-native-modern-datepicker'; 
 import TimePicking from '../../components/timePicker';
+import {time} from '../../components/timePicker';
+
 import { db, auth } from "../../firebase/firebase";
 
 
@@ -276,7 +278,8 @@ export default function AppAlarmsPage() {
         <View style={styles.container}>
         <TopBanner>
             {/* <Text style={styles.pageTitle}>Alarms_Testing</Text> */}
-            <TimePicking/> 
+            <TimePicking/>
+            
             {/*<MaterialIcons
                 name="add"
                 size={24}
