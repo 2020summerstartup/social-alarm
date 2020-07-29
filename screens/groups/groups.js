@@ -83,7 +83,6 @@ export default class Groups extends Component {
                 id: docRef.id,
               }),
             });
-            console.log('groupData')
           //  update user's groups in state
           var groupData = [];
           for(var i = 0;  i < this.state.groups.length; i++) {
@@ -91,8 +90,8 @@ export default class Groups extends Component {
           }
           groupData.push({
             name: name,
-            id: docRef,
-            key: this.state.groups.length + 1,
+            id: docRef.id,
+            //key: this.state.groups.length + 1,
           });
           
           this.setState({ groups: groupData });
@@ -109,7 +108,7 @@ export default class Groups extends Component {
     // opens modal, stores some info in some state
     this.setState({ groupModalOpen: true });
     this.setState({ groupNameClicked: groupName });
-    this.setState({ groupIdClicked: groupId.id });
+    this.setState({ groupIdClicked: groupId });
 
     // groupId  might be a string or a doc reference, so it does something different for each case
     if (typeof groupId == "string") {
@@ -124,7 +123,8 @@ export default class Groups extends Component {
           }
           this.setState({ groupMembers: groupMem });
         });
-    } else {
+    } 
+    /* else {
       // gets group members,  stores them in state
       db.collection("groups")
         .doc(groupId.id)
@@ -136,81 +136,109 @@ export default class Groups extends Component {
           }
           this.setState({ groupMembers: groupMem });
         });
-    }
+    } */
   };
 
   addUser = (userName, groupId) => {
     //  this is needed - talk to anna to explain more
     // https://stackoverflow.com/questions/39191001/setstate-with-firebase-promise-in-react
     var self = this;
+    if (userName){
 
     // find's user's doc
     db.collection("users")
-      .doc(userName)
-      .get()
-      .then(function (doc) {
-        // if that is a  real user in our system
-        if (doc.exists) {
-          db.collection("groups")
-            .doc(groupId)
-            .get()
-            .then(function (doc2) {
-              // if the user is not already in the group
-              if (doc2.data().members.indexOf(userName) == -1) {
-                // update user's document so it contains new group info
-                db.collection("users")
-                  .doc(userName)
-                  .update({
-                    groups: Firebase.firestore.FieldValue.arrayUnion({
-                      name: doc2.data().groupName,
-                      id: doc2.id,
-                    }),
-                  })
-                  .then(function () {
-                    // update group doc so it contains added user
-                    db.collection("groups")
-                      .doc(groupId)
-                      .update({
-                        members: Firebase.firestore.FieldValue.arrayUnion(
-                          userName
-                        ),
-                      });
-                    // clear texr input screen, add user to screen via state
-                    self.textInput.clear();
-                    const groupMem = [];
-                    for (var i = 0; i < self.state.groupMembers.length; i++) {
-                      groupMem.push(self.state.groupMembers[i]);
-                    }
-                    groupMem.push(userName);
-                    self.setState({ groupMembers: groupMem });
-                  })
-                  .catch((error) => console.log(error));
-              } else {
-                // if the user is already in the  group - alert
-                Alert.alert("Oops!", "This user is already in the group", [
-                  { text: "ok" },
-                ]);
-              }
-            })
-            .catch((error) => console.log(error));
-        } else {
-          // id the  user is not in our database - alert
-          Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
-        }
-      })
-      .catch((error) => console.log(error));
+    .doc(userName)
+    .get()
+    .then(function (doc) {
+      // if that is a  real user in our system
+      if (doc.exists) {
+        db.collection("groups")
+          .doc(groupId)
+          .get()
+          .then(function (doc2) {
+            // if the user is not already in the group
+            if (doc2.data().members.indexOf(userName) == -1) {
+              // update user's document so it contains new group info
+              db.collection("users")
+                .doc(userName)
+                .update({
+                  groups: Firebase.firestore.FieldValue.arrayUnion({
+                    name: doc2.data().groupName,
+                    id: doc2.id,
+                  }),
+                })
+                .then(function () {
+                  // update group doc so it contains added user
+                  db.collection("groups")
+                    .doc(groupId)
+                    .update({
+                      members: Firebase.firestore.FieldValue.arrayUnion(
+                        userName
+                      ),
+                    });
+                  // clear texr input screen, add user to screen via state
+                  self.textInput.clear();
+                  const groupMem = [];
+                  for (var i = 0; i < self.state.groupMembers.length; i++) {
+                    groupMem.push(self.state.groupMembers[i]);
+                  }
+                  groupMem.push(userName);
+                  self.setState({ groupMembers: groupMem });
+                })
+                .catch((error) => console.log(error));
+            } else {
+              // if the user is already in the  group - alert
+              Alert.alert("Oops!", "This user is already in the group", [
+                { text: "ok" },
+              ]);
+            }
+          })
+          .catch((error) => console.log(error));
+      } else {
+        // id the  user is not in our database - alert
+        Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
+      }
+    })
+    .catch((error) => console.log(error));
+
+    }  else {
+      Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
+    }
+
   };
 
-  deleteGroup(group) {
-    console.log('delete ' + group)
-    /*
-    db.collection('users').doc(user.email).update({
+  // deletes current user from a group
+  deleteGroup(group, groupId) {
+    var self = this;
+    
+    db.collection('users').doc(self.state.user.email).update({
       groups: Firebase.firestore.FieldValue.arrayRemove({
-
+        id: groupId,
+        name: group
       })
+    }).then( ()  => {
+      db.collection('groups').doc(groupId).get().then( function(doc) {
+        if(doc.data().members.length <= 1) {
+          db.collection('groups').doc(groupId).delete().then( () => console.log('doc deleted'))
+        } else {
+          db.collection('groups').doc(groupId).update({
+            members: Firebase.firestore.FieldValue.arrayRemove(self.state.user.email)
+          })
+        }
+      })
+    }).then(() => {
+      const newGroups = self.state.groups
+      for(var i = 0; i < newGroups.length; i++) {
+        if(newGroups[i].id == groupId) {
+          newGroups.splice(i, 1)
+        }
+      }
+      self.setState({groups: newGroups})
+      self.setState({groupModalOpen: false})
 
-    })*/
-    this.setState({groupModalOpen: false})
+    }) 
+    .catch((error) => console.log(error)).catch((error) => console.log(error))
+    
 
   }
 
@@ -230,7 +258,7 @@ export default class Groups extends Component {
             groupsData.push({
               name: doc.data().groups[i].name,
               id: doc.data().groups[i].id,
-              key: i,
+              //key: i,
             });
           }
           this.setState({ groups: groupsData });
@@ -289,7 +317,7 @@ export default class Groups extends Component {
               />
               <MaterialIcons name = 'delete' size={24} 
                 style={{ ...appStyles.modalToggle, ...appStyles.modalClose }} color='#333' 
-                onPress={() => this.deleteGroup(this.state.groupNameClicked)}
+                onPress={() => this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked)}
                 
               />
               <Text
@@ -306,7 +334,7 @@ export default class Groups extends Component {
                     this.textInput = input;
                   }}
                   style={appStyles.inputText}
-                  placeholder="add friends ..."
+                  placeholder="add group member..."
                   placeholderTextColor="#003f5c"
                   keyboardType="email-address"
                   onChangeText={(text) => {
@@ -323,12 +351,12 @@ export default class Groups extends Component {
                 <Text style={appStyles.buttonText}> add member</Text>
               </TouchableOpacity>
 
-              <Text style={styles.wordText}>Members:</Text>
+              <Text style={styles.wordText}>Members: {this.state.groupMembers.length}</Text>
               <ScrollView style={{ width: "95%" }}>
                 {this.state.groupMembers &&
                   this.state.groupMembers.map((person) => {
                     return (
-                      <TouchableOpacity style={styles.alarmBanner} key={person}>
+                      <TouchableOpacity style={styles.alarmBanner} key={person} >
                         <Text
                           adjustsFontSizeToFit
                           numberOfLines={1}
@@ -366,7 +394,7 @@ export default class Groups extends Component {
               return (
                 <TouchableOpacity
                   style={styles.alarmBanner}
-                  key={group.key}
+                  key={group.id}
                   onPress={() => this.groupModal(group.name, group.id)}
                 >
                   <Text
