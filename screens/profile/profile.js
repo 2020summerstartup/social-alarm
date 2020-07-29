@@ -1,44 +1,37 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   StyleSheet,
   View,
   Text,
   TouchableOpacity,
   AsyncStorage,
+  DevSettings,
 } from "react-native";
 import { auth } from "../../firebase/firebase";
-import { appStyles } from '../../style/stylesheet';
-import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
+import { appStyles } from "../../style/stylesheet";
+import { APPBACKGROUNDCOLOR } from "../../style/constants";
 
 /* profile.js
  * Profile screen
  * contains sign out button
  */
 
-export default function Profile({ navigation }) {
-  var user = auth.currentUser;
-
+export default function Profile() {
   // signOutUser - navigates user to login screen/stack, signs out user via firebase
-  // DEBUGGING NOW - NOT FUNCTIONAL
-  // navigation problems, but async storage stuff works (just reload app)
+  // i had navigation problems so now the app reloads and once it reloads it goes to auth
   signOutUser = async () => {
-    //navigation.navigate('Auth');
     await AsyncStorage.removeItem("email");
     await AsyncStorage.removeItem("password");
-    auth.signOut().catch((error) => console.log(error))
-    /*
-    auth.signOut().then(function(user) {
-      // await AsyncStorage.removeItem(userToken);
-      navigation.navigate('Auth');
-      // sign out successful
-      
-        
-    }).catch(function(error) {
-      // errors
-    }) */
-
-    // {db.collection('users').doc(user.uid).get()}
+    //navigation.navigate("Auth");
+    auth
+      .signOut()
+      .then(() => {
+        // this reloads the page
+        DevSettings.reload();
+      })
+      .catch((error) => console.log(error));
   };
+
   return (
     <View style={styles.container}>
       <Text style={styles.name}>Name: </Text>
@@ -80,5 +73,4 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginLeft: 20,
   },
-
 });

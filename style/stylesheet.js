@@ -100,7 +100,7 @@ const appStyles = StyleSheet.create({
 });
 
 
-// ********** NEW STYLESHEET **********
+// ********** NEW STYLESHEET **********************************
 
 const alarmStyles = StyleSheet.create({
   container: {

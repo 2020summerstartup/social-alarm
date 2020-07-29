@@ -76,8 +76,8 @@ export default function SignUp({ navigation }) {
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={appStyles.loginContainer}>
-        <Text style={appStyles.logo}>Sign Up</Text>
+      <View style={styles.container}>
+        <Text style={styles.logo}>Sign Up</Text>
         <View style={appStyles.inputView}>
           {/* text inputs - email, password, confirm password */}
           <TextInput
@@ -120,6 +120,7 @@ export default function SignUp({ navigation }) {
             style={appStyles.inputText}
             placeholder="Name..."
             placeholderTextColor="#003f5c"
+            autoCorrect={false}
             onChangeText={(text) => {
               setName(text);
             }}
@@ -145,49 +146,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: APPBACKGROUNDCOLOR,
     alignItems: "center",
-    justifyContent: "center",
+    paddingTop: 20,
+    //justifyContent: "center",
   },
 
   logo: {
     fontWeight: "bold",
     fontSize: 50,
     color: APPTEXTRED,
-    marginBottom: 40,
-  },
-
-  inputView: {
-    width: "80%",
-    backgroundColor: "#465881",
-    borderRadius: 25,
-    height: 50,
     marginBottom: 20,
-    justifyContent: "center",
-    padding: 20,
-  },
-
-  inputText: {
-    height: 50,
-    color: APPTEXTWHITE,
-  },
-
-  forgot: {
-    color: APPTEXTWHITE,
-    fontSize: 13,
-  },
-
-  loginText: {
-    color: APPTEXTWHITE,
-    fontSize: 15,
-  },
-
-  loginBtn: {
-    width: "80%",
-    backgroundColor: APPTEXTRED,
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 10,
   },
 });
