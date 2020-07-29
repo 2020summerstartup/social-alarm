@@ -12,6 +12,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import { SwipeListView } from 'react-native-swipe-list-view';
 // TODO: can i make this less things?? - possibly import the default fromfirebase file
 // import * as firebase from "firebase";
 import Firebase from "../../firebase/firebase";
@@ -79,16 +80,21 @@ export default class Groups extends Component {
             .update({
               groups: Firebase.firestore.FieldValue.arrayUnion({
                 name: name,
-                id: docRef,
+                id: docRef.id,
               }),
             });
+            console.log('groupData')
           //  update user's groups in state
-          groupData = this.state.groups;
+          var groupData = [];
+          for(var i = 0;  i < this.state.groups.length; i++) {
+            groupData.push(this.state.groups[i]);
+          }
           groupData.push({
             name: name,
             id: docRef,
             key: this.state.groups.length + 1,
           });
+          
           this.setState({ groups: groupData });
         })
         .catch(function (error) {
@@ -195,6 +201,19 @@ export default class Groups extends Component {
       .catch((error) => console.log(error));
   };
 
+  deleteGroup(group) {
+    console.log('delete ' + group)
+    /*
+    db.collection('users').doc(user.email).update({
+      groups: Firebase.firestore.FieldValue.arrayRemove({
+
+      })
+
+    })*/
+    this.setState({groupModalOpen: false})
+
+  }
+
   // called when the component launches/mounts
   // this is like a react native method that automatically gets called
   //  when the component  mounts
@@ -267,6 +286,11 @@ export default class Groups extends Component {
                 size={24}
                 style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                 onPress={() => this.setState({ groupModalOpen: false })}
+              />
+              <MaterialIcons name = 'delete' size={24} 
+                style={{ ...appStyles.modalToggle, ...appStyles.modalClose }} color='#333' 
+                onPress={() => this.deleteGroup(this.state.groupNameClicked)}
+                
               />
               <Text
                 adjustsFontSizeToFit
