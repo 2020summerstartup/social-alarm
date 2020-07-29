@@ -7,8 +7,9 @@ import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 import { MaterialIcons } from "@expo/vector-icons";
 
-import SwitchExample, {switchValue} from '../../components/toggleSwitch';
-import { appStyles, alarmStyles } from '../../style/stylesheet';
+import { APPBACKGROUNDCOLOR } from '../../../style/constants';
+import SwitchExample, {switchValue} from '../../../components/toggleSwitch';
+import { appStyles, alarmStyles } from '../../../style/stylesheet';
 
 // import DatePicker from 'react-native-modern-datepicker'; 
 import TimePicking from '../../components/timePicker';
@@ -16,6 +17,8 @@ import {time} from '../../components/timePicker';
 
 import { db, auth } from "../../firebase/firebase";
 
+import * as firebase from "firebase";
+import { db, auth } from "../../../firebase/firebase";
 
 // const rowSwipeAnimatedValues = {};
 
@@ -90,20 +93,29 @@ async function showAlarms(){
 }
 
 function AlarmsTable(){
+
     const [alarms, setAlarms] = useState([
-        {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 48, alarm_second: 0, switch: true,  id: "1"},
-        {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 49, alarm_second: 0, switch: true,  id: "2"},
-        {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 50, alarm_second: 0, switch: true,  id: "3"},
-        {name: 'Fourth Alarm',  alarm_hour: 13, alarm_minute: 51, alarm_second: 0, switch: true,  id: "4"},
+        {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 48, switch: true,  id: "1"},
+        {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 49, switch: true,  id: "2"},
+        {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 50, switch: true,  id: "3"},
+        {name: 'Fourth Alarm',  alarm_hour: 13, alarm_minute: 51, switch: true,  id: "4"},
     ]);
 
-    makeAlarms(alarms).then(list => {
-      var print_list;
-      for (var i = 0; i < alarms.length; i++) {
-          print_list += list[i].identifier
-          print_list += " "
-      }
-    })
+    makeAlarms(alarms)
+      .then(list => {
+        var print_list;
+        for (var i = 0; i < alarms.length; i++) {
+            print_list += list[i].identifier
+            print_list += " "
+        }
+      db.collection("users")
+      .doc("sidneyt9999@gmail.com")
+      .update({
+        alarms: firebase.firestore.FieldValue.arrayUnion({
+          alarms: alarms
+        }),
+      });
+    });
 
     // removeAlarm(alarms[1].name, alarms)
     // removeAlarm("Second Alarm", alarms)
@@ -132,18 +144,6 @@ function AlarmsTable(){
       const { key, value } = swipeData;
       // rowSwipeAnimatedValues[key].setValue(Math.abs(value));
     };
-
-    const renderItem = data => (
-      <TouchableHighlight
-          onPress={() => console.log('You touched me')}
-          style={alarmStyles.rowFront}
-          underlayColor={'#AAA'}
-      >
-          <View>
-              <Text>I am {data.item.title} in a SwipeListView</Text>
-          </View>
-      </TouchableHighlight>
-    );
 
     const renderHiddenItem = (data, rowMap) => (
       <View style={alarmStyles.rowBack}>
@@ -380,3 +380,198 @@ async function registerForPushNotificationsAsync() {
     return token;
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: APPBACKGROUNDCOLOR,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 100,
+  },
+
+  scrollViewContainer: {
+    flex: 1,
+    backgroundColor: APPBACKGROUNDCOLOR,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 30,
+    paddingBottom: 10,
+    padding: 0
+  },
+
+  timerContainer: {
+    flexDirection: "row",
+  },
+
+  lapTimer:{
+    width: 25,
+  },
+
+  topBanner:{
+    flexDirection : "row",
+    width:"100%",
+    // backgroundColor: "white",
+    backgroundColor: APPBACKGROUNDCOLOR,
+    height: 110,
+    paddingTop: 30,
+    paddingBottom: 0,
+    padding: 15,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: "space-between",
+  },
+
+  Text:{
+    height:50,
+    color: "white",
+    fontSize: 16
+  },
+
+  pageTitle:{
+    padding: 20,
+    color: "#fb5b5a",
+    fontSize: 40,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+
+  inputText:{
+    height:50,
+    color: "#ffffff",
+    fontSize: 16
+  },
+
+  inputView:{
+    width:"50%",
+    backgroundColor:"#465881",
+    borderRadius:25,
+    height:50,
+    marginBottom:20,
+    justifyContent:"center",
+    padding:20
+  },
+
+  alarmTime: {
+    color: "#ffffff",
+    fontSize: 45,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+  },
+
+  alarmText: {
+    color: "#ffffff",
+    fontSize: 16,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+  },
+
+  alarmBanner: {
+    flex: 1,
+    flexDirection : "row",
+    backgroundColor: "#fb5b5a",
+    // backgroundColor: "black",
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 0,
+    marginBottom: 10,
+    paddingTop: 0,
+    paddingBottom: 0,
+    width: "95%",
+    borderRadius: 15
+  },
+
+  alarmDetails: {
+    flex: 1,
+    backgroundColor: "#fb5b5a",
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: "100%",
+    borderRadius: 15
+  },
+
+  scrollView: {
+    alignSelf: 'stretch',
+    alignContent: 'center',
+  }, 
+
+  button: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }, 
+
+  buttonTitle: {
+    color: "#ffffff",
+    fontSize: 40,
+  },
+
+  buttonBorder: {
+    color: "#ffffff",
+    width: 56, 
+    height: 56, 
+    borderRadius: 28, 
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rowFront: {
+    alignItems: 'center',
+    backgroundColor: '#CCC',
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    justifyContent: 'center',
+    height: 50,
+  },
+
+  backTextWhite: {
+    color: '#FFF',
+  },
+
+  rowBack: {
+      alignItems: 'center',
+      // backgroundColor: '#DDD',
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingLeft: 15,
+      width: "95%"
+  },
+
+  backRightBtn: {
+      alignItems: 'center',
+      bottom: 0,
+      justifyContent: 'center',
+      position: 'absolute',
+      top: 0,
+      width: 75,
+  },
+  backRightBtnLeft: {
+      backgroundColor: 'blue',
+      right: 75,
+      marginTop: 0,
+      marginBottom: 10,
+      paddingTop: 0,
+      paddingBottom: 0,
+      borderTopLeftRadius: 15,
+      borderBottomLeftRadius: 15,
+  },
+  backRightBtnRight: {
+      backgroundColor: 'red',
+      right: 0,
+      marginTop: 0,
+      marginBottom: 10,
+      paddingTop: 0,
+      paddingBottom: 0,
+      borderTopRightRadius: 15,
+      borderBottomRightRadius: 15,
+  },
+  trash: {
+      height: 25,
+      width: 25,
+  },
+})
