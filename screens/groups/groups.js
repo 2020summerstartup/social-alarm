@@ -143,96 +143,102 @@ export default class Groups extends Component {
     //  this is needed - talk to anna to explain more
     // https://stackoverflow.com/questions/39191001/setstate-with-firebase-promise-in-react
     var self = this;
+    if (userName){
 
     // find's user's doc
     db.collection("users")
-      .doc(userName)
-      .get()
-      .then(function (doc) {
-        // if that is a  real user in our system
-        if (doc.exists) {
-          db.collection("groups")
-            .doc(groupId)
-            .get()
-            .then(function (doc2) {
-              // if the user is not already in the group
-              if (doc2.data().members.indexOf(userName) == -1) {
-                // update user's document so it contains new group info
-                db.collection("users")
-                  .doc(userName)
-                  .update({
-                    groups: Firebase.firestore.FieldValue.arrayUnion({
-                      name: doc2.data().groupName,
-                      id: doc2.id,
-                    }),
-                  })
-                  .then(function () {
-                    // update group doc so it contains added user
-                    db.collection("groups")
-                      .doc(groupId)
-                      .update({
-                        members: Firebase.firestore.FieldValue.arrayUnion(
-                          userName
-                        ),
-                      });
-                    // clear texr input screen, add user to screen via state
-                    self.textInput.clear();
-                    const groupMem = [];
-                    for (var i = 0; i < self.state.groupMembers.length; i++) {
-                      groupMem.push(self.state.groupMembers[i]);
-                    }
-                    groupMem.push(userName);
-                    self.setState({ groupMembers: groupMem });
-                  })
-                  .catch((error) => console.log(error));
-              } else {
-                // if the user is already in the  group - alert
-                Alert.alert("Oops!", "This user is already in the group", [
-                  { text: "ok" },
-                ]);
-              }
-            })
-            .catch((error) => console.log(error));
-        } else {
-          // id the  user is not in our database - alert
-          Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
-        }
-      })
-      .catch((error) => console.log(error));
+    .doc(userName)
+    .get()
+    .then(function (doc) {
+      // if that is a  real user in our system
+      if (doc.exists) {
+        db.collection("groups")
+          .doc(groupId)
+          .get()
+          .then(function (doc2) {
+            // if the user is not already in the group
+            if (doc2.data().members.indexOf(userName) == -1) {
+              // update user's document so it contains new group info
+              db.collection("users")
+                .doc(userName)
+                .update({
+                  groups: Firebase.firestore.FieldValue.arrayUnion({
+                    name: doc2.data().groupName,
+                    id: doc2.id,
+                  }),
+                })
+                .then(function () {
+                  // update group doc so it contains added user
+                  db.collection("groups")
+                    .doc(groupId)
+                    .update({
+                      members: Firebase.firestore.FieldValue.arrayUnion(
+                        userName
+                      ),
+                    });
+                  // clear texr input screen, add user to screen via state
+                  self.textInput.clear();
+                  const groupMem = [];
+                  for (var i = 0; i < self.state.groupMembers.length; i++) {
+                    groupMem.push(self.state.groupMembers[i]);
+                  }
+                  groupMem.push(userName);
+                  self.setState({ groupMembers: groupMem });
+                })
+                .catch((error) => console.log(error));
+            } else {
+              // if the user is already in the  group - alert
+              Alert.alert("Oops!", "This user is already in the group", [
+                { text: "ok" },
+              ]);
+            }
+          })
+          .catch((error) => console.log(error));
+      } else {
+        // id the  user is not in our database - alert
+        Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
+      }
+    })
+    .catch((error) => console.log(error));
+
+    }  else {
+      Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
+    }
+
   };
 
   // deletes current user from a group
   deleteGroup(group, groupId) {
+    var self = this;
     
-    db.collection('users').doc(this.state.user.email).update({
+    db.collection('users').doc(self.state.user.email).update({
       groups: Firebase.firestore.FieldValue.arrayRemove({
         id: groupId,
         name: group
       })
     }).then( ()  => {
-      
-      db.collection('groups').doc(groupId).update({
-        members: Firebase.firestore.FieldValue.arrayRemove(this.state.user.email)
+      db.collection('groups').doc(groupId).get().then( function(doc) {
+        if(doc.data().members.length <= 1) {
+          db.collection('groups').doc(groupId).delete().then( () => console.log('doc deleted'))
+        } else {
+          db.collection('groups').doc(groupId).update({
+            members: Firebase.firestore.FieldValue.arrayRemove(self.state.user.email)
+          })
+        }
       })
     }).then(() => {
-      const newGroups = this.state.groups
+      const newGroups = self.state.groups
       for(var i = 0; i < newGroups.length; i++) {
         if(newGroups[i].id == groupId) {
           newGroups.splice(i, 1)
         }
       }
-      this.setState({groups: newGroups})
+      self.setState({groups: newGroups})
+      self.setState({groupModalOpen: false})
 
-      
-      // maybe look in to a better way of doing this?
-      db.collection('groups').doc(groupId).get().then( function(doc) {
-        if(doc.data().members.length < 1) {
-          db.collection('groups').doc(groupId).delete().then( () => console.log('doc deleted'))
-        }
-      })
     }) 
     .catch((error) => console.log(error)).catch((error) => console.log(error))
-    this.setState({groupModalOpen: false})
+    
 
   }
 
