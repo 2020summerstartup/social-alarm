@@ -1,11 +1,11 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   StyleSheet,
   View,
 } from "react-native";
-import { auth, db } from "../../firebase/firebase";
-import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 import Profile3 from './Profile3';
+import { auth } from "../../firebase/firebase";
+import { appStyles } from "../../style/stylesheet";
 
 /* profile.js
  * Profile screen

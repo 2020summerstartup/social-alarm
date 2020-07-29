@@ -1,12 +1,11 @@
 import React from "react";
-import { ActivityIndicator, AsyncStorage, StatusBar, View } from "react-native";
+import { ActivityIndicator, AsyncStorage, StatusBar, View , StyleSheet} from "react-native";
 import { auth } from "../../firebase/firebase";
 
 
 /* authLoadingScreen.js
  * Auth loading screen
- * this is not used/does not work yet
- * it's supposed to be called when app opens so user can be automatically
+ * it's called when app opens so user can be automatically
  * signed in to their account via local storage
  *
  * code from https://reactnavigation.org/docs/4.x/auth-flow (react navigation api docs example)
@@ -14,25 +13,48 @@ import { auth } from "../../firebase/firebase";
  */
 
 class AuthLoadingScreen extends React.Component {
+
   componentDidMount() {
     this._bootstrapAsync();
   }
 
   // Fetch the token from storage then navigate to our appropriate place
   _bootstrapAsync = async () => {
-    const userToken = await AsyncStorage.getItem("userToken");
+    var self = this;
+    const userToken = await AsyncStorage.getItem("email");
+    const password =await AsyncStorage.getItem("password");
+    if (userToken ) {
+      auth.signInWithEmailAndPassword(userToken, password).then(function(user){
+        self.props.navigation.navigate(
+          userToken && auth.currentUser ? "App" : "Auth"
+        );
 
-    // This will switch to the App screen or Auth screen and this loading
+      })
+    } else {
+        // This will switch to the App screen or Auth screen and this loading
     // screen will be unmounted and thrown away.
     this.props.navigation.navigate(
       userToken && auth.currentUser ? "App" : "Auth"
     );
+
+    }
+/*
+    auth.signInWithEmailAndPassword(userToken, password).then(function(user){
+      // This will switch to the App screen or Auth screen and this loading
+    // screen will be unmounted and thrown away.
+    this.props.navigation.navigate(
+      userToken && auth.currentUser ? "App" : "Auth"
+    );
+
+    })
+*/
+    
   };
 
   // Render any loading content that you like here
   render() {
     return (
-      <View>
+      <View style={styles.container}>
         <ActivityIndicator />
         <StatusBar barStyle="default" />
       </View>
@@ -41,3 +63,12 @@ class AuthLoadingScreen extends React.Component {
 }
 
 export default AuthLoadingScreen;
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
+})
