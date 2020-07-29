@@ -334,7 +334,7 @@ export default class Groups extends Component {
                     this.textInput = input;
                   }}
                   style={appStyles.inputText}
-                  placeholder="add friends ..."
+                  placeholder="add group member..."
                   placeholderTextColor="#003f5c"
                   keyboardType="email-address"
                   onChangeText={(text) => {
@@ -351,7 +351,7 @@ export default class Groups extends Component {
                 <Text style={appStyles.buttonText}> add member</Text>
               </TouchableOpacity>
 
-              <Text style={styles.wordText}>Members:</Text>
+              <Text style={styles.wordText}>Members: {this.state.groupMembers.length}</Text>
               <ScrollView style={{ width: "95%" }}>
                 {this.state.groupMembers &&
                   this.state.groupMembers.map((person) => {
