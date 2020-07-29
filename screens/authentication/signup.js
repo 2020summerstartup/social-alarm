@@ -40,6 +40,7 @@ export default function SignUp({ navigation }) {
     try {
       if (password == confirmPassword) {
         await AsyncStorage.setItem("email", email);
+        await AsyncStorage.setItem("name", name);
         await AsyncStorage.setItem("password", password);
 
         auth

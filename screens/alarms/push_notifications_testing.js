@@ -10,6 +10,12 @@ import { MaterialIcons } from "@expo/vector-icons";
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 import { appStyles, alarmStyles } from '../../style/stylesheet';
 
+// import DatePicker from 'react-native-modern-datepicker'; 
+import TimePicking from '../../components/timePicker';
+import {time} from '../../components/timePicker';
+
+import { db, auth } from "../../firebase/firebase";
+
 
 // const rowSwipeAnimatedValues = {};
 
@@ -225,6 +231,28 @@ export default function AppAlarmsPage() {
     const notificationListener = useRef();
     const responseListener = useRef();
 
+    // This is the time picker, has two rows for the hour and minute
+    const TimePicker = () => {
+      const [time, setTime] = useState('');
+
+      return (
+        <DatePicker
+          mode="time"
+          minuteInterval={1}
+          onTimeChange={selectedTime => setTime(selectedTime), console.log(time)}
+          options={{
+            backgroundColor: APPBACKGROUNDCOLOR,
+            textDefaultColor: APPTEXTWHITE,
+            selectedTextColor: '#fff',
+            mainColor: APPTEXTRED,
+            textFontSize:16
+          }}
+        />
+        // <Text style={styles.logo}>time: {selectedTime}</Text>
+        // </View>
+      );
+    };
+
     useEffect(() => { // useEffect is similar to componentDidMount and componentDidUpdate
         registerForPushNotificationsAsync().then(token => setExpoPushToken(token)).catch(console.log(".catch"))
 
@@ -266,7 +294,7 @@ export default function AppAlarmsPage() {
                 DateTimePicker will go here
                 </Text>
             </View>
-            </Modal>
+            </Modal>*/}
         </TopBanner>
 
         <Button
