@@ -83,7 +83,6 @@ export default class Groups extends Component {
                 id: docRef.id,
               }),
             });
-            console.log('groupData')
           //  update user's groups in state
           var groupData = [];
           for(var i = 0;  i < this.state.groups.length; i++) {
@@ -123,7 +122,6 @@ export default class Groups extends Component {
             groupMem.push(doc.data().members[i]);
           }
           this.setState({ groupMembers: groupMem });
-          console.log(this.state.groupMembers)
         });
     } 
     /* else {
@@ -203,6 +201,7 @@ export default class Groups extends Component {
       .catch((error) => console.log(error));
   };
 
+  // deletes current user from a group
   deleteGroup(group, groupId) {
     
     db.collection('users').doc(this.state.user.email).update({
@@ -211,16 +210,12 @@ export default class Groups extends Component {
         name: group
       })
     }).then( ()  => {
+      
       db.collection('groups').doc(groupId).update({
         members: Firebase.firestore.FieldValue.arrayRemove(this.state.user.email)
       })
     }).then(() => {
       const newGroups = this.state.groups
-      console.log(groupId)
-      console.log(group)
-      console.log(newGroups[4])
-      console.log({id: groupId, name: group})
-      console.log(newGroups[4] == {id: groupId, name: group})
       for(var i = 0; i < newGroups.length; i++) {
         if(newGroups[i].id == groupId) {
           newGroups.splice(i, 1)
@@ -355,7 +350,7 @@ export default class Groups extends Component {
                 {this.state.groupMembers &&
                   this.state.groupMembers.map((person) => {
                     return (
-                      <TouchableOpacity style={styles.alarmBanner} key={person}>
+                      <TouchableOpacity style={styles.alarmBanner} key={person} >
                         <Text
                           adjustsFontSizeToFit
                           numberOfLines={1}
