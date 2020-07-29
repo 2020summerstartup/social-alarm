@@ -200,11 +200,10 @@ export default class Alarms extends Component {
         const newData = [...props.alarms];
         const prevIndex = props.alarms.findIndex(item => item.id === rowKey);
         newData.splice(prevIndex, 1);
-        // setAlarms(newData);
         this.setState({ alarms: newData }),
         console.log("rowKey", rowKey)
         // console.log("alarms[rowKey - 1].name", props.alarms[rowKey - 1].name)
-        // removeAlarm(alarms[rowKey].name, alarms);
+        // removeAlarm(alarms[rowKey - 1].name, alarms);
       };
   
       const onRowDidOpen = rowKey => {
@@ -218,7 +217,14 @@ export default class Alarms extends Component {
       const renderHiddenItem = (data, rowMap) => (
         <View style={styles.rowBack}>
             <TouchableOpacity
-                style={[styles.backRightBtn, styles.backRightBtnLeft]}
+                style={[styles.backLeftBtn]}
+                onPress={() => console.log("Pressed share alarm with group button")}
+            >
+              <Text style={styles.backTextWhite}>+ Group</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style={[styles.backRightBtn, styles.backRightBtnCenter]}
                 onPress={() => closeRow(rowMap, data.item.id)}
             >
               <Text style={styles.backTextWhite}>Close</Text>
@@ -251,11 +257,11 @@ export default class Alarms extends Component {
                 </AlarmBanner>
                 )}
                 renderHiddenItem={renderHiddenItem}
-                leftOpenValue={0}
-                rightOpenValue={-150}
+                leftOpenValue={75}
+                rightOpenValue={-160}
                 previewRowKey={'0'}
-                previewOpenValue={-40}
-                previewOpenDelay={3000}
+                previewOpenValue={-80}
+                previewOpenDelay={500}
                 onRowDidOpen={onRowDidOpen}
                 onSwipeValueChange={onSwipeValueChange}
         />
@@ -667,6 +673,25 @@ const styles = StyleSheet.create({
       width: "95%"
   },
 
+  backLeftBtn:{
+    alignItems: 'center',
+    bottom: 0,
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    width: 90,
+    backgroundColor: 'green',
+    left: 25,
+    marginTop: 0,
+    marginBottom: 10,
+    paddingTop: 0,
+    paddingBottom: 0,
+    borderTopLeftRadius: 15,
+    borderBottomLeftRadius: 15,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+
   backRightBtn: {
       alignItems: 'center',
       bottom: 0,
@@ -675,16 +700,18 @@ const styles = StyleSheet.create({
       top: 0,
       width: 75,
   },
-  backRightBtnLeft: {
+
+  backRightBtnCenter: {
       backgroundColor: 'blue',
       right: 75,
       marginTop: 0,
       marginBottom: 10,
       paddingTop: 0,
       paddingBottom: 0,
-      borderTopLeftRadius: 15,
-      borderBottomLeftRadius: 15,
+      borderTopLeftRadius: 0,
+      borderBottomLeftRadius: 0,
   },
+
   backRightBtnRight: {
       backgroundColor: 'red',
       right: 0,
