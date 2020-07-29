@@ -6,10 +6,10 @@ import { auth } from "../../firebase/firebase";
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 
 // chevron is the greater than sign that's on the right of everything on the profile page
-import Chevron from './chevron'
+import Chevron from './Chevron'
 
 // sets the styles for all the icons
-import BaseIcon from './icon'
+import BaseIcon from './Icon'
 
 /* profile3.js
  * profile screen 

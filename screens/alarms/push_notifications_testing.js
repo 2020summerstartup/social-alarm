@@ -294,7 +294,7 @@ export default function AppAlarmsPage() {
                 DateTimePicker will go here
                 </Text>
             </View>
-            </Modal>*/}
+            </Modal>
         </TopBanner>
 
         <Button
