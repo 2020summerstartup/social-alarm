@@ -317,7 +317,9 @@ export default class Groups extends Component {
               />
               <MaterialIcons name = 'delete' size={24} 
                 style={{ ...appStyles.modalToggle, ...appStyles.modalClose }} color='#333' 
-                onPress={() => this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked)}
+                //onPress={() => this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked)}
+                onPress={()  => Alert.alert("Warning", "Are you sure you  want to delete yourself from this group?", 
+                  [{text: 'No'}, { text: "Yes", onPress: () => this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked) }])}
                 
               />
               <Text
