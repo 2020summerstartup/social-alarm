@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
+import React, { Component, createContext } from 'react'
 import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, TouchableOpacity, DevSettings } from 'react-native'
-import { Avatar, ListItem } from 'react-native-elements'
+import { Avatar, ListItem, ThemeContext } from 'react-native-elements'
 import { auth } from "../../firebase/firebase";
 
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
@@ -10,6 +10,9 @@ import Chevron from './Chevron'
 
 // sets the styles for all the icons
 import BaseIcon from './Icon'
+
+//import Switch from 'expo-dark-mode-switch';
+
 
 /* profile3.js
  * profile screen 
@@ -65,6 +68,7 @@ const styles = StyleSheet.create({
   },
 })
 
+
 class ProfileScreen extends Component {
 
   // sign out functionality 
@@ -97,18 +101,19 @@ class ProfileScreen extends Component {
     super(props);
 
     this.state = {
-      pushNotifications: true,
+      darkTheme: false,
       name: "", // this is the user's name
       email: "", // this is the user's email
     };
   }
 
   // changes the toggle switch whenever the user clicks it
-  onChangePushNotifications = () => {
+  onChangeDarkTheme = () => {
     this.setState(state => ({
-      pushNotifications: !state.pushNotifications,
+      darkTheme: !state.darkTheme,
     }))
   }
+
 
   render() {
     return (
@@ -139,12 +144,12 @@ class ProfileScreen extends Component {
         <View>
           <ListItem
             hideChevron
-            title="Push Notifications"
+            title="Dark Theme"
             containerStyle={styles.listItemContainer}
             rightElement={
               <Switch
-                onValueChange={this.onChangePushNotifications}
-                value={this.state.pushNotifications}
+                onValueChange={this.onChangeDarkTheme}
+                value={this.state.darkTheme}
               />
             }
             leftIcon={
@@ -153,8 +158,8 @@ class ProfileScreen extends Component {
                   backgroundColor: '#FFADF2',
                 }}
                 icon={{
-                  type: 'material',
-                  name: 'notifications',
+                  type: 'ionicon',
+                  name: 'ios-moon',
                 }}
               />
             }
