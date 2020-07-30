@@ -208,26 +208,30 @@ export default class Groups extends Component {
   };
 
   // deletes current user from a group
-  deleteGroup(group, groupId) {
+  deleteGroup(group, groupId, userDeleted) {
     var self = this;
-    
-    db.collection('users').doc(self.state.user.email).update({
+
+    // user side firebase
+    db.collection('users').doc(userDeleted).update({
       groups: Firebase.firestore.FieldValue.arrayRemove({
         id: groupId,
         name: group
       })
     }).then( ()  => {
+      // group side firebase
       db.collection('groups').doc(groupId).get().then( function(doc) {
         if(doc.data().members.length <= 1) {
           db.collection('groups').doc(groupId).delete().then( () => console.log('doc deleted'))
         } else {
           db.collection('groups').doc(groupId).update({
-            members: Firebase.firestore.FieldValue.arrayRemove(self.state.user.email)
+            members: Firebase.firestore.FieldValue.arrayRemove(userDeleted)
           })
         }
       })
     }).then(() => {
-      const newGroups = self.state.groups
+      // updating state if user is deleting themself
+      if(userDeleted == this.state.user.email) {
+        const newGroups = self.state.groups
       for(var i = 0; i < newGroups.length; i++) {
         if(newGroups[i].id == groupId) {
           newGroups.splice(i, 1)
@@ -236,10 +240,13 @@ export default class Groups extends Component {
       self.setState({groups: newGroups})
       self.setState({groupModalOpen: false})
 
+      } else {
+        // delete userDeleted from their own state
+      }
+      
+
     }) 
     .catch((error) => console.log(error)).catch((error) => console.log(error))
-    
-
   }
 
   // called when the component launches/mounts
@@ -319,7 +326,7 @@ export default class Groups extends Component {
                 style={{ ...appStyles.modalToggle, ...appStyles.modalClose }} color='#333' 
                 //onPress={() => this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked)}
                 onPress={()  => Alert.alert("Warning", "Are you sure you  want to delete yourself from this group?", 
-                  [{text: 'No'}, { text: "Yes", onPress: () => this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked) }])}
+                  [{text: 'No'}, { text: "Yes", onPress: () => this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked, this.state.user.email) }])}
                 
               />
               <Text
@@ -388,7 +395,6 @@ export default class Groups extends Component {
           onPress={() => this.setState({ createModalOpen: true })}
         />
         <ScrollView
-          //indicatorStyle='white'
           style={{ width: "95%" }}
         >
           {this.state.groups &&
