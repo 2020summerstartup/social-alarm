@@ -12,6 +12,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Image,
+  TouchableHighlight,
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 // TODO: can i make this less things?? - possibly import the default fromfirebase file
@@ -26,6 +27,7 @@ import {
   APPBACKGROUNDCOLOR,
   APPTEXTRED,
   APPTEXTWHITE,
+  APPINPUTVIEW,
 } from "../../style/constants";
 import { appStyles, alarmStyles } from "../../style/stylesheet";
 
@@ -563,7 +565,8 @@ export default class Groups extends Component {
                     {this.state.groupMembers &&
                       this.state.groupMembers.map((person) => {
                         return (
-                          <TouchableOpacity
+                          <TouchableHighlight
+                            underlayColor={APPINPUTVIEW}
                             style={styles.alarmBanner}
                             key={person}
                             /*
@@ -584,7 +587,7 @@ export default class Groups extends Component {
                             >
                               {person}
                             </Text>
-                          </TouchableOpacity>
+                          </TouchableHighlight>
                         );
                       })}
                   </ScrollView>
@@ -596,10 +599,11 @@ export default class Groups extends Component {
                 this.state.user.email == this.state.groupAdminClicked && (
                   <SwipeListView
                     style={{ width: "95%" }}
+                    underlayColor={APPINPUTVIEW}
                     keyExtractor={(item) => item} // specifying id as the key to prevent the key warning
                     data={this.state.groupMembers}
                     renderItem={({ item }) => (
-                      <TouchableOpacity
+                      <TouchableHighlight
                         style={styles.alarmBanner}
                         //onPress={() => this.groupModal(item.name, item.id)}
                       >
@@ -610,7 +614,7 @@ export default class Groups extends Component {
                         >
                           {item}
                         </Text>
-                      </TouchableOpacity>
+                      </TouchableHighlight>
                     )}
                     renderHiddenItem={this.renderHiddenItemModal}
                     leftOpenValue={75}
@@ -667,7 +671,9 @@ export default class Groups extends Component {
           keyExtractor={(item) => item.id} // specifying id as the key to prevent the key warning
           data={this.state.groups}
           renderItem={({ item }) => (
-            <TouchableOpacity
+            <TouchableHighlight
+              // changes color when clicked
+              underlayColor={APPINPUTVIEW}
               style={styles.alarmBanner}
               onPress={() => this.groupModal(item.name, item.id)}
             >
@@ -678,7 +684,7 @@ export default class Groups extends Component {
               >
                 {item.name}
               </Text>
-            </TouchableOpacity>
+            </TouchableHighlight>
           )}
           renderHiddenItem={this.renderHiddenItem}
           leftOpenValue={75}
