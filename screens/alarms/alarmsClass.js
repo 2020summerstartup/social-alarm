@@ -20,6 +20,9 @@ import RNPickerSelect from 'react-native-picker-select';
 import * as firebase from "firebase";
 import { db, auth } from "../../firebase/firebase";
 
+
+const moment = require("moment");
+
 // TopBanner formats the title and modal button along the top of the screen
 function TopBanner({ children }){
   return(
@@ -65,13 +68,13 @@ export default class Alarms extends Component {
         this.updateFirebaseGroupsDoc = this.updateFirebaseGroupsDoc.bind(this)
         
         this.state = {
-            alarms: [
-                {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  id: "1"},
-                {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  id: "2"},
-                {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  id: "3"},
-                {name: 'Fifth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  id: "5"},
-            ],
-            // alarms: [],
+            // alarms: [
+            //     {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  id: "1"},
+            //     {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  id: "2"},
+            //     {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  id: "3"},
+            //     {name: 'Fifth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  id: "5"},
+            // ],
+            alarms: [],
             newAlarmModalOpen: false,
             groupPickerModalOpen: false,
             expoPushToken: "",
@@ -470,7 +473,7 @@ export default class Alarms extends Component {
 
                     <DatePicker
                       style={{height: 75, width: 200, color: "black"}}
-                      date= "00:00" // Change this to show the current time
+                      date= {moment().format("LTS")} // Starts timepicker at current time (except always AM)
                       mode="time"
                       format="HH:mm"
                       confirmBtnText="Confirm"
