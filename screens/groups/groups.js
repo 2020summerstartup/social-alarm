@@ -11,6 +11,7 @@ import {
   Modal,
   TouchableWithoutFeedback,
   Keyboard,
+  Image,
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 // TODO: can i make this less things?? - possibly import the default fromfirebase file
@@ -289,6 +290,57 @@ export default class Groups extends Component {
       .catch((error) => console.log(error));
   }
 
+
+  renderHiddenItem = (data, rowMap) => (
+    <View style={alarmStyles.rowBack}>
+        <TouchableOpacity
+            style={[alarmStyles.backLeftBtn]}
+            onPress={() => console.log("Pressed share alarm with group button")}
+        >
+          <Text style={alarmStyles.backTextWhite}>+ Group</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+            style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnCenter]}
+            onPress={() => closeRow(rowMap, data.item.id)}
+        >
+          <Text style={alarmStyles.backTextWhite}>Close</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+            style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnRight]}
+            onPress={() => deleteRow(rowMap, data.item.id)}
+        >
+          <View style={[alarmStyles.trash]}>
+              <Image
+                  source={require('../../assets/trash.png')}
+                  style={alarmStyles.trash}
+              />
+          </View>
+        </TouchableOpacity>
+    </View>
+  );
+
+   deleteRow = (rowMap, rowKey) => {
+    closeRow(rowMap, rowKey);
+    const newData = [...props.alarms];
+    const prevIndex = props.alarms.findIndex(item => item.id === rowKey);
+    newData.splice(prevIndex, 1);
+    this.setState({ alarms: newData }),
+    console.log("rowKey", rowKey)
+    // console.log("alarms[rowKey - 1].name", props.alarms[rowKey - 1].name)
+    // removeAlarm(alarms[rowKey - 1].name, alarms);
+  };
+
+   onRowDidOpen = rowKey => {
+    console.log('This row opened', rowKey);
+  };
+
+  onSwipeValueChange = swipeData => {
+    const { key, value } = swipeData;
+  };
+
+
   // called when the component launches/mounts
   // this is like a react native method that automatically gets called
   //  when the component  mounts
@@ -474,6 +526,7 @@ export default class Groups extends Component {
           style={appStyles.modalToggle}
           onPress={() => this.setState({ createModalOpen: true })}
         />
+        {/*
         <ScrollView style={{ width: "95%" }}>
           {this.state.groups &&
             this.state.groups.map((group) => {
@@ -493,7 +546,34 @@ export default class Groups extends Component {
                 </TouchableOpacity>
               );
             })}
-        </ScrollView>
+          </ScrollView> */}
+
+        <SwipeListView
+        style={{ width: "95%" }}
+        keyExtractor ={(item) => item.id} // specifying id as the key to prevent the key warning
+        data = {this.state.groups}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+                  style={styles.alarmBanner}
+                  onPress={() => this.groupModal(item.name, item.id)}
+                >
+                  <Text
+                    adjustsFontSizeToFit
+                    numberOfLines={1}
+                    style={styles.alarmText}
+                  >
+                    {item.name}
+                  </Text>
+                </TouchableOpacity>)}
+        renderHiddenItem={this.renderHiddenItem}
+        leftOpenValue={75}
+        rightOpenValue={-160}
+        previewRowKey={'0'}
+        previewOpenValue={-80}
+        previewOpenDelay={500}
+        onRowDidOpen={this.onRowDidOpen}
+        onSwipeValueChange={this.onSwipeValueChange}
+/>
       </View>
     );
   }
