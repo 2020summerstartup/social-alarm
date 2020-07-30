@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { SwipeListView } from 'react-native-swipe-list-view';
+import { SwipeListView } from "react-native-swipe-list-view";
 // TODO: can i make this less things?? - possibly import the default fromfirebase file
 // import * as firebase from "firebase";
 import Firebase from "../../firebase/firebase";
@@ -45,6 +45,7 @@ export default class Groups extends Component {
       // info for group specific modal
       groupNameClicked: "",
       groupIdClicked: "",
+      groupAdminClicked: "",
       groupMembers: [],
       // the text input in add user field of group specific modal
       addUser: "",
@@ -85,7 +86,7 @@ export default class Groups extends Component {
             });
           //  update user's groups in state
           var groupData = [];
-          for(var i = 0;  i < this.state.groups.length; i++) {
+          for (var i = 0; i < this.state.groups.length; i++) {
             groupData.push(this.state.groups[i]);
           }
           groupData.push({
@@ -93,7 +94,7 @@ export default class Groups extends Component {
             id: docRef.id,
             //key: this.state.groups.length + 1,
           });
-          
+
           this.setState({ groups: groupData });
         })
         .catch(function (error) {
@@ -122,8 +123,9 @@ export default class Groups extends Component {
             groupMem.push(doc.data().members[i]);
           }
           this.setState({ groupMembers: groupMem });
+          this.setState({ groupAdminClicked: doc.data().adminEmail });
         });
-    } 
+    }
     /* else {
       // gets group members,  stores them in state
       db.collection("groups")
@@ -143,110 +145,148 @@ export default class Groups extends Component {
     //  this is needed - talk to anna to explain more
     // https://stackoverflow.com/questions/39191001/setstate-with-firebase-promise-in-react
     var self = this;
-    if (userName){
-
-    // find's user's doc
-    db.collection("users")
-    .doc(userName)
-    .get()
-    .then(function (doc) {
-      // if that is a  real user in our system
-      if (doc.exists) {
-        db.collection("groups")
-          .doc(groupId)
-          .get()
-          .then(function (doc2) {
-            // if the user is not already in the group
-            if (doc2.data().members.indexOf(userName) == -1) {
-              // update user's document so it contains new group info
-              db.collection("users")
-                .doc(userName)
-                .update({
-                  groups: Firebase.firestore.FieldValue.arrayUnion({
-                    name: doc2.data().groupName,
-                    id: doc2.id,
-                  }),
-                })
-                .then(function () {
-                  // update group doc so it contains added user
-                  db.collection("groups")
-                    .doc(groupId)
+    if (userName) {
+      // find's user's doc
+      db.collection("users")
+        .doc(userName)
+        .get()
+        .then(function (doc) {
+          // if that is a  real user in our system
+          if (doc.exists) {
+            db.collection("groups")
+              .doc(groupId)
+              .get()
+              .then(function (doc2) {
+                // if the user is not already in the group
+                if (doc2.data().members.indexOf(userName) == -1) {
+                  // update user's document so it contains new group info
+                  db.collection("users")
+                    .doc(userName)
                     .update({
-                      members: Firebase.firestore.FieldValue.arrayUnion(
-                        userName
-                      ),
-                    });
-                  // clear texr input screen, add user to screen via state
-                  self.textInput.clear();
-                  const groupMem = [];
-                  for (var i = 0; i < self.state.groupMembers.length; i++) {
-                    groupMem.push(self.state.groupMembers[i]);
-                  }
-                  groupMem.push(userName);
-                  self.setState({ groupMembers: groupMem });
-                })
-                .catch((error) => console.log(error));
-            } else {
-              // if the user is already in the  group - alert
-              Alert.alert("Oops!", "This user is already in the group", [
-                { text: "ok" },
-              ]);
-            }
-          })
-          .catch((error) => console.log(error));
-      } else {
-        // id the  user is not in our database - alert
-        Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
-      }
-    })
-    .catch((error) => console.log(error));
-
-    }  else {
+                      groups: Firebase.firestore.FieldValue.arrayUnion({
+                        name: doc2.data().groupName,
+                        id: doc2.id,
+                      }),
+                    })
+                    .then(function () {
+                      // update group doc so it contains added user
+                      db.collection("groups")
+                        .doc(groupId)
+                        .update({
+                          members: Firebase.firestore.FieldValue.arrayUnion(
+                            userName
+                          ),
+                        });
+                      // clear texr input screen, add user to screen via state
+                      self.textInput.clear();
+                      const groupMem = [];
+                      for (var i = 0; i < self.state.groupMembers.length; i++) {
+                        groupMem.push(self.state.groupMembers[i]);
+                      }
+                      groupMem.push(userName);
+                      self.setState({ groupMembers: groupMem });
+                    })
+                    .catch((error) => console.log(error));
+                } else {
+                  // if the user is already in the  group - alert
+                  Alert.alert("Oops!", "This user is already in the group", [
+                    { text: "ok" },
+                  ]);
+                }
+              })
+              .catch((error) => console.log(error));
+          } else {
+            // id the  user is not in our database - alert
+            Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
+          }
+        })
+        .catch((error) => console.log(error));
+    } else {
       Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
     }
-
   };
+
+  deleteUser(group, groupId, userDeleted) {
+    if (
+      userDeleted != this.state.user.email &&
+      this.state.user.email != this.state.groupAdminClicked
+    ) {
+      console.log("no pls");
+      return;
+    } else {
+      Alert.alert(
+        "Warning",
+        "Are you sure you want to delete " + userDeleted + " from this group?",
+        [
+          { text: "No" },
+          {
+            text: "Yes",
+            onPress: () => this.deleteGroup(group, groupId, userDeleted),
+          },
+        ]
+      );
+    }
+  }
 
   // deletes current user from a group
   deleteGroup(group, groupId, userDeleted) {
     var self = this;
 
     // user side firebase
-    db.collection('users').doc(userDeleted).update({
-      groups: Firebase.firestore.FieldValue.arrayRemove({
-        id: groupId,
-        name: group
+    db.collection("users")
+      .doc(userDeleted)
+      .update({
+        groups: Firebase.firestore.FieldValue.arrayRemove({
+          id: groupId,
+          name: group,
+        }),
       })
-    }).then( ()  => {
-      // group side firebase
-      db.collection('groups').doc(groupId).get().then( function(doc) {
-        if(doc.data().members.length <= 1) {
-          db.collection('groups').doc(groupId).delete().then( () => console.log('doc deleted'))
+      .then(() => {
+        // group side firebase
+        db.collection("groups")
+          .doc(groupId)
+          .get()
+          .then(function (doc) {
+            if (doc.data().members.length <= 1) {
+              db.collection("groups")
+                .doc(groupId)
+                .delete()
+                .then(() => console.log("doc deleted"));
+            } else {
+              db.collection("groups")
+                .doc(groupId)
+                .update({
+                  members: Firebase.firestore.FieldValue.arrayRemove(
+                    userDeleted
+                  ),
+                });
+            }
+          });
+      })
+      .then(() => {
+        // updating state if user is deleting themself
+        if (userDeleted == this.state.user.email) {
+          const newGroups = self.state.groups;
+          for (var i = 0; i < newGroups.length; i++) {
+            if (newGroups[i].id == groupId) {
+              newGroups.splice(i, 1);
+            }
+          }
+          self.setState({ groups: newGroups });
+          self.setState({ groupModalOpen: false });
         } else {
-          db.collection('groups').doc(groupId).update({
-            members: Firebase.firestore.FieldValue.arrayRemove(userDeleted)
-          })
+          // delete userDeleted from their own state
+          const newMembers = self.state.groupMembers;
+          for (var i = 0; i < newMembers.length; i++) {
+            if (newMembers[i] == userDeleted) {
+              newMembers.splice(i, 1);
+            }
+          }
+          self.setState({ groupMembers: newMembers });
         }
       })
-    }).then(() => {
-      // updating state if user is deleting themself
-      if(userDeleted == this.state.user.email) {
-        const newGroups = self.state.groups
-      for(var i = 0; i < newGroups.length; i++) {
-        if(newGroups[i].id == groupId) {
-          newGroups.splice(i, 1)
-        }
-      }
-      self.setState({groups: newGroups})
-      self.setState({groupModalOpen: false})
-
-      } else {
-        // delete userDeleted from their own state
-      }
-      
-
-    }) 
-    .catch((error) => console.log(error)).catch((error) => console.log(error))
+      .catch((error) => console.log(error))
+      .catch((error) => console.log(error));
   }
 
   // called when the component launches/mounts
@@ -279,7 +319,7 @@ export default class Groups extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {/* *********** CREATE NEW GROUP MODAL *********** */}
+        {/* **************************************** CREATE NEW GROUP MODAL **************************************** */}
         <Modal visible={this.state.createModalOpen} animationType="slide">
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={appStyles.modalContainer}>
@@ -312,7 +352,7 @@ export default class Groups extends Component {
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* *********** INDIVIDUAL GROUP MODAL *********** */}
+        {/* **************************************** INDIVIDUAL GROUP MODAL **************************************** */}
         <Modal visible={this.state.groupModalOpen} animationType="slide">
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={appStyles.modalContainer}>
@@ -322,12 +362,30 @@ export default class Groups extends Component {
                 style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                 onPress={() => this.setState({ groupModalOpen: false })}
               />
-              <MaterialIcons name = 'delete' size={24} 
-                style={{ ...appStyles.modalToggle, ...appStyles.modalClose }} color='#333' 
+              <MaterialIcons
+                name="delete"
+                size={24}
+                style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
+                color="#333"
                 //onPress={() => this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked)}
-                onPress={()  => Alert.alert("Warning", "Are you sure you  want to delete yourself from this group?", 
-                  [{text: 'No'}, { text: "Yes", onPress: () => this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked, this.state.user.email) }])}
-                
+                onPress={() =>
+                  Alert.alert(
+                    "Warning",
+                    "Are you sure you  want to delete yourself from this group?",
+                    [
+                      { text: "No" },
+                      {
+                        text: "Yes",
+                        onPress: () =>
+                          this.deleteGroup(
+                            this.state.groupNameClicked,
+                            this.state.groupIdClicked,
+                            this.state.user.email
+                          ),
+                      },
+                    ]
+                  )
+                }
               />
               <Text
                 adjustsFontSizeToFit
@@ -336,6 +394,12 @@ export default class Groups extends Component {
               >
                 {this.state.groupNameClicked}
               </Text>
+
+              {/*(this.state.groupAdminClicked == this.state.user.email) && (
+                <View>
+                  <Text>you are the admin</Text>
+                </View>
+              ) */}
 
               <View style={appStyles.inputView}>
                 <TextInput
@@ -360,12 +424,28 @@ export default class Groups extends Component {
                 <Text style={appStyles.buttonText}> add member</Text>
               </TouchableOpacity>
 
-              <Text style={styles.wordText}>Members: {this.state.groupMembers.length}</Text>
+              <Text style={styles.wordText}>
+                Members: {this.state.groupMembers.length}
+              </Text>
+              <Text style={styles.wordText}>
+                Admin: {this.state.groupAdminClicked}
+              </Text>
               <ScrollView style={{ width: "95%" }}>
                 {this.state.groupMembers &&
                   this.state.groupMembers.map((person) => {
                     return (
-                      <TouchableOpacity style={styles.alarmBanner} key={person} >
+                      <TouchableOpacity
+                        style={styles.alarmBanner}
+                        key={person}
+                        onPress={() =>
+                          this.deleteUser(
+                            this.state.groupNameClicked,
+                            this.state.groupIdClicked,
+                            person
+                          )
+                        }
+                        //onPress={() => console.log(person)}
+                      >
                         <Text
                           adjustsFontSizeToFit
                           numberOfLines={1}
@@ -382,7 +462,7 @@ export default class Groups extends Component {
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* *********** ACTUAL PAGE *********** */}
+        {/* **************************************** ACTUAL PAGE ************************************************* */}
 
         <View style={styles.center}>
           <Text style={styles.logo}>Groups</Text>
@@ -394,9 +474,7 @@ export default class Groups extends Component {
           style={appStyles.modalToggle}
           onPress={() => this.setState({ createModalOpen: true })}
         />
-        <ScrollView
-          style={{ width: "95%" }}
-        >
+        <ScrollView style={{ width: "95%" }}>
           {this.state.groups &&
             this.state.groups.map((group) => {
               return (
