@@ -294,7 +294,7 @@ export default class Groups extends Component {
   renderHiddenItem = (data, rowMap) => (
     // might take the first one out..
     <View style={alarmStyles.rowBack}>
-    {/*}
+      {/*}
       <TouchableOpacity
         style={[alarmStyles.backLeftBtn]}
         onPress={() => console.log("Pressed share alarm with group button")}
@@ -326,7 +326,7 @@ export default class Groups extends Component {
   renderHiddenItemModal = (data, rowMap) => (
     // might take the first one out..
     <View style={alarmStyles.rowBack}>
-    {/*}
+      {/*}
       <TouchableOpacity
         style={[alarmStyles.backLeftBtn]}
         onPress={() => console.log("Pressed share alarm with group button")}
@@ -384,10 +384,10 @@ export default class Groups extends Component {
 
   deleteRowModal = (rowMap, rowKey) => {
     this.closeRow(rowMap, rowKey);
-    console.log(rowKey)
+    console.log(rowKey);
     //const prevIndex = this.state.groups.findIndex((item) => item.id === rowKey);
     //const groupName = this.state.groups[prevIndex].name;
-    console.log(this.state.groupNameClicked)
+    console.log(this.state.groupNameClicked);
 
     Alert.alert(
       "Warning",
@@ -397,7 +397,11 @@ export default class Groups extends Component {
         {
           text: "Yes",
           onPress: () =>
-            this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked, rowKey),
+            this.deleteGroup(
+              this.state.groupNameClicked,
+              this.state.groupIdClicked,
+              rowKey
+            ),
         },
       ]
     );
@@ -552,16 +556,17 @@ export default class Groups extends Component {
               <Text style={styles.wordText}>
                 Admin: {this.state.groupAdminClicked}
               </Text>
-              { // IF USER  IS NOT ADMIN
-                (this.state.user.email != this.state.groupAdminClicked) && (
-              <ScrollView style={{ width: "95%" }}>
-                {this.state.groupMembers &&
-                  this.state.groupMembers.map((person) => {
-                    return (
-                      <TouchableOpacity
-                        style={styles.alarmBanner}
-                        key={person}
-                        /*
+              {
+                // IF USER  IS NOT ADMIN
+                this.state.user.email != this.state.groupAdminClicked && (
+                  <ScrollView style={{ width: "95%" }}>
+                    {this.state.groupMembers &&
+                      this.state.groupMembers.map((person) => {
+                        return (
+                          <TouchableOpacity
+                            style={styles.alarmBanner}
+                            key={person}
+                            /*
                         onPress={() =>
                           this.deleteUser(
                             this.state.groupNameClicked,
@@ -569,51 +574,55 @@ export default class Groups extends Component {
                             person
                           )
                         } */
-                        //onPress={() => console.log(person)}
+                            //onPress={() => console.log(person)}
+                          >
+                            <Text
+                              adjustsFontSizeToFit
+                              numberOfLines={1}
+                              // allowFontScaling
+                              style={styles.memberText}
+                            >
+                              {person}
+                            </Text>
+                          </TouchableOpacity>
+                        );
+                      })}
+                  </ScrollView>
+                )
+              }
+
+              {
+                // IF USER IS ADMIN
+                this.state.user.email == this.state.groupAdminClicked && (
+                  <SwipeListView
+                    style={{ width: "95%" }}
+                    keyExtractor={(item) => item} // specifying id as the key to prevent the key warning
+                    data={this.state.groupMembers}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        style={styles.alarmBanner}
+                        //onPress={() => this.groupModal(item.name, item.id)}
                       >
                         <Text
                           adjustsFontSizeToFit
                           numberOfLines={1}
-                          // allowFontScaling
                           style={styles.memberText}
                         >
-                          {person}
+                          {item}
                         </Text>
                       </TouchableOpacity>
-                    );
-                  })}
-                </ScrollView> )}
-
-                { // IF USER  IS NOT ADMIN
-                  (this.state.user.email == this.state.groupAdminClicked) && (
-              <SwipeListView
-                style={{ width: "95%" }}
-                keyExtractor={(item) => item} // specifying id as the key to prevent the key warning
-                data={this.state.groupMembers}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.alarmBanner}
-                    //onPress={() => this.groupModal(item.name, item.id)}
-                  >
-                    <Text
-                      adjustsFontSizeToFit
-                      numberOfLines={1}
-                      style={styles.memberText}
-                    >
-                      {item}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                renderHiddenItem={this.renderHiddenItemModal}
-                leftOpenValue={75}
-                rightOpenValue={-160}
-                previewRowKey={"0"}
-                previewOpenValue={-80}
-                previewOpenDelay={500}
-                onRowDidOpen={this.onRowDidOpen}
-                onSwipeValueChange={this.onSwipeValueChange}
-              /> 
-                  )}
+                    )}
+                    renderHiddenItem={this.renderHiddenItemModal}
+                    leftOpenValue={75}
+                    rightOpenValue={-160}
+                    previewRowKey={"0"}
+                    previewOpenValue={-80}
+                    previewOpenDelay={500}
+                    onRowDidOpen={this.onRowDidOpen}
+                    onSwipeValueChange={this.onSwipeValueChange}
+                  />
+                )
+              }
             </View>
           </TouchableWithoutFeedback>
         </Modal>
