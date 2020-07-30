@@ -297,19 +297,19 @@ export default class Groups extends Component {
             style={[alarmStyles.backLeftBtn]}
             onPress={() => console.log("Pressed share alarm with group button")}
         >
-          <Text style={alarmStyles.backTextWhite}>+ Group</Text>
+          <Text style={alarmStyles.backTextWhite}>+ Alarm</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
             style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnCenter]}
-            onPress={() => closeRow(rowMap, data.item.id)}
+            onPress={() => this.closeRow(rowMap, data.item.id)}
         >
           <Text style={alarmStyles.backTextWhite}>Close</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
             style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnRight]}
-            onPress={() => deleteRow(rowMap, data.item.id)}
+            onPress={() => this.deleteRow(rowMap, data.item.id)}
         >
           <View style={[alarmStyles.trash]}>
               <Image
@@ -321,15 +321,35 @@ export default class Groups extends Component {
     </View>
   );
 
+  closeRow = (rowMap, rowKey) => {
+    if (rowMap[rowKey]) {
+        rowMap[rowKey].closeRow();
+    }
+  };
+
    deleteRow = (rowMap, rowKey) => {
-    closeRow(rowMap, rowKey);
-    const newData = [...props.alarms];
-    const prevIndex = props.alarms.findIndex(item => item.id === rowKey);
-    newData.splice(prevIndex, 1);
-    this.setState({ alarms: newData }),
-    console.log("rowKey", rowKey)
-    // console.log("alarms[rowKey - 1].name", props.alarms[rowKey - 1].name)
-    // removeAlarm(alarms[rowKey - 1].name, alarms);
+    this.closeRow(rowMap, rowKey);
+    const prevIndex = this.state.groups.findIndex(item => item.id === rowKey);
+    const groupName = this.state.groups[prevIndex].name
+    
+    Alert.alert(
+      "Warning",
+      "Are you sure you  want to delete yourself from this group?",
+      [
+        { text: "No" },
+        {
+          text: "Yes",
+          onPress: () =>
+            this.deleteGroup(
+              groupName,
+              rowKey,
+              this.state.user.email
+            ),
+        },
+      ]
+    )
+
+
   };
 
    onRowDidOpen = rowKey => {
