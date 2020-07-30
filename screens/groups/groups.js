@@ -290,48 +290,51 @@ export default class Groups extends Component {
       .catch((error) => console.log(error));
   }
 
-
+  // hidden items in swipe list - from Sidney's code
   renderHiddenItem = (data, rowMap) => (
+    // might take the first one out.. 
     <View style={alarmStyles.rowBack}>
-        <TouchableOpacity
-            style={[alarmStyles.backLeftBtn]}
-            onPress={() => console.log("Pressed share alarm with group button")}
-        >
-          <Text style={alarmStyles.backTextWhite}>+ Alarm</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={[alarmStyles.backLeftBtn]}
+        onPress={() => console.log("Pressed share alarm with group button")}
+      >
+        <Text style={alarmStyles.backTextWhite}>+ Alarm</Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity
-            style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnCenter]}
-            onPress={() => this.closeRow(rowMap, data.item.id)}
-        >
-          <Text style={alarmStyles.backTextWhite}>Close</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnCenter]}
+        onPress={() => this.closeRow(rowMap, data.item.id)}
+      >
+        <Text style={alarmStyles.backTextWhite}>Close</Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity
-            style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnRight]}
-            onPress={() => this.deleteRow(rowMap, data.item.id)}
-        >
-          <View style={[alarmStyles.trash]}>
-              <Image
-                  source={require('../../assets/trash.png')}
-                  style={alarmStyles.trash}
-              />
-          </View>
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnRight]}
+        onPress={() => this.deleteRow(rowMap, data.item.id)}
+      >
+        <View style={[alarmStyles.trash]}>
+          <Image
+            source={require("../../assets/trash.png")}
+            style={alarmStyles.trash}
+          />
+        </View>
+      </TouchableOpacity>
     </View>
   );
 
+  // called when  user presses close
   closeRow = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
-        rowMap[rowKey].closeRow();
+      rowMap[rowKey].closeRow();
     }
   };
 
-   deleteRow = (rowMap, rowKey) => {
+  // called when user  presses trash can
+  deleteRow = (rowMap, rowKey) => {
     this.closeRow(rowMap, rowKey);
-    const prevIndex = this.state.groups.findIndex(item => item.id === rowKey);
-    const groupName = this.state.groups[prevIndex].name
-    
+    const prevIndex = this.state.groups.findIndex((item) => item.id === rowKey);
+    const groupName = this.state.groups[prevIndex].name;
+
     Alert.alert(
       "Warning",
       "Are you sure you  want to delete yourself from this group?",
@@ -340,26 +343,19 @@ export default class Groups extends Component {
         {
           text: "Yes",
           onPress: () =>
-            this.deleteGroup(
-              groupName,
-              rowKey,
-              this.state.user.email
-            ),
+            this.deleteGroup(groupName, rowKey, this.state.user.email),
         },
       ]
-    )
-
-
+    );
   };
 
-   onRowDidOpen = rowKey => {
-    console.log('This row opened', rowKey);
+  onRowDidOpen = (rowKey) => {
+    console.log("This row opened", rowKey);
   };
 
-  onSwipeValueChange = swipeData => {
+  onSwipeValueChange = (swipeData) => {
     const { key, value } = swipeData;
   };
-
 
   // called when the component launches/mounts
   // this is like a react native method that automatically gets called
@@ -547,6 +543,7 @@ export default class Groups extends Component {
           onPress={() => this.setState({ createModalOpen: true })}
         />
         {/*
+        // this is my old code if we wanna bring it back ever
         <ScrollView style={{ width: "95%" }}>
           {this.state.groups &&
             this.state.groups.map((group) => {
@@ -569,31 +566,32 @@ export default class Groups extends Component {
           </ScrollView> */}
 
         <SwipeListView
-        style={{ width: "95%" }}
-        keyExtractor ={(item) => item.id} // specifying id as the key to prevent the key warning
-        data = {this.state.groups}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-                  style={styles.alarmBanner}
-                  onPress={() => this.groupModal(item.name, item.id)}
-                >
-                  <Text
-                    adjustsFontSizeToFit
-                    numberOfLines={1}
-                    style={styles.alarmText}
-                  >
-                    {item.name}
-                  </Text>
-                </TouchableOpacity>)}
-        renderHiddenItem={this.renderHiddenItem}
-        leftOpenValue={75}
-        rightOpenValue={-160}
-        previewRowKey={'0'}
-        previewOpenValue={-80}
-        previewOpenDelay={500}
-        onRowDidOpen={this.onRowDidOpen}
-        onSwipeValueChange={this.onSwipeValueChange}
-/>
+          style={{ width: "95%" }}
+          keyExtractor={(item) => item.id} // specifying id as the key to prevent the key warning
+          data={this.state.groups}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.alarmBanner}
+              onPress={() => this.groupModal(item.name, item.id)}
+            >
+              <Text
+                adjustsFontSizeToFit
+                numberOfLines={1}
+                style={styles.alarmText}
+              >
+                {item.name}
+              </Text>
+            </TouchableOpacity>
+          )}
+          renderHiddenItem={this.renderHiddenItem}
+          leftOpenValue={75}
+          rightOpenValue={-160}
+          previewRowKey={"0"}
+          previewOpenValue={-80}
+          previewOpenDelay={500}
+          onRowDidOpen={this.onRowDidOpen}
+          onSwipeValueChange={this.onSwipeValueChange}
+        />
       </View>
     );
   }
