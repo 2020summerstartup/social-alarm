@@ -1,5 +1,6 @@
 // home.js
-import React, { Component, useState } from "react";
+import React, { Component } from "react";
+// not sure if I need this import
 import "react-native-gesture-handler";
 import {
   StyleSheet,
@@ -15,8 +16,6 @@ import {
   TouchableHighlight,
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
-// TODO: can i make this less things?? - possibly import the default fromfirebase file
-// import * as firebase from "firebase";
 import Firebase from "../../firebase/firebase";
 import { db, auth } from "../../firebase/firebase";
 
@@ -43,8 +42,6 @@ export default class Groups extends Component {
       groupName: "",
       // array of groups the user is in
       groups: [],
-      // current user - doesn't change, idk why it's a state
-      user: auth.currentUser,
       // info for group specific modal
       groupNameClicked: "",
       groupIdClicked: "",
@@ -82,12 +79,13 @@ export default class Groups extends Component {
           db.collection("users")
             .doc(user.email)
             .update({
+              // pushes new element to groups array in firebase
               groups: Firebase.firestore.FieldValue.arrayUnion({
                 name: name,
                 id: docRef.id,
               }),
             });
-          //  update user's groups in state
+          // update user's groups in local state
           var groupData = [];
           for (var i = 0; i < this.state.groups.length; i++) {
             groupData.push(this.state.groups[i]);
@@ -95,9 +93,7 @@ export default class Groups extends Component {
           groupData.push({
             name: name,
             id: docRef.id,
-            //key: this.state.groups.length + 1,
           });
-
           this.setState({ groups: groupData });
         })
         .catch(function (error) {
@@ -114,7 +110,7 @@ export default class Groups extends Component {
     this.setState({ groupNameClicked: groupName });
     this.setState({ groupIdClicked: groupId });
 
-    // groupId  might be a string or a doc reference, so it does something different for each case
+    // groupId  should alway be a string
     if (typeof groupId == "string") {
       // gets group members,  stores them in state
       db.collection("groups")
@@ -129,6 +125,8 @@ export default class Groups extends Component {
           this.setState({ groupAdminClicked: doc.data().adminEmail });
         });
     }
+    // this was for when groupId was a docRef, this shouldn't happen anymore
+    // but keeping the code until the next merge to github just in case
     /* else {
       // gets group members,  stores them in state
       db.collection("groups")
@@ -144,18 +142,20 @@ export default class Groups extends Component {
     } */
   };
 
+  // called when user tries to add someone to a group
   addUser = (userName, groupId) => {
     //  this is needed - talk to anna to explain more
     // https://stackoverflow.com/questions/39191001/setstate-with-firebase-promise-in-react
     var self = this;
     if (userName) {
-      // find's user's doc
+      // find's user's doc (doc)
       db.collection("users")
         .doc(userName)
         .get()
         .then(function (doc) {
-          // if that is a  real user in our system
+          // if that is a real user in our system
           if (doc.exists) {
+            // get group doc (doc2)
             db.collection("groups")
               .doc(groupId)
               .get()
@@ -180,8 +180,9 @@ export default class Groups extends Component {
                             userName
                           ),
                         });
-                      // clear texr input screen, add user to screen via state
+                      // clear text input
                       self.textInput.clear();
+                      // update screen by updating local state
                       const groupMem = [];
                       for (var i = 0; i < self.state.groupMembers.length; i++) {
                         groupMem.push(self.state.groupMembers[i]);
@@ -199,24 +200,27 @@ export default class Groups extends Component {
               })
               .catch((error) => console.log(error));
           } else {
-            // id the  user is not in our database - alert
+            // if the user is not in our database - alert
             Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
           }
         })
         .catch((error) => console.log(error));
     } else {
+      // if nothing was entered in the text input - alert
       Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
     }
   };
 
+  // called when admin wants to delete someone from a group
   deleteUser(group, groupId, userDeleted) {
     if (
-      userDeleted != this.state.user.email &&
-      this.state.user.email != this.state.groupAdminClicked
+      // if the person is not trying to delete themselves and is not the admin, return
+      userDeleted != this.user.email &&
+      this.user.email != this.state.groupAdminClicked
     ) {
-      console.log("no pls");
       return;
     } else {
+      //  double check with user - make sure they want to delete via alert
       Alert.alert(
         "Warning",
         "Are you sure you want to delete " + userDeleted + " from this group?",
@@ -224,6 +228,7 @@ export default class Groups extends Component {
           { text: "No" },
           {
             text: "Yes",
+            // if they  click yes, calls deleteGroup
             onPress: () => this.deleteGroup(group, groupId, userDeleted),
           },
         ]
@@ -231,11 +236,11 @@ export default class Groups extends Component {
     }
   }
 
-  // deletes current user from a group
+  // deletes a user from a group
   deleteGroup(group, groupId, userDeleted) {
     var self = this;
 
-    // user side firebase
+    // user side firebase (delete's group from user's doc)
     db.collection("users")
       .doc(userDeleted)
       .update({
@@ -245,17 +250,19 @@ export default class Groups extends Component {
         }),
       })
       .then(() => {
-        // group side firebase
+        // group side firebase (deletes user from group's doc)
         db.collection("groups")
           .doc(groupId)
           .get()
           .then(function (doc) {
+            // if they are the last member in the group, delete the group document
             if (doc.data().members.length <= 1) {
               db.collection("groups")
                 .doc(groupId)
                 .delete()
                 .then(() => console.log("doc deleted"));
             } else {
+              // else just remove the user from the group's doc
               db.collection("groups")
                 .doc(groupId)
                 .update({
@@ -267,8 +274,10 @@ export default class Groups extends Component {
           });
       })
       .then(() => {
-        // updating state if user is deleting themself
-        if (userDeleted == this.state.user.email) {
+        
+        if (userDeleted == this.user.email) {
+          // updating state if user is deleting themself
+          // updates the groups displayed on main page
           const newGroups = self.state.groups;
           for (var i = 0; i < newGroups.length; i++) {
             if (newGroups[i].id == groupId) {
@@ -276,9 +285,11 @@ export default class Groups extends Component {
             }
           }
           self.setState({ groups: newGroups });
+          // close  modal (bc they aren't in the group anymore)
           self.setState({ groupModalOpen: false });
         } else {
-          // delete userDeleted from their own state
+          // updating state if admin deleted someone else
+          // updates the members displayed on open modal
           const newMembers = self.state.groupMembers;
           for (var i = 0; i < newMembers.length; i++) {
             if (newMembers[i] == userDeleted) {
@@ -293,6 +304,7 @@ export default class Groups extends Component {
   }
 
   // hidden items in swipe list - from Sidney's code
+  // for main page
   renderHiddenItem = (data, rowMap) => (
     // might take the first one out..
     <View style={alarmStyles.rowBack}>
@@ -325,6 +337,8 @@ export default class Groups extends Component {
     </View>
   );
 
+  // hidden items in swipe list - from Sidney's code
+  // for indiv group modal
   renderHiddenItemModal = (data, rowMap) => (
     // might take the first one out..
     <View style={alarmStyles.rowBack}>
@@ -358,13 +372,15 @@ export default class Groups extends Component {
   );
 
   // called when  user presses close
+  // doesn't work fully for indiv group modal
   closeRow = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
       rowMap[rowKey].closeRow();
     }
   };
 
-  // called when user  presses trash can
+  // called when user  presses trash can (from Sidney's code)
+  // for main page
   deleteRow = (rowMap, rowKey) => {
     this.closeRow(rowMap, rowKey);
     const prevIndex = this.state.groups.findIndex((item) => item.id === rowKey);
@@ -378,12 +394,14 @@ export default class Groups extends Component {
         {
           text: "Yes",
           onPress: () =>
-            this.deleteGroup(groupName, rowKey, this.state.user.email),
+            this.deleteGroup(groupName, rowKey, this.user.email),
         },
       ]
     );
   };
 
+  // called when user  presses trash can (from Sidney's code)
+  // for indiv group modal
   deleteRowModal = (rowMap, rowKey) => {
     this.closeRow(rowMap, rowKey);
     console.log(rowKey);
@@ -409,10 +427,12 @@ export default class Groups extends Component {
     );
   };
 
+  // idk what this does - from Sidney's code
   onRowDidOpen = (rowKey) => {
     console.log("This row opened", rowKey);
   };
 
+  // idk what this does - from Sidney's code
   onSwipeValueChange = (swipeData) => {
     const { key, value } = swipeData;
   };
@@ -433,7 +453,6 @@ export default class Groups extends Component {
             groupsData.push({
               name: doc.data().groups[i].name,
               id: doc.data().groups[i].id,
-              //key: i,
             });
           }
           this.setState({ groups: groupsData });
@@ -508,7 +527,7 @@ export default class Groups extends Component {
                           this.deleteGroup(
                             this.state.groupNameClicked,
                             this.state.groupIdClicked,
-                            this.state.user.email
+                            this.user.email
                           ),
                       },
                     ]
@@ -523,7 +542,7 @@ export default class Groups extends Component {
                 {this.state.groupNameClicked}
               </Text>
 
-              {/*(this.state.groupAdminClicked == this.state.user.email) && (
+              {/*(this.state.groupAdminClicked == this.user.email) && (
                 <View>
                   <Text>you are the admin</Text>
                 </View>
@@ -560,7 +579,7 @@ export default class Groups extends Component {
               </Text>
               {
                 // IF USER  IS NOT ADMIN
-                this.state.user.email != this.state.groupAdminClicked && (
+                this.user.email != this.state.groupAdminClicked && (
                   <ScrollView style={{ width: "95%" }}>
                     {this.state.groupMembers &&
                       this.state.groupMembers.map((person) => {
@@ -596,7 +615,7 @@ export default class Groups extends Component {
 
               {
                 // IF USER IS ADMIN
-                this.state.user.email == this.state.groupAdminClicked && (
+                this.user.email == this.state.groupAdminClicked && (
                   <SwipeListView
                     style={{ width: "95%" }}
                     underlayColor={APPINPUTVIEW}
