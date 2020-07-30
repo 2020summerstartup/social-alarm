@@ -62,7 +62,8 @@ export default class Alarms extends Component {
     constructor(props) {
         super(props);
         this.AlarmsTable = this.AlarmsTable.bind(this) // This is the magical line that gets rid of "this" errors inside AlarmsTable
-
+        this.updateFirebaseGroupsDoc = this.updateFirebaseGroupsDoc.bind(this)
+        
         this.state = {
             alarms: [
                 {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  id: "1"},
@@ -83,7 +84,8 @@ export default class Alarms extends Component {
             responseListener: "",
             newGroupName: "",
             groupsArray: [],
-            addAlarmToGroup:"",
+            groupIdClicked: "",
+            singleAlarm: {name: 'Alarm'}
         }
     }
 
@@ -106,6 +108,11 @@ export default class Alarms extends Component {
           }
         });
       list = (await Notifications.getAllScheduledNotificationsAsync());
+
+      list.forEach(element => {
+        // console.log("Element.trigger:", element.trigger.dateComponents.hour, element.trigger.dateComponents.minute)
+      })
+      // console.log("This is the list", list)
       return list;
     };
 
@@ -120,6 +127,14 @@ export default class Alarms extends Component {
               alarm_array.splice(i, 1)
           }
       }
+    };
+
+    removeAllAlarms(){
+      // promise = (await Notifications.cancelScheduledNotificationAsync(identifier))
+      Notifications.cancelAllScheduledNotificationsAsync()
+      console.log("Cancelled All Scheduled Notifications Async")
+  
+      this.setState({ alarms: [] }); // empty the alarms array
     };
 
     async addAlarm(name, alarm_hour, alarm_minute, id, alarm_array){
@@ -180,13 +195,16 @@ export default class Alarms extends Component {
     }
 
     updateFirebaseGroupsDoc(){
+      console.log("Updating", this.state.groupIdClicked, "in firebase")
+      console.log("this.state.groupIdClicked:", this.state.groupIdClicked)
       db.collection("groups")
-        .doc("7Ek2dYinSXsmIiZuFPZB")
+        .doc(this.state.groupIdClicked)
         .update({
             alarms: firebase.firestore.FieldValue.arrayUnion({
-              alarms: this.state.alarms
+              alarms: this.state.singleAlarm
         }),
       });
+      this.setState({ groupPickerModalOpen: false })
     }
 
     getFirebaseUsersGroups(){
@@ -212,9 +230,9 @@ export default class Alarms extends Component {
             // console.log("element before", element)
             // var obj = {label: element.name, value: element.name}
             element.label = element.name;
-            element.value = element.name;
-            element.key = element.name;
-            // console.log("element after", element);
+            element.value = element.id;
+            element.key = element.id;
+            console.log("element after", element);
           })
 
         }
@@ -250,7 +268,7 @@ export default class Alarms extends Component {
         this.setState({ alarms: newData }),
         console.log("rowKey", rowKey)
         // console.log("alarms[rowKey - 1].name", props.alarms[rowKey - 1].name)
-        // removeAlarm(alarms[rowKey - 1].name, alarms);
+        removeAlarm(alarms[rowKey - 1].name, alarms);
       };
   
       const onRowDidOpen = rowKey => {
@@ -409,10 +427,16 @@ export default class Alarms extends Component {
       this.state.notificationListener = Notifications.addNotificationReceivedListener(notification => this.setState({ notification: notification}))
 
       this.state.responseListener = Notifications.addNotificationResponseReceivedListener(response => {console.log("Response:", response)});
+    
+      return () => {
+        Notifications.removeNotificationSubscription(this.state.notificationListener);
+        Notifications.removeNotificationSubscription(this.state.responseListener);
+      };
+    
     };
 
     render(){
-      console.log("Initialize alarms")
+      // console.log("Initialize alarms")
       this.makeAlarms(this.state.alarms)
       this.state.alarms.sort(this.sortByTime)
       this.updateFirebaseUsersDoc()
@@ -420,7 +444,7 @@ export default class Alarms extends Component {
       return(
         <View style={styles.container}>
           <TopBanner>
-              <Text style={styles.pageTitle}>Alarms_Testing</Text>
+              <Text style={styles.pageTitle}>Alarms_Class</Text>
 
               {/*BEGINNING OF MODAL FOR ADD ALARM */}
               <MaterialIcons
@@ -442,7 +466,7 @@ export default class Alarms extends Component {
 
                     <DatePicker
                       style={{height: 75, width: 200, color: "black"}}
-                      date= "20:00"
+                      date= "00:00" // Change this to show the current time
                       mode="time"
                       format="HH:mm"
                       confirmBtnText="Confirm"
@@ -518,6 +542,18 @@ export default class Alarms extends Component {
 
           </View>
 
+          <Button
+            title="Print user email to console"
+            onPress={ async() =>
+              console.log("auth.currentUser.email:", auth.currentUser.email)
+            }
+          />
+
+          <Button
+            title="Remove all alarms"
+            onPress={() => this.removeAllAlarms()}
+          />
+
           {/*BEGINNING OF MODAL FOR GROUP PICKER */}
           <Modal visible={this.state.groupPickerModalOpen} animationType="slide">
           <View style={appStyles.modalContainer}>
@@ -531,7 +567,7 @@ export default class Alarms extends Component {
 
               {/* https://github.com/lawnstarter/react-native-picker-select */} 
               <RNPickerSelect
-                onValueChange={(label) => this.setState({ addAlarmToGroup: label })}
+                onValueChange={(value) => this.setState({ groupIdClicked: value })}
                 // items={[
                 //     { label: 'Option1', value: 'option1' },
                 //     { label: 'Option2', value: 'option2' },
@@ -557,7 +593,6 @@ export default class Alarms extends Component {
                       alignItems: 'center',
                       justifyContent: 'center',
                     }
-                    // chevronDown: 'true',
                   }
                 }
                 doneText={"Select"}
@@ -565,8 +600,8 @@ export default class Alarms extends Component {
                  
               />
 
-              {/* <Text style={styles.inputText}>this.state.addAlarmToGroup:</Text> 
-              <Text style={styles.inputText}>{this.state.addAlarmToGroup}</Text>  */}
+              <Text style={styles.inputText}>this.state.groupIdClicked:</Text> 
+              <Text style={styles.inputText}>{this.state.groupIdClicked}</Text> 
 
               <Text></Text>
                 
@@ -574,8 +609,12 @@ export default class Alarms extends Component {
                 title="Add alarm to group"
                 color="lightgreen"
                 onPress={ async() =>
-                  this.setState({ groupPickerModalOpen: false })
+                  this.updateFirebaseGroupsDoc()
+                  // .then(this.setState({ groupPickerModalOpen: false }))
                 }
+                // onPress={ async() =>
+                //   this.setState({ groupPickerModalOpen: false })
+                // }
               />
 
               </View>
