@@ -67,9 +67,9 @@ export default class Alarms extends Component {
         this.state = {
             alarms: [
                 {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  id: "1"},
-                // {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  id: "2"},
-                // {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  id: "3"},
-                // {name: 'Fourth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  id: "4"},
+                {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  id: "2"},
+                {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  id: "3"},
+                {name: 'Fifth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  id: "5"},
             ],
             // alarms: [],
             newAlarmModalOpen: false,
@@ -127,6 +127,10 @@ export default class Alarms extends Component {
               alarm_array.splice(i, 1)
           }
       }
+
+      this.setState({alarms: alarm_array})
+      // console.log("this.state.alarms:", this.state.alarms)
+
     };
 
     removeAllAlarms(){
@@ -149,8 +153,8 @@ export default class Alarms extends Component {
       promise = (await Notifications.scheduleNotificationAsync({
           identifier: name,
           content: {
-              title: list_item.name,
-              subtitle: 'Its ' + list_item.alarm_hour + ':' + list_item.alarm_minute + '!',
+              title: name,
+              subtitle: 'Its ' + alarm_hour + ':' + alarm_minute + '!',
           },
           // DailyTriggerInput
           trigger: {
@@ -265,14 +269,14 @@ export default class Alarms extends Component {
         const newData = [...props.alarms];
         const prevIndex = props.alarms.findIndex(item => item.id === rowKey);
         newData.splice(prevIndex, 1);
-        this.setState({ alarms: newData }),
-        console.log("rowKey", rowKey)
-        // console.log("alarms[rowKey - 1].name", props.alarms[rowKey - 1].name)
-        removeAlarm(alarms[rowKey - 1].name, alarms);
+        this.setState({ alarms: newData });
+        console.log("rowKey", rowKey);
+        this.removeAlarm(props.alarms[prevIndex].name, props.alarms);
       };
   
       const onRowDidOpen = rowKey => {
         console.log('This row opened', rowKey);
+
       };
   
       const onSwipeValueChange = swipeData => {
@@ -349,7 +353,7 @@ export default class Alarms extends Component {
         comparison = -2;
       } 
       else if (Ah == Bh) {
-        console.log("same hour")
+        // console.log("same hour")
         if (Am > Bm) {
           comparison = 1;
         } else if (Am < Bm){
@@ -512,7 +516,7 @@ export default class Alarms extends Component {
                   <Button style={styles.button}
                   title="Set Alarm"
                   onPress={ async() =>
-                    this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.alarms.length + 1, this.state.alarms)
+                    this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, String(this.state.alarms.length + 1), this.state.alarms)
                     .then(this.setState({ newAlarmModalOpen: false }))
                   }
                   />
