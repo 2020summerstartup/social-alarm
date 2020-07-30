@@ -1,12 +1,4 @@
 import React, { Component } from 'react';
-/*import ToggleSwitch from "../../components/toggleSwitch";
-
-export default function Navigation() {
-    return (
-        <ToggleSwitch />
-    );
-  }
-*/
 
 import { GiftedChat } from 'react-native-gifted-chat'
 
@@ -15,56 +7,93 @@ export default class Example extends Component {
     messages: [],
   }
 
-
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.setState({
       messages: [
+        {
+          // this is the last message
+          _id: Math.round(Math.random() * 1000000),
+          text: '#awesome',
+          createdAt: new Date(),
+          user: {
+            _id: 2,
+            name: 'React Native',
+          },
+        },
+        {
+          _id: Math.round(Math.random() * 1000000),
+          text: 'An alarm app',
+          createdAt: new Date(),
+          user: {
+            _id: 1,
+            name: 'Developer',
+          },
+
+          // shows two checkmarks in the corner of the message 
+          sent: true,
+          received: true,
+        },
+        {
+          _id: Math.round(Math.random() * 1000000),
+          text: 'What are you building?',
+          createdAt: new Date(),
+          user: {
+            _id: 2,
+            name: 'React Native',
+          },
+        },
+        {
+          _id: Math.round(Math.random() * 1000000),
+          text: 'Seattle!',
+          createdAt: new Date(),
+          user: {
+            _id: 1,
+            name: 'Developer',
+          },
+          sent: true,
+          received: true,
+        },
+        {
+          _id: Math.round(Math.random() * 1000000),
+          text: 'Where are you?',
+          createdAt: new Date(),
+          user: {
+            _id: 2,
+            name: 'React Native',
+          },
+        },
         {
           _id: Math.round(Math.random() * 1000000),
           text: 'Yes, and I use Gifted Chat!',
           createdAt: new Date(),
           user: {
             _id: 1,
-            name: 'Shifa Somji',
+            name: 'Developer', // sent from the user
           },
+          sent: true,
+          received: true
         },
+
+        // this is the first message
         {
           _id: Math.round(Math.random() * 1000000),
           text: 'Are you building a chat app?',
           createdAt: new Date(),
           user: {
             _id: 2,
-            name: 'React Native',
+            name: 'React Native', // the avatar is the initials, so RN in this case
           },
         },
+
+        // this is a system message 
+        // not officially a "message"
         {
-          _id: 1,
-          text: 'This is a quick reply. Do you love Gifted Chat?',
+          _id: Math.round(Math.random() * 1000000),
+          text: "You are officially rocking GiftedChat.",
           createdAt: new Date(),
-          quickReplies: {
-            type: 'radio', // or 'checkbox',
-            keepIt: true,
-            values: [
-              {
-                title: '😋 Yes',
-                value: 'yes',
-              },
-              {
-                title: '📷 Yes, let me show you with a picture!',
-                value: 'yes_picture',
-              },
-              {
-                title: '😞 Nope. What?',
-                value: 'no',
-              },
-            ],
-          },
-          user: {
-            _id: 2,
-            name: 'React Native',
-          },
+          system: true,
         },
-        
+       
       ],
     })
   }
@@ -82,7 +111,7 @@ export default class Example extends Component {
         messages={this.state.messages}
         onSend={messages => this.onSend(messages)}
         user={{
-          _id: 1, // TO DO: figure out what this does, i'm not sure yet
+          _id: 1, // id of 1 starts with the react native's message, if the id is 2 it'll start with the user's message 
         }}
       />
     )
