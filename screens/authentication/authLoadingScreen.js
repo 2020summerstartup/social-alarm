@@ -22,7 +22,7 @@ class AuthLoadingScreen extends React.Component {
   _bootstrapAsync = async () => {
     var self = this;
     const userToken = await AsyncStorage.getItem("email");
-    const password =await AsyncStorage.getItem("password");
+    const password = await AsyncStorage.getItem("password");
     if (userToken ) {
       auth.signInWithEmailAndPassword(userToken, password).then(function(user){
         self.props.navigation.navigate(

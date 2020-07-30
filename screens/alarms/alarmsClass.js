@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, Component } from 'react';
 import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList, AsyncStorage, Animated, Image, TouchableHighlight } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import Chevron from './downChevron';
 
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
@@ -82,6 +83,7 @@ export default class Alarms extends Component {
             responseListener: "",
             newGroupName: "",
             groupsArray: [],
+            addAlarmToGroup:"",
         }
     }
 
@@ -529,14 +531,54 @@ export default class Alarms extends Component {
 
               {/* https://github.com/lawnstarter/react-native-picker-select */} 
               <RNPickerSelect
-                onValueChange={(label) => console.log(label)}
+                onValueChange={(label) => this.setState({ addAlarmToGroup: label })}
                 // items={[
                 //     { label: 'Option1', value: 'option1' },
                 //     { label: 'Option2', value: 'option2' },
                 // ]}
                 items={this.state.groupsArray}
+
+                // Object to overide the default text placeholder for the PickerSelect
+                placeholder={{label: 'Click here to select a group', value: null}}
+                style={
+                  { fontWeight: 'normal',
+                    color: 'red',
+                    placeholder: {
+                      color: "#fb5b5a",
+                      fontSize: 20,
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    },
+                    inputIOS: {
+                      color: "#fb5b5a",
+                      fontSize: 20,
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }
+                    // chevronDown: 'true',
+                  }
+                }
+                doneText={"Select"}
+                Icon={() => {return <Chevron size={1.5} color="gray" />;}}
+                 
               />
-          </View>
+
+              {/* <Text style={styles.inputText}>this.state.addAlarmToGroup:</Text> 
+              <Text style={styles.inputText}>{this.state.addAlarmToGroup}</Text>  */}
+
+              <Text></Text>
+                
+              <Button
+                title="Add alarm to group"
+                color="lightgreen"
+                onPress={ async() =>
+                  this.setState({ groupPickerModalOpen: false })
+                }
+              />
+
+              </View>
           </Modal>
           {/*END OF MODAL FOR GROUP PICKER */}
 
@@ -627,12 +669,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
   },
 
   inputText:{
-    height:50,
-    color: "#ffffff",
+    padding: 20,
+    height: 50,
+    color:"#ffffff",
     fontSize: 16
   },
 
