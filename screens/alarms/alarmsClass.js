@@ -20,7 +20,6 @@ import RNPickerSelect from 'react-native-picker-select';
 import * as firebase from "firebase";
 import { db, auth } from "../../firebase/firebase";
 
-
 const moment = require("moment");
 
 // TopBanner formats the title and modal button along the top of the screen
@@ -66,13 +65,14 @@ export default class Alarms extends Component {
         super(props);
         this.AlarmsTable = this.AlarmsTable.bind(this) // This is the magical line that gets rid of "this" errors inside AlarmsTable
         this.updateFirebaseGroupsDoc = this.updateFirebaseGroupsDoc.bind(this)
+        this.setMaxKey = this.setMaxKey.bind(this)
         
         this.state = {
             alarms: [
-                {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  id: "1"},
-                {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  id: "2"},
-                {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  id: "3"},
-                {name: 'Fifth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  id: "5"},
+                {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  key: 1},
+                {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  key: 2},
+                {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  key: 3},
+                {name: 'Fifth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  key: 5},
             ],
             // alarms: [],
             newAlarmModalOpen: false,
@@ -88,8 +88,10 @@ export default class Alarms extends Component {
             newGroupName: "",
             groupsArray: [],
             groupIdClicked: "",
-            singleAlarm: {name: '', alarm_hour: null, alarm_minute: null, switch: null,  id: ""},
+            singleAlarm: {name: '', alarm_hour: null, alarm_minute: null, switch: null,  key: ""},
             openRow: null,
+            currentMaxKey: 0,
+            listOfKeys: []
         }
     }
 
@@ -145,13 +147,13 @@ export default class Alarms extends Component {
       this.setState({ alarms: [] }); // empty the alarms array
     };
 
-    async addAlarm(name, alarm_hour, alarm_minute, id, alarm_array){
+    async addAlarm(name, alarm_hour, alarm_minute, key, alarm_array){
       // Add new alarm data to the alarm_array
       alarm_array.push(
-        {name: name, alarm_hour: alarm_hour, alarm_minute: alarm_minute, switch: true, id: id}
+        {name: name, alarm_hour: alarm_hour, alarm_minute: alarm_minute, switch: true, key: key}
       )
     
-      console.log("New id:", id)
+      console.log("New key:", key)
       
       // Use the new alarm data to schedule a notification
       promise = (await Notifications.scheduleNotificationAsync({
@@ -202,45 +204,51 @@ export default class Alarms extends Component {
       });
     }
 
-    updateFirebaseGroupsDoc(){
-      console.log("Updating", this.state.groupIdClicked, "in firebase")
-      console.log("this.state.groupIdClicked:", this.state.groupIdClicked)
-
-      // console.log("this.state.openRow === 0:", this.state.openRow === 0)
-
+    setMaxKey = async () => {
+      var maxKey = 0
       for (var i = 0; i < this.state.alarms.length; i++) {
-        if (this.state.alarms[i].id == this.state.openRow){
-          console.log("this.state.alarms[i].id == this.state.openRow")
-          var newAlarm = {
-            name: this.state.alarms[i].name, 
-            alarm_hour: this.state.alarms[i].alarm_hour,
-            alarm_minute: this.state.alarms[i].alarm_minute, 
-            switch: this.state.alarms[i].switch, 
-            id: this.state.alarms[i].id
+        if (this.state.alarms[i].key > this.state.currentMaxKey){
+          maxKey = this.state.alarms[i].key
+          promise = await(this.setState( {currentMaxKey: maxKey}))
+        }
+        // console.log("The currentMaxKey is", this.state.currentMaxKey);
+      }
+    }
+
+    listofKeys = async () => {
+      var list = []
+      for (var i = 0; i < this.state.alarms.length; i++) {
+        list.push(this.state.alarms[i].key)
+      }
+      this.setState( {listOfKeys: list}) // , () => {console.log("listOfKeys:", this.state.listOfKeys); })
+    }
+
+    updateFirebaseGroupsDoc = async () => {
+      console.log("Updating", this.state.groupIdClicked, "in firebase")
+
+      await(this.setMaxKey())
+      await(this.listofKeys())
+
+      for (var i = 0; i < this.state.currentMaxKey + 1; i++) {
+        if (this.state.listOfKeys.includes(i)){
+          for (var j = 0; j < this.state.alarms.length; j++) {
+            if (this.state.alarms[j].key == this.state.openRow){
+              // console.log("this.state.alarms[i].key == this.state.openRow")
+              var newAlarm = {
+                name: this.state.alarms[j].name, 
+                alarm_hour: this.state.alarms[j].alarm_hour,
+                alarm_minute: this.state.alarms[j].alarm_minute, 
+                switch: this.state.alarms[j].switch, 
+                key: this.state.alarms[j].key
+              }
+            }
           }
         }
       }
-
-      // var newAlarm = {
-      //   name: this.state.alarms[(this.state.openRow)].name, 
-      //   alarm_hour: this.state.alarms[(this.state.openRow)].alarm_hour,
-      //   alarm_minute: this.state.alarms[(this.state.openRow)].alarm_minute, 
-      //   switch: this.state.alarms[(this.state.openRow)].switch, 
-      //   id: this.state.alarms[(this.state.openRow)].id}
-
       
-      console.log("newAlarm:", newAlarm)
-      this.setState({singleAlarm: newAlarm})
-
-      // this.setState({singleAlarm: {
-      //   name: this.state.alarms[0].name, 
-      //   alarm_hour: this.state.alarms[0].alarm_hour,
-      //   alarm_minute: this.state.alarms[0].alarm_minute, 
-      //   switch: this.state.alarms[0].switch, 
-      //   id: this.state.alarms[0].id}})
-
-      console.log("this.state.alarms[2]:", this.state.alarms[2])
-      console.log("singleAlarm:", this.state.singleAlarm)
+      // console.log("newAlarm:", newAlarm)
+      await(this.setState( {singleAlarm: newAlarm} ))
+      // console.log("singleAlarm:", this.state.singleAlarm)
 
       db.collection("groups")
         .doc(this.state.groupIdClicked)
@@ -268,16 +276,15 @@ export default class Alarms extends Component {
             });
           }
           this.setState({ groupsArray: groupsData });
-          // console.log("The user's groups:", this.state.groupsArray)
+          console.log("The user's groups:", this.state.groupsArray)
 
           // Adds label and value keys to the groupsArray for the picker to work
           this.state.groupsArray.forEach( element => {
             // console.log("element before", element)
-            // var obj = {label: element.name, value: element.name}
             element.label = element.name;
             element.value = element.id;
             element.key = element.id;
-            console.log("element after", element);
+            // console.log("element after", element);
           })
 
         }
@@ -308,7 +315,7 @@ export default class Alarms extends Component {
       const deleteRow = (rowMap, rowKey) => {
         closeRow(rowMap, rowKey);
         const newData = [...props.alarms];
-        const prevIndex = props.alarms.findIndex(item => item.id === rowKey);
+        const prevIndex = props.alarms.findIndex(item => item.key === rowKey);
         newData.splice(prevIndex, 1);
         this.setState({ alarms: newData });
         console.log("rowKey", rowKey);
@@ -316,12 +323,12 @@ export default class Alarms extends Component {
       };
   
       onRowDidOpen = async(rowKey) => {
-        console.log('This row opened', rowKey);
-        const prevIndex = props.alarms.findIndex(item => item.id === rowKey);
+        // console.log('This row opened', rowKey);
+        const prevIndex = props.alarms.findIndex(item => item.key === rowKey);
         promise = await(this.setState({ openRow: Number(rowKey)}));
         // promise = await(this.setState({ openRow: Number(prevIndex) }));
-        console.log("openRow:", this.state.openRow)
-        console.log("typeof openRow:", typeof this.state.openRow)
+        // console.log("openRow:", this.state.openRow)
+        // console.log("typeof openRow:", typeof this.state.openRow)
       };
   
       const onSwipeValueChange = swipeData => {
@@ -339,14 +346,14 @@ export default class Alarms extends Component {
 
             <TouchableOpacity
                 style={[styles.backRightBtn, styles.backRightBtnCenter]}
-                onPress={() => closeRow(rowMap, data.item.id)}
+                onPress={() => closeRow(rowMap, data.item.key)}
             >
               <Text style={styles.backTextWhite}>Edit</Text>
             </TouchableOpacity>
   
             <TouchableOpacity
                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                onPress={() => deleteRow(rowMap, data.item.id)}
+                onPress={() => deleteRow(rowMap, data.item.key)}
             >
               <View style={[styles.trash]}>
                   <Image
@@ -649,8 +656,8 @@ export default class Alarms extends Component {
                  
               />
 
-              <Text style={styles.inputText}>this.state.groupIdClicked:</Text> 
-              <Text style={styles.inputText}>{this.state.groupIdClicked}</Text> 
+              {/* <Text style={styles.inputText}>this.state.groupIdClicked:</Text>  */}
+              {/* <Text style={styles.inputText}>{this.state.groupIdClicked}</Text>  */}
 
               <Text></Text>
                 
