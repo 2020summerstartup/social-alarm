@@ -211,33 +211,8 @@ export default class Groups extends Component {
     }
   };
 
-  // called when admin wants to delete someone from a group
-  deleteUser(group, groupId, userDeleted) {
-    if (
-      // if the person is not trying to delete themselves and is not the admin, return
-      userDeleted != this.user.email &&
-      this.user.email != this.state.groupAdminClicked
-    ) {
-      return;
-    } else {
-      //  double check with user - make sure they want to delete via alert
-      Alert.alert(
-        "Warning",
-        "Are you sure you want to delete " + userDeleted + " from this group?",
-        [
-          { text: "No" },
-          {
-            text: "Yes",
-            // if they  click yes, calls deleteGroup
-            onPress: () => this.deleteGroup(group, groupId, userDeleted),
-          },
-        ]
-      );
-    }
-  }
-
   // deletes a user from a group
-  deleteGroup(group, groupId, userDeleted) {
+  deleteUser(group, groupId, userDeleted) {
     var self = this;
 
     // user side firebase (delete's group from user's doc)
@@ -392,7 +367,7 @@ export default class Groups extends Component {
         { text: "No" },
         {
           text: "Yes",
-          onPress: () => this.deleteGroup(groupName, rowKey, this.user.email),
+          onPress: () => this.deleteUser(groupName, rowKey, this.user.email),
         },
       ]
     );
@@ -403,26 +378,33 @@ export default class Groups extends Component {
   deleteRowModal = (rowMap, rowKey) => {
     this.closeRow(rowMap, rowKey);
     console.log(rowKey);
-    //const prevIndex = this.state.groups.findIndex((item) => item.id === rowKey);
-    //const groupName = this.state.groups[prevIndex].name;
-    console.log(this.state.groupNameClicked);
 
-    Alert.alert(
-      "Warning",
-      "Are you sure you  want to delete " + rowKey + " from this group?",
-      [
-        { text: "No" },
-        {
-          text: "Yes",
-          onPress: () =>
-            this.deleteGroup(
+    if (
+      // if the person is not trying to delete themselves and is not the admin, return
+      rowKey != this.user.email &&
+      this.user.email != this.state.groupAdminClicked
+    ) {
+      return;
+    } else {
+      //  double check with user - make sure they want to delete via alert
+      Alert.alert(
+        "Warning",
+        "Are you sure you want to delete " + rowKey + " from this group?",
+        [
+          { text: "No" },
+          {
+            text: "Yes",
+            // if they  click yes, calls deleteUser
+            onPress: () => this.deleteUser(
               this.state.groupNameClicked,
               this.state.groupIdClicked,
               rowKey
             ),
-        },
-      ]
-    );
+          },
+        ]
+      );
+    }
+    
   };
 
   // idk what this does - from Sidney's code
@@ -518,7 +500,7 @@ export default class Groups extends Component {
                     ...{ justifyContent: "flex-start" },
                   }}
                   color="#333"
-                  //onPress={() => this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked)}
+                  //onPress={() => this.deleteUser(this.state.groupNameClicked, this.state.groupIdClicked)}
                   onPress={() =>
                     Alert.alert(
                       "Warning",
@@ -528,7 +510,7 @@ export default class Groups extends Component {
                         {
                           text: "Yes",
                           onPress: () =>
-                            this.deleteGroup(
+                            this.deleteUser(
                               this.state.groupNameClicked,
                               this.state.groupIdClicked,
                               this.user.email
