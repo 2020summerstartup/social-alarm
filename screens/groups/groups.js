@@ -277,6 +277,54 @@ export default class Groups extends Component {
       .catch((error) => console.log(error));
   }
 
+
+  deleteGroup(group, groupId) {
+    var self = this;
+
+    if (
+      // if the person is not trying to delete themselves and is not the admin, return
+      this.user.email != this.state.groupAdminClicked
+    ) {
+      Alert.alert(
+        "Oops!",
+        "Only the group admin can delete a group",
+        [
+          { text: "ok" },
+        ]
+      );
+      return;
+    }
+    console.log(group)
+    console.log(groupId)
+
+    // could also possibly use state here, but I don't want things to get messed up
+    // if they are accidentally not the same
+    db.collection("groups").doc(groupId).get().then( function(doc) {
+      const groupMembers = doc.data().members;
+      console.log(groupMembers)
+      for(var i = 0;  i < groupMembers.length; i++) {
+        db.collection("users").doc(groupMembers[i]).update({
+          groups: Firebase.firestore.FieldValue.arrayRemove({
+            id: groupId,
+            name: group,
+          }),
+        }).then(console.log("deleted from " + groupMembers[i]))
+      }
+
+      db.collection("groups").doc(groupId).delete().then(()  => {
+        console.log(group + " deleted")
+        
+
+        
+      })
+    })
+
+
+  }
+
+
+
+
   // hidden items in swipe list - from Sidney's code
   // for main page
   renderHiddenItem = (data, rowMap) => (
@@ -364,9 +412,12 @@ export default class Groups extends Component {
       "Warning",
       "Are you sure you  want to delete yourself from this group?",
       [
-        { text: "No" },
+        { text: "No",
+          style: "cancel",
+        },
         {
           text: "Yes",
+          style: "destructive",
           onPress: () => this.deleteUser(groupName, rowKey, this.user.email),
         },
       ]
@@ -391,9 +442,12 @@ export default class Groups extends Component {
         "Warning",
         "Are you sure you want to delete " + rowKey + " from this group?",
         [
-          { text: "No" },
+          { text: "No",
+            style: "cancel",
+          },
           {
             text: "Yes",
+            style: "destructive",
             // if they  click yes, calls deleteUser
             onPress: () => this.deleteUser(
               this.state.groupNameClicked,
@@ -504,17 +558,16 @@ export default class Groups extends Component {
                   onPress={() =>
                     Alert.alert(
                       "Warning",
-                      "Are you sure you  want to delete yourself from this group?",
+                      "Are you sure you want to delete this group? This action is not reversable",
                       [
-                        { text: "No" },
+                        { text: "No",
+                        style: "cancel",
+                        },
                         {
                           text: "Yes",
+                          style: "destructive",
                           onPress: () =>
-                            this.deleteUser(
-                              this.state.groupNameClicked,
-                              this.state.groupIdClicked,
-                              this.user.email
-                            ),
+                            this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked),
                         },
                       ]
                     )
