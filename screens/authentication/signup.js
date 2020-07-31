@@ -15,8 +15,6 @@ import {
 import { db, auth } from "../../firebase/firebase";
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 import {appStyles} from '../../style/stylesheet';
-// import { NavigationContainer } from '@react-navigation/native';
-// import NavigationContainer from './navigation';
 
 /* signup.js
  * SignUp screen
@@ -35,7 +33,6 @@ export default function SignUp({ navigation }) {
 
   // signUpUser - called when user presses sign up button
   // if passwords match, signs user up (and logs them in) and navigates to App
-  // TODO: if passwords don't match, some kind of alert
   signUpUser = async (email, password, confirmPassword, name) => {
     try {
       if (password == confirmPassword) {

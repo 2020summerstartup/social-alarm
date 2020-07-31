@@ -6,11 +6,7 @@
 // Not yet using https://github.com/smartliang/react-native-alarm
 
 import React, { Component } from 'react';
-import { Button, View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { createAppContainer } from 'react-navigation'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator, HeaderBackground } from 'react-navigation-stack';
-import Moment from 'moment';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import {APPBACKGROUNDCOLOR} from '../../style/constants';
 
 const moment = require("moment");
@@ -109,7 +105,6 @@ export default class Alarms extends Component {
     };
   }
 
-
   componentWillUnmount(){
     clearInterval(this.timer) // Sidney wants to look into this more
 
@@ -182,15 +177,6 @@ export default class Alarms extends Component {
 
     return (
       <View style={styles.container}>
-        {/* <Text style={styles.timeText}>
-          {this.state.time}
-        </Text>
-        <Text style={styles.dateText}>
-          {this.state.date}
-
-        </Text> */}
-
-
         <Timer
           interval={laps.reduce((total, curr) => total + curr, 0) + timer}
           /*laps.reduce() sums all the times in the laps and then + timer adds the current lap. This makes main timer display the total time since the beginning of the first lap*/

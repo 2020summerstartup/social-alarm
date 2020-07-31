@@ -13,13 +13,7 @@ import {
   Keyboard,
 } from "react-native";
 import { auth } from "../../firebase/firebase";
-
-// import Navigator from './navigation';
-// import { NavigationContainer } from '@react-navigation/native';
-// import NavigationContainer from './navigation';
-
 import {appStyles} from '../../style/stylesheet';
-
 
 /* login.js
  * Login screen
@@ -39,7 +33,6 @@ export default function Login({ navigation }) {
   };
   // loginUser - called when user presses login button
   // logs user in via firebase, navigates to App page (bottom tab navigator)
-  // TODO: add AsyncStorage so user stays signed in
   loginUser = async (email, password) => {
     try {
       await AsyncStorage.setItem("email", email);
