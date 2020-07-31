@@ -7,6 +7,8 @@ import * as ImagePicker from 'expo-image-picker';
 
 export default function App() {
   let openImagePickerAsync = async () => {
+
+    // needs permission from user to open camera roll
     let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
 
     if (permissionResult.granted === false) {
