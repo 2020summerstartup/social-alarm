@@ -68,12 +68,6 @@ export default class Alarms extends Component {
         this.addAlarm = this.addAlarm.bind(this);
         
         this.state = {
-            // alarms: [
-            //     {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  key: 1},
-            //     {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  key: 2},
-            //     {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  key: 3},
-            //     {name: 'Fifth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  key: 5},
-            // ],
             alarms: [],
             newAlarmModalOpen: false,
             groupPickerModalOpen: false,
@@ -95,7 +89,7 @@ export default class Alarms extends Component {
         }
     }
 
-    getFirebaseUsersAlarms(){
+    getFirebaseUsersAlarmsFromUsersDoc(){
       db.collection("users")
       .doc(auth.currentUser.email)
       .get()
@@ -119,6 +113,39 @@ export default class Alarms extends Component {
       .catch(function (error) {
         console.log(error);
       });
+    }
+
+    async getFirebaseUsersAlarmsFromGroupsDocs(){
+      // promise = await(this.getFirebaseUsersGroups());
+      // console.log("this.state.groupsArray inside getFirebaseUsersAlarmsFromGroupsDocs()", this.state.groupsArray)
+      // for (var i = 0; i < this.state.groupsArray.length; i++){
+        db.collection("groups")
+        // .doc(this.state.groupsArray[0].id)
+        .doc("7Ek2dYinSXsmIiZuFPZB")
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            // get the groups from the user's doc - store in some state to display
+            const alarmsData = [];
+            for (var i = 0; i < doc.data().alarms.length; i++) {
+              alarmsData.push({
+                alarm_hour: doc.data().alarms[i].alarm_hour,
+                alarm_minute: doc.data().alarms[i].alarm_minute,
+                key: doc.data().alarms[i].key,
+                name: doc.data().alarms[i].name,
+                switch: doc.data().alarms[i].switch,
+              });
+            }
+            alarmList = this.state.alarms;
+            Array.prototype.push.apply(alarmList, alarmsData);
+          }
+          console.log("The user's alarms with alarms from groups docs:", this.state.alarms)
+          this.setState({ alarms: alarmList });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      // }
     }
 
     async makeAlarms(alarm_array){
@@ -302,7 +329,7 @@ export default class Alarms extends Component {
       this.setState({ groupPickerModalOpen: false })
     }
 
-    getFirebaseUsersGroups(){
+    async getFirebaseUsersGroups(){
       db.collection("users")
       .doc(auth.currentUser.email)
       .get()
@@ -318,7 +345,7 @@ export default class Alarms extends Component {
             });
           }
           this.setState({ groupsArray: groupsData });
-          console.log("The user's groups:", this.state.groupsArray)
+          // console.log("The user's groups:", this.state.groupsArray)
 
           // Adds label and value keys to the groupsArray for the picker to work
           this.state.groupsArray.forEach( element => {
@@ -334,8 +361,7 @@ export default class Alarms extends Component {
       .catch(function (error) {
         console.log(error);
       });
-
-      this.setState({ groupPickerModalOpen: true })
+      // this.setState({ groupPickerModalOpen: true })
     }
 
     splitTime(){
@@ -381,7 +407,9 @@ export default class Alarms extends Component {
         <View style={styles.rowBack}>
             <TouchableOpacity
                 style={[styles.backLeftBtn]}
-                onPress={() => this.getFirebaseUsersGroups()}
+                onPress={() => 
+                  this.getFirebaseUsersGroups()
+                  .then(this.setState({ groupPickerModalOpen: true }))}
             >
               <Text style={styles.backTextWhite}>+Group</Text>
             </TouchableOpacity>
@@ -519,7 +547,16 @@ export default class Alarms extends Component {
     }
 
     componentDidMount(){
-      this.getFirebaseUsersAlarms();
+      // console.log("Initialize alarms")
+      this.getFirebaseUsersAlarmsFromUsersDoc();
+
+      this.getFirebaseUsersAlarmsFromGroupsDocs();
+
+      // Uses alarms array to make the alarms
+      this.makeAlarms(this.state.alarms)
+
+      // Sorts the alarms for output in ascending order by time
+      this.state.alarms.sort(this.sortByTime)
 
       this.registerForPushNotificationsAsync().then(token => this.setState({ expoPushToken: token }))//.catch(console.log(".catch"))
 
@@ -536,11 +573,7 @@ export default class Alarms extends Component {
     };
 
     render(){
-      // console.log("Initialize alarms")
-      // this.getFirebaseUsersAlarms()
-      this.makeAlarms(this.state.alarms)
-      this.state.alarms.sort(this.sortByTime)
-      this.updateFirebaseUsersDoc()
+      // this.updateFirebaseUsersDoc()
 
       return(
         <View style={styles.container}>
