@@ -1,7 +1,7 @@
 // This is the most updated alarms page file as of 7/28/20
  
-import React, { useState, useEffect, useRef, Component } from 'react';
-import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, ScrollView, Modal, FlatList, AsyncStorage, Animated, Image, TouchableHighlight } from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, Modal, AsyncStorage, Animated, Image, TouchableHighlight } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import Chevron from './downChevron';
 
@@ -13,7 +13,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 import { APPBACKGROUNDCOLOR } from '../../style/constants';
 import { appStyles } from '../../style/stylesheet';
-import TimePicking from "../../components/timePicker";
 import DatePicker from 'react-native-datepicker';
 import RNPickerSelect from 'react-native-picker-select';
 
@@ -63,18 +62,19 @@ function AlarmDetails({title, hour, minute}){
 export default class Alarms extends Component {
     constructor(props) {
         super(props);
-        this.AlarmsTable = this.AlarmsTable.bind(this) // This is the magical line that gets rid of "this" errors inside AlarmsTable
-        this.updateFirebaseGroupsDoc = this.updateFirebaseGroupsDoc.bind(this)
-        this.setMaxKey = this.setMaxKey.bind(this)
+        this.AlarmsTable = this.AlarmsTable.bind(this); // This is the magical line that gets rid of "this" errors inside AlarmsTable
+        this.updateFirebaseGroupsDoc = this.updateFirebaseGroupsDoc.bind(this);
+        this.setMaxKey = this.setMaxKey.bind(this);
+        this.addAlarm = this.addAlarm.bind(this);
         
         this.state = {
-            alarms: [
-                {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  key: 1},
-                {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  key: 2},
-                {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  key: 3},
-                {name: 'Fifth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  key: 5},
-            ],
-            // alarms: [],
+            // alarms: [
+            //     {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  key: 1},
+            //     {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  key: 2},
+            //     {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  key: 3},
+            //     {name: 'Fifth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  key: 5},
+            // ],
+            alarms: [],
             newAlarmModalOpen: false,
             groupPickerModalOpen: false,
             expoPushToken: "",
@@ -82,7 +82,7 @@ export default class Alarms extends Component {
             newAlarmTime: 0,
             newAlarmHour: 0,
             newAlarmMinute: 0,
-            newAlarmText:"New Alarm",
+            newAlarmText:"",
             notificationListener: "",
             responseListener: "",
             newGroupName: "",
@@ -147,13 +147,22 @@ export default class Alarms extends Component {
       this.setState({ alarms: [] }); // empty the alarms array
     };
 
-    async addAlarm(name, alarm_hour, alarm_minute, key, alarm_array){
+    async addAlarm(name, alarm_hour, alarm_minute, key, alarm_array) {
       // Add new alarm data to the alarm_array
       alarm_array.push(
         {name: name, alarm_hour: alarm_hour, alarm_minute: alarm_minute, switch: true, key: key}
       )
+
+      // promise = await(this.setState(
+      //   {alarms: [this.state.alarms] + [{name: name, alarm_hour: alarm_hour, alarm_minute: alarm_minute, switch: true, key: key}]
+      //   }))
+
+      console.log("this.state.alarms:", this.state.alarms)
     
+      promise = await(this.setState( {currentMaxKey: key} ))
+
       console.log("New key:", key)
+      console.log("currentMaxKey:", this.state.currentMaxKey)
       
       // Use the new alarm data to schedule a notification
       promise = (await Notifications.scheduleNotificationAsync({
@@ -228,12 +237,14 @@ export default class Alarms extends Component {
 
       await(this.setMaxKey())
       await(this.listofKeys())
+      console.log("listOfKeys:", this.state.listOfKeys);
 
       for (var i = 0; i < this.state.currentMaxKey + 1; i++) {
         if (this.state.listOfKeys.includes(i)){
+          console.log("Includes")
           for (var j = 0; j < this.state.alarms.length; j++) {
             if (this.state.alarms[j].key == this.state.openRow){
-              // console.log("this.state.alarms[i].key == this.state.openRow")
+              console.log("this.state.alarms[i].key == this.state.openRow")
               var newAlarm = {
                 name: this.state.alarms[j].name, 
                 alarm_hour: this.state.alarms[j].alarm_hour,
@@ -246,9 +257,9 @@ export default class Alarms extends Component {
         }
       }
       
-      // console.log("newAlarm:", newAlarm)
+      console.log("newAlarm:", newAlarm)
       await(this.setState( {singleAlarm: newAlarm} ))
-      // console.log("singleAlarm:", this.state.singleAlarm)
+      console.log("singleAlarm:", this.state.singleAlarm)
 
       db.collection("groups")
         .doc(this.state.groupIdClicked)
@@ -323,7 +334,7 @@ export default class Alarms extends Component {
       };
   
       onRowDidOpen = async(rowKey) => {
-        // console.log('This row opened', rowKey);
+        console.log('This row opened', rowKey);
         const prevIndex = props.alarms.findIndex(item => item.key === rowKey);
         promise = await(this.setState({ openRow: Number(rowKey)}));
         // promise = await(this.setState({ openRow: Number(prevIndex) }));
@@ -568,8 +579,9 @@ export default class Alarms extends Component {
                   <Button style={styles.button}
                   title="Set Alarm"
                   onPress={ async() =>
-                    this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, String(this.state.alarms.length + 1), this.state.alarms)
+                    this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, (this.state.currentMaxKey + 1), this.state.alarms)
                     .then(this.setState({ newAlarmModalOpen: false }))
+                    // this.setState({ newAlarmModalOpen: false })
                   }
                   />
 
@@ -624,14 +636,10 @@ export default class Alarms extends Component {
               {/* https://github.com/lawnstarter/react-native-picker-select */} 
               <RNPickerSelect
                 onValueChange={(value) => this.setState({ groupIdClicked: value })}
-                // items={[
-                //     { label: 'Option1', value: 'option1' },
-                //     { label: 'Option2', value: 'option2' },
-                // ]}
                 items={this.state.groupsArray}
 
                 // Object to overide the default text placeholder for the PickerSelect
-                placeholder={{label: 'Click here to select a group', value: null}}
+                placeholder={{label: 'Click here to select a group', value: "0", key: "0"}}
                 style={
                   { fontWeight: 'normal',
                     color: 'red',
