@@ -307,7 +307,7 @@ export default class Groups extends Component {
   renderHiddenItem = (data, rowMap) => (
     // might take the first one out..
     <View style={alarmStyles.rowBack}>
-      {/*}
+      {/*
       <TouchableOpacity
         style={[alarmStyles.backLeftBtn]}
         onPress={() => console.log("Pressed share alarm with group button")}
@@ -341,17 +341,10 @@ export default class Groups extends Component {
   renderHiddenItemModal = (data, rowMap) => (
     // might take the first one out..
     <View style={alarmStyles.rowBack}>
-      {/*}
-      <TouchableOpacity
-        style={[alarmStyles.backLeftBtn]}
-        onPress={() => console.log("Pressed share alarm with group button")}
-      >
-        <Text style={alarmStyles.backTextWhite}>+ Alarm</Text>
-  </TouchableOpacity> */}
 
       <TouchableOpacity
         style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnCenter]}
-        onPress={() => this.closeRow(rowMap, data.item.id)}
+        onPress={() => this.closeRowModal(rowMap, data.item)}
       >
         <Text style={alarmStyles.backTextWhite}>Close</Text>
       </TouchableOpacity>
@@ -373,6 +366,14 @@ export default class Groups extends Component {
   // called when  user presses close
   // doesn't work fully for indiv group modal
   closeRow = (rowMap, rowKey) => {
+    if (rowMap[rowKey]) {
+      rowMap[rowKey].closeRow();
+    }
+  };
+
+    // called when  user presses close
+  // doesn't work fully for indiv group modal
+  closeRowModal = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
       rowMap[rowKey].closeRow();
     }
