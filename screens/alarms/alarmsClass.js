@@ -68,13 +68,13 @@ export default class Alarms extends Component {
         this.updateFirebaseGroupsDoc = this.updateFirebaseGroupsDoc.bind(this)
         
         this.state = {
-            // alarms: [
-            //     {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  id: "1"},
-            //     {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  id: "2"},
-            //     {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  id: "3"},
-            //     {name: 'Fifth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  id: "5"},
-            // ],
-            alarms: [],
+            alarms: [
+                {name: 'First Alarm',   alarm_hour: 13, alarm_minute: 36, switch: true,  id: "1"},
+                {name: 'Second Alarm',  alarm_hour: 13, alarm_minute: 35, switch: true,  id: "2"},
+                {name: 'Third Alarm',   alarm_hour: 13, alarm_minute: 38, switch: true,  id: "3"},
+                {name: 'Fifth Alarm',  alarm_hour: 13, alarm_minute: 37, switch: true,  id: "5"},
+            ],
+            // alarms: [],
             newAlarmModalOpen: false,
             groupPickerModalOpen: false,
             expoPushToken: "",
@@ -88,7 +88,8 @@ export default class Alarms extends Component {
             newGroupName: "",
             groupsArray: [],
             groupIdClicked: "",
-            singleAlarm: {name: 'Alarm'}
+            singleAlarm: {name: '', alarm_hour: null, alarm_minute: null, switch: null,  id: ""},
+            openRow: null,
         }
     }
 
@@ -204,11 +205,48 @@ export default class Alarms extends Component {
     updateFirebaseGroupsDoc(){
       console.log("Updating", this.state.groupIdClicked, "in firebase")
       console.log("this.state.groupIdClicked:", this.state.groupIdClicked)
+
+      // console.log("this.state.openRow === 0:", this.state.openRow === 0)
+
+      for (var i = 0; i < this.state.alarms.length; i++) {
+        if (this.state.alarms[i].id == this.state.openRow){
+          console.log("this.state.alarms[i].id == this.state.openRow")
+          var newAlarm = {
+            name: this.state.alarms[i].name, 
+            alarm_hour: this.state.alarms[i].alarm_hour,
+            alarm_minute: this.state.alarms[i].alarm_minute, 
+            switch: this.state.alarms[i].switch, 
+            id: this.state.alarms[i].id
+          }
+        }
+      }
+
+      // var newAlarm = {
+      //   name: this.state.alarms[(this.state.openRow)].name, 
+      //   alarm_hour: this.state.alarms[(this.state.openRow)].alarm_hour,
+      //   alarm_minute: this.state.alarms[(this.state.openRow)].alarm_minute, 
+      //   switch: this.state.alarms[(this.state.openRow)].switch, 
+      //   id: this.state.alarms[(this.state.openRow)].id}
+
+      
+      console.log("newAlarm:", newAlarm)
+      this.setState({singleAlarm: newAlarm})
+
+      // this.setState({singleAlarm: {
+      //   name: this.state.alarms[0].name, 
+      //   alarm_hour: this.state.alarms[0].alarm_hour,
+      //   alarm_minute: this.state.alarms[0].alarm_minute, 
+      //   switch: this.state.alarms[0].switch, 
+      //   id: this.state.alarms[0].id}})
+
+      console.log("this.state.alarms[2]:", this.state.alarms[2])
+      console.log("singleAlarm:", this.state.singleAlarm)
+
       db.collection("groups")
         .doc(this.state.groupIdClicked)
         .update({
             alarms: firebase.firestore.FieldValue.arrayUnion({
-              alarms: this.state.singleAlarm
+            alarms: this.state.singleAlarm
         }),
       });
       this.setState({ groupPickerModalOpen: false })
@@ -277,9 +315,13 @@ export default class Alarms extends Component {
         this.removeAlarm(props.alarms[prevIndex].name, props.alarms);
       };
   
-      const onRowDidOpen = rowKey => {
+      onRowDidOpen = async(rowKey) => {
         console.log('This row opened', rowKey);
-
+        const prevIndex = props.alarms.findIndex(item => item.id === rowKey);
+        promise = await(this.setState({ openRow: Number(rowKey)}));
+        // promise = await(this.setState({ openRow: Number(prevIndex) }));
+        console.log("openRow:", this.state.openRow)
+        console.log("typeof openRow:", typeof this.state.openRow)
       };
   
       const onSwipeValueChange = swipeData => {
