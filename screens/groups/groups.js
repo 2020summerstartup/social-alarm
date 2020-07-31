@@ -289,6 +289,8 @@ export default class Groups extends Component {
       .catch((error) => console.log(error));
   }
 
+  // deletes group doc, the group  from all members user doc, and updates local state
+  // called when admin wants to delete a group
   deleteGroup(group, groupId) {
     var self = this;
 
@@ -306,12 +308,15 @@ export default class Groups extends Component {
 
     // could also possibly use state here, but I don't want things to get messed up
     // if they are accidentally not the same
+    // get group doc
     db.collection("groups")
       .doc(groupId)
       .get()
       .then(function (doc) {
+        // get group members
         const groupMembers = doc.data().members;
         console.log(groupMembers);
+        // go through all member's user doc and delete that group
         for (var i = 0; i < groupMembers.length; i++) {
           db.collection("users")
             .doc(groupMembers[i])
@@ -323,7 +328,7 @@ export default class Groups extends Component {
             })
             .then(console.log("deleted from " + groupMembers[i]));
         }
-
+        // delete group doc
         db.collection("groups")
           .doc(groupId)
           .delete()
