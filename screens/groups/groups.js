@@ -66,7 +66,6 @@ export default class Groups extends Component {
       db.collection("groups")
         .add({
           groupName: name,
-          adminId: user.uid,
           adminEmail: user.email,
           members: [user.email],
           alarms: [],
