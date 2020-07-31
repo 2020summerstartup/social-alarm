@@ -95,6 +95,32 @@ export default class Alarms extends Component {
         }
     }
 
+    getFirebaseUsersAlarms(){
+      db.collection("users")
+      .doc(auth.currentUser.email)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          // get the groups from the user's doc - store in some state to display
+          const alarmsData = [];
+          for (var i = 0; i < doc.data().alarms.length; i++) {
+            alarmsData.push({
+              alarm_hour: doc.data().alarms[i].alarm_hour,
+              alarm_minute: doc.data().alarms[i].alarm_minute,
+              key: doc.data().alarms[i].key,
+              name: doc.data().alarms[i].name,
+              switch: doc.data().alarms[i].switch,
+            });
+          }
+          this.setState({ alarms: alarmsData });
+          console.log("The user's alarms:", this.state.alarms)
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    }
+
     async makeAlarms(alarm_array){
       alarm_array.forEach(async(list_item) => {
           if (list_item.switch == true){
@@ -152,15 +178,9 @@ export default class Alarms extends Component {
       alarm_array.push(
         {name: name, alarm_hour: alarm_hour, alarm_minute: alarm_minute, switch: true, key: key}
       )
-
-      // promise = await(this.setState(
-      //   {alarms: [this.state.alarms] + [{name: name, alarm_hour: alarm_hour, alarm_minute: alarm_minute, switch: true, key: key}]
-      //   }))
-
-      console.log("this.state.alarms:", this.state.alarms)
+      // console.log("this.state.alarms:", this.state.alarms)
     
       promise = await(this.setState( {currentMaxKey: key} ))
-
       console.log("New key:", key)
       console.log("currentMaxKey:", this.state.currentMaxKey)
       
@@ -203,14 +223,20 @@ export default class Alarms extends Component {
     }
 
     updateFirebaseUsersDoc(){
-      db.collection("users")
-        .doc(auth.currentUser.email)
-        .update({
+      for (var i = 0; i < this.state.alarms.length; i++){
+        db.collection("users")
+          .doc(auth.currentUser.email)
+          .update({
             alarms: firebase.firestore.FieldValue.arrayUnion({
-            // alarms : "test"
-            alarms: this.state.alarms
-        }),
-      });
+                name: this.state.alarms[i].name, 
+                alarm_hour: this.state.alarms[i].alarm_hour,
+                alarm_minute: this.state.alarms[i].alarm_minute, 
+                switch: this.state.alarms[i].switch, 
+                key: this.state.alarms[i].key
+            }),
+        });
+      }
+      console.log("Updated users doc in firebase")
     }
 
     setMaxKey = async () => {
@@ -265,7 +291,12 @@ export default class Alarms extends Component {
         .doc(this.state.groupIdClicked)
         .update({
             alarms: firebase.firestore.FieldValue.arrayUnion({
-            alarms: this.state.singleAlarm
+            // alarms: this.state.singleAlarm
+            name: this.state.singleAlarm.name, 
+            alarm_hour: this.state.singleAlarm.alarm_hour,
+            alarm_minute: this.state.singleAlarm.alarm_minute, 
+            switch: this.state.singleAlarm.switch, 
+            key: this.state.singleAlarm.key
         }),
       });
       this.setState({ groupPickerModalOpen: false })
@@ -488,6 +519,8 @@ export default class Alarms extends Component {
     }
 
     componentDidMount(){
+      this.getFirebaseUsersAlarms();
+
       this.registerForPushNotificationsAsync().then(token => this.setState({ expoPushToken: token }))//.catch(console.log(".catch"))
 
       // let the_subscription;
@@ -504,6 +537,7 @@ export default class Alarms extends Component {
 
     render(){
       // console.log("Initialize alarms")
+      // this.getFirebaseUsersAlarms()
       this.makeAlarms(this.state.alarms)
       this.state.alarms.sort(this.sortByTime)
       this.updateFirebaseUsersDoc()
