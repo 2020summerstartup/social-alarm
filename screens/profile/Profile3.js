@@ -57,11 +57,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     height: 40,
     marginLeft: 20,
-    width: 0.9 * Dimensions.get('screen').width, // sign out button is 90% of the screen's width
+    width: 0.85 * Dimensions.get('screen').width, // sign out button is 90% of the screen's width
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
     marginBottom: 10,
+    marginLeft: 30,
   },
 })
 
@@ -140,7 +141,7 @@ class ProfileScreen extends Component {
         <View>
           <ListItem
             hideChevron
-            title="Dark Theme"
+            title="Dark Mode"
             containerStyle={styles.listItemContainer}
             rightElement={
               <Switch

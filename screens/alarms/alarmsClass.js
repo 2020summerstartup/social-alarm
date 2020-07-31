@@ -12,8 +12,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 import { APPBACKGROUNDCOLOR } from '../../style/constants';
 import { appStyles } from '../../style/stylesheet';
-import TimePicking from "../../components/timePicker";
 import DatePicker from 'react-native-datepicker';
+
+import getStyleSheet from '../../style/theme';
 
 import * as firebase from "firebase";
 import { db, auth } from "../../firebase/firebase";
@@ -23,7 +24,6 @@ function TopBanner({ children }){
     <View style = {styles.topBanner}>{children}</View>
   )
 };
-
 
 function AlarmBanner({ children }){
   return(
@@ -75,7 +75,7 @@ export default class Alarms extends Component {
             newAlarmMinute: 0,
             newAlarmText:"New Alarm",
             notificationListener: "",
-            responseListener: ""
+            responseListener: "",
         }
     }
 
@@ -377,7 +377,7 @@ export default class Alarms extends Component {
       return(
         <View style={styles.container}>
           <TopBanner>
-              <Text style={styles.pageTitle}>Alarms_Testing</Text>
+              <Text style={styles.pageTitle}>Alarms</Text> 
               <MaterialIcons
                   name="add"
                   size={24}
