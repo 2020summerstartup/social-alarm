@@ -548,37 +548,45 @@ export default class Groups extends Component {
             <View style={appStyles.modalContainer}>
               <View style={styles.buttonContainer}>
                 {/* delete group button */}
-                <MaterialIcons
-                  name="delete"
-                  size={24}
-                  style={{
-                    ...appStyles.modalToggle,
-                    ...appStyles.modalClose,
-                    ...{ justifyContent: "flex-start" },
-                  }}
-                  color="#333"
-                  //onPress={() => this.deleteUser(this.state.groupNameClicked, this.state.groupIdClicked)}
-                  onPress={() =>
-                    Alert.alert(
-                      "Warning",
-                      "Are you sure you want to delete this group? This action is not reversable",
-                      [
-                        { text: "No", style: "cancel" },
-                        {
-                          text: "Yes",
-                          style: "destructive",
-                          onPress: () =>
-                            this.deleteGroup(
-                              this.state.groupNameClicked,
-                              this.state.groupIdClicked
-                            ),
-                        },
-                      ]
-                    )
-                  }
-                />
+                {this.user.email == this.state.groupAdminClicked && (
+                  <MaterialIcons
+                    name="delete"
+                    size={24}
+                    style={{
+                      ...appStyles.modalToggle,
+                      ...appStyles.modalClose,
+                      ...{ justifyContent: "flex-start" },
+                    }}
+                    color="#333"
+                    //onPress={() => this.deleteUser(this.state.groupNameClicked, this.state.groupIdClicked)}
+                    onPress={() =>
+                      Alert.alert(
+                        "Warning",
+                        "Are you sure you want to delete this group? This action is not reversable",
+                        [
+                          { text: "No", style: "cancel" },
+                          {
+                            text: "Yes",
+                            style: "destructive",
+                            onPress: () =>
+                              this.deleteGroup(
+                                this.state.groupNameClicked,
+                                this.state.groupIdClicked
+                              ),
+                          },
+                        ]
+                      )
+                    }
+                  />
+                )}
 
-                <Text> </Text>
+                {this.user.email != this.state.groupAdminClicked && (
+                  //   i            i
+                  <Text>            </Text>
+                )}
+
+                {/*                                                                     */}
+                <Text>                                                                     </Text>
 
                 {/* close indiv group modal button */}
                 <MaterialIcons
