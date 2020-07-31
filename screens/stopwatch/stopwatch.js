@@ -7,7 +7,7 @@
 
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import {APPBACKGROUNDCOLOR} from '../../style/constants';
+import {APPTEXTWHITE, APPTEXTBLUE, APPBACKGROUNDCOLOR} from '../../style/constants';
 
 const moment = require("moment");
 /*const DATA = {
@@ -255,17 +255,17 @@ const styles = StyleSheet.create({
   },
 
   timeText: {
-    color: "#0B132B",
+    color: APPTEXTBLUE,
     fontSize: 50,
   },
 
   dateText: {
-    color: "#0B132B",
+    color: APPTEXTBLUE,
     fontSize: 30,
   },
 
   timer: {
-    color: "#FFFFFF",
+    color: APPTEXTBLUE,
     fontSize: 70,
     fontWeight: "300",
     flex: 1,
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
-    color: "#FFFFFF",
+    color: APPTEXTWHITE,
   },
 
   ButtonRow: {
@@ -315,13 +315,13 @@ const styles = StyleSheet.create({
   lap: {
     flexDirection: "row",
     justifyContent: "space-between",
-    borderColor: "#FFFFFF",
+    borderColor: APPTEXTBLUE,
     borderTopWidth: 1,
     paddingVertical: 10,
   },
 
   lapText: {
-    color: "#000000",
+    color: "black",
     fontSize: 18,
     width: 35,
   },

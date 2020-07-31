@@ -3,16 +3,13 @@ import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncS
 import { Avatar, ListItem, ThemeContext } from 'react-native-elements'
 import { auth } from "../../firebase/firebase";
 
-import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
+import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTBLUE} from '../../style/constants';
 
 // chevron is the greater than sign that's on the right of everything on the profile page
 import Chevron from './Chevron'
 
 // sets the styles for all the icons
 import BaseIcon from './Icon'
-
-//import Switch from 'expo-dark-mode-switch';
-
 
 /* profile3.js
  * profile screen 
@@ -68,7 +65,6 @@ const styles = StyleSheet.create({
   },
 })
 
-
 class ProfileScreen extends Component {
 
   // sign out functionality 
@@ -114,17 +110,17 @@ class ProfileScreen extends Component {
     }))
   }
 
-
   render() {
+
     return (
       <ScrollView style={styles.scroll}>  
         {/* this part shows the user's name and email */}
         <View style={styles.userRow}>
           <View>
-            <Text style={{ fontSize: 30, color: APPBACKGROUNDCOLOR }}>{this.state.name}</Text>
+            <Text style={{ fontSize: 30, color: APPTEXTBLUE }}>{this.state.name}</Text>
             <Text
               style={{
-                color: APPBACKGROUNDCOLOR,
+                color: APPTEXTBLUE,
                 fontSize: 25,
               }}
             >
