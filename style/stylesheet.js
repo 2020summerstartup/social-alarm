@@ -81,6 +81,7 @@ const appStyles = StyleSheet.create({
   modalContainer: {
     backgroundColor: APPBACKGROUNDCOLOR,
     flex: 1,
+    justifyContent: "flex-start",
     alignItems: "center",
     padding: 15,
     paddingTop: 0,
@@ -88,7 +89,7 @@ const appStyles = StyleSheet.create({
 
   modalClose: {
     alignSelf: "flex-end",
-    marginTop: 50,
+    marginTop: 30,
     marginBottom: 0,
   },
 

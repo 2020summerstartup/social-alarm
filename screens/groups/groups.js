@@ -341,7 +341,6 @@ export default class Groups extends Component {
   renderHiddenItemModal = (data, rowMap) => (
     // might take the first one out..
     <View style={alarmStyles.rowBack}>
-
       <TouchableOpacity
         style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnCenter]}
         onPress={() => this.closeRowModal(rowMap, data.item)}
@@ -371,7 +370,7 @@ export default class Groups extends Component {
     }
   };
 
-    // called when  user presses close
+  // called when  user presses close
   // doesn't work fully for indiv group modal
   closeRowModal = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
@@ -508,39 +507,53 @@ export default class Groups extends Component {
           {/* this allows for touch anywhere and keyboard dismisses functionality */}
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={appStyles.modalContainer}>
-              {/* close indiv group modal button */}
-              <MaterialIcons
-                name="close"
-                size={24}
-                style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
-                onPress={() => this.setState({ groupModalOpen: false })}
-              />
-              {/* delete group button */}
-              <MaterialIcons
-                name="delete"
-                size={24}
-                style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
-                color="#333"
-                //onPress={() => this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked)}
-                onPress={() =>
-                  Alert.alert(
-                    "Warning",
-                    "Are you sure you  want to delete yourself from this group?",
-                    [
-                      { text: "No" },
-                      {
-                        text: "Yes",
-                        onPress: () =>
-                          this.deleteGroup(
-                            this.state.groupNameClicked,
-                            this.state.groupIdClicked,
-                            this.user.email
-                          ),
-                      },
-                    ]
-                  )
-                }
-              />
+              <View style={styles.buttonContainer}>
+                {/* delete group button */}
+                <MaterialIcons
+                  name="delete"
+                  size={24}
+                  style={{
+                    ...appStyles.modalToggle,
+                    ...appStyles.modalClose,
+                    ...{ justifyContent: "flex-start" },
+                  }}
+                  color="#333"
+                  //onPress={() => this.deleteGroup(this.state.groupNameClicked, this.state.groupIdClicked)}
+                  onPress={() =>
+                    Alert.alert(
+                      "Warning",
+                      "Are you sure you  want to delete yourself from this group?",
+                      [
+                        { text: "No" },
+                        {
+                          text: "Yes",
+                          onPress: () =>
+                            this.deleteGroup(
+                              this.state.groupNameClicked,
+                              this.state.groupIdClicked,
+                              this.user.email
+                            ),
+                        },
+                      ]
+                    )
+                  }
+                />
+
+                <Text>                                                                      </Text>
+
+                {/* close indiv group modal button */}
+                <MaterialIcons
+                  name="close"
+                  size={24}
+                  style={{
+                    ...appStyles.modalToggle,
+                    ...appStyles.modalClose,
+                    ...{ justifyContent: "flex-end" },
+                  }}
+                  onPress={() => this.setState({ groupModalOpen: false })}
+                />
+              </View>
+
               {/* group name text */}
               <Text
                 adjustsFontSizeToFit
@@ -823,5 +836,13 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     marginHorizontal: 4,
     marginVertical: 6,
+  },
+
+  buttonContainer: {
+    marginTop: 10,
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingTop: 10,
   },
 });
