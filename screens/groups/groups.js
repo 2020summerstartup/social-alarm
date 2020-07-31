@@ -25,6 +25,7 @@ import {
   APPBACKGROUNDCOLOR,
   APPTEXTRED,
   APPTEXTWHITE,
+  APPTEXTBLUE,
 } from "../../style/constants";
 import { appStyles, alarmStyles } from "../../style/stylesheet";
 
@@ -286,7 +287,7 @@ export default class Groups extends Component {
               <View style={appStyles.inputView}>
                 <TextInput
                   style={appStyles.inputText}
-                  placeholder="Group name..."
+                  placeholder="group name..."
                   placeholderTextColor="#003f5c"
                   onChangeText={(text) => {
                     this.setState({ groupName: text });
@@ -498,7 +499,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginLeft: 16,
     elevation: 3,
-    backgroundColor: APPBACKGROUNDCOLOR,
+    backgroundColor: "black",
     shadowOffset: { width: 1, height: 1 },
     shadowColor: "#031821",
     shadowOpacity: 0.7,
