@@ -1,4 +1,4 @@
-// This is the most updated alarms page file as of 7/28/20
+// This is the most updated alarms page file as of 8/3/20
  
 import React, { Component } from 'react';
 import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, Modal, AsyncStorage, Animated, Image, TouchableHighlight } from 'react-native';
@@ -37,9 +37,19 @@ function AlarmBanner({ children }){
 
 // AlarmDetails specifies the layout within an AlarmBanner 
 function AlarmDetails({title, hour, minute}){
+  
   var new_hour = hour;
+  if (hour < 12){
+    new_hour = "am " + hour;
+  }
   if (hour > 12){
-    new_hour = hour - 12
+    new_hour = "pm " + (hour - 12);
+  }
+  if (hour == 12){
+    new_hour = "pm " + (hour);
+  }
+  if (hour == 0){
+    new_hour = "am 12";
   }
   if (minute < 10) {
     return (
@@ -92,7 +102,6 @@ export default class Alarms extends Component {
     }
 
     getFirebaseUsersAlarmsFromUsersDoc(){
-      console.log("getFirebaseUsersAlarmsFromUsersDoc()")
       db.collection("users")
       .doc(auth.currentUser.email)
       .get()
@@ -136,13 +145,11 @@ export default class Alarms extends Component {
           this.setState({ groupsArray: groupsData });
 
           for (var i = 0; i < groupsData.length; i++){
-            console.log("inside for loop")
             db.collection("groups")
             .doc(groupsData[i].id)
             .get()
             .then((doc) => {
               if (doc.exists) {
-                console.log("doc.exists")
                 // get the groups from the user's doc - store in some state to display
                 const alarmsData = [];
                 for (var i = 0; i < doc.data().alarms.length; i++) {
@@ -157,7 +164,7 @@ export default class Alarms extends Component {
                 alarmList = this.state.alarms;
                 Array.prototype.push.apply(alarmList, alarmsData);
               }
-              console.log("The user's alarms with alarms from groups docs:", this.state.alarms)
+              // console.log("The user's alarms with alarms from groups docs:", this.state.alarms)
               this.setState({ alarms: alarmList });
             })
             .catch(function (error) {
@@ -213,9 +220,8 @@ export default class Alarms extends Component {
     };
 
     removeAllAlarms(){
-      // promise = (await Notifications.cancelScheduledNotificationAsync(identifier))
       Notifications.cancelAllScheduledNotificationsAsync()
-      console.log("Cancelled All Scheduled Notifications Async")
+      // console.log("Cancelled All Scheduled Notifications Async")
   
       this.setState({ alarms: [] }); // empty the alarms array
     };
@@ -245,6 +251,21 @@ export default class Alarms extends Component {
               repeats: false
           }
       }));
+
+      // Update user's document in firebase with one alarm
+      db.collection("users")
+        .doc(auth.currentUser.email)
+        .update({
+          alarms: firebase.firestore.FieldValue.arrayUnion({
+            name: name, 
+            alarm_hour: alarm_hour, 
+            alarm_minute: alarm_minute, 
+            switch: true, 
+            key: key
+          }),
+      });
+      
+      console.log("Updated users doc in firebase with one alarm")
       
       // return the list of all the scheduled notifications
       list = (await Notifications.getAllScheduledNotificationsAsync());
@@ -267,23 +288,6 @@ export default class Alarms extends Component {
           console.log("showAlarms:", print_list_new)
           return list;
       }
-    }
-
-    updateFirebaseUsersDoc(){
-      for (var i = 0; i < this.state.alarms.length; i++){
-        db.collection("users")
-          .doc(auth.currentUser.email)
-          .update({
-            alarms: firebase.firestore.FieldValue.arrayUnion({
-                name: this.state.alarms[i].name, 
-                alarm_hour: this.state.alarms[i].alarm_hour,
-                alarm_minute: this.state.alarms[i].alarm_minute, 
-                switch: this.state.alarms[i].switch, 
-                key: this.state.alarms[i].key
-            }),
-        });
-      }
-      console.log("Updated users doc in firebase")
     }
 
     setMaxKey = async () => {
@@ -310,14 +314,12 @@ export default class Alarms extends Component {
 
       await(this.setMaxKey())
       await(this.listofKeys())
-      console.log("listOfKeys:", this.state.listOfKeys);
+      // console.log("listOfKeys:", this.state.listOfKeys);
 
       for (var i = 0; i < this.state.currentMaxKey + 1; i++) {
         if (this.state.listOfKeys.includes(i)){
-          console.log("Includes")
           for (var j = 0; j < this.state.alarms.length; j++) {
             if (this.state.alarms[j].key == this.state.openRow){
-              console.log("this.state.alarms[i].key == this.state.openRow")
               var newAlarm = {
                 name: this.state.alarms[j].name, 
                 alarm_hour: this.state.alarms[j].alarm_hour,
@@ -336,21 +338,42 @@ export default class Alarms extends Component {
 
       db.collection("groups")
         .doc(this.state.groupIdClicked)
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            db.collection("groups")
+              .doc(this.state.groupIdClicked)
+              .update({
+                alarms: firebase.firestore.FieldValue.arrayUnion({
+                  // alarms: this.state.singleAlarm
+                  name: this.state.singleAlarm.name, 
+                  alarm_hour: this.state.singleAlarm.alarm_hour,
+                  alarm_minute: this.state.singleAlarm.alarm_minute, 
+                  switch: this.state.singleAlarm.switch, 
+                  key: this.state.groupIdClicked + ":" + doc.data().alarms.length
+                }),
+            })
+          }
+      });
+      
+      // Remove the alarm from the user's doc in firebase (so the alarm is only listed in the group's doc)
+      db.collection("users")
+        .doc(auth.currentUser.email)
         .update({
-            alarms: firebase.firestore.FieldValue.arrayUnion({
-            // alarms: this.state.singleAlarm
+          alarms: firebase.firestore.FieldValue.arrayRemove({
             name: this.state.singleAlarm.name, 
             alarm_hour: this.state.singleAlarm.alarm_hour,
             alarm_minute: this.state.singleAlarm.alarm_minute, 
             switch: this.state.singleAlarm.switch, 
             key: this.state.singleAlarm.key
-        }),
+          }),
       });
+
       this.setState({ groupPickerModalOpen: false })
     }
 
-    async getFirebaseUsersGroups() {
-      console.log("getFirebaseUsersGroups()")
+    getFirebaseUsersGroups() {
+      // console.log("getFirebaseUsersGroups()")
       db.collection("users")
       .doc(auth.currentUser.email)
       .get()
@@ -365,32 +388,36 @@ export default class Alarms extends Component {
               key: i,
             });
           }
-          this.setState({ groupsArray: groupsData });
-          console.log("The user's groups:", this.state.groupsArray)
+          // this.setState({ groupsArray: groupsData });
+          // console.log("The user's groups:", this.state.groupsArray)
 
           // Adds label and value keys to the groupsArray for the picker to work
-          this.state.groupsArray.forEach( element => {
+          groupsData.forEach( element => {
             // console.log("element before", element)
             element.label = element.name;
             element.value = element.id;
             element.key = element.id;
             // console.log("element after", element);
           })
+
+          this.setState({ groupsArray: groupsData });
+          console.log("The user's groups:", this.state.groupsArray)
         }
       })
       .catch(function (error) {
         console.log(error);
       });
-      // this.setState({ groupPickerModalOpen: true })
-      let groups = this.state.groupsArray
-      return groups
+      // let groups = this.state.groupsArray
+      // return 
+      
+      // this.setState({ groupPickerModalOpen: true });
     }
 
     splitTime(){
       var variable = this.state.newAlarmTime
       var splitArray
       splitArray = variable.split(":")
-      console.log("splitArray", splitArray)
+      // console.log("splitArray", splitArray)
       this.setState( {newAlarmHour: Number(splitArray[0]) })
       this.setState( {newAlarmMinute: Number(splitArray[1]) })
     }
@@ -430,8 +457,8 @@ export default class Alarms extends Component {
             <TouchableOpacity
                 style={[styles.backLeftBtn]}
                 onPress={() => 
-                  this.getFirebaseUsersGroups()
-                  .then(this.setState({ groupPickerModalOpen: true }))}
+                  this.setState({ groupPickerModalOpen: true })}
+                  // .then(this.setState({ groupPickerModalOpen: true }))}
                   // .then(console.log("this.state.groupsArray onPress()", this.state.groupsArray))}
             >
               <Text style={styles.backTextWhite}>+Group</Text>
@@ -570,10 +597,17 @@ export default class Alarms extends Component {
     }
 
     async componentDidMount(){
-      // console.log("Initialize alarms")
+      // remove all alarms
+      this.removeAllAlarms()
+
+      // get the user's personal alarms
       this.getFirebaseUsersAlarmsFromUsersDoc();
 
+      // get the user's group alarms
       this.getFirebaseUsersAlarmsFromGroupsDocs();
+
+      // get the users groups
+      this.getFirebaseUsersGroups();
 
       // Uses alarms array to make the alarms
       this.makeAlarms(this.state.alarms)
@@ -764,11 +798,7 @@ export default class Alarms extends Component {
                 color="lightgreen"
                 onPress={ async() =>
                   this.updateFirebaseGroupsDoc()
-                  // .then(this.setState({ groupPickerModalOpen: false }))
                 }
-                // onPress={ async() =>
-                //   this.setState({ groupPickerModalOpen: false })
-                // }
               />
 
               </View>
