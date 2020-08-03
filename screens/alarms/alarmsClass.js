@@ -97,7 +97,6 @@ export default class Alarms extends Component {
             openRow: null,
             currentMaxKey: 0,
             listOfKeys: [],
-            dummyvar: 0
         }
     }
 
@@ -176,6 +175,9 @@ export default class Alarms extends Component {
     }
 
     async makeAlarms(alarm_array){
+      console.log("makeAlarms")
+      console.log("alarm_array", alarm_array)
+      console.log("this.state.alarms", this.state.alarms)
       alarm_array.forEach(async(list_item) => {
           if (list_item.switch == true){
               promise = (await Notifications.scheduleNotificationAsync({
@@ -596,10 +598,7 @@ export default class Alarms extends Component {
       return token;
     }
 
-    async componentDidMount(){
-      // remove all alarms
-      this.removeAllAlarms()
-
+    async getFirebase(){
       // get the user's personal alarms
       this.getFirebaseUsersAlarmsFromUsersDoc();
 
@@ -609,8 +608,27 @@ export default class Alarms extends Component {
       // get the users groups
       this.getFirebaseUsersGroups();
 
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      return token;
+    }
+
+    componentDidMount(){
+      // remove all alarms
+      this.removeAllAlarms();
+
+      // // get the user's personal alarms
+      // this.getFirebaseUsersAlarmsFromUsersDoc();
+
+      // // get the user's group alarms
+      // this.getFirebaseUsersAlarmsFromGroupsDocs();
+
+      // // get the users groups
+      // this.getFirebaseUsersGroups();
+
+      this.getFirebase().then(this.makeAlarms(this.state.alarms))
+
       // Uses alarms array to make the alarms
-      this.makeAlarms(this.state.alarms)
+      // this.makeAlarms(this.state.alarms);
 
       // Sorts the alarms for output in ascending order by time
       this.state.alarms.sort(this.sortByTime)
