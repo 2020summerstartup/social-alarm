@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@cawfree/react-native-simpler-date-picker": "0.1.0-alpha.4",
     "@react-native-community/async-storage": "^1.11.0",
     "@react-native-community/cameraroll": "^4.0.0",
     "@react-native-community/cli": "^4.10.1",
