@@ -30,10 +30,7 @@ function TopBanner({ children }){
   )
 };
 
-<<<<<<< HEAD
-=======
 // An AlarmBanner is one alarm displayed in the list of alarms
->>>>>>> 8e2db154f55a857c4ba39bbad64f4329e876e3da
 function AlarmBanner({ children }){
   return(
       <View style = {styles.alarmBanner}>{children}</View>
