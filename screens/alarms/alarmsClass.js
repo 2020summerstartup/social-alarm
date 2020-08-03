@@ -41,22 +41,27 @@ function AlarmBanner({ children }){
 function AlarmDetails({title, hour, minute}){
   
   var new_hour = hour;
+  var ampm; 
   if (hour < 12){
-    new_hour = "am " + hour;
+    new_hour = hour;
+    ampm = " am";
   }
   if (hour > 12){
-    new_hour = "pm " + (hour - 12);
+    new_hour = hour - 12;
+    ampm = " pm";
   }
   if (hour == 12){
-    new_hour = "pm " + (hour);
+    new_hour = hour;
+    ampm = " pm"
   }
   if (hour == 0){
-    new_hour = "am 12";
+    new_hour = "12";
+    ampm = " am"
   }
   if (minute < 10) {
     return (
       <View style={styles.alarmDetails}>
-          <Text style={styles.alarmTime}>{new_hour}:0{minute}</Text>
+          <Text style={styles.alarmTime}>{new_hour}:0{minute}{ampm}</Text>
           <Text style={styles.alarmText}>{title}</Text>
       </View>
     )
@@ -64,7 +69,7 @@ function AlarmDetails({title, hour, minute}){
   else{
     return (
       <View style={styles.alarmDetails}>
-          <Text style={styles.alarmTime}>{new_hour}:{minute}</Text>
+          <Text style={styles.alarmTime}>{new_hour}:{minute}{ampm}</Text>
           <Text style={styles.alarmText}>{title}</Text>
       </View>
     )
@@ -95,11 +100,10 @@ export default class Alarms extends Component {
             newGroupName: "",
             groupsArray: [],
             groupIdClicked: "",
-            singleAlarm: {name: '', alarm_hour: null, alarm_minute: null, switch: null,  key: ""},
+            singleAlarm: {name: "", alarm_hour: null, alarm_minute: null, switch: null,  key: ""},
             openRow: null,
             currentMaxKey: 0,
             listOfKeys: [],
-            dummyvar: 0
         }
     }
 
@@ -178,6 +182,9 @@ export default class Alarms extends Component {
     }
 
     async makeAlarms(alarm_array){
+      console.log("makeAlarms")
+      // console.log("alarm_array", alarm_array)
+      // console.log("this.state.alarms", this.state.alarms)
       alarm_array.forEach(async(list_item) => {
           if (list_item.switch == true){
               promise = (await Notifications.scheduleNotificationAsync({
@@ -197,9 +204,9 @@ export default class Alarms extends Component {
         });
       list = (await Notifications.getAllScheduledNotificationsAsync());
 
-      list.forEach(element => {
+      // list.forEach(element => {
         // console.log("Element.trigger:", element.trigger.dateComponents.hour, element.trigger.dateComponents.minute)
-      })
+      // })
       // console.log("This is the list", list)
       return list;
     };
@@ -403,7 +410,7 @@ export default class Alarms extends Component {
           })
 
           this.setState({ groupsArray: groupsData });
-          console.log("The user's groups:", this.state.groupsArray)
+          // console.log("The user's groups:", this.state.groupsArray)
         }
       })
       .catch(function (error) {
@@ -598,21 +605,30 @@ export default class Alarms extends Component {
       return token;
     }
 
-    async componentDidMount(){
+    getFirebase = () => new Promise(
+      (resolve) => {
+        // get the user's personal alarms
+        this.getFirebaseUsersAlarmsFromUsersDoc();
+
+        // get the user's group alarms
+        this.getFirebaseUsersAlarmsFromGroupsDocs();
+
+        // get the users groups
+        this.getFirebaseUsersGroups();
+
+        setTimeout(() => resolve(1234), 1000)
+      }
+    )
+
+    componentDidMount = async () => {
       // remove all alarms
-      this.removeAllAlarms()
+      this.removeAllAlarms();
 
-      // get the user's personal alarms
-      this.getFirebaseUsersAlarmsFromUsersDoc();
-
-      // get the user's group alarms
-      this.getFirebaseUsersAlarmsFromGroupsDocs();
-
-      // get the users groups
-      this.getFirebaseUsersGroups();
+      const promise = await this.getFirebase();
+      // console.log("promise:", promise)
 
       // Uses alarms array to make the alarms
-      this.makeAlarms(this.state.alarms)
+      this.makeAlarms(this.state.alarms);
 
       // Sorts the alarms for output in ascending order by time
       this.state.alarms.sort(this.sortByTime)
