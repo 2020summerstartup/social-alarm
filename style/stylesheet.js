@@ -6,6 +6,7 @@ import {
   APPTEXTRED,
   APPTEXTWHITE,
   APPINPUTVIEW,
+  APPTEXTBLUE,
 } from "./constants";
 
 const appStyles = StyleSheet.create({
@@ -34,7 +35,9 @@ const appStyles = StyleSheet.create({
 
   inputView: {
     width: "80%",
-    backgroundColor: APPINPUTVIEW,
+    backgroundColor: APPBACKGROUNDCOLOR,
+    borderColor: "black",
+    borderWidth: 0.9,
     borderRadius: 25,
     height: 50,
     marginBottom: 20,
@@ -44,16 +47,16 @@ const appStyles = StyleSheet.create({
 
   inputText: {
     height: 50,
-    color: APPTEXTWHITE,
+    color: APPTEXTBLUE,
   },
 
   forgot: {
-    color: APPTEXTWHITE,
+    color: APPTEXTBLUE,
     fontSize: 13,
   },
 
   loginText: {
-    color: APPTEXTWHITE,
+    color: APPTEXTBLUE,
     fontSize: 15,
   },
 

@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
+import React, { Component, createContext } from 'react'
 import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, TouchableOpacity, DevSettings } from 'react-native'
-import { Avatar, ListItem } from 'react-native-elements'
+import { Avatar, ListItem, ThemeContext } from 'react-native-elements'
 import { auth } from "../../firebase/firebase";
 
-import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
+import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTBLUE} from '../../style/constants';
 
 // chevron is the greater than sign that's on the right of everything on the profile page
 import Chevron from './Chevron'
@@ -57,11 +57,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     height: 40,
     marginLeft: 20,
-    width: 0.9 * Dimensions.get('screen').width, // sign out button is 90% of the screen's width
+    width: 0.85 * Dimensions.get('screen').width, // sign out button is 90% of the screen's width
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
     marginBottom: 10,
+    marginLeft: 30,
   },
 })
 
@@ -97,29 +98,30 @@ class ProfileScreen extends Component {
     super(props);
 
     this.state = {
-      pushNotifications: true,
+      darkTheme: false,
       name: "", // this is the user's name
       email: "", // this is the user's email
     };
   }
 
   // changes the toggle switch whenever the user clicks it
-  onChangePushNotifications = () => {
+  onChangeDarkTheme = () => {
     this.setState(state => ({
-      pushNotifications: !state.pushNotifications,
+      darkTheme: !state.darkTheme,
     }))
   }
 
   render() {
+
     return (
       <ScrollView style={styles.scroll}>  
         {/* this part shows the user's name and email */}
         <View style={styles.userRow}>
           <View>
-            <Text style={{ fontSize: 30, color: APPBACKGROUNDCOLOR }}>{this.state.name}</Text>
+            <Text style={{ fontSize: 30, color: APPTEXTBLUE }}>{this.state.name}</Text>
             <Text
               style={{
-                color: APPBACKGROUNDCOLOR,
+                color: APPTEXTBLUE,
                 fontSize: 25,
               }}
             >
@@ -139,12 +141,12 @@ class ProfileScreen extends Component {
         <View>
           <ListItem
             hideChevron
-            title="Push Notifications"
+            title="Dark Mode"
             containerStyle={styles.listItemContainer}
             rightElement={
               <Switch
-                onValueChange={this.onChangePushNotifications}
-                value={this.state.pushNotifications}
+                onValueChange={this.onChangeDarkTheme}
+                value={this.state.darkTheme}
               />
             }
             leftIcon={
@@ -153,8 +155,8 @@ class ProfileScreen extends Component {
                   backgroundColor: '#FFADF2',
                 }}
                 icon={{
-                  type: 'material',
-                  name: 'notifications',
+                  type: 'ionicon',
+                  name: 'ios-moon',
                 }}
               />
             }
