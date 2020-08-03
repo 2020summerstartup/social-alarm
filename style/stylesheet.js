@@ -84,6 +84,7 @@ const appStyles = StyleSheet.create({
   modalContainer: {
     backgroundColor: APPBACKGROUNDCOLOR,
     flex: 1,
+    justifyContent: "flex-start",
     alignItems: "center",
     padding: 15,
     paddingTop: 0,
@@ -91,7 +92,7 @@ const appStyles = StyleSheet.create({
 
   modalClose: {
     alignSelf: "flex-end",
-    marginTop: 50,
+    marginTop: 30,
     marginBottom: 0,
   },
 
@@ -103,7 +104,7 @@ const appStyles = StyleSheet.create({
 });
 
 
-// ********** NEW STYLESHEET **********************************
+// ********** NEW STYLESHEET **********
 
 const alarmStyles = StyleSheet.create({
   container: {
@@ -242,37 +243,58 @@ const alarmStyles = StyleSheet.create({
     width: "95%",
   },
 
-  backRightBtn: {
-    alignItems: "center",
+  backLeftBtn:{
+    alignItems: 'center',
     bottom: 0,
-    justifyContent: "center",
-    position: "absolute",
+    justifyContent: 'center',
+    position: 'absolute',
     top: 0,
-    width: 75,
-  },
-  backRightBtnLeft: {
-    backgroundColor: "blue",
-    right: 75,
+    width: 90,
+    backgroundColor: 'green',
+    left: 25,
     marginTop: 0,
     marginBottom: 10,
     paddingTop: 0,
     paddingBottom: 0,
     borderTopLeftRadius: 15,
     borderBottomLeftRadius: 15,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
   },
+
+  backRightBtn: {
+      alignItems: 'center',
+      bottom: 0,
+      justifyContent: 'center',
+      position: 'absolute',
+      top: 0,
+      width: 75,
+  },
+
+  backRightBtnCenter: {
+      backgroundColor: 'blue',
+      right: 75,
+      marginTop: 0,
+      marginBottom: 10,
+      paddingTop: 0,
+      paddingBottom: 0,
+      borderTopLeftRadius: 0,
+      borderBottomLeftRadius: 0,
+  },
+
   backRightBtnRight: {
-    backgroundColor: "red",
-    right: 0,
-    marginTop: 0,
-    marginBottom: 10,
-    paddingTop: 0,
-    paddingBottom: 0,
-    borderTopRightRadius: 15,
-    borderBottomRightRadius: 15,
+      backgroundColor: 'red',
+      right: 0,
+      marginTop: 0,
+      marginBottom: 10,
+      paddingTop: 0,
+      paddingBottom: 0,
+      borderTopRightRadius: 15,
+      borderBottomRightRadius: 15,
   },
   trash: {
-    height: 25,
-    width: 25,
+      height: 25,
+      width: 25,
   },
 });
 
