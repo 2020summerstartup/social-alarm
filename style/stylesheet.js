@@ -51,12 +51,12 @@ const appStyles = StyleSheet.create({
   },
 
   forgot: {
-    color: APPTEXTWHITE,
+    color: APPTEXTBLUE,
     fontSize: 13,
   },
 
   loginText: {
-    color: APPTEXTWHITE,
+    color: APPTEXTBLUE,
     fontSize: 15,
   },
 
