@@ -392,7 +392,6 @@ export default class Alarms extends Component {
                   style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                   onPress={() => this.setState({ newAlarmModalOpen: false })}
                   />
-                  {/* <Text style={styles.Text}>DateTimePicker will go here</Text> */}
                   <Text style={styles.pageTitle}> Set a new alarm </Text>
 
                     <DatePicker
@@ -540,7 +539,6 @@ const styles = StyleSheet.create({
   topBanner:{
     flexDirection : "row",
     width:"100%",
-    // backgroundColor: "white",
     backgroundColor: APPBACKGROUNDCOLOR,
     height: 110,
     paddingTop: 30,
@@ -575,7 +573,9 @@ const styles = StyleSheet.create({
 
   inputView:{
     width:"75%",
-    backgroundColor:"#465881",
+    backgroundColor:APPBACKGROUNDCOLOR,
+    borderColor:"black",
+    borderWidth: 1,
     borderRadius:25,
     height:50,
     marginBottom:20,
@@ -601,7 +601,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection : "row",
     backgroundColor: "#fb5b5a",
-    // backgroundColor: "black",
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -666,13 +665,12 @@ const styles = StyleSheet.create({
   },
 
   rowBack: {
-      alignItems: 'center',
-      // backgroundColor: '#DDD',
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingLeft: 15,
-      width: "95%"
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 15,
+    width: "95%"
   },
 
   backLeftBtn:{
