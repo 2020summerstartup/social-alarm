@@ -358,7 +358,10 @@ export default class Alarms extends Component {
     }
 
     componentDidMount(){
-      this.registerForPushNotificationsAsync().then(token => this.setState({ expoPushToken: token })).catch(console.log(".catch"))
+      this.registerForPushNotificationsAsync().then(token => {
+        this.setState({ expoPushToken: token })
+        db.collection("users").doc(auth.currentUser.email).update({expoPushToken: token})
+        }).catch(console.log(".catch"))
 
       // let the_subscription;
       this.state.notificationListener = Notifications.addNotificationReceivedListener(notification => this.setState({ notification: notification}))
