@@ -4,15 +4,13 @@ import {
   View,
 } from "react-native";
 import Profile3 from './Profile3';
-import { auth } from "../../firebase/firebase";
-import { appStyles } from "../../style/stylesheet";
 
 /* profile.js
  * Profile screen
  * TO DO: delete this file? all the code is in Profile3.js
  */
 
-export default function Profile({ navigation }) {
+export default function Profile() {
   return (
     <View style={styles.container}>
       <Profile3/>

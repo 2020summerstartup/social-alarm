@@ -1,7 +1,10 @@
-import React, { Component, createContext } from 'react'
-import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, TouchableOpacity, DevSettings } from 'react-native'
-import { Avatar, ListItem, ThemeContext } from 'react-native-elements'
+import React, { Component, useState } from 'react'
+import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, TouchableOpacity, DevSettings, Button } from 'react-native'
+import { Avatar, ListItem } from 'react-native-elements'
 import { auth } from "../../firebase/firebase";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import RNPickerSelect from 'react-native-picker-select';
+import { profileStyles } from '../../style/stylesheet';
 
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTBLUE} from '../../style/constants';
 
@@ -13,58 +16,47 @@ import BaseIcon from './Icon'
 
 /* profile3.js
  * profile screen 
- * has push notifications, birthday, time zone, language, about us,  
+ * has push notifications, birthday, time zone, about us,  
  * share our app, and send feedback
  * feel free to change or delete any of these 
  */
 
-const styles = StyleSheet.create({
-  scroll: {
-    backgroundColor: 'white',
 
-    // these lines fit the container to the entire screen
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
-  },
-  userRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingBottom: 60,
-    paddingLeft: 15,
-    paddingRight: 15,
-    paddingTop: 60,
-  },
-  userImage: {
-    marginRight: 12,
-  },
-  listItemContainer: {
-    height: 60,
-    borderWidth: 0.5,
-    borderColor: APPBACKGROUNDCOLOR,
-  },
-  logo: {
-    fontWeight: "bold",
-    fontSize: 20,
-    color: APPBACKGROUNDCOLOR,
-    marginBottom: 5,
-    marginTop: 5,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  loginBtn: {
-    width: "80%",
-    backgroundColor: APPTEXTRED,
-    borderRadius: 15,
-    height: 40,
-    marginLeft: 20,
-    width: 0.85 * Dimensions.get('screen').width, // sign out button is 90% of the screen's width
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 10,
-    marginLeft: 30,
-  },
-})
+// This is for the birthday picker
+const BirthdayPicker = () => {
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  // shows the date picker
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  // TO DO: replace the "select birthday" button title with the date
+  const handleConfirm = (date) => {
+    hideDatePicker();
+    // console.log(date.toString());
+  };
+
+  return (
+    <View>
+      <Button title="Select birthday" onPress={showDatePicker}/>
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        minimumDate={new Date(1950, 0, 1)}
+        maximumDate={new Date(2020, 11, 31)}
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+        style={profileStyles.birthdayBtn}
+        headerTextIOS={"When's your birthday?"}
+      />
+    </View>
+  );
+};
 
 class ProfileScreen extends Component {
 
@@ -98,25 +90,32 @@ class ProfileScreen extends Component {
     super(props);
 
     this.state = {
-      darkTheme: false,
+      switchValue: false,
       name: "", // this is the user's name
       email: "", // this is the user's email
+      timeZoneSelected: "",
+      timezoneArray: [
+        { label: 'AST', value: 'AST' },
+        { label: 'EST', value: 'EST' },
+        { label: 'CST', value: 'CST' },
+        { label: 'MST', value: 'MST' },
+        { label: 'PST', value: 'PST' },
+        { label: 'AKST', value: 'AKST' },
+        { label: 'HST', value: 'HST' },
+      ]
     };
   }
 
-  // changes the toggle switch whenever the user clicks it
-  onChangeDarkTheme = () => {
-    this.setState(state => ({
-      darkTheme: !state.darkTheme,
-    }))
-  }
+  toggleSwitch = value => {
+    this.setState({ switchValue: value });
+  };
 
   render() {
 
     return (
-      <ScrollView style={styles.scroll}>  
+      <ScrollView style={profileStyles.scroll}>  
         {/* this part shows the user's name and email */}
-        <View style={styles.userRow}>
+        <View style={profileStyles.userRow}>
           <View>
             <Text style={{ fontSize: 30, color: APPTEXTBLUE }}>{this.state.name}</Text>
             <Text
@@ -130,23 +129,15 @@ class ProfileScreen extends Component {
           </View>
         </View>
 
-        {/* This is supposed to show an avatar but it doesn't show up, styling issues?
-        <Avatar
-          rounded
-          icon={{name: 'user', type: 'font-awesome'}}
-          activeOpacity={0.7}
-          containerStyle={{flex: 2, marginLeft: 20, marginTop: 115}}
-        />*/}
-        {/* Not really sure if we want this, was in the tutorial so I kept it */}
         <View>
           <ListItem
             hideChevron
             title="Dark Mode"
-            containerStyle={styles.listItemContainer}
+            containerStyle={profileStyles.listItemContainer}
             rightElement={
               <Switch
-                onValueChange={this.onChangeDarkTheme}
-                value={this.state.darkTheme}
+                onValueChange={this.toggleSwitch}
+                value={this.state.switchValue}
               />
             }
             leftIcon={
@@ -163,9 +154,9 @@ class ProfileScreen extends Component {
           />
           <ListItem
             title="Birthday"
-            rightTitle="05/01/2001"  // TO DO: add text box or date picker here so users can pick their birthday
-            rightTitleStyle={{ fontSize: 15 }}
-            containerStyle={styles.listItemContainer}
+            rightTitleStyle={{ fontSize: 18 }}
+            rightElement={<BirthdayPicker/>}    
+            containerStyle={profileStyles.listItemContainer}
             leftIcon={
               <BaseIcon
                 containerStyle={{ backgroundColor: '#FAD291' }}
@@ -178,9 +169,41 @@ class ProfileScreen extends Component {
           />
           <ListItem
             title="Time Zone"
-            rightTitle="PST" // TO DO: add time zone picker or a text box here
+            rightElement={
+              <RNPickerSelect
+                onValueChange={(value) => this.setState({ timeZoneSelected: value })}
+                items={this.state.timezoneArray}
+
+                // Object to overide the default text placeholder for the PickerSelect
+                placeholder={{label: 'Select timezone', value: 'select timezone'}}
+                style={
+                  { fontWeight: 'normal',
+                    color: 'black',
+                    placeholder: {
+                      color: "black",
+                      fontSize: 18,
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: 12,
+                      marginTop: 8,
+                    },
+                    inputIOS: {
+                      color: "black",
+                      fontSize: 18,
+                      marginRight: 12,
+                      marginTop: 8,
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }
+                  }
+                }
+                doneText={"Select"}                 
+              />
+            }
             rightTitleStyle={{ fontSize: 15 }}
-            containerStyle={styles.listItemContainer}
+            containerStyle={profileStyles.listItemContainer}
             leftIcon={
               <BaseIcon
                 containerStyle={{ backgroundColor: '#57DCE7' }}
@@ -191,29 +214,11 @@ class ProfileScreen extends Component {
               />
             }
           />
-          {/* Not really sure if we want this, was in the tutorial so I kept it */}
-          <ListItem
-            title="Language"
-            rightTitle="English"
-            rightTitleStyle={{ fontSize: 15 }}
-            onPress={ ()=>{ Linking.openURL('https://www.google.com')}} // navigate to some website
-            containerStyle={styles.listItemContainer}
-            leftIcon={
-              <BaseIcon
-                containerStyle={{ backgroundColor: '#FEA8A1' }}
-                icon={{
-                  type: 'material',
-                  name: 'language',
-                }}
-              />
-            }
-            rightIcon={<Chevron />}
-          />
         </View>
         <View>
           <ListItem
             title="About Us"
-            containerStyle={styles.listItemContainer}
+            containerStyle={profileStyles.listItemContainer}
             onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}} // we can change this later 
             leftIcon={
               <BaseIcon
@@ -229,7 +234,7 @@ class ProfileScreen extends Component {
           <ListItem
             title="Share our App"
             onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}}
-            containerStyle={styles.listItemContainer}
+            containerStyle={profileStyles.listItemContainer}
             leftIcon={
               <BaseIcon
                 containerStyle={{
@@ -246,7 +251,7 @@ class ProfileScreen extends Component {
           <ListItem
             title="Send Feedback"
             onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}}
-            containerStyle={styles.listItemContainer}
+            containerStyle={profileStyles.listItemContainer}
             leftIcon={
               <BaseIcon
                 containerStyle={{
@@ -264,10 +269,10 @@ class ProfileScreen extends Component {
         
         {/* Sign out button */}
         <TouchableOpacity
-          style={styles.loginBtn}
+          style={profileStyles.loginBtn}
           onPress={() => this.signOutUser()}
         >
-          <Text style={styles.logo}>Sign Out</Text>
+          <Text style={profileStyles.logo}>Sign Out</Text>
         </TouchableOpacity>
       </ScrollView>
     )

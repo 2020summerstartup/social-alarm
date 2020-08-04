@@ -12,12 +12,10 @@ import * as Permissions from 'expo-permissions';
 import { MaterialIcons } from "@expo/vector-icons";
 
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
-import { APPBACKGROUNDCOLOR } from '../../style/constants';
+import { APPBACKGROUNDCOLOR, APPTEXTBLUE, APPTEXTRED } from '../../style/constants';
 import { appStyles } from '../../style/stylesheet';
 import DatePicker from 'react-native-datepicker';
 import RNPickerSelect from 'react-native-picker-select';
-
-//import getStyleSheet from '../../style/theme';
 
 import * as firebase from "firebase";
 import { db, auth } from "../../firebase/firebase";
@@ -726,7 +724,7 @@ export default class Alarms extends Component {
                   style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                   onPress={() => this.setState({ newAlarmModalOpen: false })}
                   />
-                  <Text style={styles.pageTitle}> Set a new alarm </Text>
+                  <Text style={appStyles.logo}> Set a new alarm </Text>
 
                     <DatePicker
                       style={{height: 75, width: 200, color: "black"}}
@@ -760,6 +758,7 @@ export default class Alarms extends Component {
                     />
                   </View>
 
+                  {/*
                   <Button
                     title="Split the time"
                     onPress={ async() =>
@@ -826,7 +825,7 @@ export default class Alarms extends Component {
               style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
               onPress={() => this.setState({ groupPickerModalOpen: false })}
               />
-              <Text style={styles.pageTitle}> Select a group </Text>
+              <Text style={appStyles.logo}> Select a group </Text>
 
               {/* https://github.com/lawnstarter/react-native-picker-select */} 
               <RNPickerSelect
@@ -846,7 +845,7 @@ export default class Alarms extends Component {
                       justifyContent: 'center',
                     },
                     inputIOS: {
-                      color: "#fb5b5a",
+                      color: APPTEXTBLUE,
                       fontSize: 20,
                       alignSelf: 'center',
                       alignItems: 'center',
@@ -857,14 +856,17 @@ export default class Alarms extends Component {
                 doneText={"Select"}
                 Icon={() => {return <Chevron size={1.5} color="gray" />;}}
               />
-                
-              <Button
-                title="Add alarm to group"
-                color="lightgreen"
-                onPress={ async() =>
+
+              <Text></Text>
+
+              <TouchableOpacity
+                style={{ ...appStyles.loginBtn, ...{ marginTop: 10 } }}
+                onPress={async() =>
                   this.updateFirebaseGroupsDoc()
                 }
-              />
+              >
+                <Text style={appStyles.buttonText}> add alarm to group</Text>
+              </TouchableOpacity>
 
               </View>
           </Modal>
@@ -932,11 +934,10 @@ const styles = StyleSheet.create({
 
   pageTitle:{
     padding: 20,
-    color: "#fb5b5a",
-    fontSize: 40,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
+    fontWeight: "bold",
+    fontSize: 50,
+    color: APPTEXTRED,
+    alignItems: "center",
   },
 
   inputText:{
