@@ -353,9 +353,7 @@ const profileStyles = StyleSheet.create({
     marginLeft: 30,
   },
   birthdayBtn: {
-    width: "80%",
-    height: 50,
-    width: 200,
+    width: 300,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,

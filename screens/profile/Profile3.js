@@ -22,9 +22,11 @@ import BaseIcon from './Icon'
  */
 
 
+// This is for the birthday picker
 const BirthdayPicker = () => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
+  // shows the date picker
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };
@@ -33,9 +35,10 @@ const BirthdayPicker = () => {
     setDatePickerVisibility(false);
   };
 
+  // TO DO: replace the "select birthday" button title with the date
   const handleConfirm = (date) => {
     hideDatePicker();
-    console.log(date.toString());
+    // console.log(date.toString());
   };
 
   return (
