@@ -307,8 +307,6 @@ export default class Groups extends Component {
       ]);
       return;
     }
-    console.log(group);
-    console.log(groupId);
 
     // could also possibly use state here, but I don't want things to get messed up
     // if they are accidentally not the same
@@ -319,7 +317,6 @@ export default class Groups extends Component {
       .then(function (doc) {
         // get group members
         const groupMembers = doc.data().members;
-        console.log(groupMembers);
         // go through all member's user doc and delete that group
         for (var i = 0; i < groupMembers.length; i++) {
           db.collection("users")
@@ -454,7 +451,6 @@ export default class Groups extends Component {
   // for indiv group modal
   deleteRowModal = (rowMap, rowKey) => {
     this.closeRow(rowMap, rowKey);
-    console.log(rowKey);
 
     if (
       // if the person is not trying to delete themselves and is not the admin, return
@@ -487,13 +483,30 @@ export default class Groups extends Component {
 
   // idk what this does - from Sidney's code
   onRowDidOpen = (rowKey) => {
-    console.log("This row opened", rowKey);
+    //console.log("This row opened", rowKey);
   };
 
   // idk what this does - from Sidney's code
   onSwipeValueChange = (swipeData) => {
     const { key, value } = swipeData;
   };
+
+
+  alertNewGroups = () => {
+    if(this.state.newGroups.length > 0) {
+      var newGroupData = this.state.newGroups
+      while(newGroupData.length > 0){
+        Alert.alert("Yay!", 'You have been added to the group "' + newGroupData[0] +'"', [
+        { text: "ok" },
+        ]);
+        newGroupData.shift();
+      }       
+    }
+    this.setState({newGroups: []})
+
+    db.collection("users").doc(this.user.email).update({newGroups: []})
+
+  }
 
   // called when the component launches/mounts
   // this is like a react native method that automatically gets called
@@ -520,20 +533,14 @@ export default class Groups extends Component {
           for(var i =  0; i < doc.data().newGroups.length; i++) {
             newGroupsData.push(doc.data().newGroups[i])
           }
-          this.setState({newGroups: newGroupsData})
-
-          if(doc.data().newGroups.length != 0) {
-            Alert.alert("Yay!", 'You have been added to group "' + doc.data().newGroups[0] +'"', [
-        { text: "ok" },
-      ]);
-            
-          }
+          this.setState({newGroups: newGroupsData}, () => this.alertNewGroups() )
         }
       })
       .catch(function (error) {
         console.log(error);
       });
   }
+
 
   render() {
     return (
