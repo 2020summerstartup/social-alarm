@@ -172,9 +172,10 @@ export default class Groups extends Component {
                         name: doc2.data().groupName,
                         id: doc2.id,
                       }),
-                      newGroups: Firebase.firestore.FieldValue.arrayUnion(
-                        doc2.data().groupName
-                      ),
+                      newGroups: Firebase.firestore.FieldValue.arrayUnion({
+                        groupName: doc2.data().groupName,
+                        adder: self.user.email,
+                      }),
                     })
                     .then(function () {
                       // update group doc so it contains added user
@@ -503,7 +504,7 @@ export default class Groups extends Component {
         // send alert
         Alert.alert(
           "Yay!",
-          'You have been added to the group "' + newGroupData[0] + '"',
+          newGroupData[0].adder + ' has added you to the group "' + newGroupData[0].groupName + '"',
           [{ text: "ok" }]
         );
         // deletes first element in an array
@@ -512,6 +513,7 @@ export default class Groups extends Component {
     }
     this.setState({ newGroups: [] });
     // update firebase
+    
     db.collection("users").doc(this.user.email).update({ newGroups: [] });
   };
 
@@ -538,7 +540,11 @@ export default class Groups extends Component {
 
           const newGroupsData = [];
           for (var i = 0; i < doc.data().newGroups.length; i++) {
-            newGroupsData.push(doc.data().newGroups[i]);
+            newGroupsData.push({
+              groupName: doc.data().newGroups[i].groupName,
+              adder: doc.data().newGroups[i].adder,
+            }
+              );
           }
           this.setState({ newGroups: newGroupsData }, () =>
             this.alertNewGroups()
