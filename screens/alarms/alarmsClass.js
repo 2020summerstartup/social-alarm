@@ -29,9 +29,11 @@ function TopBanner({ children }){
 };
 
 // An AlarmBanner is one alarm displayed in the list of alarms
-function AlarmBanner({ children }){
+function AlarmBanner({ children, color }){
   return(
-      <View style = {styles.alarmBanner}>{children}</View>
+      <View style={[styles.alarmBanner, {backgroundColor: color}]}>
+        {children}
+      </View>
   )
 };
 
@@ -120,6 +122,7 @@ export default class Alarms extends Component {
               key: doc.data().alarms[i].key,
               name: doc.data().alarms[i].name,
               switch: doc.data().alarms[i].switch,
+              color: doc.data().alarms[i].color
             });
           }
           this.setState({ alarms: alarmsData });
@@ -163,6 +166,7 @@ export default class Alarms extends Component {
                     key: doc.data().alarms[i].key,
                     name: doc.data().alarms[i].name,
                     switch: doc.data().alarms[i].switch,
+                    color: doc.data().alarms[i].color
                   });
                 }
                 alarmList = this.state.alarms;
@@ -221,8 +225,7 @@ export default class Alarms extends Component {
           }
       }
 
-      this.setState({alarms: alarm_array})
-      // console.log("this.state.alarms:", this.state.alarms)
+      this.setState({alarms: alarm_array}, () => console.log("this.state.alarms from removeAlarm:", this.state.alarms));
 
     };
 
@@ -233,16 +236,12 @@ export default class Alarms extends Component {
       this.setState({ alarms: [] }); // empty the alarms array
     };
 
-    async addAlarm(name, alarm_hour, alarm_minute, key, alarm_array) {
-      // Add new alarm data to the alarm_array
+    async addAlarm(name, alarm_hour, alarm_minute, key, color, alarm_array) {
+            
+      // Add new alarm data to the local alarm_array to display
       alarm_array.push(
-        {name: name, alarm_hour: alarm_hour, alarm_minute: alarm_minute, switch: true, key: key}
+        {name: name, alarm_hour: alarm_hour, alarm_minute: alarm_minute, switch: true, key: key, color: color}
       )
-      // console.log("this.state.alarms:", this.state.alarms)
-    
-      promise = await(this.setState( {currentMaxKey: key} ))
-      console.log("New key:", key)
-      console.log("currentMaxKey:", this.state.currentMaxKey)
       
       // Use the new alarm data to schedule a notification
       promise = (await Notifications.scheduleNotificationAsync({
@@ -259,7 +258,7 @@ export default class Alarms extends Component {
           }
       }));
 
-      // Update user's document in firebase with one alarm
+      // Update user's document in firebase with the one alarm
       db.collection("users")
         .doc(auth.currentUser.email)
         .update({
@@ -268,9 +267,14 @@ export default class Alarms extends Component {
             alarm_hour: alarm_hour, 
             alarm_minute: alarm_minute, 
             switch: true, 
-            key: key
+            key: key,
+            color: color
           }),
       });
+
+      // increment the current max key now that we've added an alarm with key: currentMaxKey + 1
+      await this.incrementCurrentMaxKey();
+      console.log("currentMaxKey after increment:", this.state.currentMaxKey)
       
       console.log("Updated users doc in firebase with one alarm")
       
@@ -297,15 +301,15 @@ export default class Alarms extends Component {
       }
     }
 
-    setMaxKey = async () => {
-      var maxKey = 0
-      for (var i = 0; i < this.state.alarms.length; i++) {
-        if (this.state.alarms[i].key > this.state.currentMaxKey){
-          maxKey = this.state.alarms[i].key
-          promise = await(this.setState( {currentMaxKey: maxKey}))
-        }
-        // console.log("The currentMaxKey is", this.state.currentMaxKey);
-      }
+    setMaxKey(){
+      // var maxKey = 0
+      // for (var i = 0; i < this.state.alarms.length; i++) {
+      //   if (this.state.alarms[i].key > this.state.currentMaxKey){
+      //     maxKey = this.state.alarms[i].key
+      //     promise = await(this.setState( {currentMaxKey: maxKey}))
+      //   }
+      //   // console.log("The currentMaxKey is", this.state.currentMaxKey);
+      // }
     }
 
     listofKeys = async () => {
@@ -319,7 +323,8 @@ export default class Alarms extends Component {
     updateFirebaseGroupsDoc = async () => {
       console.log("Updating", this.state.groupIdClicked, "in firebase")
 
-      await(this.setMaxKey())
+      const promise = await this.updateCurrentMaxKey();
+      console.log("currentMaxKey:", this.state.currentMaxKey)
       await(this.listofKeys())
       // console.log("listOfKeys:", this.state.listOfKeys);
 
@@ -332,7 +337,8 @@ export default class Alarms extends Component {
                 alarm_hour: this.state.alarms[j].alarm_hour,
                 alarm_minute: this.state.alarms[j].alarm_minute, 
                 switch: this.state.alarms[j].switch, 
-                key: this.state.alarms[j].key
+                key: this.state.alarms[j].key,
+                color: this.state.alarms[j].color
               }
             }
           }
@@ -352,12 +358,12 @@ export default class Alarms extends Component {
               .doc(this.state.groupIdClicked)
               .update({
                 alarms: firebase.firestore.FieldValue.arrayUnion({
-                  // alarms: this.state.singleAlarm
                   name: this.state.singleAlarm.name, 
                   alarm_hour: this.state.singleAlarm.alarm_hour,
                   alarm_minute: this.state.singleAlarm.alarm_minute, 
                   switch: this.state.singleAlarm.switch, 
-                  key: this.state.groupIdClicked + ":" + doc.data().alarms.length
+                  key: this.state.groupIdClicked + ":" + doc.data().alarms.length,
+                  color: this.state.singleAlarm.color, 
                 }),
             })
           }
@@ -442,13 +448,32 @@ export default class Alarms extends Component {
         const prevIndex = props.alarms.findIndex(item => item.key === rowKey);
         newData.splice(prevIndex, 1);
         this.setState({ alarms: newData });
-        console.log("rowKey", rowKey);
+        // console.log("rowKey", rowKey);
+        // console.log("prevIndex", prevIndex);
+        // console.log("props.alarms[prevIndex]", props.alarms[prevIndex]);
+
+        // Remove the alarm from the user's doc in firebase
+        db.collection("users")
+          .doc(auth.currentUser.email)
+          .update({
+            alarms: firebase.firestore.FieldValue.arrayRemove({
+              name: props.alarms[prevIndex].name,
+              alarm_hour: props.alarms[prevIndex].alarm_hour,
+              alarm_minute: props.alarms[prevIndex].alarm_minute, 
+              switch: props.alarms[prevIndex].switch, 
+              key: props.alarms[prevIndex].key,
+              color: props.alarms[prevIndex].color
+            }),
+          });
+        
+        // Remove the alarm from the local array that displays
         this.removeAlarm(props.alarms[prevIndex].name, props.alarms);
       };
   
       onRowDidOpen = async(rowKey) => {
-        console.log('This row opened', rowKey);
+        console.log('This row opened rowKey', rowKey);
         const prevIndex = props.alarms.findIndex(item => item.key === rowKey);
+        console.log('This row opened prevIndex', prevIndex);
         promise = await(this.setState({ openRow: Number(rowKey)}));
         // promise = await(this.setState({ openRow: Number(prevIndex) }));
         // console.log("openRow:", this.state.openRow)
@@ -498,11 +523,13 @@ export default class Alarms extends Component {
                 keyExtractor ={(item) => item.id} // specifying id as the key to prevent the key warning
                 data = {props.alarms}
                 renderItem={({ item }) => (
-                <AlarmBanner>
-                    <AlarmDetails title={item.name} hour={item.alarm_hour} minute={item.alarm_minute}/>
-                    <SwitchExample/>
-                    <Text>{item.switch}</Text>
-                </AlarmBanner>
+                  <View>
+                    <AlarmBanner color={item.color}>
+                        <AlarmDetails title={item.name} hour={item.alarm_hour} minute={item.alarm_minute}/>
+                        <SwitchExample/>
+                        {/* <Text>{item.switch}</Text> */}
+                    </AlarmBanner>
+                  </View>
                 )}
                 renderHiddenItem={renderHiddenItem}
                 leftOpenValue={90}
@@ -614,6 +641,39 @@ export default class Alarms extends Component {
         // get the users groups
         this.getFirebaseUsersGroups();
 
+        this.updateCurrentMaxKey();
+
+        setTimeout(() => resolve(1234), 1000)
+      }
+    )
+
+    updateCurrentMaxKey(){
+      var maxKey = this.state.currentMaxKey
+
+      db.collection("users")
+      .doc(auth.currentUser.email)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          db.collection("users")
+            .doc(auth.currentUser.email)
+            for (var i = 0; i < doc.data().alarms.length; i++){
+              if (doc.data().alarms[i].key > maxKey){
+                console.log("Inside if statement")
+                maxKey = doc.data().alarms[i].key
+              }
+            }
+        }
+        console.log("maxKey from updateCurrentMaxKey():", maxKey);
+        this.setState({currentMaxKey: maxKey});
+      })
+    }
+
+    incrementCurrentMaxKey = () => new Promise(
+      (resolve) => {
+        newMaxKey = this.state.currentMaxKey;
+        newMaxKey = newMaxKey + 1; 
+        this.setState({currentMaxKey: newMaxKey})
         setTimeout(() => resolve(1234), 1000)
       }
     )
@@ -623,6 +683,8 @@ export default class Alarms extends Component {
       this.removeAllAlarms();
 
       const promise = await this.getFirebase();
+      console.log("this.state.currentMaxKey after await getFirebase():", this.state.currentMaxKey);
+
       // console.log("promise:", promise)
 
       // Uses alarms array to make the alarms
@@ -631,18 +693,19 @@ export default class Alarms extends Component {
       // Sorts the alarms for output in ascending order by time
       this.state.alarms.sort(this.sortByTime)
 
+      console.log("this.state.alarms from componentDidMount:", this.state.alarms)
+
       this.registerForPushNotificationsAsync().then(token => this.setState({ expoPushToken: token }))//.catch(console.log(".catch"))
 
       // let the_subscription;
       this.state.notificationListener = Notifications.addNotificationReceivedListener(notification => this.setState({ notification: notification}))
 
-      this.state.responseListener = Notifications.addNotificationResponseReceivedListener(response => {console.log("Response:", response)});
+      // this.state.responseListener = Notifications.addNotificationResponseReceivedListener(response => {console.log("Response:", response)});
     
       return () => {
         Notifications.removeNotificationSubscription(this.state.notificationListener);
         Notifications.removeNotificationSubscription(this.state.responseListener);
       };
-    
     };
 
     render(){
@@ -651,7 +714,7 @@ export default class Alarms extends Component {
       return(
         <View style={styles.container}>
           <TopBanner>
-              <Text style={styles.pageTitle}>Alarms_Class</Text>
+              <Text style={styles.pageTitle}>Alarms</Text>
 
               {/*BEGINNING OF MODAL FOR ADD ALARM */}
               <MaterialIcons
@@ -668,7 +731,6 @@ export default class Alarms extends Component {
                   style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                   onPress={() => this.setState({ newAlarmModalOpen: false })}
                   />
-                  {/* <Text style={styles.Text}>DateTimePicker will go here</Text> */}
                   <Text style={styles.pageTitle}> Set a new alarm </Text>
 
                     <DatePicker
@@ -715,18 +777,17 @@ export default class Alarms extends Component {
                   <Text style={styles.inputText}> minute:{this.state.newAlarmMinute}</Text>
                   <Text style={styles.inputText}> title:{this.state.newAlarmText}</Text>
 
-
                   <Button style={styles.button}
                   title="Set Alarm"
                   onPress={ async() =>
-                    this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, (this.state.currentMaxKey + 1), this.state.alarms)
+                    this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.currentMaxKey + 1, "white", this.state.alarms)
                     .then(this.setState({ newAlarmModalOpen: false }))
-                    // this.setState({ newAlarmModalOpen: false })
+                    // Add color wheel to specify color (rn hardcoded "white")
                   }
                   />
 
                   <Button
-                    title="Close Modal"
+                    title="Cancel"
                     onPress={ async() =>
                       this.setState({ newAlarmModalOpen: false })
                     }
@@ -821,30 +882,10 @@ export default class Alarms extends Component {
           </Modal>
           {/*END OF MODAL FOR GROUP PICKER */}
 
-          {/* <Text style={styles.Text}> Share alarm with a group</Text> */}
-
-          {/* <View style={styles.inputView}>
-            <TextInput
-              style={styles.inputText}
-              placeholder="Group name..."
-              placeholderTextColor="#003f5c"
-              onChangeText={(text) => this.setState({newGroupName: text})}
-            />
-          </View>
-
-          <Button
-            title="Share alarms with a group"
-            onPress={ async() =>
-              this.updateFirebaseGroupsDoc()
-            }
-          /> */}
-
         </View>
       );
     };
 }
-
-// Keep adding starting at line 295 to line 493 of alarms.js
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -955,6 +996,10 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     width: "95%",
     borderRadius: 15
+  },
+
+  alarmBannerColor:{
+    backgroundColor: "lightgreen",
   },
 
   alarmDetails: {
