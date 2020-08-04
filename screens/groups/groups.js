@@ -172,9 +172,10 @@ export default class Groups extends Component {
                         name: doc2.data().groupName,
                         id: doc2.id,
                       }),
-                      alertQueue: Firebase.firestore.FieldValue.arrayUnion(
-                        self.user.email + ' has added you to the group "' + doc2.data().groupName + '"'),
-                    })
+                      alertQueue: Firebase.firestore.FieldValue.arrayUnion({
+                        title: "New Group!",
+                        body: self.user.email + ' has added you to the group "' + doc2.data().groupName + '"',
+                    })})
                     .then(function () {
                       // update group doc so it contains added user
                       db.collection("groups")
@@ -503,8 +504,8 @@ export default class Groups extends Component {
     } else {
       var newAlert = queue.shift();
       Alert.alert(
-        "Alert!",
-        newAlert,
+        newAlert.title,
+        newAlert.body,
         [
           { text: "skip", style: "cancel", onPress: () => db.collection("users").doc(this.user.email).update({ alertQueue: [] }) },
           { text: "ok", style: "default", onPress: ()  => this.alertQueueFunction(queue) },   
