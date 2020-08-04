@@ -1,5 +1,6 @@
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
+import { APPBACKGROUNDCOLOR, APPTEXTRED } from "../style/constants";
 
 import Login from "../screens/authentication/login";
 import SignUp from "../screens/authentication/signup";
@@ -35,8 +36,8 @@ const HomeStack = createStackNavigator(
   },
   {
     defaultNavigationOptions: {
-      headerStyle: { backgroundColor: "#003f5c", height: 60 },
-      headerTintColor: "#fb5b5a",
+      headerStyle: { backgroundColor: APPBACKGROUNDCOLOR, height: 60 },
+      headerTintColor: APPTEXTRED,
     },
   }
 );

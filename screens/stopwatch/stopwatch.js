@@ -6,12 +6,8 @@
 // Not yet using https://github.com/smartliang/react-native-alarm
 
 import React, { Component } from 'react';
-import { Button, View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { createAppContainer } from 'react-navigation'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator, HeaderBackground } from 'react-navigation-stack';
-import Moment from 'moment';
-import {APPBACKGROUNDCOLOR} from '../../style/constants';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {APPTEXTWHITE, APPTEXTBLUE, APPBACKGROUNDCOLOR} from '../../style/constants';
 
 const moment = require("moment");
 /*const DATA = {
@@ -109,7 +105,6 @@ export default class Alarms extends Component {
     };
   }
 
-
   componentWillUnmount(){
     clearInterval(this.timer) // Sidney wants to look into this more
 
@@ -182,15 +177,6 @@ export default class Alarms extends Component {
 
     return (
       <View style={styles.container}>
-        {/* <Text style={styles.timeText}>
-          {this.state.time}
-        </Text>
-        <Text style={styles.dateText}>
-          {this.state.date}
-
-        </Text> */}
-
-
         <Timer
           interval={laps.reduce((total, curr) => total + curr, 0) + timer}
           /*laps.reduce() sums all the times in the laps and then + timer adds the current lap. This makes main timer display the total time since the beginning of the first lap*/
@@ -269,17 +255,17 @@ const styles = StyleSheet.create({
   },
 
   timeText: {
-    color: "#0B132B",
+    color: APPTEXTBLUE,
     fontSize: 50,
   },
 
   dateText: {
-    color: "#0B132B",
+    color: APPTEXTBLUE,
     fontSize: 30,
   },
 
   timer: {
-    color: "#FFFFFF",
+    color: APPTEXTBLUE,
     fontSize: 70,
     fontWeight: "300",
     flex: 1,
@@ -314,7 +300,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
-    color: "#FFFFFF",
+    color: APPTEXTWHITE,
   },
 
   ButtonRow: {
@@ -329,13 +315,13 @@ const styles = StyleSheet.create({
   lap: {
     flexDirection: "row",
     justifyContent: "space-between",
-    borderColor: "#FFFFFF",
+    borderColor: APPTEXTBLUE,
     borderTopWidth: 1,
     paddingVertical: 10,
   },
 
   lapText: {
-    color: "#000000",
+    color: "black",
     fontSize: 18,
     width: 35,
   },

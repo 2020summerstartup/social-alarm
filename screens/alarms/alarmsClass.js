@@ -17,6 +17,8 @@ import { appStyles } from '../../style/stylesheet';
 import DatePicker from 'react-native-datepicker';
 import RNPickerSelect from 'react-native-picker-select';
 
+//import getStyleSheet from '../../style/theme';
+
 import * as firebase from "firebase";
 import { db, auth } from "../../firebase/firebase";
 
@@ -946,7 +948,9 @@ const styles = StyleSheet.create({
 
   inputView:{
     width:"75%",
-    backgroundColor:"#465881",
+    backgroundColor:APPBACKGROUNDCOLOR,
+    borderColor:"black",
+    borderWidth: 1,
     borderRadius:25,
     height:50,
     marginBottom:20,

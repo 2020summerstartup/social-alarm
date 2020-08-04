@@ -1,7 +1,12 @@
 import React from "react";
-import { ActivityIndicator, AsyncStorage, StatusBar, View , StyleSheet} from "react-native";
+import {
+  ActivityIndicator,
+  AsyncStorage,
+  StatusBar,
+  View,
+  StyleSheet,
+} from "react-native";
 import { auth } from "../../firebase/firebase";
-
 
 /* authLoadingScreen.js
  * Auth loading screen
@@ -13,7 +18,6 @@ import { auth } from "../../firebase/firebase";
  */
 
 class AuthLoadingScreen extends React.Component {
-
   componentDidMount() {
     this._bootstrapAsync();
   }
@@ -23,32 +27,17 @@ class AuthLoadingScreen extends React.Component {
     var self = this;
     const userToken = await AsyncStorage.getItem("email");
     const password = await AsyncStorage.getItem("password");
-    if (userToken ) {
-      auth.signInWithEmailAndPassword(userToken, password).then(function(user){
-        self.props.navigation.navigate(
-          userToken && auth.currentUser ? "App" : "Auth"
-        );
-
-      })
+    if (userToken && password) {
+      auth
+        .signInWithEmailAndPassword(userToken, password)
+        .then(function (user) {
+          self.props.navigation.navigate("App");
+        });
     } else {
-        // This will switch to the App screen or Auth screen and this loading
-    // screen will be unmounted and thrown away.
-    this.props.navigation.navigate(
-      userToken && auth.currentUser ? "App" : "Auth"
-    );
-
-    }
-/*
-    auth.signInWithEmailAndPassword(userToken, password).then(function(user){
       // This will switch to the App screen or Auth screen and this loading
-    // screen will be unmounted and thrown away.
-    this.props.navigation.navigate(
-      userToken && auth.currentUser ? "App" : "Auth"
-    );
-
-    })
-*/
-    
+      // screen will be unmounted and thrown away.
+      this.props.navigation.navigate("Auth");
+    }
   };
 
   // Render any loading content that you like here
@@ -64,11 +53,10 @@ class AuthLoadingScreen extends React.Component {
 
 export default AuthLoadingScreen;
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
-})
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
