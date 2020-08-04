@@ -16,8 +16,6 @@ import { appStyles } from '../../style/stylesheet';
 import DatePicker from 'react-native-datepicker';
 import RNPickerSelect from 'react-native-picker-select';
 
-import getStyleSheet from '../../style/theme';
-
 import * as firebase from "firebase";
 import { db, auth } from "../../firebase/firebase";
 
