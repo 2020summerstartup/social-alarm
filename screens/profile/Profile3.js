@@ -1,7 +1,8 @@
-import React, { Component, createContext } from 'react'
-import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, TouchableOpacity, DevSettings } from 'react-native'
-import { Avatar, ListItem, ThemeContext } from 'react-native-elements'
+import React, { Component, useState } from 'react'
+import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, TouchableOpacity, DevSettings, Button } from 'react-native'
+import { Avatar, ListItem } from 'react-native-elements'
 import { auth } from "../../firebase/firebase";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTBLUE} from '../../style/constants';
 
@@ -29,10 +30,10 @@ const styles = StyleSheet.create({
   userRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    paddingBottom: 60,
+    paddingBottom: 80,
     paddingLeft: 15,
     paddingRight: 15,
-    paddingTop: 60,
+    paddingTop: 80,
   },
   userImage: {
     marginRight: 12,
@@ -64,7 +65,109 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft: 30,
   },
+  birthdayBtn: {
+    width: "80%",
+    height: 50,
+    marginLeft: 20,
+    width: 150,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+    marginBottom: 40,
+    marginLeft: 30,
+  },
 })
+
+/* this code was for dark mode, currently not working, delete?
+const ThemeContext = React.createContext(null);
+const ThemeConstants = {
+  light: {
+    backgroundColor: '#fff',
+    fontColor: '#000',
+  },
+  dark: {
+    backgroundColor: '#000',
+    fontColor: '#fff',
+  },
+};
+
+class ThemedButton extends React.Component {
+  render() {
+    let { title, ...props } = this.props;
+    return (
+      <TouchableOpacity {...props}>
+        <ThemeContext.Consumer>
+          {({ theme }) => (
+            <Text style={{ color: ThemeConstants[theme].fontColor }}>
+              {title}
+            </Text>
+          )}
+        </ThemeContext.Consumer>
+      </TouchableOpacity>
+    );
+  }
+}
+
+class ThemedView extends React.Component {
+  render() {
+    return (
+      <ThemeContext.Consumer>
+        {({ theme }) => (
+          <View
+            {...this.props}
+            style={[
+              this.props.style,
+              { backgroundColor: ThemeConstants[theme].backgroundColor },
+            ]}
+          />
+        )}
+      </ThemeContext.Consumer>
+    );
+  }
+}
+*/
+
+const BirthdayPicker = () => {
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const onPressButton = () => {
+    this.setState({
+        textValue: 'Text has been changed'
+    })
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date) => {
+    hideDatePicker();
+    showDate(date);
+  };
+
+  const showDate = (date) => {
+    <Text>{date}</Text>
+  }
+
+  return (
+    <View>
+      <Button title="Select" onPress={showDatePicker}/>
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        minimumDate={new Date(1950, 0, 1)}
+        maximumDate={new Date(2020, 11, 31)}
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+        headerTextIOS={"When's your birthday?"}
+      />
+    </View>
+  );
+};
 
 class ProfileScreen extends Component {
 
@@ -101,15 +204,15 @@ class ProfileScreen extends Component {
       darkTheme: false,
       name: "", // this is the user's name
       email: "", // this is the user's email
+      theme: 'light',
     };
   }
 
-  // changes the toggle switch whenever the user clicks it
-  onChangeDarkTheme = () => {
-    this.setState(state => ({
-      darkTheme: !state.darkTheme,
-    }))
-  }
+  toggleTheme = () => {
+    this.setState(({ theme }) => ({
+      theme: theme === 'light' ? 'dark' : 'light',
+    }));
+  };
 
   render() {
 
@@ -130,15 +233,16 @@ class ProfileScreen extends Component {
           </View>
         </View>
 
-        {/* This is supposed to show an avatar but it doesn't show up, styling issues?
-        <Avatar
-          rounded
-          icon={{name: 'user', type: 'font-awesome'}}
-          activeOpacity={0.7}
-          containerStyle={{flex: 2, marginLeft: 20, marginTop: 115}}
-        />*/}
-        {/* Not really sure if we want this, was in the tutorial so I kept it */}
         <View>
+          {/* dark mode code - doesn't work rn */}
+          {/*<ThemedView
+              style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+              <ThemeContext.Consumer>
+              {({ toggleTheme }) => (
+                <ThemedButton title="Toggle theme" onPress={toggleTheme} />
+              )}
+            </ThemeContext.Consumer>
+              </ThemedView>*/}
           <ListItem
             hideChevron
             title="Dark Mode"
@@ -163,8 +267,8 @@ class ProfileScreen extends Component {
           />
           <ListItem
             title="Birthday"
-            rightTitle="05/01/2001"  // TO DO: add text box or date picker here so users can pick their birthday
             rightTitleStyle={{ fontSize: 15 }}
+            rightElement={<BirthdayPicker/>}         
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
@@ -190,24 +294,6 @@ class ProfileScreen extends Component {
                 }}
               />
             }
-          />
-          {/* Not really sure if we want this, was in the tutorial so I kept it */}
-          <ListItem
-            title="Language"
-            rightTitle="English"
-            rightTitleStyle={{ fontSize: 15 }}
-            onPress={ ()=>{ Linking.openURL('https://www.google.com')}} // navigate to some website
-            containerStyle={styles.listItemContainer}
-            leftIcon={
-              <BaseIcon
-                containerStyle={{ backgroundColor: '#FEA8A1' }}
-                icon={{
-                  type: 'material',
-                  name: 'language',
-                }}
-              />
-            }
-            rightIcon={<Chevron />}
           />
         </View>
         <View>
