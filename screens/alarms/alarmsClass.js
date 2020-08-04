@@ -11,7 +11,7 @@ import * as Permissions from 'expo-permissions';
 import { MaterialIcons } from "@expo/vector-icons";
 
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
-import { APPBACKGROUNDCOLOR, APPTEXTBLUE } from '../../style/constants';
+import { APPBACKGROUNDCOLOR, APPTEXTBLUE, APPTEXTRED } from '../../style/constants';
 import { appStyles } from '../../style/stylesheet';
 import DatePicker from 'react-native-datepicker';
 import RNPickerSelect from 'react-native-picker-select';
@@ -668,7 +668,7 @@ export default class Alarms extends Component {
                   style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                   onPress={() => this.setState({ newAlarmModalOpen: false })}
                   />
-                  <Text style={styles.pageTitle}> Set a new alarm </Text>
+                  <Text style={appStyles.logo}> Set a new alarm </Text>
 
                     <DatePicker
                       style={{height: 75, width: 200, color: "black"}}
@@ -773,7 +773,7 @@ export default class Alarms extends Component {
               style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
               onPress={() => this.setState({ groupPickerModalOpen: false })}
               />
-              <Text style={styles.pageTitle}> Select a group </Text>
+              <Text style={appStyles.logo}> Select a group </Text>
 
               {/* https://github.com/lawnstarter/react-native-picker-select */} 
               <RNPickerSelect
@@ -905,11 +905,10 @@ const styles = StyleSheet.create({
 
   pageTitle:{
     padding: 20,
-    color: "#fb5b5a",
-    fontSize: 40,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
+    fontWeight: "bold",
+    fontSize: 50,
+    color: APPTEXTRED,
+    alignItems: "center",
   },
 
   inputText:{

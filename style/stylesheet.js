@@ -101,6 +101,15 @@ const appStyles = StyleSheet.create({
     fontSize: 16,
     padding: 10,
   },
+
+  logo: {
+    marginTop: 30,
+    fontWeight: "bold",
+    fontSize: 50,
+    color: APPTEXTRED,
+    marginBottom: 18,
+    alignItems: "center",
+  },
 });
 
 
