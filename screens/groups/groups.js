@@ -228,6 +228,10 @@ export default class Groups extends Component {
           id: groupId,
           name: group,
         }),
+        alertQueue: Firebase.firestore.FieldValue.arrayUnion({
+          title: "Group deleted",
+          body: self.user.email + ' has deleted you from the group "' + group + '"',
+      })
       })
       .then(() => {
         // group side firebase (deletes user from group's doc)
@@ -309,7 +313,6 @@ export default class Groups extends Component {
       ]);
       return;
     }
-
     // could also possibly use state here, but I don't want things to get messed up
     // if they are accidentally not the same
     // get group doc
@@ -328,6 +331,10 @@ export default class Groups extends Component {
                 id: groupId,
                 name: group,
               }),
+              alertQueue: Firebase.firestore.FieldValue.arrayUnion({
+                title: "Group deleted",
+                body: self.user.email + ' has deleted the group "' + group + '"',
+            })
             })
             .then(console.log("deleted from " + groupMembers[i]));
         }
@@ -608,7 +615,6 @@ export default class Groups extends Component {
                       ...{ justifyContent: "flex-start" },
                     }}
                     color="#333"
-                    //onPress={() => this.deleteUser(this.state.groupNameClicked, this.state.groupIdClicked)}
                     onPress={() =>
                       Alert.alert(
                         "Warning",
