@@ -3,6 +3,7 @@ import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncS
 import { Avatar, ListItem } from 'react-native-elements'
 import { auth } from "../../firebase/firebase";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import RNPickerSelect from 'react-native-picker-select';
 
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTBLUE} from '../../style/constants';
 
@@ -30,16 +31,16 @@ const styles = StyleSheet.create({
   userRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    paddingBottom: 80,
+    paddingBottom: 60,
     paddingLeft: 15,
     paddingRight: 15,
-    paddingTop: 80,
+    paddingTop: 60,
   },
   userImage: {
     marginRight: 12,
   },
   listItemContainer: {
-    height: 60,
+    height: 65,
     borderWidth: 0.5,
     borderColor: APPBACKGROUNDCOLOR,
   },
@@ -57,7 +58,6 @@ const styles = StyleSheet.create({
     backgroundColor: APPTEXTRED,
     borderRadius: 15,
     height: 40,
-    marginLeft: 20,
     width: 0.85 * Dimensions.get('screen').width, // sign out button is 90% of the screen's width
     alignItems: "center",
     justifyContent: "center",
@@ -68,13 +68,12 @@ const styles = StyleSheet.create({
   birthdayBtn: {
     width: "80%",
     height: 50,
-    marginLeft: 20,
-    width: 150,
+    width: 200,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
     marginBottom: 40,
-    marginLeft: 30,
+    marginLeft: 70,
   },
 })
 
@@ -129,15 +128,9 @@ class ThemedView extends React.Component {
 
 const BirthdayPicker = () => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  
+
   const showDatePicker = () => {
     setDatePickerVisibility(true);
-  };
-
-  const onPressButton = () => {
-    this.setState({
-        textValue: 'Text has been changed'
-    })
   };
 
   const hideDatePicker = () => {
@@ -146,16 +139,12 @@ const BirthdayPicker = () => {
 
   const handleConfirm = (date) => {
     hideDatePicker();
-    showDate(date);
+    console.log(date.toString());
   };
-
-  const showDate = (date) => {
-    <Text>{date}</Text>
-  }
 
   return (
     <View>
-      <Button title="Select" onPress={showDatePicker}/>
+      <Button title="Select birthday" onPress={showDatePicker}/>
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
@@ -163,6 +152,7 @@ const BirthdayPicker = () => {
         maximumDate={new Date(2020, 11, 31)}
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
+        style={styles.birthdayBtn}
         headerTextIOS={"When's your birthday?"}
       />
     </View>
@@ -205,6 +195,16 @@ class ProfileScreen extends Component {
       name: "", // this is the user's name
       email: "", // this is the user's email
       theme: 'light',
+      timeZoneSelected: "",
+      timezoneArray: [
+        { label: 'AST', value: 'AST' },
+        { label: 'EST', value: 'EST' },
+        { label: 'CST', value: 'CST' },
+        { label: 'MST', value: 'MST' },
+        { label: 'PST', value: 'PST' },
+        { label: 'AKST', value: 'AKST' },
+        { label: 'HST', value: 'HST' },
+      ]
     };
   }
 
@@ -267,8 +267,8 @@ class ProfileScreen extends Component {
           />
           <ListItem
             title="Birthday"
-            rightTitleStyle={{ fontSize: 15 }}
-            rightElement={<BirthdayPicker/>}         
+            rightTitleStyle={{ fontSize: 18 }}
+            rightElement={<BirthdayPicker/>}    
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
@@ -282,7 +282,42 @@ class ProfileScreen extends Component {
           />
           <ListItem
             title="Time Zone"
-            rightTitle="PST" // TO DO: add time zone picker or a text box here
+            //rightTitle="PST" // TO DO: add time zone picker or a text box here
+            rightElement={
+              <RNPickerSelect
+                onValueChange={(value) => this.setState({ timeZoneSelected: value })}
+                items={this.state.timezoneArray}
+
+                // Object to overide the default text placeholder for the PickerSelect
+                placeholder={{label: 'Select timezone', value: 'select timezone'}}
+                style={
+                  { fontWeight: 'normal',
+                    color: 'black',
+                    placeholder: {
+                      color: "black",
+                      fontSize: 18,
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: 12,
+                      marginTop: 8,
+                    },
+                    inputIOS: {
+                      color: "black",
+                      fontSize: 18,
+                      marginRight: 12,
+                      marginTop: 8,
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }
+                  }
+                }
+                doneText={"Select"}
+                //Icon={() => {return <Chevron size={1.5} color="gray" />;}}
+                 
+              />
+            }
             rightTitleStyle={{ fontSize: 15 }}
             containerStyle={styles.listItemContainer}
             leftIcon={
