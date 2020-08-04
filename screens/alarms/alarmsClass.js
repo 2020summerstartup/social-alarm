@@ -11,7 +11,7 @@ import * as Permissions from 'expo-permissions';
 import { MaterialIcons } from "@expo/vector-icons";
 
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
-import { APPBACKGROUNDCOLOR } from '../../style/constants';
+import { APPBACKGROUNDCOLOR, APPTEXTBLUE } from '../../style/constants';
 import { appStyles } from '../../style/stylesheet';
 import DatePicker from 'react-native-datepicker';
 import RNPickerSelect from 'react-native-picker-select';
@@ -651,7 +651,7 @@ export default class Alarms extends Component {
       return(
         <View style={styles.container}>
           <TopBanner>
-              <Text style={styles.pageTitle}>Alarms_Class</Text>
+              <Text style={styles.pageTitle}>Alarms</Text>
 
               {/*BEGINNING OF MODAL FOR ADD ALARM */}
               <MaterialIcons
@@ -702,6 +702,7 @@ export default class Alarms extends Component {
                     />
                   </View>
 
+                  {/*
                   <Button
                     title="Split the time"
                     onPress={ async() =>
@@ -712,7 +713,7 @@ export default class Alarms extends Component {
                   <Text style={styles.inputText}> time:{this.state.newAlarmTime} </Text>
                   <Text style={styles.inputText}> hour:{this.state.newAlarmHour} </Text>
                   <Text style={styles.inputText}> minute:{this.state.newAlarmMinute}</Text>
-                  <Text style={styles.inputText}> title:{this.state.newAlarmText}</Text>
+                  <Text style={styles.inputText}> title:{this.state.newAlarmText}</Text>*/}
 
 
                   <Button style={styles.button}
@@ -749,6 +750,7 @@ export default class Alarms extends Component {
 
           </View>
 
+          {/*
           <Button
             title="Print user email to console"
             onPress={ async() =>
@@ -760,6 +762,7 @@ export default class Alarms extends Component {
             title="Remove all alarms"
             onPress={() => this.removeAllAlarms()}
           />
+          */}
 
           {/*BEGINNING OF MODAL FOR GROUP PICKER */}
           <Modal visible={this.state.groupPickerModalOpen} animationType="slide">
@@ -790,7 +793,7 @@ export default class Alarms extends Component {
                       justifyContent: 'center',
                     },
                     inputIOS: {
-                      color: "#fb5b5a",
+                      color: APPTEXTBLUE,
                       fontSize: 20,
                       alignSelf: 'center',
                       alignItems: 'center',
@@ -807,14 +810,15 @@ export default class Alarms extends Component {
               {/* <Text style={styles.inputText}>{this.state.groupIdClicked}</Text>  */}
 
               <Text></Text>
-                
-              <Button
-                title="Add alarm to group"
-                color="lightgreen"
-                onPress={ async() =>
+
+              <TouchableOpacity
+                style={{ ...appStyles.loginBtn, ...{ marginTop: 10 } }}
+                onPress={async() =>
                   this.updateFirebaseGroupsDoc()
                 }
-              />
+              >
+                <Text style={appStyles.buttonText}> add alarm to group</Text>
+              </TouchableOpacity>
 
               </View>
           </Modal>
