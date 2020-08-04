@@ -16,60 +16,11 @@ import BaseIcon from './Icon'
 
 /* profile3.js
  * profile screen 
- * has push notifications, birthday, time zone, language, about us,  
+ * has push notifications, birthday, time zone, about us,  
  * share our app, and send feedback
  * feel free to change or delete any of these 
  */
 
-
-/* this code was for dark mode, currently not working, delete?
-const ThemeContext = React.createContext(null);
-const ThemeConstants = {
-  light: {
-    backgroundColor: '#fff',
-    fontColor: '#000',
-  },
-  dark: {
-    backgroundColor: '#000',
-    fontColor: '#fff',
-  },
-};
-
-class ThemedButton extends React.Component {
-  render() {
-    let { title, ...props } = this.props;
-    return (
-      <TouchableOpacity {...props}>
-        <ThemeContext.Consumer>
-          {({ theme }) => (
-            <Text style={{ color: ThemeConstants[theme].fontColor }}>
-              {title}
-            </Text>
-          )}
-        </ThemeContext.Consumer>
-      </TouchableOpacity>
-    );
-  }
-}
-
-class ThemedView extends React.Component {
-  render() {
-    return (
-      <ThemeContext.Consumer>
-        {({ theme }) => (
-          <View
-            {...this.props}
-            style={[
-              this.props.style,
-              { backgroundColor: ThemeConstants[theme].backgroundColor },
-            ]}
-          />
-        )}
-      </ThemeContext.Consumer>
-    );
-  }
-}
-*/
 
 const BirthdayPicker = () => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -176,15 +127,6 @@ class ProfileScreen extends Component {
         </View>
 
         <View>
-          {/* dark mode code - doesn't work rn */}
-          {/*<ThemedView
-              style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-              <ThemeContext.Consumer>
-              {({ toggleTheme }) => (
-                <ThemedButton title="Toggle theme" onPress={toggleTheme} />
-              )}
-            </ThemeContext.Consumer>
-              </ThemedView>*/}
           <ListItem
             hideChevron
             title="Dark Mode"
