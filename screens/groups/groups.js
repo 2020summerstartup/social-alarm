@@ -43,6 +43,8 @@ export default class Groups extends Component {
       groupName: "",
       // array of groups the user is in
       groups: [],
+      // array of new groups user is in
+      newGroups: [],
       // info for group specific modal
       groupNameClicked: "",
       groupIdClicked: "",
@@ -170,6 +172,7 @@ export default class Groups extends Component {
                         name: doc2.data().groupName,
                         id: doc2.id,
                       }),
+                      newGroups: Firebase.firestore.FieldValue.arrayUnion(doc2.data().groupName)
                     })
                     .then(function () {
                       // update group doc so it contains added user
@@ -512,6 +515,19 @@ export default class Groups extends Component {
             });
           }
           this.setState({ groups: groupsData });
+
+          const newGroupsData  = [];
+          for(var i =  0; i < doc.data().newGroups.length; i++) {
+            newGroupsData.push(doc.data().newGroups[i])
+          }
+          this.setState({newGroups: newGroupsData})
+
+          if(doc.data().newGroups.length != 0) {
+            Alert.alert("Yay!", 'You have been added to group "' + doc.data().newGroups[0] +'"', [
+        { text: "ok" },
+      ]);
+            
+          }
         }
       })
       .catch(function (error) {

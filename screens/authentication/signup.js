@@ -51,6 +51,7 @@ export default function SignUp({ navigation }) {
                 uid: user.user.uid,
                 alarms: [],
                 groups: [],
+                newGroups: [],
               })
               .then(navigation.navigate("App"))
               .catch(console.log("idk"));
