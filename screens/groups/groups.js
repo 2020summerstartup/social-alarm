@@ -249,7 +249,6 @@ export default class Groups extends Component {
               // else just remove the user from the group's doc
               if (userDeleted == self.user.email) {
                 // if admin is deleted - choose new admin
-                // im pretty sure this will work, though it's possible it won't
                 db.collection("groups")
                   .doc(groupId)
                   .update({
