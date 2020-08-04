@@ -147,5 +147,6 @@ const styles = StyleSheet.create({
     fontSize: 50,
     color: APPTEXTRED,
     marginBottom: 20,
+    marginTop: 80,
   },
 });
