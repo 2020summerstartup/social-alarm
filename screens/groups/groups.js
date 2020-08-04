@@ -172,7 +172,9 @@ export default class Groups extends Component {
                         name: doc2.data().groupName,
                         id: doc2.id,
                       }),
-                      newGroups: Firebase.firestore.FieldValue.arrayUnion(doc2.data().groupName)
+                      newGroups: Firebase.firestore.FieldValue.arrayUnion(
+                        doc2.data().groupName
+                      ),
                     })
                     .then(function () {
                       // update group doc so it contains added user
@@ -241,25 +243,25 @@ export default class Groups extends Component {
                 .then(() => console.log("doc deleted"));
             } else {
               // else just remove the user from the group's doc
-              if(userDeleted == self.user.email) {
+              if (userDeleted == self.user.email) {
                 // if admin is deleted - choose new admin
                 // im pretty sure this will work, though it's possible it won't
                 db.collection("groups")
-                .doc(groupId)
-                .update({
-                  adminEmail: doc.data().members[1],
-                  members: Firebase.firestore.FieldValue.arrayRemove(
-                    userDeleted
-                  ),
-                });
+                  .doc(groupId)
+                  .update({
+                    adminEmail: doc.data().members[1],
+                    members: Firebase.firestore.FieldValue.arrayRemove(
+                      userDeleted
+                    ),
+                  });
               } else {
                 db.collection("groups")
-                .doc(groupId)
-                .update({
-                  members: Firebase.firestore.FieldValue.arrayRemove(
-                    userDeleted
-                  ),
-                });
+                  .doc(groupId)
+                  .update({
+                    members: Firebase.firestore.FieldValue.arrayRemove(
+                      userDeleted
+                    ),
+                  });
               }
             }
           });
@@ -491,22 +493,27 @@ export default class Groups extends Component {
     const { key, value } = swipeData;
   };
 
-
+  // called in componentDidMount
+  // pings alerts for all new groups user is in
   alertNewGroups = () => {
-    if(this.state.newGroups.length > 0) {
-      var newGroupData = this.state.newGroups
-      while(newGroupData.length > 0){
-        Alert.alert("Yay!", 'You have been added to the group "' + newGroupData[0] +'"', [
-        { text: "ok" },
-        ]);
+    // if there are new groups
+    if (this.state.newGroups.length > 0) {
+      var newGroupData = this.state.newGroups;
+      while (newGroupData.length > 0) {
+        // send alert
+        Alert.alert(
+          "Yay!",
+          'You have been added to the group "' + newGroupData[0] + '"',
+          [{ text: "ok" }]
+        );
+        // deletes first element in an array
         newGroupData.shift();
-      }       
+      }
     }
-    this.setState({newGroups: []})
-
-    db.collection("users").doc(this.user.email).update({newGroups: []})
-
-  }
+    this.setState({ newGroups: [] });
+    // update firebase
+    db.collection("users").doc(this.user.email).update({ newGroups: [] });
+  };
 
   // called when the component launches/mounts
   // this is like a react native method that automatically gets called
@@ -529,18 +536,19 @@ export default class Groups extends Component {
           }
           this.setState({ groups: groupsData });
 
-          const newGroupsData  = [];
-          for(var i =  0; i < doc.data().newGroups.length; i++) {
-            newGroupsData.push(doc.data().newGroups[i])
+          const newGroupsData = [];
+          for (var i = 0; i < doc.data().newGroups.length; i++) {
+            newGroupsData.push(doc.data().newGroups[i]);
           }
-          this.setState({newGroups: newGroupsData}, () => this.alertNewGroups() )
+          this.setState({ newGroups: newGroupsData }, () =>
+            this.alertNewGroups()
+          );
         }
       })
       .catch(function (error) {
         console.log(error);
       });
   }
-
 
   render() {
     return (
