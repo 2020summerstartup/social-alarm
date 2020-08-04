@@ -22,9 +22,6 @@ import {appStyles} from '../../style/stylesheet';
  */
 
 export default function SignUp({ navigation }) {
-  //const firebase = require("firebase");
-  // Required for side-effects
-  // require("firebase/firestore");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -68,10 +65,6 @@ export default function SignUp({ navigation }) {
       console.log(error.toString());
     }
   };
-  /*
-  if (!firebase.apps.length) {
-    firebase.initializeApp({});
-  } */
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>

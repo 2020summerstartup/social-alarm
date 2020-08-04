@@ -16,7 +16,6 @@ import { appStyles, alarmStyles } from '../../style/stylesheet';
 
 import Constants from 'expo-constants';
 
-// import * as firebase from 'firebase';
 // import * as Notifications from 'expo-notifications';
 // import * as Permissions from 'expo-permissions';
 import { Permissions, Notifications } from 'expo';

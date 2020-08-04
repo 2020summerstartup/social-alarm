@@ -15,9 +15,7 @@ import { appStyles, alarmStyles } from '../../../style/stylesheet';
 import TimePicking from '../../components/timePicker';
 import {time} from '../../components/timePicker';
 
-import { db, auth } from "../../firebase/firebase";
-
-import * as firebase from "firebase";
+import Firebase from "../../../firebase/firebase";
 import { db, auth } from "../../../firebase/firebase";
 
 // const rowSwipeAnimatedValues = {};
@@ -111,7 +109,7 @@ function AlarmsTable(){
       db.collection("users")
       .doc("sidneyt9999@gmail.com")
       .update({
-        alarms: firebase.firestore.FieldValue.arrayUnion({
+        alarms: Firebase.firestore.FieldValue.arrayUnion({
           alarms: alarms
         }),
       });

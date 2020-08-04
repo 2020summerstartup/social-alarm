@@ -18,7 +18,8 @@ import RNPickerSelect from 'react-native-picker-select';
 
 //import getStyleSheet from '../../style/theme';
 
-import * as firebase from "firebase";
+import Firebase from "../../firebase/firebase";
+
 import { db, auth } from "../../firebase/firebase";
 
 const moment = require("moment");
@@ -258,7 +259,7 @@ export default class Alarms extends Component {
       db.collection("users")
         .doc(auth.currentUser.email)
         .update({
-          alarms: firebase.firestore.FieldValue.arrayUnion({
+          alarms: Firebase.firestore.FieldValue.arrayUnion({
             name: name, 
             alarm_hour: alarm_hour, 
             alarm_minute: alarm_minute, 
@@ -346,7 +347,7 @@ export default class Alarms extends Component {
             db.collection("groups")
               .doc(this.state.groupIdClicked)
               .update({
-                alarms: firebase.firestore.FieldValue.arrayUnion({
+                alarms: Firebase.firestore.FieldValue.arrayUnion({
                   // alarms: this.state.singleAlarm
                   name: this.state.singleAlarm.name, 
                   alarm_hour: this.state.singleAlarm.alarm_hour,
@@ -362,7 +363,7 @@ export default class Alarms extends Component {
       db.collection("users")
         .doc(auth.currentUser.email)
         .update({
-          alarms: firebase.firestore.FieldValue.arrayRemove({
+          alarms: Firebase.firestore.FieldValue.arrayRemove({
             name: this.state.singleAlarm.name, 
             alarm_hour: this.state.singleAlarm.alarm_hour,
             alarm_minute: this.state.singleAlarm.alarm_minute, 

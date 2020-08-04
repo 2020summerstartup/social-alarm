@@ -17,7 +17,6 @@ import {appStyles} from '../../style/stylesheet';
 
 /* login.js
  * Login screen
- * also contains firebase configs
  *
  */
 
@@ -50,11 +49,7 @@ export default function Login({ navigation }) {
       //Alert.alert('Oops!', error.toString(), [{text:'ok'}]);
     }
   };
-  /*
-    if (!firebase.apps.length) {
-      firebase.initializeApp({});
-    }
-*/
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={appStyles.loginContainer}>

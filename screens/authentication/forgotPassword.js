@@ -39,11 +39,7 @@ export default function Login({ navigation }) {
         Alert.alert("Oops!", error.toString().substring(6), [{ text: "ok" }]);
       });
   };
-  /*
-    if (!firebase.apps.length) {
-      firebase.initializeApp({});
-    }
-*/
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={appStyles.loginContainer}>
