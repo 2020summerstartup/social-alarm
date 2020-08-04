@@ -506,31 +506,11 @@ export default class Groups extends Component {
         "Alert!",
         newAlert,
         [
-          { text: "skip", style: "destructive", onPress: () => db.collection("users").doc(this.user.email).update({ alertQueue: [] }) },
-          { text: "ok", style: "cancel", onPress: ()  => this.alertQueueFunction(queue) },   
+          { text: "skip", style: "cancel", onPress: () => db.collection("users").doc(this.user.email).update({ alertQueue: [] }) },
+          { text: "ok", style: "default", onPress: ()  => this.alertQueueFunction(queue) },   
         ]
       );  
     }
-
-    /*
-    // if there are new groups
-    if (this.state.alertQueue.length > 0) {
-      var newAlertQueue = this.state.alertQueue;
-      while (newAlertQueue.length > 0) {
-        // send alert
-        Alert.alert(
-          "Yay!",
-          newAlertQueue[0],
-          [{ text: "ok" }]
-        );
-        // deletes first element in an array
-        newAlertQueue.shift();
-      }
-    }
-    this.setState({ alertQueue: [] });
-    // update firebase
-    
-    db.collection("users").doc(this.user.email).update({ alertQueue: [] }); */
   };
 
   // called when the component launches/mounts
