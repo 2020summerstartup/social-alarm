@@ -65,7 +65,10 @@ function AlarmDetails({title, hour, minute}){
   }
   return (
       <View style={styles.alarmDetails}>
-          <Text style={styles.alarmTime}>{hour}:{minute}{ampm}</Text>
+          <Text style={styles.alarmTime} adjustsFontSizeToFitnumberOfLines={1}>
+          {/* <Text  adjustsFontSizeToFitnumberOfLines={1}> */}
+            {hour}:{minute}{ampm}
+          </Text>
           <Text style={styles.alarmText}>{title}</Text>
       </View>
   )
@@ -549,8 +552,8 @@ export default class Alarms extends Component {
                   </View>
                 )}
                 renderHiddenItem={renderHiddenItem}
-                leftOpenValue={90}
-                rightOpenValue={-145}
+                leftOpenValue={85}
+                rightOpenValue={-160}
                 previewRowKey={'1'}
                 previewOpenValue={-50}
                 previewOpenDelay={500}
@@ -776,9 +779,9 @@ export default class Alarms extends Component {
                   <Button style={styles.button}
                   title="Set Alarm"
                   onPress={ async() =>
-                    this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.currentMaxKey + 1, "grey", this.state.alarms)
+                    this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.currentMaxKey + 1, "#fb5b5a", this.state.alarms)
                     .then(this.setState({ newAlarmModalOpen: false }))
-                    // Add color wheel to specify color (rn hardcoded "grey")
+                    // Add color wheel to specify color (rn hardcoded to the app red color)
                   }
                   />
 
@@ -810,12 +813,12 @@ export default class Alarms extends Component {
           </View>
 
           {/* Useful button during testing */}
-          <Button
+          {/* <Button
             title="Print user email to console"
             onPress={ async() =>
               console.log("auth.currentUser.email:", auth.currentUser.email)
             }
-          />
+          /> */}
 
           {/* BEGINNING OF MODAL FOR GROUP PICKER */}
           <Modal visible={this.state.groupPickerModalOpen} animationType="slide">
@@ -960,7 +963,7 @@ const styles = StyleSheet.create({
 
   alarmTime: {
     color: "#ffffff",
-    fontSize: 45,
+    fontSize: 40,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
   },
@@ -975,7 +978,6 @@ const styles = StyleSheet.create({
   alarmBanner: {
     flex: 1,
     flexDirection : "row",
-    backgroundColor: "#fb5b5a",
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -987,17 +989,12 @@ const styles = StyleSheet.create({
     borderRadius: 15
   },
 
-  alarmBannerColor:{
-    backgroundColor: "lightgreen",
-  },
-
   alarmDetails: {
     flex: 1,
-    backgroundColor: "#fb5b5a",
     alignItems: 'center',
     justifyContent: 'center',
-    width: "100%",
-    borderRadius: 15
+    alignSelf: 'center',
+    width: 100,
   },
 
   scrollView: {
@@ -1059,7 +1056,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     width: 90,
-    backgroundColor: 'green',
+    backgroundColor: '#56D945',
     left: 25,
     marginTop: 0,
     marginBottom: 10,
@@ -1081,7 +1078,7 @@ const styles = StyleSheet.create({
   },
 
   backRightBtnCenter: {
-      backgroundColor: 'blue',
+      backgroundColor: 'grey',
       right: 75,
       marginTop: 0,
       marginBottom: 10,
