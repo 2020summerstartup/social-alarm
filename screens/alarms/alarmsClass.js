@@ -40,40 +40,31 @@ function AlarmBanner({ children, color }){
 // AlarmDetails specifies the layout within an AlarmBanner 
 function AlarmDetails({title, hour, minute}){
   
-  var new_hour = hour;
-  var ampm; 
+  var ampm;
+
   if (hour < 12){
-    new_hour = hour;
     ampm = " am";
   }
   if (hour > 12){
-    new_hour = hour - 12;
+    hour = hour - 12;
     ampm = " pm";
   }
   if (hour == 12){
-    new_hour = hour;
     ampm = " pm"
   }
   if (hour == 0){
-    new_hour = "12";
+    hour = "12";
     ampm = " am"
   }
   if (minute < 10) {
-    return (
+    minute = "0" + minute;
+  }
+  return (
       <View style={styles.alarmDetails}>
-          <Text style={styles.alarmTime}>{new_hour}:0{minute}{ampm}</Text>
+          <Text style={styles.alarmTime}>{hour}:{minute}{ampm}</Text>
           <Text style={styles.alarmText}>{title}</Text>
       </View>
-    )
-  }
-  else{
-    return (
-      <View style={styles.alarmDetails}>
-          <Text style={styles.alarmTime}>{new_hour}:{minute}{ampm}</Text>
-          <Text style={styles.alarmText}>{title}</Text>
-      </View>
-    )
-  }
+  )
 };
 
 export default class Alarms extends Component {
@@ -243,6 +234,9 @@ export default class Alarms extends Component {
         {name: name, alarm_hour: alarm_hour, alarm_minute: alarm_minute, switch: true, key: key, color: color}
       )
       
+      // Sort the alarm array by time after new alarm is added
+      alarm_array.sort(this.sortByTime)
+      
       // Use the new alarm data to schedule a notification
       promise = (await Notifications.scheduleNotificationAsync({
           identifier: name,
@@ -354,6 +348,14 @@ export default class Alarms extends Component {
         .get()
         .then((doc) => {
           if (doc.exists) {
+            var maxKey = 0
+            for (var i = 0; i < doc.data().alarms.length; i++){
+              var keySplitArray = doc.data().alarms[i].key.split(":")
+              if (keySplitArray[1] > maxKey){
+                maxKey = keySplitArray[1]
+              }
+            }
+            maxKey = Number(maxKey) + 1
             db.collection("groups")
               .doc(this.state.groupIdClicked)
               .update({
@@ -362,7 +364,7 @@ export default class Alarms extends Component {
                   alarm_hour: this.state.singleAlarm.alarm_hour,
                   alarm_minute: this.state.singleAlarm.alarm_minute, 
                   switch: this.state.singleAlarm.switch, 
-                  key: this.state.groupIdClicked + ":" + doc.data().alarms.length,
+                  key: this.state.groupIdClicked + ":" + (maxKey),
                   color: this.state.singleAlarm.color, 
                 }),
             })
@@ -378,7 +380,8 @@ export default class Alarms extends Component {
             alarm_hour: this.state.singleAlarm.alarm_hour,
             alarm_minute: this.state.singleAlarm.alarm_minute, 
             switch: this.state.singleAlarm.switch, 
-            key: this.state.singleAlarm.key
+            key: this.state.singleAlarm.key,
+            color: this.state.singleAlarm.color
           }),
       });
 
@@ -823,7 +826,7 @@ export default class Alarms extends Component {
             onPress={() => this.removeAllAlarms()}
           />
 
-          {/*BEGINNING OF MODAL FOR GROUP PICKER */}
+          {/* BEGINNING OF MODAL FOR GROUP PICKER */}
           <Modal visible={this.state.groupPickerModalOpen} animationType="slide">
           <View style={appStyles.modalContainer}>
               <MaterialIcons
@@ -864,9 +867,6 @@ export default class Alarms extends Component {
                 Icon={() => {return <Chevron size={1.5} color="gray" />;}}
                  
               />
-
-              {/* <Text style={styles.inputText}>this.state.groupIdClicked:</Text>  */}
-              {/* <Text style={styles.inputText}>{this.state.groupIdClicked}</Text>  */}
 
               <Text></Text>
                 
@@ -925,7 +925,6 @@ const styles = StyleSheet.create({
   topBanner:{
     flexDirection : "row",
     width:"100%",
-    // backgroundColor: "white",
     backgroundColor: APPBACKGROUNDCOLOR,
     height: 110,
     paddingTop: 30,
@@ -986,7 +985,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection : "row",
     backgroundColor: "#fb5b5a",
-    // backgroundColor: "black",
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -1056,7 +1054,6 @@ const styles = StyleSheet.create({
 
   rowBack: {
       alignItems: 'center',
-      // backgroundColor: '#DDD',
       flex: 1,
       flexDirection: 'row',
       justifyContent: 'space-between',
