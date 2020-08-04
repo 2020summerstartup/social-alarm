@@ -191,10 +191,9 @@ class ProfileScreen extends Component {
     super(props);
 
     this.state = {
-      darkTheme: false,
+      switchValue: false,
       name: "", // this is the user's name
       email: "", // this is the user's email
-      theme: 'light',
       timeZoneSelected: "",
       timezoneArray: [
         { label: 'AST', value: 'AST' },
@@ -208,10 +207,8 @@ class ProfileScreen extends Component {
     };
   }
 
-  toggleTheme = () => {
-    this.setState(({ theme }) => ({
-      theme: theme === 'light' ? 'dark' : 'light',
-    }));
+  toggleSwitch = value => {
+    this.setState({ switchValue: value });
   };
 
   render() {
@@ -249,8 +246,8 @@ class ProfileScreen extends Component {
             containerStyle={styles.listItemContainer}
             rightElement={
               <Switch
-                onValueChange={this.onChangeDarkTheme}
-                value={this.state.darkTheme}
+                onValueChange={this.toggleSwitch}
+                value={this.state.switchValue}
               />
             }
             leftIcon={
@@ -282,7 +279,6 @@ class ProfileScreen extends Component {
           />
           <ListItem
             title="Time Zone"
-            //rightTitle="PST" // TO DO: add time zone picker or a text box here
             rightElement={
               <RNPickerSelect
                 onValueChange={(value) => this.setState({ timeZoneSelected: value })}
@@ -313,9 +309,7 @@ class ProfileScreen extends Component {
                     }
                   }
                 }
-                doneText={"Select"}
-                //Icon={() => {return <Chevron size={1.5} color="gray" />;}}
-                 
+                doneText={"Select"}                 
               />
             }
             rightTitleStyle={{ fontSize: 15 }}
