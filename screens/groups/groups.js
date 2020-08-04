@@ -818,7 +818,7 @@ const styles = StyleSheet.create({
   },
 
   wordText: {
-    color: APPTEXTWHITE,
+    color: APPTEXTBLUE,
     fontSize: 20,
     padding: 10,
   },
