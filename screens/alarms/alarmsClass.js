@@ -776,9 +776,9 @@ export default class Alarms extends Component {
                   <Button style={styles.button}
                   title="Set Alarm"
                   onPress={ async() =>
-                    this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.currentMaxKey + 1, "white", this.state.alarms)
+                    this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.currentMaxKey + 1, "grey", this.state.alarms)
                     .then(this.setState({ newAlarmModalOpen: false }))
-                    // Add color wheel to specify color (rn hardcoded "white")
+                    // Add color wheel to specify color (rn hardcoded "grey")
                   }
                   />
 
@@ -942,7 +942,7 @@ const styles = StyleSheet.create({
   inputText:{
     padding: 20,
     height: 50,
-    color:"#ffffff",
+    color:"black",
     fontSize: 16
   },
 
