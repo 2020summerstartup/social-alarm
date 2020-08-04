@@ -4,6 +4,7 @@ import { Avatar, ListItem } from 'react-native-elements'
 import { auth } from "../../firebase/firebase";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RNPickerSelect from 'react-native-picker-select';
+import { profileStyles } from '../../style/stylesheet';
 
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTBLUE} from '../../style/constants';
 
@@ -20,62 +21,6 @@ import BaseIcon from './Icon'
  * feel free to change or delete any of these 
  */
 
-const styles = StyleSheet.create({
-  scroll: {
-    backgroundColor: 'white',
-
-    // these lines fit the container to the entire screen
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
-  },
-  userRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingBottom: 60,
-    paddingLeft: 15,
-    paddingRight: 15,
-    paddingTop: 60,
-  },
-  userImage: {
-    marginRight: 12,
-  },
-  listItemContainer: {
-    height: 65,
-    borderWidth: 0.5,
-    borderColor: APPBACKGROUNDCOLOR,
-  },
-  logo: {
-    fontWeight: "bold",
-    fontSize: 20,
-    color: APPBACKGROUNDCOLOR,
-    marginBottom: 5,
-    marginTop: 5,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  loginBtn: {
-    width: "80%",
-    backgroundColor: APPTEXTRED,
-    borderRadius: 15,
-    height: 40,
-    width: 0.85 * Dimensions.get('screen').width, // sign out button is 90% of the screen's width
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 10,
-    marginLeft: 30,
-  },
-  birthdayBtn: {
-    width: "80%",
-    height: 50,
-    width: 200,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 40,
-    marginLeft: 70,
-  },
-})
 
 /* this code was for dark mode, currently not working, delete?
 const ThemeContext = React.createContext(null);
@@ -152,7 +97,7 @@ const BirthdayPicker = () => {
         maximumDate={new Date(2020, 11, 31)}
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
-        style={styles.birthdayBtn}
+        style={profileStyles.birthdayBtn}
         headerTextIOS={"When's your birthday?"}
       />
     </View>
@@ -214,9 +159,9 @@ class ProfileScreen extends Component {
   render() {
 
     return (
-      <ScrollView style={styles.scroll}>  
+      <ScrollView style={profileStyles.scroll}>  
         {/* this part shows the user's name and email */}
-        <View style={styles.userRow}>
+        <View style={profileStyles.userRow}>
           <View>
             <Text style={{ fontSize: 30, color: APPTEXTBLUE }}>{this.state.name}</Text>
             <Text
@@ -243,7 +188,7 @@ class ProfileScreen extends Component {
           <ListItem
             hideChevron
             title="Dark Mode"
-            containerStyle={styles.listItemContainer}
+            containerStyle={profileStyles.listItemContainer}
             rightElement={
               <Switch
                 onValueChange={this.toggleSwitch}
@@ -266,7 +211,7 @@ class ProfileScreen extends Component {
             title="Birthday"
             rightTitleStyle={{ fontSize: 18 }}
             rightElement={<BirthdayPicker/>}    
-            containerStyle={styles.listItemContainer}
+            containerStyle={profileStyles.listItemContainer}
             leftIcon={
               <BaseIcon
                 containerStyle={{ backgroundColor: '#FAD291' }}
@@ -313,7 +258,7 @@ class ProfileScreen extends Component {
               />
             }
             rightTitleStyle={{ fontSize: 15 }}
-            containerStyle={styles.listItemContainer}
+            containerStyle={profileStyles.listItemContainer}
             leftIcon={
               <BaseIcon
                 containerStyle={{ backgroundColor: '#57DCE7' }}
@@ -328,7 +273,7 @@ class ProfileScreen extends Component {
         <View>
           <ListItem
             title="About Us"
-            containerStyle={styles.listItemContainer}
+            containerStyle={profileStyles.listItemContainer}
             onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}} // we can change this later 
             leftIcon={
               <BaseIcon
@@ -344,7 +289,7 @@ class ProfileScreen extends Component {
           <ListItem
             title="Share our App"
             onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}}
-            containerStyle={styles.listItemContainer}
+            containerStyle={profileStyles.listItemContainer}
             leftIcon={
               <BaseIcon
                 containerStyle={{
@@ -361,7 +306,7 @@ class ProfileScreen extends Component {
           <ListItem
             title="Send Feedback"
             onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}}
-            containerStyle={styles.listItemContainer}
+            containerStyle={profileStyles.listItemContainer}
             leftIcon={
               <BaseIcon
                 containerStyle={{
@@ -379,10 +324,10 @@ class ProfileScreen extends Component {
         
         {/* Sign out button */}
         <TouchableOpacity
-          style={styles.loginBtn}
+          style={profileStyles.loginBtn}
           onPress={() => this.signOutUser()}
         >
-          <Text style={styles.logo}>Sign Out</Text>
+          <Text style={profileStyles.logo}>Sign Out</Text>
         </TouchableOpacity>
       </ScrollView>
     )
