@@ -468,6 +468,21 @@ export default class Alarms extends Component {
               color: props.alarms[prevIndex].color
             }),
           });
+
+        // Remove the alarm from the user's doc in firebase
+        var groupIDSplitArray = props.alarms[prevIndex].key.split(":")
+        db.collection("groups")
+          .doc(groupIDSplitArray[0])
+          .update({
+            alarms: firebase.firestore.FieldValue.arrayRemove({
+              name: props.alarms[prevIndex].name,
+              alarm_hour: props.alarms[prevIndex].alarm_hour,
+              alarm_minute: props.alarms[prevIndex].alarm_minute, 
+              switch: props.alarms[prevIndex].switch, 
+              key: props.alarms[prevIndex].key,
+              color: props.alarms[prevIndex].color
+            }),
+          });
         
         // Remove the alarm from the local array that displays
         this.removeAlarm(props.alarms[prevIndex].name, props.alarms);
