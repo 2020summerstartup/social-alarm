@@ -44,7 +44,7 @@ export default class Groups extends Component {
       // array of groups the user is in
       groups: [],
       // array of new groups user is in
-      newGroups: [],
+      alertQueue: [],
       // info for group specific modal
       groupNameClicked: "",
       groupIdClicked: "",
@@ -172,10 +172,8 @@ export default class Groups extends Component {
                         name: doc2.data().groupName,
                         id: doc2.id,
                       }),
-                      newGroups: Firebase.firestore.FieldValue.arrayUnion({
-                        groupName: doc2.data().groupName,
-                        adder: self.user.email,
-                      }),
+                      alertQueue: Firebase.firestore.FieldValue.arrayUnion(
+                        self.user.email + ' has added you to the group "' + doc2.data().groupName + '"'),
                     })
                     .then(function () {
                       // update group doc so it contains added user
@@ -498,23 +496,23 @@ export default class Groups extends Component {
   // pings alerts for all new groups user is in
   alertNewGroups = () => {
     // if there are new groups
-    if (this.state.newGroups.length > 0) {
-      var newGroupData = this.state.newGroups;
-      while (newGroupData.length > 0) {
+    if (this.state.alertQueue.length > 0) {
+      var newAlertQueue = this.state.alertQueue;
+      while (newAlertQueue.length > 0) {
         // send alert
         Alert.alert(
           "Yay!",
-          newGroupData[0].adder + ' has added you to the group "' + newGroupData[0].groupName + '"',
+          newAlertQueue[0],
           [{ text: "ok" }]
         );
         // deletes first element in an array
-        newGroupData.shift();
+        newAlertQueue.shift();
       }
     }
-    this.setState({ newGroups: [] });
+    this.setState({ alertQueue: [] });
     // update firebase
     
-    db.collection("users").doc(this.user.email).update({ newGroups: [] });
+    db.collection("users").doc(this.user.email).update({ alertQueue: [] });
   };
 
   // called when the component launches/mounts
@@ -539,14 +537,12 @@ export default class Groups extends Component {
           this.setState({ groups: groupsData });
 
           const newGroupsData = [];
-          for (var i = 0; i < doc.data().newGroups.length; i++) {
-            newGroupsData.push({
-              groupName: doc.data().newGroups[i].groupName,
-              adder: doc.data().newGroups[i].adder,
-            }
+          for (var i = 0; i < doc.data().alertQueue.length; i++) {
+            newGroupsData.push(
+              doc.data().alertQueue[i]
               );
           }
-          this.setState({ newGroups: newGroupsData }, () =>
+          this.setState({ alertQueue: newGroupsData }, () =>
             this.alertNewGroups()
           );
         }
