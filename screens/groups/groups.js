@@ -494,7 +494,25 @@ export default class Groups extends Component {
 
   // called in componentDidMount
   // pings alerts for all new groups user is in
-  alertNewGroups = () => {
+  alertQueueFunction = (queue) => {
+
+    if(queue.length ==  0) {
+      db.collection("users").doc(this.user.email).update({ alertQueue: [] });
+      // delete from firebase here
+      return;
+    } else {
+      var newAlert = queue.shift();
+      Alert.alert(
+        "Alert!",
+        newAlert,
+        [
+          { text: "skip", style: "destructive", onPress: () => db.collection("users").doc(this.user.email).update({ alertQueue: [] }) },
+          { text: "ok", style: "cancel", onPress: ()  => this.alertQueueFunction(queue) },   
+        ]
+      );  
+    }
+
+    /*
     // if there are new groups
     if (this.state.alertQueue.length > 0) {
       var newAlertQueue = this.state.alertQueue;
@@ -512,7 +530,7 @@ export default class Groups extends Component {
     this.setState({ alertQueue: [] });
     // update firebase
     
-    db.collection("users").doc(this.user.email).update({ alertQueue: [] });
+    db.collection("users").doc(this.user.email).update({ alertQueue: [] }); */
   };
 
   // called when the component launches/mounts
@@ -543,7 +561,7 @@ export default class Groups extends Component {
               );
           }
           this.setState({ alertQueue: newGroupsData }, () =>
-            this.alertNewGroups()
+            this.alertQueueFunction(this.state.alertQueue)
           );
         }
       })
