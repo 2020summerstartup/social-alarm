@@ -127,21 +127,6 @@ export default class Groups extends Component {
           this.setState({ groupAdminClicked: doc.data().adminEmail });
         });
     }
-    // this was for when groupId was a docRef, this shouldn't happen anymore
-    // but keeping the code until the next merge to github just in case
-    /* else {
-      // gets group members,  stores them in state
-      db.collection("groups")
-        .doc(groupId.id)
-        .get()
-        .then((doc) => {
-          const groupMem = [];
-          for (var i = 0; i < doc.data().members.length; i++) {
-            groupMem.push(doc.data().members[i]);
-          }
-          this.setState({ groupMembers: groupMem });
-        });
-    } */
   };
 
   // called when user tries to add someone to a group
