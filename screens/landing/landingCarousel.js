@@ -43,13 +43,13 @@ export default class Landing extends React.Component {
             <Pagination
               dotsLength={this.state.carouselItems.length}
               activeDotIndex={this.state.activeIndex}
-              containerStyle={{ backgroundColor: APPTEXTRED, width: 200, marginLeft: 100, marginTop: 10, height: 65 }}
+              containerStyle={{ backgroundColor: APPBACKGROUNDCOLOR, width: 200, marginLeft: 100, marginBottom: 2, marginTop: 2, height: 62 }}
               dotStyle={{
                   width: 10,
                   height: 10,
                   borderRadius: 5,
-                  marginHorizontal: 8,
-                  backgroundColor: 'rgba(255, 255, 255, 0.92)'
+                  marginHorizontal: 4,
+                  backgroundColor: "black"
               }}
               inactiveDotStyle={{
                   // Define styles for inactive dots here
@@ -67,10 +67,10 @@ export default class Landing extends React.Component {
               borderRadius: 35,
               borderBottomEndRadius: 35,
               borderBottomStartRadius: 35,
-              height: 650,
+              height: 500,
               padding: 50,
               marginLeft: 40,
-              marginTop: 25,
+              marginTop: 15,
               marginRight: 25, }}>
             <Text style={{fontSize: 35, fontWeight: "bold", color: APPTEXTWHITE, justifyContent: "center"}}>{item.title}</Text>
             <Text style={{fontSize: 20, color: APPTEXTBLUE}}>{item.text}</Text>
