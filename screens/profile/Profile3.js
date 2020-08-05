@@ -1,9 +1,13 @@
 import React, { Component, createContext } from 'react'
-import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, TouchableOpacity, DevSettings } from 'react-native'
+import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, TouchableOpacity, DevSettings, Modal, TouchableHighlight } from 'react-native'
 import { Avatar, ListItem, ThemeContext } from 'react-native-elements'
-import { auth } from "../../firebase/firebase";
+import { auth, db } from "../../firebase/firebase";
 
-import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTBLUE} from '../../style/constants';
+import { MaterialIcons } from "@expo/vector-icons";
+
+import  {appStyles} from '../../style/stylesheet';
+
+import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTBLUE, APPTEXTWHITE, APPINPUTVIEW} from '../../style/constants';
 
 // chevron is the greater than sign that's on the right of everything on the profile page
 import Chevron from './Chevron'
@@ -64,6 +68,47 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft: 30,
   },
+
+    // the banner
+    alarmBanner: {
+      flex: 1,
+      flexDirection: "row",
+      backgroundColor: APPTEXTRED,
+      alignSelf: "center",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginTop: 0,
+      marginBottom: 10,
+      paddingTop: 0,
+      paddingBottom: 0,
+      width: "100%",
+      borderRadius: 15,
+    },
+  
+    // lol bad name - the button text
+    titleText: {
+      color: APPTEXTWHITE,
+      fontSize: 22,
+      alignItems: "flex-start",
+      justifyContent: "flex-start",
+      padding: 5,
+      paddingLeft: 20,
+      paddingRight: 20,
+      paddingTop: 15,
+      paddingVertical: 5,
+    },
+  
+    // text in indiv group modal - members
+    bodyText: {
+      color: APPTEXTWHITE,
+      fontSize: 18,
+      alignItems: "flex-start",
+      justifyContent: "flex-start",
+      padding: 5,
+      paddingLeft: 20,
+      paddingRight: 20,
+      paddingBottom: 15,
+    },
 })
 
 class ProfileScreen extends Component {
@@ -84,6 +129,8 @@ class ProfileScreen extends Component {
   
   componentDidMount() {
     this.getEmailName();
+    this.getNotifications();
+
   }
 
   // gets user email and name from async storage
@@ -101,6 +148,8 @@ class ProfileScreen extends Component {
       darkTheme: false,
       name: "", // this is the user's name
       email: "", // this is the user's email
+      notificationsModal: false,
+      notifications: [],
     };
   }
 
@@ -111,21 +160,39 @@ class ProfileScreen extends Component {
     }))
   }
 
+  getNotifications = () => {
+    db.collection("users").doc(auth.currentUser.email).get().then((doc) => {
+      this.setState({notifications: doc.data().alertQueue})
+    })
+  }
+
+  closeNotifications = () => {
+    this.setState({notificationsModal: false})
+    db.collection("users").doc(auth.currentUser.email).update({
+      alertQueue: []
+    })
+
+  }
+
+
+
   render() {
 
     return (
-      <ScrollView style={styles.scroll}>  
+      <ScrollView style={styles.scroll}>
         {/* this part shows the user's name and email */}
         <View style={styles.userRow}>
           <View>
-            <Text style={{ fontSize: 30, color: APPTEXTBLUE }}>{this.state.name}</Text>
+            <Text style={{ fontSize: 30, color: APPTEXTBLUE }}>
+              {this.state.name}
+            </Text>
             <Text
               style={{
                 color: APPTEXTBLUE,
                 fontSize: 25,
               }}
             >
-              {this.state.email} 
+              {this.state.email}
             </Text>
           </View>
         </View>
@@ -138,7 +205,67 @@ class ProfileScreen extends Component {
           containerStyle={{flex: 2, marginLeft: 20, marginTop: 115}}
         />*/}
         {/* Not really sure if we want this, was in the tutorial so I kept it */}
+
+        <Modal visible={this.state.notificationsModal} animationType="slide">
+          <View style={{ alignItems: "center", flex: 1 }}>
+            <MaterialIcons
+              name="close"
+              size={24}
+              style={{
+                ...appStyles.modalClose,
+                ...appStyles.modalToggle,
+                ...{ margin: 20 },
+              }}
+              color={APPTEXTRED}
+              onPress={() => this.closeNotifications()}
+            />
+
+            <Text style={{...styles.logo, color: APPTEXTRED, fontSize: 36}}> New Notifications</Text>
+
+            <ScrollView style={{ width: "95%" }}>
+              {this.state.notifications &&
+                this.state.notifications.map((notification) => {
+                  return (
+                    <TouchableHighlight
+                      style={styles.alarmBanner}
+                      key={notification.body}
+                    >
+                      <View>
+                        <Text
+                          adjustsFontSizeToFit
+                          numberOfLines={1}
+                          style={styles.titleText}
+                        >
+                          {notification.title}
+                        </Text>
+                        <Text style={styles.bodyText}>{notification.body}</Text>
+                      </View>
+                    </TouchableHighlight>
+                  );
+                })}
+            </ScrollView>
+          </View>
+        </Modal>
+
         <View>
+          <ListItem
+            title="Notifications"
+            containerStyle={styles.listItemContainer}
+            onPress={() => this.setState({notificationsModal: true})} // we can change this later
+            leftIcon={
+              <BaseIcon
+                // probably want to change the color
+                containerStyle={{ backgroundColor: "#A4C8F0" }}
+                icon={{
+                  type: "ionicon",
+                  //TODO: FIX THIS
+                  name: "notifications-outline",
+                }}
+              />
+            }
+            rightIcon={<Chevron />}
+          />
+
           <ListItem
             hideChevron
             title="Dark Mode"
@@ -152,26 +279,26 @@ class ProfileScreen extends Component {
             leftIcon={
               <BaseIcon
                 containerStyle={{
-                  backgroundColor: '#FFADF2',
+                  backgroundColor: "#FFADF2",
                 }}
                 icon={{
-                  type: 'ionicon',
-                  name: 'ios-moon',
+                  type: "ionicon",
+                  name: "ios-moon",
                 }}
               />
             }
           />
           <ListItem
             title="Birthday"
-            rightTitle="05/01/2001"  // TO DO: add text box or date picker here so users can pick their birthday
+            rightTitle="05/01/2001" // TO DO: add text box or date picker here so users can pick their birthday
             rightTitleStyle={{ fontSize: 15 }}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
-                containerStyle={{ backgroundColor: '#FAD291' }}
+                containerStyle={{ backgroundColor: "#FAD291" }}
                 icon={{
-                  type: 'material',
-                  name: 'cake',
+                  type: "material",
+                  name: "cake",
                 }}
               />
             }
@@ -183,10 +310,10 @@ class ProfileScreen extends Component {
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
-                containerStyle={{ backgroundColor: '#57DCE7' }}
+                containerStyle={{ backgroundColor: "#57DCE7" }}
                 icon={{
-                  type: 'font-awesome',
-                  name: 'globe',
+                  type: "font-awesome",
+                  name: "globe",
                 }}
               />
             }
@@ -196,14 +323,16 @@ class ProfileScreen extends Component {
             title="Language"
             rightTitle="English"
             rightTitleStyle={{ fontSize: 15 }}
-            onPress={ ()=>{ Linking.openURL('https://www.google.com')}} // navigate to some website
+            onPress={() => {
+              Linking.openURL("https://www.google.com");
+            }} // navigate to some website
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
-                containerStyle={{ backgroundColor: '#FEA8A1' }}
+                containerStyle={{ backgroundColor: "#FEA8A1" }}
                 icon={{
-                  type: 'material',
-                  name: 'language',
+                  type: "material",
+                  name: "language",
                 }}
               />
             }
@@ -214,13 +343,17 @@ class ProfileScreen extends Component {
           <ListItem
             title="About Us"
             containerStyle={styles.listItemContainer}
-            onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}} // we can change this later 
+            onPress={() => {
+              Linking.openURL(
+                "https://www.github.com/2020summerstartup/social-alarm"
+              );
+            }} // we can change this later
             leftIcon={
               <BaseIcon
-                containerStyle={{ backgroundColor: '#A4C8F0' }}
+                containerStyle={{ backgroundColor: "#A4C8F0" }}
                 icon={{
-                  type: 'ionicon',
-                  name: 'md-information-circle',
+                  type: "ionicon",
+                  name: "md-information-circle",
                 }}
               />
             }
@@ -228,16 +361,20 @@ class ProfileScreen extends Component {
           />
           <ListItem
             title="Share our App"
-            onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}}
+            onPress={() => {
+              Linking.openURL(
+                "https://www.github.com/2020summerstartup/social-alarm"
+              );
+            }}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
                 containerStyle={{
-                  backgroundColor: '#C47EFF',
+                  backgroundColor: "#C47EFF",
                 }}
                 icon={{
-                  type: 'entypo',
-                  name: 'share',
+                  type: "entypo",
+                  name: "share",
                 }}
               />
             }
@@ -245,23 +382,27 @@ class ProfileScreen extends Component {
           />
           <ListItem
             title="Send Feedback"
-            onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}}
+            onPress={() => {
+              Linking.openURL(
+                "https://www.github.com/2020summerstartup/social-alarm"
+              );
+            }}
             containerStyle={styles.listItemContainer}
             leftIcon={
               <BaseIcon
                 containerStyle={{
-                  backgroundColor: '#00C001',
+                  backgroundColor: "#00C001",
                 }}
                 icon={{
-                  type: 'materialicon',
-                  name: 'feedback',
+                  type: "materialicon",
+                  name: "feedback",
                 }}
               />
             }
             rightIcon={<Chevron />}
           />
         </View>
-        
+
         {/* Sign out button */}
         <TouchableOpacity
           style={styles.loginBtn}
@@ -270,7 +411,7 @@ class ProfileScreen extends Component {
           <Text style={styles.logo}>Sign Out</Text>
         </TouchableOpacity>
       </ScrollView>
-    )
+    );
   }
 }
 

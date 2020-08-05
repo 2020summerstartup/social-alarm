@@ -561,7 +561,9 @@ export default class Groups extends Component {
             });
           }
           this.setState({ groups: groupsData });
-
+          
+          // this is for the alert notifications
+          /*
           const newGroupsData = [];
           for (var i = 0; i < doc.data().alertQueue.length; i++) {
             newGroupsData.push(doc.data().alertQueue[i]);
@@ -569,6 +571,7 @@ export default class Groups extends Component {
           this.setState({ alertQueue: newGroupsData }, () =>
             this.alertQueueFunction(this.state.alertQueue)
           );
+          */
         }
       })
       .catch(function (error) {
