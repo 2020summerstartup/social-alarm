@@ -5,7 +5,6 @@ import { APPBACKGROUNDCOLOR, APPTEXTRED } from "../style/constants";
 import Login from "../screens/authentication/login";
 import SignUp from "../screens/authentication/signup";
 import ForgotPassword from "../screens/authentication/forgotPassword";
-//import Landing from "../screens/landing/landing";
 import Landing from "../screens/landing/landingCarousel";
 
 /* stackNavigation.js
