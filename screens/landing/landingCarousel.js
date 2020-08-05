@@ -6,11 +6,17 @@ import {
   StyleSheet, 
   Button } from 'react-native';
 
-import Carousel from 'react-native-snap-carousel';
+import Carousel, {Pagination} from 'react-native-snap-carousel';
 import { APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE, APPTEXTBLUE } from '../../style/constants';
 
-export default class App extends React.Component {
- 
+// function Navigation({ navigation }) {
+//     onPressStart = () => {
+//         navigation.navigate("SignUp");
+//       };
+// }
+
+export default class Landing extends React.Component {
+
     constructor(props){
         super(props);
         this.state = {
@@ -18,28 +24,53 @@ export default class App extends React.Component {
           carouselItems: [
           {
               title:"Alarmium",
-              text: "Stay connected with your friends with group alarms!",
+              text: "Stay connected with your friends by setting alarms for each other!",
           },
           {
               title:"Set alarms!",
-              text: "Click the plus icon to set an alarm with a custom name.",
+              text: "Click the + icon to set an alarm with a custom name.",
           },
           {
               title:"Create groups!",
-              text: "Click the plus icon to create a group with a custon name. Add your friends too!",
+              text: "Click the + icon to create groups with custom names. Add your friends too!",
           },
         ]
       }
+    }
+
+    get pagination () {
+        return (
+            <Pagination
+              dotsLength={this.state.carouselItems.length}
+              activeDotIndex={this.state.activeIndex}
+              containerStyle={{ backgroundColor: APPTEXTRED, width: 200, marginLeft: 100, marginTop: 10, height: 65 }}
+              dotStyle={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: 5,
+                  marginHorizontal: 8,
+                  backgroundColor: 'rgba(255, 255, 255, 0.92)'
+              }}
+              inactiveDotStyle={{
+                  // Define styles for inactive dots here
+              }}
+              inactiveDotOpacity={0.4}
+              inactiveDotScale={0.6}
+            />
+        );
     }
 
     _renderItem({item,index}){
         return (
           <View style={{
               backgroundColor:APPTEXTRED,
-              borderRadius: 5,
-              height: 550,
+              borderRadius: 35,
+              borderBottomEndRadius: 35,
+              borderBottomStartRadius: 35,
+              height: 650,
               padding: 50,
               marginLeft: 40,
+              marginTop: 25,
               marginRight: 25, }}>
             <Text style={{fontSize: 35, fontWeight: "bold", color: APPTEXTWHITE, justifyContent: "center"}}>{item.title}</Text>
             <Text style={{fontSize: 20, color: APPTEXTBLUE}}>{item.text}</Text>
@@ -55,20 +86,22 @@ export default class App extends React.Component {
                 <Carousel
                   layout={"default"}
                   ref={ref => this.carousel = ref}
-                  activeSlideOffset={2}
+                  activeSlideOffset={0.2}
                   data={this.state.carouselItems}
-                  sliderWidth={0.2}
+                  sliderWidth={0.02}
                   itemWidth={400}
                   renderItem={this._renderItem}
                   onSnapToItem = { index => this.setState({activeIndex:index}) } />
             </View>
+
+            { this.pagination }
 
             <View style={styles.bottomContainer}>
             <View style={styles.buttonContainer}>
             <Button
                 title="LET'S START"
                 style={styles.button}
-                //onPress={() => this.onPressStart()}
+                // onPress={() => Navigation()}
                 color={APPTEXTWHITE}
             />
             </View>
