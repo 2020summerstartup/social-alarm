@@ -149,6 +149,21 @@ export default class Groups extends Component {
               .then(function (doc2) {
                 // if the user is not already in the group
                 if (doc2.data().members.indexOf(userName) == -1) {
+
+                  // update all local state here
+
+                  // clear text input
+                  self.textInput.clear();
+                  
+                  // update screen by updating local state
+                  const groupMem = [];
+                  for (var i = 0; i < self.state.groupMembers.length; i++) {
+                    groupMem.push(self.state.groupMembers[i]);
+                  }
+                  groupMem.push(userName);
+                  self.setState({ groupMembers: groupMem });
+
+
                   // update user's document so it contains new group info
                   db.collection("users")
                     .doc(userName)
@@ -170,15 +185,7 @@ export default class Groups extends Component {
                             userName
                           ),
                         });
-                      // clear text input
-                      self.textInput.clear();
-                      // update screen by updating local state
-                      const groupMem = [];
-                      for (var i = 0; i < self.state.groupMembers.length; i++) {
-                        groupMem.push(self.state.groupMembers[i]);
-                      }
-                      groupMem.push(userName);
-                      self.setState({ groupMembers: groupMem });
+                      
                     })
                     .catch((error) => console.log(error));
                 } else {
