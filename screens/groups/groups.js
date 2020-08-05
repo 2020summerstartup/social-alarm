@@ -216,7 +216,12 @@ export default class Groups extends Component {
   deleteUser(group, groupId, userDeleted) {
     var self = this;
 
+    var alert = {};
+
     if (userDeleted == this.user.email) {
+      // alert is empty if same person
+      alert = {};
+
       // updating state if user is deleting themself
       // updates the groups displayed on main page
       const newGroups = self.state.groups;
@@ -229,6 +234,12 @@ export default class Groups extends Component {
       // close  modal (bc they aren't in the group anymore)
       self.setState({ groupModalOpen: false });
     } else {
+      alert = {
+        title: "Group deleted",
+        body:
+          self.user.email + ' has deleted you from the group "' + group + '"',
+      };
+
       // updating state if admin deleted someone else
       // updates the members displayed on open modal
       const newMembers = self.state.groupMembers;
@@ -248,11 +259,7 @@ export default class Groups extends Component {
           id: groupId,
           name: group,
         }),
-        alertQueue: Firebase.firestore.FieldValue.arrayUnion({
-          title: "Group deleted",
-          body:
-            self.user.email + ' has deleted you from the group "' + group + '"',
-        }),
+        alertQueue: Firebase.firestore.FieldValue.arrayUnion(alert),
       })
       .then(() => {
         // group side firebase (deletes user from group's doc)
@@ -505,22 +512,26 @@ export default class Groups extends Component {
       return;
     } else {
       var newAlert = queue.shift();
-      Alert.alert(newAlert.title, newAlert.body, [
-        {
-          text: "skip",
-          style: "cancel",
-          onPress: () =>
-            db
-              .collection("users")
-              .doc(this.user.email)
-              .update({ alertQueue: [] }),
-        },
-        {
-          text: "ok",
-          style: "default",
-          onPress: () => this.alertQueueFunction(queue),
-        },
-      ]);
+      if (Object.keys(newAlert).length == 0) {
+        this.alertQueueFunction(queue);
+      } else {
+        Alert.alert(newAlert.title, newAlert.body, [
+          {
+            text: "skip",
+            style: "cancel",
+            onPress: () =>
+              db
+                .collection("users")
+                .doc(this.user.email)
+                .update({ alertQueue: [] }),
+          },
+          {
+            text: "ok",
+            style: "default",
+            onPress: () => this.alertQueueFunction(queue),
+          },
+        ]);
+      }
     }
   };
 
@@ -639,11 +650,11 @@ export default class Groups extends Component {
 
                 {this.user.email != this.state.groupAdminClicked && (
                   //   i            i
-                  <Text> </Text>
+                  <Text>            </Text>
                 )}
 
                 {/*                                                                     */}
-                <Text> </Text>
+                <Text>                                                                     </Text>
 
                 {/* close indiv group modal button */}
                 <MaterialIcons
