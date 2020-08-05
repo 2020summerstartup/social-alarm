@@ -20,6 +20,7 @@ const HomeStack = createStackNavigator(
       screen: Landing,
       navigationOptions: {
         title: "",
+        headerShown: false
       }
     },
     Login: {
