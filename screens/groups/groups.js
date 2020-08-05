@@ -62,7 +62,7 @@ export default class Groups extends Component {
     // if group length is too small - no group made, instead alert
     if (name.length < 3) {
       Alert.alert("Oops!", "Group name must be at least 3 characters long", [
-        { text: "ok" },
+        { text: "OK" },
       ]);
     } else {
       // add group to group collection with relevant info
@@ -195,20 +195,20 @@ export default class Groups extends Component {
                 } else {
                   // if the user is already in the  group - alert
                   Alert.alert("Oops!", "This user is already in the group", [
-                    { text: "ok" },
+                    { text: "OK" },
                   ]);
                 }
               })
               .catch((error) => console.log(error));
           } else {
             // if the user is not in our database - alert
-            Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
+            Alert.alert("Oops!", "This user does not exist", [{ text: "OK" }]);
           }
         })
         .catch((error) => console.log(error));
     } else {
       // if nothing was entered in the text input - alert
-      Alert.alert("Oops!", "This user does not exist", [{ text: "ok" }]);
+      Alert.alert("Oops!", "This user does not exist", [{ text: "OK" }]);
     }
   };
 
@@ -312,7 +312,7 @@ export default class Groups extends Component {
       this.user.email != this.state.groupAdminClicked
     ) {
       Alert.alert("Oops!", "Only the group admin can delete a group", [
-        { text: "ok" },
+        { text: "OK" },
       ]);
       return;
     }
@@ -455,7 +455,7 @@ export default class Groups extends Component {
       "Warning",
       "Are you sure you  want to delete yourself from this group?",
       [
-        { text: "No", style: "cancel" },
+        { text: "Cancel", style: "cancel" },
         {
           text: "Yes",
           style: "destructive",
@@ -482,7 +482,7 @@ export default class Groups extends Component {
         "Warning",
         "Are you sure you want to delete " + rowKey + " from this group?",
         [
-          { text: "No", style: "cancel" },
+          { text: "Cancel", style: "cancel" },
           {
             text: "Yes",
             style: "destructive",
@@ -523,7 +523,7 @@ export default class Groups extends Component {
       } else {
         Alert.alert(newAlert.title, newAlert.body, [
           {
-            text: "skip",
+            text: "Skip",
             style: "cancel",
             onPress: () =>
               db
@@ -532,7 +532,7 @@ export default class Groups extends Component {
                 .update({ alertQueue: [] }),
           },
           {
-            text: "ok",
+            text: "OK",
             style: "default",
             onPress: () => this.alertQueueFunction(queue),
           },
@@ -638,7 +638,7 @@ export default class Groups extends Component {
                         "Warning",
                         "Are you sure you want to delete this group? This action is not reversable",
                         [
-                          { text: "No", style: "cancel" },
+                          { text: "Cancel", style: "cancel" },
                           {
                             text: "Yes",
                             style: "destructive",

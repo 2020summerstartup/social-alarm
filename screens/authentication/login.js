@@ -42,11 +42,10 @@ export default function Login({ navigation }) {
           navigation.navigate("App");
         })
         .catch(function (error) {
-          Alert.alert("Oops!", error.toString().substring(6), [{ text: "ok" }]);
+          Alert.alert("Oops!", error.toString().substring(6), [{ text: "OK" }]);
         });
     } catch (error) {
       console.log(error.toString());
-      //Alert.alert('Oops!', error.toString(), [{text:'ok'}]);
     }
   };
 

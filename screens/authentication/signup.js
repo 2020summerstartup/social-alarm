@@ -54,12 +54,11 @@ export default function SignUp({ navigation }) {
               .catch(console.log("idk"));
           })
           .catch(function (error) {
-            Alert.alert("Oops!", error.toString(), [{ text: "ok" }]);
+            Alert.alert("Oops!", error.toString(), [{ text: "OK" }]);
           });
       } else {
         console.log("passwords dont match");
-        Alert.alert("Oops!", "your passwords don't match", [{ text: "ok" }]);
-        // TODO: make this pop up on app
+        Alert.alert("Oops!", "your passwords don't match", [{ text: "OK" }]);
       }
     } catch (error) {
       console.log(error.toString());
