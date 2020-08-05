@@ -149,7 +149,6 @@ export default class Groups extends Component {
               .then(function (doc2) {
                 // if the user is not already in the group
                 if (doc2.data().members.indexOf(userName) == -1) {
-
                   // update all local state here
 
                   // clear text input
@@ -165,7 +164,6 @@ export default class Groups extends Component {
                   groupMem.push(userName);
                   self.setState({ groupMembers: groupMem });
 
-
                   // update user's document so it contains new group info
                   db.collection("users")
                     .doc(userName)
@@ -176,8 +174,13 @@ export default class Groups extends Component {
                       }),
                       alertQueue: Firebase.firestore.FieldValue.arrayUnion({
                         title: "New Group!",
-                        body: self.user.email + ' has added you to the group "' + doc2.data().groupName + '"',
-                    })})
+                        body:
+                          self.user.email +
+                          ' has added you to the group "' +
+                          doc2.data().groupName +
+                          '"',
+                      }),
+                    })
                     .then(function () {
                       // update group doc so it contains added user
                       db.collection("groups")
@@ -187,7 +190,6 @@ export default class Groups extends Component {
                             userName
                           ),
                         });
-                      
                     })
                     .catch((error) => console.log(error));
                 } else {
@@ -248,8 +250,9 @@ export default class Groups extends Component {
         }),
         alertQueue: Firebase.firestore.FieldValue.arrayUnion({
           title: "Group deleted",
-          body: self.user.email + ' has deleted you from the group "' + group + '"',
-      })
+          body:
+            self.user.email + ' has deleted you from the group "' + group + '"',
+        }),
       })
       .then(() => {
         // group side firebase (deletes user from group's doc)
@@ -305,6 +308,17 @@ export default class Groups extends Component {
       ]);
       return;
     }
+
+    // updates the groups displayed on main page - state stuff
+    const newGroups = self.state.groups;
+    for (var i = 0; i < newGroups.length; i++) {
+      if (newGroups[i].id == groupId) {
+        newGroups.splice(i, 1);
+      }
+    }
+    self.setState({ groups: newGroups });
+    self.setState({ groupModalOpen: false });
+
     // could also possibly use state here, but I don't want things to get messed up
     // if they are accidentally not the same
     // get group doc
@@ -325,8 +339,9 @@ export default class Groups extends Component {
               }),
               alertQueue: Firebase.firestore.FieldValue.arrayUnion({
                 title: "Group deleted",
-                body: self.user.email + ' has deleted the group "' + group + '"',
-            })
+                body:
+                  self.user.email + ' has deleted the group "' + group + '"',
+              }),
             })
             .then(console.log("deleted from " + groupMembers[i]));
         }
@@ -336,17 +351,6 @@ export default class Groups extends Component {
           .delete()
           .then(() => {
             console.log(group + " deleted");
-
-            // updating state if user is deleting themself
-            // updates the groups displayed on main page
-            const newGroups = self.state.groups;
-            for (var i = 0; i < newGroups.length; i++) {
-              if (newGroups[i].id == groupId) {
-                newGroups.splice(i, 1);
-              }
-            }
-            self.setState({ groups: newGroups });
-            self.setState({ groupModalOpen: false });
           });
       });
   }
@@ -495,21 +499,28 @@ export default class Groups extends Component {
   // called in componentDidMount
   // pings alerts for all new groups user is in
   alertQueueFunction = (queue) => {
-
-    if(queue.length ==  0) {
+    if (queue.length == 0) {
       db.collection("users").doc(this.user.email).update({ alertQueue: [] });
       // delete from firebase here
       return;
     } else {
       var newAlert = queue.shift();
-      Alert.alert(
-        newAlert.title,
-        newAlert.body,
-        [
-          { text: "skip", style: "cancel", onPress: () => db.collection("users").doc(this.user.email).update({ alertQueue: [] }) },
-          { text: "ok", style: "default", onPress: ()  => this.alertQueueFunction(queue) },   
-        ]
-      );  
+      Alert.alert(newAlert.title, newAlert.body, [
+        {
+          text: "skip",
+          style: "cancel",
+          onPress: () =>
+            db
+              .collection("users")
+              .doc(this.user.email)
+              .update({ alertQueue: [] }),
+        },
+        {
+          text: "ok",
+          style: "default",
+          onPress: () => this.alertQueueFunction(queue),
+        },
+      ]);
     }
   };
 
@@ -536,9 +547,7 @@ export default class Groups extends Component {
 
           const newGroupsData = [];
           for (var i = 0; i < doc.data().alertQueue.length; i++) {
-            newGroupsData.push(
-              doc.data().alertQueue[i]
-              );
+            newGroupsData.push(doc.data().alertQueue[i]);
           }
           this.setState({ alertQueue: newGroupsData }, () =>
             this.alertQueueFunction(this.state.alertQueue)
@@ -630,11 +639,11 @@ export default class Groups extends Component {
 
                 {this.user.email != this.state.groupAdminClicked && (
                   //   i            i
-                  <Text>            </Text>
+                  <Text> </Text>
                 )}
 
                 {/*                                                                     */}
-                <Text>                                                                     </Text>
+                <Text> </Text>
 
                 {/* close indiv group modal button */}
                 <MaterialIcons
