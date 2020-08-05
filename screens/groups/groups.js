@@ -308,6 +308,7 @@ export default class Groups extends Component {
 
     if (
       // if the person is not trying to delete themselves and is not the admin, return
+      // this probably won't happen since that button only appears for admin now..
       this.user.email != this.state.groupAdminClicked
     ) {
       Alert.alert("Oops!", "Only the group admin can delete a group", [
@@ -337,6 +338,15 @@ export default class Groups extends Component {
         const groupMembers = doc.data().members;
         // go through all member's user doc and delete that group
         for (var i = 0; i < groupMembers.length; i++) {
+          var alert = {};
+          // admin shouldn't get this alert since they deleted the group
+          if(groupMembers[i] != doc.data().adminEmail) {
+            alert = {
+              title: "Group deleted",
+              body:
+                self.user.email + ' has deleted the group "' + group + '"',
+            };
+          }
           db.collection("users")
             .doc(groupMembers[i])
             .update({
@@ -344,11 +354,7 @@ export default class Groups extends Component {
                 id: groupId,
                 name: group,
               }),
-              alertQueue: Firebase.firestore.FieldValue.arrayUnion({
-                title: "Group deleted",
-                body:
-                  self.user.email + ' has deleted the group "' + group + '"',
-              }),
+              alertQueue: Firebase.firestore.FieldValue.arrayUnion(alert),
             })
             .then(console.log("deleted from " + groupMembers[i]));
         }
