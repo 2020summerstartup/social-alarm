@@ -154,7 +154,9 @@ export default class Groups extends Component {
 
                   // clear text input
                   self.textInput.clear();
-                  
+                  //  dismisses the  keyboard
+                  Keyboard.dismiss();
+
                   // update screen by updating local state
                   const groupMem = [];
                   for (var i = 0; i < self.state.groupMembers.length; i++) {
@@ -212,6 +214,30 @@ export default class Groups extends Component {
   deleteUser(group, groupId, userDeleted) {
     var self = this;
 
+    if (userDeleted == this.user.email) {
+      // updating state if user is deleting themself
+      // updates the groups displayed on main page
+      const newGroups = self.state.groups;
+      for (var i = 0; i < newGroups.length; i++) {
+        if (newGroups[i].id == groupId) {
+          newGroups.splice(i, 1);
+        }
+      }
+      self.setState({ groups: newGroups });
+      // close  modal (bc they aren't in the group anymore)
+      self.setState({ groupModalOpen: false });
+    } else {
+      // updating state if admin deleted someone else
+      // updates the members displayed on open modal
+      const newMembers = self.state.groupMembers;
+      for (var i = 0; i < newMembers.length; i++) {
+        if (newMembers[i] == userDeleted) {
+          newMembers.splice(i, 1);
+        }
+      }
+      self.setState({ groupMembers: newMembers });
+    }
+
     // user side firebase (delete's group from user's doc)
     db.collection("users")
       .doc(userDeleted)
@@ -260,31 +286,6 @@ export default class Groups extends Component {
               }
             }
           });
-      })
-      .then(() => {
-        if (userDeleted == this.user.email) {
-          // updating state if user is deleting themself
-          // updates the groups displayed on main page
-          const newGroups = self.state.groups;
-          for (var i = 0; i < newGroups.length; i++) {
-            if (newGroups[i].id == groupId) {
-              newGroups.splice(i, 1);
-            }
-          }
-          self.setState({ groups: newGroups });
-          // close  modal (bc they aren't in the group anymore)
-          self.setState({ groupModalOpen: false });
-        } else {
-          // updating state if admin deleted someone else
-          // updates the members displayed on open modal
-          const newMembers = self.state.groupMembers;
-          for (var i = 0; i < newMembers.length; i++) {
-            if (newMembers[i] == userDeleted) {
-              newMembers.splice(i, 1);
-            }
-          }
-          self.setState({ groupMembers: newMembers });
-        }
       })
       .catch((error) => console.log(error))
       .catch((error) => console.log(error));
