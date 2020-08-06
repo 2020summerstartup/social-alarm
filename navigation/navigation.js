@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GroupScreen from "../screens/groups/groups";
@@ -8,6 +8,7 @@ import ProfileScreen from "../screens/profile/profile";
 import StopwatchScreen from "../screens/stopwatch/stopwatch";
 import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../style/constants';
+import { db, auth }  from "../firebase/firebase";
 
 
 /* navigation.js
@@ -27,11 +28,28 @@ export default function Navigation() {
 }
 
 
-
 const Tab = createBottomTabNavigator();
 
 // Add more screens as necessary
 function MyTabs() {
+  const [notifications, setNotifications] = useState("");
+
+useEffect(() => {
+  
+  db.collection("users").doc(auth.currentUser.email).get().then((doc) => {
+    setNotifications(doc.data().alertQueue.length.toString())
+    if(doc.data().alertQueue.length == 0) {
+      //setNotifications("")
+      //return
+    }
+  })
+
+  //setNotifications(1)
+  console.log(notifications)
+})
+
+
+
   return (
     <Tab.Navigator
       initialRoutename="Alarms" // After user signs in, go to alarms page
@@ -85,7 +103,8 @@ function MyTabs() {
         component={ProfileScreen}
         options={{
           tabBarLabel: "Profile",
-          tabBarBadge: 3,
+          
+          tabBarBadge: notifications,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account" color={color} size={size} />
           ),

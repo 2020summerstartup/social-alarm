@@ -277,14 +277,22 @@ export default class Groups extends Component {
               // else just remove the user from the group's doc
               if (userDeleted == self.user.email) {
                 // if admin is deleted - choose new admin
+                var newAdmin = doc.data().members[1]
                 db.collection("groups")
                   .doc(groupId)
                   .update({
-                    adminEmail: doc.data().members[1],
+                    adminEmail: newAdmin,
                     members: Firebase.firestore.FieldValue.arrayRemove(
                       userDeleted
                     ),
                   });
+                // give new admin a lil notification now
+                db.collection("users").doc(newAdmin).update({
+                  alertQueue: Firebase.firestore.FieldValue.arrayUnion({
+                    title: "Congrats!",
+                    body: "You are now the admin of group " + group,
+                  }),
+                })
               } else {
                 db.collection("groups")
                   .doc(groupId)
