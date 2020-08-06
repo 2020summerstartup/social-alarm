@@ -1,21 +1,26 @@
-import * as React from 'react';
+/* landingCarousel.js
+ * landing screen
+ * navigates to sign up 
+ *
+ */
+
+import React, { Component } from 'react';
 import {
   Text, 
   View,
   SafeAreaView,
   StyleSheet, 
-  Button } from 'react-native';
+  Button,
+  Image } from 'react-native';
 
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import { APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE, APPTEXTBLUE } from '../../style/constants';
 
-// function Navigation({ navigation }) {
-//     onPressStart = () => {
-//         navigation.navigate("SignUp");
-//       };
-// }
+import alarmpage from "../../assets/alarmpage.png";
+import logo from "../../assets/logo9696.png";
+import grouppage from "../../assets/grouppage1.png";
 
-export default class Landing extends React.Component {
+export default class Landing extends Component{
 
     constructor(props){
         super(props);
@@ -25,14 +30,17 @@ export default class Landing extends React.Component {
           {
               title:"Alarmium",
               text: "Stay connected with your friends by setting alarms for each other!",
+              image: logo,
           },
           {
               title:"Set alarms!",
               text: "Click the + icon to set an alarm with a custom name.",
+              image: alarmpage
           },
           {
               title:"Create groups!",
               text: "Click the + icon to create groups with custom names. Add your friends too!",
+              image: grouppage
           },
         ]
       }
@@ -43,11 +51,14 @@ export default class Landing extends React.Component {
             <Pagination
               dotsLength={this.state.carouselItems.length}
               activeDotIndex={this.state.activeIndex}
-              containerStyle={{ backgroundColor: APPBACKGROUNDCOLOR, width: 200, marginLeft: 100, marginBottom: 2, marginTop: 2, height: 62 }}
+              animatedTension={20}
+              animatedFriction={2}
+              animatedDuration={5}
+              containerStyle={{ backgroundColor: APPBACKGROUNDCOLOR, width: 200, marginLeft: 100, height: 62 }}
               dotStyle={{
                   width: 10,
                   height: 10,
-                  borderRadius: 5,
+                  borderRadius: 8,
                   marginHorizontal: 4,
                   backgroundColor: "black"
               }}
@@ -65,8 +76,6 @@ export default class Landing extends React.Component {
           <View style={{
               backgroundColor:APPTEXTRED,
               borderRadius: 35,
-              borderBottomEndRadius: 35,
-              borderBottomStartRadius: 35,
               height: 500,
               padding: 50,
               marginLeft: 40,
@@ -74,6 +83,10 @@ export default class Landing extends React.Component {
               marginRight: 25, }}>
             <Text style={{fontSize: 35, fontWeight: "bold", color: APPTEXTWHITE, justifyContent: "center"}}>{item.title}</Text>
             <Text style={{fontSize: 20, color: APPTEXTBLUE}}>{item.text}</Text>
+            <Image
+                source={item.image}
+                style={styles.image}
+            />          
           </View>
 
         )
@@ -101,7 +114,7 @@ export default class Landing extends React.Component {
             <Button
                 title="LET'S START"
                 style={styles.button}
-                // onPress={() => Navigation()}
+                onPress={() => this.onPressStart()}
                 color={APPTEXTWHITE}
             />
             </View>
@@ -130,6 +143,13 @@ const styles = StyleSheet.create({
         width: '90%',
         margin: 20,
         padding: 10,
+    },
+    image: {
+      width: 270,
+      height: 370,
+      marginLeft: 0,
+      marginTop: 10,
+      justifyContent: 'center',
     },
   });
 
