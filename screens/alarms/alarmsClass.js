@@ -328,14 +328,14 @@ export default class Alarms extends Component {
       console.log("Updating", this.state.groupIdClicked, "in firebase")
 
       this.updateCurrentMaxKey();
-      console.log("currentMaxKey:", this.state.currentMaxKey)
+      // console.log("currentMaxKey:", this.state.currentMaxKey)
       await(this.listofKeys())
       // console.log("listOfKeys:", this.state.listOfKeys);
 
       for (var i = 0; i < this.state.currentMaxKey + 1; i++) {
         if (this.state.listOfKeys.includes(i)){
           for (var j = 0; j < this.state.alarms.length; j++) {
-            if (this.state.alarms[j].key == this.state.openRow){
+            if (this.state.alarms[j].key == this.state.alarms[this.state.openRow].key){
               var newAlarm = {
                 name: this.state.alarms[j].name, 
                 alarm_hour: this.state.alarms[j].alarm_hour,
@@ -348,9 +348,8 @@ export default class Alarms extends Component {
           }
         }
       }
-      
-      await(this.setState( {singleAlarm: newAlarm} ))
 
+      // Add the alarm to group doc in firebase
       db.collection("groups")
         .doc(this.state.groupIdClicked)
         .get()
@@ -368,12 +367,12 @@ export default class Alarms extends Component {
               .doc(this.state.groupIdClicked)
               .update({
                 alarms: firebase.firestore.FieldValue.arrayUnion({
-                  name: this.state.singleAlarm.name, 
-                  alarm_hour: this.state.singleAlarm.alarm_hour,
-                  alarm_minute: this.state.singleAlarm.alarm_minute, 
-                  switch: this.state.singleAlarm.switch, 
+                  name: newAlarm.name, 
+                  alarm_hour: newAlarm.alarm_hour,
+                  alarm_minute: newAlarm.alarm_minute, 
+                  switch: newAlarm.switch, 
                   key: this.state.groupIdClicked + ":" + (maxKey),
-                  color: this.state.singleAlarm.color, 
+                  color: newAlarm.color,
                 }),
             })
           }
@@ -384,17 +383,88 @@ export default class Alarms extends Component {
         .doc(auth.currentUser.email)
         .update({
           alarms: firebase.firestore.FieldValue.arrayRemove({
-            name: this.state.singleAlarm.name, 
-            alarm_hour: this.state.singleAlarm.alarm_hour,
-            alarm_minute: this.state.singleAlarm.alarm_minute, 
-            switch: this.state.singleAlarm.switch, 
-            key: this.state.singleAlarm.key,
-            color: this.state.singleAlarm.color
+            name: newAlarm.name, 
+            alarm_hour: newAlarm.alarm_hour,
+            alarm_minute: newAlarm.alarm_minute, 
+            switch: newAlarm.switch, 
+            key: newAlarm.key,
+            color: newAlarm.color
           }),
       });
 
+      // Update state
+      this.setState( {singleAlarm: newAlarm} );
+
       // Close the picker modal
       this.setState({ groupPickerModalOpen: false })
+    }
+
+    /*Updates the correct document in Firebase after an alarm gets editted*/
+    editButtonUpdateFirebase = async () => {
+      console.log("Updating firebase after alarm edit button")
+
+      if (this.state.alarms[this.state.openRow].key.includes(":")){ // if the key includes ":" then the alarm is a group alarm so we want to update the group doc
+        console.log("Edit button: Updating group doc")
+
+        // get the group that the alarm is part of (first part of key before ":")
+        var keySplitArray = this.state.alarms[this.state.openRow].key.split(":")
+        console.log("keySplitArray[0]", keySplitArray[0])
+
+        db.collection("groups")
+        .doc(keySplitArray[0])
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            db.collection("groups")
+              .doc(keySplitArray[0])
+              .update({
+                alarms: firebase.firestore.FieldValue.arrayRemove({
+                  name: this.state.alarms[this.state.openRow].name, 
+                  alarm_hour: this.state.alarms[this.state.openRow].alarm_hour,
+                  alarm_minute: this.state.alarms[this.state.openRow].alarm_minute, 
+                  switch: this.state.alarms[this.state.openRow].switch, 
+                  key: this.state.alarms[this.state.openRow].key,
+                  color: this.state.alarms[this.state.openRow].color, 
+                }),
+            })
+          }
+      });
+
+      }
+      else{ // if the key doesn't include ":" then the alarm is a personal alarm so we want to update the user doc
+        console.log("Edit button: Updating user doc")
+      }
+
+      // db.collection("groups")
+      //   .doc(this.state.groupIdClicked)
+      //   .get()
+      //   .then((doc) => {
+      //     if (doc.exists) {
+      //       var maxKey = 0
+      //       for (var i = 0; i < doc.data().alarms.length; i++){
+      //         var keySplitArray = doc.data().alarms[i].key.split(":")
+      //         if (keySplitArray[1] > maxKey){
+      //           maxKey = keySplitArray[1]
+      //         }
+      //       }
+      //       maxKey = Number(maxKey) + 1
+      //       db.collection("groups")
+      //         .doc(this.state.groupIdClicked)
+      //         .update({
+      //           alarms: firebase.firestore.FieldValue.arrayUnion({
+      //             name: this.state.singleAlarm.name, 
+      //             alarm_hour: this.state.singleAlarm.alarm_hour,
+      //             alarm_minute: this.state.singleAlarm.alarm_minute, 
+      //             switch: this.state.singleAlarm.switch, 
+      //             key: this.state.groupIdClicked + ":" + (maxKey),
+      //             color: this.state.singleAlarm.color, 
+      //           }),
+      //       })
+      //     }
+      // });
+
+      // Close the picker modal
+      this.setState({ editAlarmModalOpen: false })
     }
 
     /*Updates state with the user's groups*/
@@ -769,8 +839,7 @@ export default class Alarms extends Component {
 
             <DatePicker
               style={{height: 75, width: 200, color: "black"}}
-              date= {String((this.state.alarms[this.state.openRow].alarm_hour) + ":" + (this.state.alarms[this.state.openRow].alarm_minute))} // Starts timepicker at current time (except always AM?)
-              // date= {"20:00"} // Starts timepicker at current time (except always AM?)
+              date= {String((this.state.alarms[this.state.openRow].alarm_hour) + ":" + (this.state.alarms[this.state.openRow].alarm_minute))} // Starts timepicker at current time
               mode="time"
               format="HH:mm"
               confirmBtnText="Confirm"
@@ -783,7 +852,7 @@ export default class Alarms extends Component {
             <View style={styles.inputView}>
               <TextInput
                 style={styles.inputText}
-                placeholder="Alarm title..."
+                placeholder={this.state.alarms[this.state.openRow].name}
                 placeholderTextColor="#003f5c"
                 onChangeText={(text) => this.setState({newAlarmText: text})}
               />
@@ -800,7 +869,7 @@ export default class Alarms extends Component {
               title="Update Alarm"
               color="lightgreen"
               onPress={ async() =>
-                this.updateFirebaseGroupsDoc()
+                this.editButtonUpdateFirebase()
               }
             />
 
@@ -914,12 +983,12 @@ export default class Alarms extends Component {
           </View>
 
           {/* Useful button during testing */}
-          {/* <Button
+          <Button
             title="Print user email to console"
             onPress={ async() =>
               console.log("auth.currentUser.email:", auth.currentUser.email)
             }
-          /> */}
+          />
 
           {/* BEGINNING OF MODAL FOR GROUP PICKER */}
           <Modal visible={this.state.groupPickerModalOpen} animationType="slide">
