@@ -17,7 +17,7 @@ import Carousel, {Pagination} from 'react-native-snap-carousel';
 import { APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE, APPTEXTBLUE } from '../../style/constants';
 
 import alarmpage from "../../assets/alarmpage.png";
-import logo from "../../assets/logopage.png";
+import logo from "../../assets/logopage1.png";
 import grouppage from "../../assets/grouppage1.png";
 
 export default class Landing extends Component{
@@ -75,9 +75,9 @@ export default class Landing extends Component{
         return (
           <View style={{
               backgroundColor:APPTEXTRED,
-              borderRadius: 35,
+              borderRadius: 25,
               height: 500,
-              padding: 30,
+              padding: 20,
               marginLeft: 40,
               marginTop: 15,
               marginRight: 25, }}>
@@ -154,13 +154,12 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         width: '80%',
         marginLeft: 40,
-        //margin: 20,
         padding: 10,
     },
     image: {
       width: 270,
       height: 370,
-      marginLeft: 0,
+      marginLeft: 12,
       marginTop: 10,
       justifyContent: 'center',
     },
