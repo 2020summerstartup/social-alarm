@@ -61,7 +61,7 @@ export default function Login({ navigation }) {
         {/* forgot pass button */}
         <TouchableOpacity
           style={appStyles.loginBtn}
-          onPress={() => this.forgotPass(email)}
+          onPress={() => this.forgotPass(email.trim())}
         >
           <Text style={appStyles.loginText}>Send password reset email</Text>
         </TouchableOpacity>

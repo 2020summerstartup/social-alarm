@@ -84,7 +84,7 @@ export default function Login({ navigation }) {
         {/* login button */}
         <TouchableOpacity
           style={appStyles.loginBtn}
-          onPress={() => this.loginUser(email, password)}
+          onPress={() => this.loginUser(email.trim(), password)}
         >
           <Text style={appStyles.loginText}>LOGIN</Text>
         </TouchableOpacity>

@@ -618,7 +618,7 @@ export default class Groups extends Component {
               <TouchableOpacity
                 style={appStyles.loginBtn}
                 onPress={() =>
-                  this.createGroup(this.state.groupName, this.user)
+                  this.createGroup(this.state.groupName.trim(), this.user)
                 }
               >
                 <Text style={appStyles.buttonText}> Create group </Text>
@@ -723,7 +723,7 @@ export default class Groups extends Component {
               <TouchableOpacity
                 style={{ ...appStyles.loginBtn, ...{ marginTop: 10 } }}
                 onPress={() =>
-                  this.addUser(this.state.addUser, this.state.groupIdClicked)
+                  this.addUser(this.state.addUser.trim(), this.state.groupIdClicked)
                 }
               >
                 <Text style={appStyles.buttonText}> add member</Text>

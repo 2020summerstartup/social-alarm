@@ -122,7 +122,7 @@ export default function SignUp({ navigation }) {
         <TouchableOpacity
           style={appStyles.loginBtn}
           onPress={() =>
-            this.signUpUser(email, password, confirmPassword, name)
+            this.signUpUser(email.trim(), password, confirmPassword, name.trim())
           }
         >
           <Text style={appStyles.loginText}>SIGN UP</Text>
