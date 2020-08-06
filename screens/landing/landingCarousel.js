@@ -17,7 +17,7 @@ import Carousel, {Pagination} from 'react-native-snap-carousel';
 import { APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE, APPTEXTBLUE } from '../../style/constants';
 
 import alarmpage from "../../assets/alarmpage.png";
-import logo from "../../assets/logo9696.png";
+import logo from "../../assets/logopage.png";
 import grouppage from "../../assets/grouppage1.png";
 
 export default class Landing extends Component{
@@ -39,7 +39,7 @@ export default class Landing extends Component{
           },
           {
               title:"Create groups!",
-              text: "Click the + icon to create groups with custom names. Add your friends too!",
+              text: "Create as many groups as you want and add your friends too!",
               image: grouppage
           },
         ]
@@ -77,7 +77,7 @@ export default class Landing extends Component{
               backgroundColor:APPTEXTRED,
               borderRadius: 35,
               height: 500,
-              padding: 50,
+              padding: 30,
               marginLeft: 40,
               marginTop: 15,
               marginRight: 25, }}>
@@ -114,7 +114,7 @@ export default class Landing extends Component{
             <Button
                 title="LET'S START"
                 style={styles.button}
-                onPress={() => this.onPressStart()}
+                onPress={() => this.props.navigation.navigate("SignUp")}
                 color={APPTEXTWHITE}
             />
             </View>
