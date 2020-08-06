@@ -424,7 +424,7 @@ class ProfileScreen extends Component {
           style={styles.loginBtn}
           onPress={() => this.signOutUser()}
         >
-          <Text style={styles.logo}>Sign Out</Text>
+          <Text style={{...styles.logo, color: APPTEXTWHITE}}>Sign Out</Text>
         </TouchableOpacity>
       </ScrollView>
     );
