@@ -1,6 +1,6 @@
 import React, { Component, createContext } from 'react'
 import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, TouchableOpacity, DevSettings, Modal, TouchableHighlight } from 'react-native'
-import { Avatar, ListItem, ThemeContext } from 'react-native-elements'
+import { Avatar, ListItem, ThemeContext, Badge, Icon, withBadge } from 'react-native-elements'
 import { auth, db } from "../../firebase/firebase";
 
 import { MaterialIcons } from "@expo/vector-icons";
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   logo: {
     fontWeight: "bold",
     fontSize: 20,
-    color: APPBACKGROUNDCOLOR,
+    color: APPTEXTRED,
     marginBottom: 5,
     marginTop: 5,
     alignItems: "center",
@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
     },
 })
 
+//@withBadge(2)
 class ProfileScreen extends Component {
 
   // sign out functionality 
@@ -175,8 +176,10 @@ class ProfileScreen extends Component {
   }
 
 
+  
 
   render() {
+    const BadgedIcon = withBadge(1)(Icon)
 
     return (
       <ScrollView style={styles.scroll}>
@@ -220,7 +223,20 @@ class ProfileScreen extends Component {
               onPress={() => this.closeNotifications()}
             />
 
-            <Text style={{...styles.logo, color: APPTEXTRED, fontSize: 36}}> New Notifications</Text>
+            <Text style={{ ...styles.logo, fontSize: 36 }}> Notifications</Text>
+
+            {this.state.notifications.length == 0 && (
+              <Text
+                style={{
+                  ...styles.logo,
+                  fontSize: 22,
+                  fontWeight: "normal",
+                  paddingTop: 30,
+                }}
+              >
+                you have no new notifications
+              </Text>
+            )}
 
             <ScrollView style={{ width: "95%" }}>
               {this.state.notifications &&
@@ -251,7 +267,7 @@ class ProfileScreen extends Component {
           <ListItem
             title="Notifications"
             containerStyle={styles.listItemContainer}
-            onPress={() => this.setState({notificationsModal: true})} // we can change this later
+            onPress={() => this.setState({ notificationsModal: true })} // we can change this later
             leftIcon={
               <BaseIcon
                 // probably want to change the color
@@ -259,7 +275,7 @@ class ProfileScreen extends Component {
                 icon={{
                   type: "ionicon",
                   //TODO: FIX THIS
-                  name: "notifications-outline",
+                  name: "ios-moon",
                 }}
               />
             }

@@ -26,6 +26,8 @@ export default function Navigation() {
   );
 }
 
+
+
 const Tab = createBottomTabNavigator();
 
 // Add more screens as necessary
@@ -83,6 +85,7 @@ function MyTabs() {
         component={ProfileScreen}
         options={{
           tabBarLabel: "Profile",
+          tabBarBadge: 3,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account" color={color} size={size} />
           ),
