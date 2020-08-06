@@ -9,6 +9,7 @@ import StopwatchScreen from "../screens/stopwatch/stopwatch";
 import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../style/constants';
 import { db, auth }  from "../firebase/firebase";
+import { NotificationContext }  from "../contexts/NotificationContext";
 
 
 /* navigation.js
@@ -51,65 +52,83 @@ useEffect(() => {
 
 
   return (
+
+    <NotificationContext.Consumer>{(context) => {
+      
+      const {notificationCount} = context
+
+
+      return(
+
+
     <Tab.Navigator
-      initialRoutename="Alarms" // After user signs in, go to alarms page
-      tabBarOptions={{
-        activeTintColor: APPTEXTRED, // This makes the button pink when you're on that page
-        activeBackgroundColor: APPBACKGROUNDCOLOR,
-        inactiveBackgroundColor: APPBACKGROUNDCOLOR,
+    initialRoutename="Alarms" // After user signs in, go to alarms page
+    tabBarOptions={{
+      activeTintColor: APPTEXTRED, // This makes the button pink when you're on that page
+      activeBackgroundColor: APPBACKGROUNDCOLOR,
+      inactiveBackgroundColor: APPBACKGROUNDCOLOR,
+    }}
+  >
+    <Tab.Screen
+      name="Alarms"
+      component={AlarmScreen}
+      options={{
+        tabBarLabel: "Alarms",
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons
+            name="alarm-multiple"
+            color={color}
+            size={size}
+          />
+        ),
       }}
-    >
-      <Tab.Screen
-        name="Alarms"
-        component={AlarmScreen}
-        options={{
-          tabBarLabel: "Alarms",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="alarm-multiple"
-              color={color}
-              size={size}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Groups"
-        component={GroupScreen}
-        options={{
-          tabBarLabel: "Groups",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-group" color={color} size={size} /> // Default color and size: white and 20
-          ),
-          //tabBarVisible: false,
-        }}
-      />
-      <Tab.Screen
-        name="Stopwatch"
-        component={StopwatchScreen}
-        options={{
-          tabBarLabel: "Stopwatch",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="clock-fast"
-              color={color}
-              size={size}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          tabBarLabel: "Profile",
-          
-          tabBarBadge: notifications,
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account" color={color} size={size} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
+    />
+    <Tab.Screen
+      name="Groups"
+      component={GroupScreen}
+      options={{
+        tabBarLabel: "Groups",
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name="account-group" color={color} size={size} /> // Default color and size: white and 20
+        ),
+        //tabBarVisible: false,
+      }}
+    />
+    <Tab.Screen
+      name="Stopwatch"
+      component={StopwatchScreen}
+      options={{
+        tabBarLabel: "Stopwatch",
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons
+            name="clock-fast"
+            color={color}
+            size={size}
+          />
+        ),
+      }}
+    />
+    <Tab.Screen
+      name="Profile"
+      component={ProfileScreen}
+      options={{
+        tabBarLabel: "Profile",
+        
+        tabBarBadge: notificationCount,
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name="account" color={color} size={size} />
+        ),
+      }}
+    />
+  </Tab.Navigator>
+
+
+
+      )
+    }}
+    
+    </NotificationContext.Consumer>
+
+
   );
 }
