@@ -1,6 +1,6 @@
 /* landingCarousel.js
  * landing screen
- * navigates to sign up 
+ * navigates to sign up and login
  *
  */
 
@@ -16,6 +16,7 @@ import {
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import { APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE, APPTEXTBLUE } from '../../style/constants';
 
+// the three pictures for the three screens
 import alarmpage from "../../assets/alarmpage.png";
 import logo from "../../assets/logopage1.png";
 import grouppage from "../../assets/grouppage1.png";
@@ -28,16 +29,19 @@ export default class Landing extends Component{
           activeIndex:0,
           carouselItems: [
           {
+              // First Screen
               title:"Alarmium",
               text: "Stay connected with your friends by setting alarms for each other!",
               image: logo,
           },
           {
+              // Second Screen
               title:"Set alarms!",
               text: "Click the + icon to set an alarm with a custom name.",
               image: alarmpage
           },
           {
+              // Third Screen
               title:"Create groups!",
               text: "Create as many groups as you want and add your friends too!",
               image: grouppage
@@ -46,6 +50,7 @@ export default class Landing extends Component{
       }
     }
 
+    // dots underneath the carousel
     get pagination () {
         return (
             <Pagination
@@ -62,9 +67,6 @@ export default class Landing extends Component{
                   marginHorizontal: 4,
                   backgroundColor: "black"
               }}
-              inactiveDotStyle={{
-                  // Define styles for inactive dots here
-              }}
               inactiveDotOpacity={0.4}
               inactiveDotScale={0.6}
             />
@@ -73,6 +75,7 @@ export default class Landing extends Component{
 
     _renderItem({item,index}){
         return (
+          // shows the title, text and image of each item in the carousel
           <View style={{
               backgroundColor:APPTEXTRED,
               borderRadius: 25,
@@ -107,6 +110,7 @@ export default class Landing extends Component{
                   onSnapToItem = { index => this.setState({activeIndex:index}) } />
             </View>
 
+            {/* three dots */}
             { this.pagination }
 
             <View style={styles.bottomContainer}>
@@ -115,7 +119,7 @@ export default class Landing extends Component{
               <Button
                   title="LET'S START"
                   style={styles.button}
-                  onPress={() => this.props.navigation.navigate("SignUp")}
+                  onPress={() => this.props.navigation.navigate("SignUp")} // this button navigates to sign up
                   color={APPTEXTWHITE}
               />
             </View>
@@ -124,7 +128,7 @@ export default class Landing extends Component{
             <Button
                 title="Login"
                 style={styles.loginBtn}
-                onPress={() => this.props.navigation.navigate("Login")}
+                onPress={() => this.props.navigation.navigate("Login")} // this button navigates to login
                 color={APPTEXTBLUE}
             />
             </View>
