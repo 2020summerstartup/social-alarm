@@ -4,11 +4,17 @@ export const NotificationContext = createContext();
 
 class NotificationContextProvider extends Component {
   state = {
-    notificationCount: 10,
+    notificationCount: 20,
   };
+
+  setNotificationCount = (num) => {
+      this.setState({notificationCount: num})
+  }
+
+
   render() {
     return (
-      <NotificationContext.Provider value={this.state}>
+      <NotificationContext.Provider value={{...this.state, setNotificationCount: this.setNotificationCount}}>
         {this.props.children}
       </NotificationContext.Provider>
     );

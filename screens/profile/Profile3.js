@@ -14,6 +14,7 @@ import Chevron from './Chevron'
 
 // sets the styles for all the icons
 import BaseIcon from './Icon'
+import { NotificationContext } from '../../contexts/NotificationContext';
 
 /* profile3.js
  * profile screen 
@@ -114,6 +115,8 @@ const styles = StyleSheet.create({
 //@withBadge(2)
 class ProfileScreen extends Component {
 
+  static contextType = NotificationContext;
+
   // sign out functionality 
   signOutUser = async () => {
      await AsyncStorage.removeItem("email");
@@ -175,11 +178,17 @@ class ProfileScreen extends Component {
 
   }
 
-
   
 
   render() {
     const BadgedIcon = withBadge(1)(Icon)
+
+    const { setNotificationCount } = this.context;
+
+    openNotifications = () => {
+      this.setState({ notificationsModal: true })
+      setNotificationCount(0)
+    }
 
     return (
       <ScrollView style={styles.scroll}>
@@ -267,7 +276,7 @@ class ProfileScreen extends Component {
           <ListItem
             title="Notifications"
             containerStyle={styles.listItemContainer}
-            onPress={() => this.setState({ notificationsModal: true })} // we can change this later
+            onPress={() => openNotifications()} 
             leftIcon={
               <BaseIcon
                 // probably want to change the color
