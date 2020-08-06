@@ -110,14 +110,23 @@ export default class Landing extends Component{
             { this.pagination }
 
             <View style={styles.bottomContainer}>
+
             <View style={styles.buttonContainer}>
-            <Button
-                title="LET'S START"
-                style={styles.button}
-                onPress={() => this.props.navigation.navigate("SignUp")}
-                color={APPTEXTWHITE}
-            />
+              <Button
+                  title="LET'S START"
+                  style={styles.button}
+                  onPress={() => this.props.navigation.navigate("SignUp")}
+                  color={APPTEXTWHITE}
+              />
             </View>
+
+
+            <Button
+                title="Login"
+                style={styles.loginBtn}
+                onPress={() => this.props.navigation.navigate("Login")}
+                color={APPTEXTBLUE}
+            />
             </View>
           </SafeAreaView>
         );
@@ -136,12 +145,16 @@ const styles = StyleSheet.create({
         backgroundColor: APPTEXTRED,
         borderRadius: 5,
         padding: 8,
-        margin: 8,
+        //margin: 8,
+    },
+    loginBtn: {
+        backgroundColor: APPTEXTWHITE,
     },
     bottomContainer: {
         justifyContent: 'flex-end',
-        width: '90%',
-        margin: 20,
+        width: '80%',
+        marginLeft: 40,
+        //margin: 20,
         padding: 10,
     },
     image: {
