@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GroupScreen from "../screens/groups/groups";
@@ -8,7 +8,6 @@ import ProfileScreen from "../screens/profile/profile";
 import StopwatchScreen from "../screens/stopwatch/stopwatch";
 import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../style/constants';
-import { db, auth }  from "../firebase/firebase";
 import { NotificationContext }  from "../contexts/NotificationContext";
 
 
@@ -33,29 +32,12 @@ const Tab = createBottomTabNavigator();
 
 // Add more screens as necessary
 function MyTabs() {
-  const [notifications, setNotifications] = useState("");
-
-useEffect(() => {
-  
-  db.collection("users").doc(auth.currentUser.email).get().then((doc) => {
-    setNotifications(doc.data().alertQueue.length.toString())
-    if(doc.data().alertQueue.length == 0) {
-      //setNotifications("")
-      //return
-    }
-  })
-
-  //setNotifications(1)
-  console.log(notifications)
-})
-
-
 
   return (
 
     <NotificationContext.Consumer>{(context) => {
       
-      const {notificationCount} = context
+      const {notificationCount, setNotificationCount} = context
 
 
       return(
