@@ -8,11 +8,12 @@ import {
   APPINPUTVIEW,
   APPTEXTBLUE,
 } from "./constants";
+import Colors from "./constants";
 
 const appStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
+    backgroundColor: Colors.APPBACKGROUNDCOLOR,
     alignItems: "center",
     justifyContent: "center",
     paddingTop: 50,
@@ -21,7 +22,7 @@ const appStyles = StyleSheet.create({
 
   loginContainer: {
     flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
+    backgroundColor: Colors.APPBACKGROUNDCOLOR,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -35,7 +36,7 @@ const appStyles = StyleSheet.create({
 
   inputView: {
     width: "80%",
-    backgroundColor: APPBACKGROUNDCOLOR,
+    backgroundColor: Colors.APPBACKGROUNDCOLOR,
     borderColor: "black",
     borderWidth: 0.9,
     borderRadius: 25,
@@ -73,7 +74,7 @@ const appStyles = StyleSheet.create({
 
   modalToggle: {
     marginBottom: 20,
-    borderWidth: 1,
+    //borderWidth: 1,
     borderColor: APPTEXTRED,
     padding: 10,
     borderRadius: 10,
@@ -82,7 +83,7 @@ const appStyles = StyleSheet.create({
   },
 
   modalContainer: {
-    backgroundColor: APPBACKGROUNDCOLOR,
+    backgroundColor: Colors.APPBACKGROUNDCOLOR,
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
@@ -109,7 +110,7 @@ const appStyles = StyleSheet.create({
 const alarmStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
+    backgroundColor: Colors.APPBACKGROUNDCOLOR,
     alignItems: "center",
     justifyContent: "center",
     height: 100,
@@ -117,7 +118,7 @@ const alarmStyles = StyleSheet.create({
 
   scrollViewContainer: {
     flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
+    backgroundColor: Colors.APPBACKGROUNDCOLOR,
     alignItems: "center",
     justifyContent: "center",
     paddingTop: 30,

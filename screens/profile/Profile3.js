@@ -151,6 +151,7 @@ class ProfileScreen extends Component {
       email: "", // this is the user's email
       notificationsModal: false,
       notifications: [],
+      theme: {},
     };
   }
 
@@ -181,32 +182,43 @@ class ProfileScreen extends Component {
 
     return (
 
-      <ThemeContext.Consumer>{(themeContext) => (
+      //<ThemeContext.Consumer>{(themeContext) => (
       <NotificationContext.Consumer>{(notificationContext) => {
-        //const { isLightMode, toggleTheme } = themeContext;
+        //const { isDarkMode, toggleTheme } = themeContext;
 
-        const { notificationCount, setNotificationCount } = notificationContext;
+        const { notificationCount, setNotificationCount, isDarkMode, toggleTheme, light, dark } = notificationContext;
+
+        const theme = isDarkMode ? dark : light
 
     openNotifications = () => {
       this.setState({ notificationsModal: true })
       setNotificationCount(0)
+      console.log(isDarkMode)
+
+    }
+
+    changeTheme = () => {
+      //this.setState({darkTheme: !this.state.darkTheme,})
+      toggleTheme
+
     }
 
     const BadgedIcon = withBadge(notificationCount)(BaseIcon)
 
     return (
 
+      <View style={{color: theme.APPBACKGROUNDCOLOR}}>
 
-      <ScrollView style={styles.scroll}>
+      <ScrollView style={{...styles.scroll, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
         {/* this part shows the user's name and email */}
         <View style={styles.userRow}>
           <View>
-            <Text style={{ fontSize: 30, color: APPTEXTBLUE }}>
+            <Text style={{ fontSize: 30, color: theme.APPTEXTBLUE }}>
               {this.state.name}
             </Text>
             <Text
               style={{
-                color: APPTEXTBLUE,
+                color: theme.APPTEXTBLUE,
                 fontSize: 25,
               }}
             >
@@ -225,20 +237,20 @@ class ProfileScreen extends Component {
         {/* Not really sure if we want this, was in the tutorial so I kept it */}
 
         <Modal visible={this.state.notificationsModal} animationType="slide">
-          <View style={{ alignItems: "center", flex: 1 }}>
+          <View style={{ alignItems: "center", flex: 1, backgroundColor: theme.APPBACKGROUNDCOLOR }}>
             <MaterialIcons
               name="close"
               size={24}
               style={{
                 ...appStyles.modalClose,
                 ...appStyles.modalToggle,
-                ...{ margin: 20 },
+                ...{ margin: 20,color: theme.APPTEXTRED },
               }}
-              color={APPTEXTRED}
+              color={theme.APPTEXTRED}
               onPress={() => this.closeNotifications()}
             />
 
-            <Text style={{ ...styles.logo, fontSize: 36 }}> Notifications</Text>
+            <Text style={{ ...styles.logo, fontSize: 36, color: theme.APPTEXTRED }}> Notifications</Text>
 
             {this.state.notifications.length == 0 && (
               <Text
@@ -247,6 +259,7 @@ class ProfileScreen extends Component {
                   fontSize: 22,
                   fontWeight: "normal",
                   paddingTop: 30,
+                  color: theme.APPTEXTRED
                 }}
               >
                 you have no new notifications
@@ -258,18 +271,18 @@ class ProfileScreen extends Component {
                 this.state.notifications.map((notification) => {
                   return (
                     <TouchableHighlight
-                      style={styles.alarmBanner}
+                      style={{...styles.alarmBanner, color: theme.APPTEXTRED}}
                       key={notification.body}
                     >
                       <View>
                         <Text
                           adjustsFontSizeToFit
                           numberOfLines={1}
-                          style={styles.titleText}
+                          style={{...styles.titleText, color: theme.APPTEXTWHITE}}
                         >
                           {notification.title}
                         </Text>
-                        <Text style={styles.bodyText}>{notification.body}</Text>
+                        <Text style={{...styles.bodyText, color: theme.APPTEXTWHITE}}>{notification.body}</Text>
                       </View>
                     </TouchableHighlight>
                   );
@@ -283,7 +296,7 @@ class ProfileScreen extends Component {
         {notificationCount > 0 && (
           <ListItem
           title="Notifications"
-          containerStyle={styles.listItemContainer}
+          containerStyle={{...styles.listItemContainer, borderColor: theme.APPBACKGROUNDCOLOR}}
           onPress={() => openNotifications()} 
           leftIcon={
             <BadgedIcon
@@ -304,7 +317,7 @@ class ProfileScreen extends Component {
         {notificationCount == 0 && (
           <ListItem
           title="Notifications"
-          containerStyle={styles.listItemContainer}
+          containerStyle={{...styles.listItemContainer, backgroundColor: theme.APPBACKGROUNDCOLOR, color: theme.APPTEXTBLUE}}
           onPress={() => openNotifications()} 
           leftIcon={
             <BaseIcon
@@ -329,8 +342,8 @@ class ProfileScreen extends Component {
             containerStyle={styles.listItemContainer}
             rightElement={
               <Switch
-                onValueChange={this.onChangeDarkTheme}
-                value={this.state.darkTheme}
+                onValueChange={toggleTheme}
+                value={isDarkMode}
               />
             }
             leftIcon={
@@ -465,13 +478,14 @@ class ProfileScreen extends Component {
           style={styles.loginBtn}
           onPress={() => this.signOutUser()}
         >
-          <Text style={{...styles.logo, color: APPTEXTWHITE}}>Sign Out</Text>
+          <Text style={{...styles.logo, color: theme.APPTEXTWHITE}}>Sign Out</Text>
         </TouchableOpacity>
 
         
       </ScrollView>
+      </View>
     )}}</NotificationContext.Consumer>
-  )}</ThemeContext.Consumer>
+  //)}</ThemeContext.Consumer>
     );
   }
 }

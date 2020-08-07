@@ -4,17 +4,18 @@ export const ThemeContext = createContext();
 
 class ThemeContextProvider extends Component {
   state = {
-    isLightMode: true,
+    isDarkMode: false,
   };
 
   toggleTheme = () => {
-    this.setState({ isLightMode: !this.state.isLightMode });
+    this.setState({ isDarkMode: !this.state.isDarkMode });
   };
 
   render() {
     return (
       <ThemeContext.Provider
-        value={{ ...this.state, toggleTheme: this.toggleTheme }}
+        //value={{ ...this.state, toggleTheme: this.toggleTheme }}
+        value={this.state.isDarkMode}
       >
         {this.props.children}
       </ThemeContext.Provider>
