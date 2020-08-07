@@ -1,5 +1,7 @@
 import React from "react";
 import SwitchNavigator from "./navigation/switchNavigation";
+import NotificationContextProvider from "./contexts/NotificationContext";
+
 
 /* Color codes from coolors.co 
 Oxford Blue #0B132B
@@ -11,12 +13,10 @@ Blue Yonder #566C9F
 
 export default class App extends React.Component {
   render() {
-    return <SwitchNavigator />;
-    //return <AuthLoadingScreen />;
-    //return <StackNavigator />
-    //return < SignUp />
-    // return <ForgotPassword />
-    //return <NavigationContainer/>
-    //return < Login />
+    return (
+        <NotificationContextProvider>
+          <SwitchNavigator />
+        </NotificationContextProvider>
+    );
   }
 }
