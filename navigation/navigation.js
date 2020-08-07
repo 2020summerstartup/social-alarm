@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GroupScreen from "../screens/groups/groups";
@@ -9,6 +9,7 @@ import StopwatchScreen from "../screens/stopwatch/stopwatch";
 import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../style/constants';
 import { NotificationContext }  from "../contexts/NotificationContext";
+import {db, auth} from "../firebase/firebase";
 
 
 /* navigation.js
@@ -33,11 +34,24 @@ const Tab = createBottomTabNavigator();
 // Add more screens as necessary
 function MyTabs() {
 
+  useEffect(()=> {
+
+    initializeNotifications()
+
+  })
+
   return (
 
     <NotificationContext.Consumer>{(context) => {
       
       const {notificationCount, setNotificationCount} = context
+
+      initializeNotifications = () => {
+        db.collection("users").doc(auth.currentUser.email).get().then((doc) => {
+          setNotificationCount(doc.data().alertQueue.length.toString())
+        })
+
+      }
 
 
       return(
@@ -90,7 +104,9 @@ function MyTabs() {
         ),
       }}
     />
-    <Tab.Screen
+
+    {notificationCount > 0 && (
+      <Tab.Screen
       name="Profile"
       component={ProfileScreen}
       options={{
@@ -102,6 +118,23 @@ function MyTabs() {
         ),
       }}
     />
+    )}
+
+    {notificationCount <= 0 && (
+      <Tab.Screen
+      name="Profile"
+      component={ProfileScreen}
+      options={{
+        tabBarLabel: "Profile",
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name="account" color={color} size={size} />
+        ),
+      }}
+    />
+    )}
+
+    
+    
   </Tab.Navigator>
 
 

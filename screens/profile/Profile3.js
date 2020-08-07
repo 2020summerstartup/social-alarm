@@ -181,9 +181,8 @@ class ProfileScreen extends Component {
   
 
   render() {
-    const BadgedIcon = withBadge(1)(Icon)
 
-    const { setNotificationCount } = this.context;
+    const { notificationCount, setNotificationCount } = this.context;
 
     openNotifications = () => {
       this.setState({ notificationsModal: true })

@@ -16,11 +16,6 @@ class NotificationContextProvider extends Component {
 
   render() {
 
-    db.collection("users").doc("annadsinger@gmail.com").get().then((doc) => {
-        this.setState({notificationCount: doc.data().alertQueue.length.toString()})
-      })
-
-
     return (
       <NotificationContext.Provider value={{...this.state, setNotificationCount: this.setNotificationCount}}>
         {this.props.children}
