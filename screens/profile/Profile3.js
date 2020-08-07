@@ -1,6 +1,6 @@
 import React, { Component, createContext } from 'react'
 import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, TouchableOpacity, DevSettings, Modal, TouchableHighlight } from 'react-native'
-import { Avatar, ListItem, ThemeContext, Badge, Icon, withBadge } from 'react-native-elements'
+import { Avatar, ListItem, ThemeContext, withBadge } from 'react-native-elements'
 import { auth, db } from "../../firebase/firebase";
 
 import { MaterialIcons } from "@expo/vector-icons";
@@ -112,10 +112,7 @@ const styles = StyleSheet.create({
     },
 })
 
-//@withBadge(2)
 class ProfileScreen extends Component {
-
-  static contextType = NotificationContext;
 
   // sign out functionality 
   signOutUser = async () => {
@@ -182,7 +179,13 @@ class ProfileScreen extends Component {
 
   render() {
 
-    const { notificationCount, setNotificationCount } = this.context;
+    return (
+
+      <ThemeContext.Consumer>{(themeContext) => (
+      <NotificationContext.Consumer>{(notificationContext) => {
+        //const { isLightMode, toggleTheme } = themeContext;
+
+        const { notificationCount, setNotificationCount } = notificationContext;
 
     openNotifications = () => {
       this.setState({ notificationsModal: true })
@@ -192,6 +195,8 @@ class ProfileScreen extends Component {
     const BadgedIcon = withBadge(notificationCount)(BaseIcon)
 
     return (
+
+
       <ScrollView style={styles.scroll}>
         {/* this part shows the user's name and email */}
         <View style={styles.userRow}>
@@ -462,7 +467,11 @@ class ProfileScreen extends Component {
         >
           <Text style={{...styles.logo, color: APPTEXTWHITE}}>Sign Out</Text>
         </TouchableOpacity>
+
+        
       </ScrollView>
+    )}}</NotificationContext.Consumer>
+  )}</ThemeContext.Consumer>
     );
   }
 }

@@ -2,6 +2,7 @@ import React from "react";
 import SwitchNavigator from "./navigation/switchNavigation";
 import NotificationContextProvider from "./contexts/NotificationContext";
 import { View } from "react-native";
+import ThemeContextProvider from "./contexts/ThemeContext";
 
 /* Color codes from coolors.co 
 Oxford Blue #0B132B
@@ -14,9 +15,11 @@ Blue Yonder #566C9F
 export default class App extends React.Component {
   render() {
     return (
-      <NotificationContextProvider>
-        <SwitchNavigator />
-      </NotificationContextProvider>
+      <ThemeContextProvider>
+        <NotificationContextProvider>
+          <SwitchNavigator />
+        </NotificationContextProvider>
+      </ThemeContextProvider>
     );
   }
 }
