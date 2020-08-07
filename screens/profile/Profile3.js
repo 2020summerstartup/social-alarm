@@ -189,6 +189,8 @@ class ProfileScreen extends Component {
       setNotificationCount(0)
     }
 
+    const BadgedIcon = withBadge(notificationCount)(BaseIcon)
+
     return (
       <ScrollView style={styles.scroll}>
         {/* this part shows the user's name and email */}
@@ -272,23 +274,49 @@ class ProfileScreen extends Component {
         </Modal>
 
         <View>
+
+        {notificationCount > 0 && (
           <ListItem
-            title="Notifications"
-            containerStyle={styles.listItemContainer}
-            onPress={() => openNotifications()} 
-            leftIcon={
-              <BaseIcon
-                // probably want to change the color
-                containerStyle={{ backgroundColor: "#A4C8F0" }}
-                icon={{
-                  type: "ionicon",
-                  //TODO: FIX THIS
-                  name: "ios-moon",
-                }}
-              />
-            }
-            rightIcon={<Chevron />}
-          />
+          title="Notifications"
+          containerStyle={styles.listItemContainer}
+          onPress={() => openNotifications()} 
+          leftIcon={
+            <BadgedIcon
+              // probably want to change the color
+              containerStyle={{ backgroundColor: "#A4C8F0" }}
+              icon={{
+                type: "ionicon",
+                //TODO: FIX THIS
+                name: "ios-moon",
+              }}
+            />
+          }
+          rightIcon={<Chevron />}
+        />
+
+        )}
+
+        {notificationCount == 0 && (
+          <ListItem
+          title="Notifications"
+          containerStyle={styles.listItemContainer}
+          onPress={() => openNotifications()} 
+          leftIcon={
+            <BaseIcon
+              // probably want to change the color
+              containerStyle={{ backgroundColor: "#A4C8F0" }}
+              icon={{
+                type: "ionicon",
+                //TODO: FIX THIS
+                name: "ios-moon",
+              }}
+            />
+          }
+          rightIcon={<Chevron />}
+        />
+
+        )}
+
 
           <ListItem
             hideChevron

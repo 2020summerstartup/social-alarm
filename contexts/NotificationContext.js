@@ -1,12 +1,11 @@
 import React, { createContext, Component } from "react";
 
-import {db, auth} from "../firebase/firebase";
 
 export const NotificationContext = createContext();
 
 class NotificationContextProvider extends Component {
   state = {
-    notificationCount: 20,
+    notificationCount: 0,
   };
 
   setNotificationCount = (num) => {
