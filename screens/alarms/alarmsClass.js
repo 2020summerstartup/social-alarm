@@ -942,9 +942,9 @@ const styles = StyleSheet.create({
   },
 
   inputText:{
-    padding: 20,
+    padding: 10,
     height: 50,
-    color:"#ffffff",
+    color:"black",
     fontSize: 16
   },
 
@@ -955,9 +955,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius:25,
     height:50,
-    marginBottom:20,
+    marginBottom:10,
     justifyContent:"center",
-    padding:20
+    padding:10
   },
 
   alarmTime: {
