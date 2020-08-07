@@ -451,7 +451,7 @@ export default class Alarms extends Component {
 
     updateFirbaseAfterEdit = () => new Promise(
       (resolve) => {
-        if (this.state.alarms[this.state.openRow].key.includes(":")){ // if the key includes ":" then the alarm is a group alarm so we want to update the group doc
+        if (String(this.state.alarms[this.state.openRow].key).includes(":")){ // if the key includes ":" then the alarm is a group alarm so we want to update the group doc
         console.log("Edit button: Updating group doc")
         console.log("this.state.alarms[this.state.openRow].key", this.state.alarms[this.state.openRow].key)
         // console.log("this.state.alarms[this.state.openRow].switch", this.state.alarms[this.state.openRow].switch)
@@ -510,6 +510,58 @@ export default class Alarms extends Component {
       }
       else{ // if the key doesn't include ":" then the alarm is a personal alarm so we want to update the user doc
         console.log("Edit button: Updating user doc")
+        // console.log("this.state.alarms[this.state.openRow].key", this.state.alarms[this.state.openRow].key)
+        // console.log("this.state.alarms[this.state.openRow].switch", this.state.alarms[this.state.openRow].switch)
+
+
+        // // get the group that the alarm is part of (first part of key before ":")
+        // var keySplitArray = this.state.alarms[this.state.openRow].key.split(":")
+        // console.log("keySplitArray[0]", keySplitArray[0])
+        // console.log("this.state.alarms[this.state.openRow].key after split", this.state.alarms[this.state.openRow].key)
+
+        // // console.log("this.state.alarms[this.state.openRow].name", this.state.alarms[this.state.openRow].name)
+        // console.log("this.state.alarms[this.state.openRow].switch", this.state.alarms[this.state.openRow].switch)
+
+        db.collection("users")
+          .doc(auth.currentUser.email)
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              // console.log("this.state.alarms[this.state.openRow].name", this.state.alarms[this.state.openRow].name)
+              db.collection("users")
+                .doc(auth.currentUser.email)
+                .update({
+                  alarms: firebase.firestore.FieldValue.arrayRemove({
+                    name: this.state.alarms[this.state.openRow].name,
+                    alarm_hour: this.state.alarms[this.state.openRow].alarm_hour,
+                    alarm_minute: this.state.alarms[this.state.openRow].alarm_minute, 
+                    switch: this.state.alarms[this.state.openRow].switch, 
+                    key: this.state.alarms[this.state.openRow].key,
+                    color: this.state.alarms[this.state.openRow].color, 
+                  }),
+                })
+            }
+          });
+
+        db.collection("users")
+          .doc(auth.currentUser.email)
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              db.collection("users")
+                .doc(auth.currentUser.email)
+                .update({
+                  alarms: firebase.firestore.FieldValue.arrayUnion({
+                    name: this.state.newAlarmText, 
+                    alarm_hour: this.state.newAlarmHour, 
+                    alarm_minute: this.state.newAlarmMinute,
+                    switch: this.state.alarms[this.state.openRow].switch, 
+                    key: this.state.alarms[this.state.openRow].key,
+                    color: "green", 
+                  }),
+                })
+            }
+          });
       }
 
       setTimeout(() => resolve(1234), 300)
