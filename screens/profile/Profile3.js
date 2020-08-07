@@ -1,7 +1,12 @@
-import React, { Component, createContext } from 'react'
-import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, TouchableOpacity, DevSettings, Modal, TouchableHighlight } from 'react-native'
+
+import React, { Component, useState } from 'react'
+import { ScrollView, Switch, StyleSheet, Dimensions, Text, View, Linking, AsyncStorage, TouchableOpacity, DevSettings, Button, Modal, TouchableHighlight } from 'react-native'
 import { Avatar, ListItem, ThemeContext, withBadge } from 'react-native-elements'
 import { auth, db } from "../../firebase/firebase";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import RNPickerSelect from 'react-native-picker-select';
+import { profileStyles } from '../../style/stylesheet';
+
 
 import { MaterialIcons } from "@expo/vector-icons";
 
@@ -18,14 +23,11 @@ import { NotificationContext } from '../../contexts/NotificationContext';
 
 /* profile3.js
  * profile screen 
- * has push notifications, birthday, time zone, language, about us,  
+ * has push notifications, birthday, time zone, about us,  
  * share our app, and send feedback
  * feel free to change or delete any of these 
  */
 
-const styles = StyleSheet.create({
-  scroll: {
-    backgroundColor: 'white',
 
     // these lines fit the container to the entire screen
     height: Dimensions.get('window').height,
@@ -112,6 +114,43 @@ const styles = StyleSheet.create({
     },
 })
 
+// This is for the birthday picker
+const BirthdayPicker = () => {
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  // shows the date picker
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  // TO DO: replace the "select birthday" button title with the date
+  const handleConfirm = (date) => {
+    hideDatePicker();
+    // console.log(date.toString());
+  };
+
+  return (
+    <View>
+      <Button title="Select birthday" onPress={showDatePicker}/>
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        minimumDate={new Date(1950, 0, 1)}
+        maximumDate={new Date(2020, 11, 31)}
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+        style={profileStyles.birthdayBtn}
+        headerTextIOS={"When's your birthday?"}
+      />
+    </View>
+  );
+};
+
+
 class ProfileScreen extends Component {
 
   // sign out functionality 
@@ -146,20 +185,30 @@ class ProfileScreen extends Component {
     super(props);
 
     this.state = {
-      darkTheme: false,
+      switchValue: false,
       name: "", // this is the user's name
       email: "", // this is the user's email
+
       notificationsModal: false,
       notifications: [],
+
+      timeZoneSelected: "",
+      timezoneArray: [
+        { label: 'AST', value: 'AST' },
+        { label: 'EST', value: 'EST' },
+        { label: 'CST', value: 'CST' },
+        { label: 'MST', value: 'MST' },
+        { label: 'PST', value: 'PST' },
+        { label: 'AKST', value: 'AKST' },
+        { label: 'HST', value: 'HST' },
+      ]
+
     };
   }
 
-  // changes the toggle switch whenever the user clicks it
-  onChangeDarkTheme = () => {
-    this.setState(state => ({
-      darkTheme: !state.darkTheme,
-    }))
-  }
+  toggleSwitch = value => {
+    this.setState({ switchValue: value });
+  };
 
   getNotifications = () => {
     db.collection("users").doc(auth.currentUser.email).get().then((doc) => {
@@ -181,6 +230,7 @@ class ProfileScreen extends Component {
 
     return (
 
+
       <NotificationContext.Consumer>{(notificationContext) => {
         //const { isLightMode, toggleTheme } = themeContext;
 
@@ -195,10 +245,10 @@ class ProfileScreen extends Component {
 
     return (
 
+      <ScrollView style={profileStyles.scroll}>  
 
-      <ScrollView style={styles.scroll}>
         {/* this part shows the user's name and email */}
-        <View style={styles.userRow}>
+        <View style={profileStyles.userRow}>
           <View>
             <Text style={{ fontSize: 30, color: APPTEXTBLUE }}>
               {this.state.name}
@@ -213,6 +263,7 @@ class ProfileScreen extends Component {
             </Text>
           </View>
         </View>
+
 
         {/* This is supposed to show an avatar but it doesn't show up, styling issues?
         <Avatar
@@ -277,6 +328,7 @@ class ProfileScreen extends Component {
           </View>
         </Modal>
 
+
         <View>
 
         {notificationCount > 0 && (
@@ -325,11 +377,11 @@ class ProfileScreen extends Component {
           <ListItem
             hideChevron
             title="Dark Mode"
-            containerStyle={styles.listItemContainer}
+            containerStyle={profileStyles.listItemContainer}
             rightElement={
               <Switch
-                onValueChange={this.onChangeDarkTheme}
-                value={this.state.darkTheme}
+                onValueChange={this.toggleSwitch}
+                value={this.state.switchValue}
               />
             }
             leftIcon={
@@ -346,9 +398,10 @@ class ProfileScreen extends Component {
           />
           <ListItem
             title="Birthday"
-            rightTitle="05/01/2001" // TO DO: add text box or date picker here so users can pick their birthday
-            rightTitleStyle={{ fontSize: 15 }}
-            containerStyle={styles.listItemContainer}
+
+            rightTitleStyle={{ fontSize: 18 }}
+            rightElement={<BirthdayPicker/>}    
+            containerStyle={profileStyles.listItemContainer}
             leftIcon={
               <BaseIcon
                 containerStyle={{ backgroundColor: "#FAD291" }}
@@ -361,9 +414,41 @@ class ProfileScreen extends Component {
           />
           <ListItem
             title="Time Zone"
-            rightTitle="PST" // TO DO: add time zone picker or a text box here
+            rightElement={
+              <RNPickerSelect
+                onValueChange={(value) => this.setState({ timeZoneSelected: value })}
+                items={this.state.timezoneArray}
+
+                // Object to overide the default text placeholder for the PickerSelect
+                placeholder={{label: 'Select timezone', value: 'select timezone'}}
+                style={
+                  { fontWeight: 'normal',
+                    color: 'black',
+                    placeholder: {
+                      color: "black",
+                      fontSize: 18,
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: 12,
+                      marginTop: 8,
+                    },
+                    inputIOS: {
+                      color: "black",
+                      fontSize: 18,
+                      marginRight: 12,
+                      marginTop: 8,
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }
+                  }
+                }
+                doneText={"Select"}                 
+              />
+            }
             rightTitleStyle={{ fontSize: 15 }}
-            containerStyle={styles.listItemContainer}
+            containerStyle={profileStyles.listItemContainer}
             leftIcon={
               <BaseIcon
                 containerStyle={{ backgroundColor: "#57DCE7" }}
@@ -374,36 +459,14 @@ class ProfileScreen extends Component {
               />
             }
           />
-          {/* Not really sure if we want this, was in the tutorial so I kept it */}
-          <ListItem
-            title="Language"
-            rightTitle="English"
-            rightTitleStyle={{ fontSize: 15 }}
-            onPress={() => {
-              Linking.openURL("https://www.google.com");
-            }} // navigate to some website
-            containerStyle={styles.listItemContainer}
-            leftIcon={
-              <BaseIcon
-                containerStyle={{ backgroundColor: "#FEA8A1" }}
-                icon={{
-                  type: "material",
-                  name: "language",
-                }}
-              />
-            }
-            rightIcon={<Chevron />}
-          />
         </View>
         <View>
           <ListItem
             title="About Us"
-            containerStyle={styles.listItemContainer}
-            onPress={() => {
-              Linking.openURL(
-                "https://www.github.com/2020summerstartup/social-alarm"
-              );
-            }} // we can change this later
+
+            containerStyle={profileStyles.listItemContainer}
+            onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}} // we can change this later 
+
             leftIcon={
               <BaseIcon
                 containerStyle={{ backgroundColor: "#A4C8F0" }}
@@ -417,12 +480,10 @@ class ProfileScreen extends Component {
           />
           <ListItem
             title="Share our App"
-            onPress={() => {
-              Linking.openURL(
-                "https://www.github.com/2020summerstartup/social-alarm"
-              );
-            }}
-            containerStyle={styles.listItemContainer}
+
+            onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}}
+            containerStyle={profileStyles.listItemContainer}
+
             leftIcon={
               <BaseIcon
                 containerStyle={{
@@ -438,12 +499,9 @@ class ProfileScreen extends Component {
           />
           <ListItem
             title="Send Feedback"
-            onPress={() => {
-              Linking.openURL(
-                "https://www.github.com/2020summerstartup/social-alarm"
-              );
-            }}
-            containerStyle={styles.listItemContainer}
+
+            onPress={ ()=>{ Linking.openURL('https://www.github.com/2020summerstartup/social-alarm')}}
+            containerStyle={profileStyles.listItemContainer}
             leftIcon={
               <BaseIcon
                 containerStyle={{
@@ -461,10 +519,12 @@ class ProfileScreen extends Component {
 
         {/* Sign out button */}
         <TouchableOpacity
-          style={styles.loginBtn}
+          style={profileStyles.loginBtn}
           onPress={() => this.signOutUser()}
         >
-          <Text style={{...styles.logo, color: APPTEXTWHITE}}>Sign Out</Text>
+
+          <Text style={profileStyles.logo}>Sign Out</Text>
+
         </TouchableOpacity>
 
         

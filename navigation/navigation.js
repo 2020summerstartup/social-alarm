@@ -4,9 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GroupScreen from "../screens/groups/groups";
 import AlarmScreen from '../screens/alarms/alarmsClass';
 import ProfileScreen from "../screens/profile/profile";
-//import ProfileScreen from "../screens/profile/test";
-import StopwatchScreen from "../screens/stopwatch/stopwatch";
-import { NavigationContainer, DarkTheme } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../style/constants';
 import { NotificationContext }  from "../contexts/NotificationContext";
 import {db, auth} from "../firebase/firebase";
@@ -14,15 +12,16 @@ import {db, auth} from "../firebase/firebase";
 
 /* navigation.js
  * bottom tab navigator for signed in user
- * contains: alarms, groups, stopwatch and profile
+ * contains: alarms, groups and profile
  *
  */
 
 // This is code to create a bottom tab navigator
 // Code from https://reactnavigation.org/docs/bottom-tab-navigator/
 export default function Navigation() {
+
   return (
-    <NavigationContainer theme={DarkTheme}>
+    <NavigationContainer>
       <MyTabs />
     </NavigationContainer>
   );
@@ -30,6 +29,7 @@ export default function Navigation() {
 
 
 const Tab = createBottomTabNavigator();
+
 
 // Add more screens as necessary
 function MyTabs() {
@@ -78,6 +78,7 @@ function MyTabs() {
           />
         ),
       }}
+
     />
     <Tab.Screen
       name="Groups"
@@ -90,6 +91,7 @@ function MyTabs() {
         //tabBarVisible: false,
       }}
     />
+{/*
     <Tab.Screen
       name="Stopwatch"
       component={StopwatchScreen}
@@ -104,6 +106,7 @@ function MyTabs() {
         ),
       }}
     />
+    */}
 
     {notificationCount > 0 && (
       <Tab.Screen
@@ -121,6 +124,7 @@ function MyTabs() {
     )}
 
     {notificationCount <= 0 && (
+
       <Tab.Screen
       name="Profile"
       component={ProfileScreen}
