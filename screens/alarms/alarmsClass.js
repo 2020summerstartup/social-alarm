@@ -918,7 +918,7 @@ const styles = StyleSheet.create({
     width:"100%",
     backgroundColor: APPBACKGROUNDCOLOR,
     height: 110,
-    paddingTop: 30,
+    paddingTop: 25,
     paddingBottom: 0,
     padding: 15,
     alignSelf: 'center',
@@ -934,6 +934,7 @@ const styles = StyleSheet.create({
 
   pageTitle:{
     padding: 20,
+    paddingTop:0,
     fontWeight: "bold",
     fontSize: 50,
     color: APPTEXTRED,

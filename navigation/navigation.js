@@ -4,7 +4,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GroupScreen from "../screens/groups/groups";
 import AlarmScreen from '../screens/alarms/alarmsClass';
 import ProfileScreen from "../screens/profile/profile";
-import StopwatchScreen from "../screens/stopwatch/stopwatch";
 import { NavigationContainer } from "@react-navigation/native";
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../style/constants';
 
