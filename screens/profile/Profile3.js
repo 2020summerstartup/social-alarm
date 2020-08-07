@@ -192,16 +192,16 @@ class ProfileScreen extends Component {
           const BadgedIcon = withBadge(notificationCount)(BaseIcon);
 
           return (
-            //<View style={{color: theme.APPBACKGROUNDCOLOR}}>
+            <View style={{color: theme.APPBACKGROUNDCOLOR, flex:1,}}>
 
             <ScrollView
               style={{
-                ...styles.scroll,
+                ...profileStyles.scroll,
                 backgroundColor: theme.APPBACKGROUNDCOLOR,
               }}
             >
               {/* this part shows the user's name and email */}
-              <View style={styles.userRow}>
+              <View style={profileStyles.userRow}>
                 <View>
                   <Text style={{ fontSize: 30, color: theme.APPTEXTBLUE }}>
                     {this.state.name}
@@ -315,11 +315,34 @@ class ProfileScreen extends Component {
               </Modal>
 
               <View>
+
+              {notificationCount == 0 && (
+                <ListItem
+                  title="Notifications"
+                  containerStyle={{
+                    ...profileStyles.listItemContainer,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                  }}
+                  onPress={() => openNotifications()}
+                  leftIcon={
+                    <BaseIcon
+                      // probably want to change the color
+                      containerStyle={{ backgroundColor: "#A4C8F0" }}
+                      icon={{
+                        type: "ionicon",
+                        //TODO: FIX THIS
+                        name: "ios-moon",
+                      }}
+                    />
+                  }
+                  rightIcon={<Chevron />}
+                />
+              )}
                 {notificationCount > 0 && (
                   <ListItem
                     title="Notifications"
                     containerStyle={{
-                      ...styles.listItemContainer,
+                      ...profileStyles.listItemContainer,
                       borderColor: theme.APPBACKGROUNDCOLOR,
                     }}
                     onPress={() => openNotifications()}
@@ -344,8 +367,8 @@ class ProfileScreen extends Component {
                   containerStyle={profileStyles.listItemContainer}
                   rightElement={
                     <Switch
-                      onValueChange={this.toggleSwitch}
-                      value={this.state.switchValue}
+                      onValueChange={toggleTheme}
+                      value={isDarkMode}
                     />
                   }
                   leftIcon={
@@ -492,14 +515,15 @@ class ProfileScreen extends Component {
 
               {/* Sign out button */}
               <TouchableOpacity
-                style={profileStyles.loginBtn}
+                style={{...profileStyles.loginBtn, backgroundColor: theme.APPTEXTRED}}
                 onPress={() => this.signOutUser()}
               >
                 <Text style={profileStyles.logo}>Sign Out</Text>
               </TouchableOpacity>
             </ScrollView>
-          );
-        }}{" "}
+            </View>
+          )
+        }}
       </NotificationContext.Consumer>
     );
   }
