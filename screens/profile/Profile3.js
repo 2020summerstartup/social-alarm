@@ -28,11 +28,7 @@ import { NotificationContext } from '../../contexts/NotificationContext';
  * feel free to change or delete any of these 
  */
 
-
-    // these lines fit the container to the entire screen
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
-  },
+const styles  =  StyleSheet.create({
   userRow: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -112,7 +108,9 @@ import { NotificationContext } from '../../contexts/NotificationContext';
       paddingRight: 20,
       paddingBottom: 15,
     },
+
 })
+
 
 // This is for the birthday picker
 const BirthdayPicker = () => {
