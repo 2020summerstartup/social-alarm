@@ -5,6 +5,7 @@ import { APPBACKGROUNDCOLOR, APPTEXTRED } from "../style/constants";
 import Login from "../screens/authentication/login";
 import SignUp from "../screens/authentication/signup";
 import ForgotPassword from "../screens/authentication/forgotPassword";
+import Landing from "../screens/landing/landingCarousel";
 
 /* stackNavigation.js
  * stack navigator for not signed in user
@@ -15,6 +16,13 @@ import ForgotPassword from "../screens/authentication/forgotPassword";
 
 const HomeStack = createStackNavigator(
   {
+    Landing: {
+      screen: Landing,
+      navigationOptions: {
+        title: "",
+        headerShown: false
+      }
+    },
     Login: {
       screen: Login,
       navigationOptions: {
@@ -25,6 +33,7 @@ const HomeStack = createStackNavigator(
       screen: SignUp,
       navigationOptions: {
         title: "",
+
       },
     },
     ForgotPassword: {

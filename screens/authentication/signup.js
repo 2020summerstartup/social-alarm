@@ -70,6 +70,17 @@ export default function SignUp({ navigation }) {
       <View style={styles.container}>
         <Text style={styles.logo}>Sign Up</Text>
         <View style={appStyles.inputView}>
+          <TextInput
+            style={appStyles.inputText}
+            placeholder="Name..."
+            placeholderTextColor="#003f5c"
+            autoCorrect={false}
+            onChangeText={(text) => {
+              setName(text);
+            }}
+          />
+        </View>
+        <View style={appStyles.inputView}>
           {/* text inputs - email, password, confirm password */}
           <TextInput
             style={appStyles.inputText}
@@ -102,18 +113,6 @@ export default function SignUp({ navigation }) {
             placeholderTextColor="#003f5c"
             onChangeText={(text) => {
               setConfirmPassword(text);
-            }}
-          />
-        </View>
-
-        <View style={appStyles.inputView}>
-          <TextInput
-            style={appStyles.inputText}
-            placeholder="Name..."
-            placeholderTextColor="#003f5c"
-            autoCorrect={false}
-            onChangeText={(text) => {
-              setName(text);
             }}
           />
         </View>

@@ -1,6 +1,6 @@
 // Feel free to add to this style sheet so we can make the screens consistent throughout our app
 
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import {
   APPBACKGROUNDCOLOR,
   APPTEXTRED,
@@ -101,6 +101,15 @@ const appStyles = StyleSheet.create({
     color: APPTEXTWHITE,
     fontSize: 16,
     padding: 10,
+  },
+
+  logo: {
+    marginTop: 30,
+    fontWeight: "bold",
+    fontSize: 50,
+    color: APPTEXTRED,
+    marginBottom: 18,
+    alignItems: "center",
   },
 });
 
@@ -299,4 +308,59 @@ const alarmStyles = StyleSheet.create({
   },
 });
 
-export { appStyles, alarmStyles };
+const profileStyles = StyleSheet.create({
+  scroll: {
+    backgroundColor: 'white',
+
+    // these lines fit the container to the entire screen
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
+  },
+  userRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingBottom: 60,
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingTop: 60,
+  },
+  userImage: {
+    marginRight: 12,
+  },
+  listItemContainer: {
+    height: 65,
+    borderWidth: 0.5,
+    borderColor: APPBACKGROUNDCOLOR,
+  },
+  logo: {
+    fontWeight: "bold",
+    fontSize: 20,
+    color: APPBACKGROUNDCOLOR,
+    marginBottom: 5,
+    marginTop: 5,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  loginBtn: {
+    width: "80%",
+    backgroundColor: APPTEXTRED,
+    borderRadius: 15,
+    height: 40,
+    width: 0.85 * Dimensions.get('screen').width, // sign out button is 90% of the screen's width
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+    marginBottom: 10,
+    marginLeft: 30,
+  },
+  birthdayBtn: {
+    width: 300,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+    marginBottom: 40,
+    marginLeft: 70,
+  },
+})
+
+export { appStyles, alarmStyles, profileStyles };
