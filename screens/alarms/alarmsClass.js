@@ -1,4 +1,4 @@
-// This is the most updated alarms page file as of 8/4/20
+// This is the most updated alarms page file as of 8/7/20
 
 // Import statements
 import React, { Component } from 'react';
@@ -89,9 +89,7 @@ export default class Alarms extends Component {
         // Defining state variables that are used throughout class functions
         this.state = {
             // alarms: [],
-            alarms: [ 
-              {alarm_hour: 10, alarm_minute: 0, color: null, key: -1, name: ".", switch: true}
-            ],
+            alarms: [{alarm_hour: 0, alarm_minute: 0, color: null, key: " ", name: " ", switch: true}],
             newAlarmModalOpen: false,
             groupPickerModalOpen: false,
             editAlarmModalOpen: false,
@@ -106,7 +104,7 @@ export default class Alarms extends Component {
             newGroupName: "",
             groupsArray: [{label: "label", value: "value"}],
             groupIdClicked: "",
-            singleAlarm: {name: "", alarm_hour: null, alarm_minute: null, switch: null,  key: ""},
+            singleAlarm: {alarm_hour: 0, alarm_minute: 0, color: null, key: " ", name: " ", switch: true},
             openRow: 0,
             currentMaxKey: 0,
             listOfKeys: [],
@@ -510,17 +508,6 @@ export default class Alarms extends Component {
       }
       else{ // if the key doesn't include ":" then the alarm is a personal alarm so we want to update the user doc
         console.log("Edit button: Updating user doc")
-        // console.log("this.state.alarms[this.state.openRow].key", this.state.alarms[this.state.openRow].key)
-        // console.log("this.state.alarms[this.state.openRow].switch", this.state.alarms[this.state.openRow].switch)
-
-
-        // // get the group that the alarm is part of (first part of key before ":")
-        // var keySplitArray = this.state.alarms[this.state.openRow].key.split(":")
-        // console.log("keySplitArray[0]", keySplitArray[0])
-        // console.log("this.state.alarms[this.state.openRow].key after split", this.state.alarms[this.state.openRow].key)
-
-        // // console.log("this.state.alarms[this.state.openRow].name", this.state.alarms[this.state.openRow].name)
-        // console.log("this.state.alarms[this.state.openRow].switch", this.state.alarms[this.state.openRow].switch)
 
         db.collection("users")
           .doc(auth.currentUser.email)
@@ -928,19 +915,9 @@ export default class Alarms extends Component {
             />
             <Text style={styles.pageTitle}> Edit Alarm </Text>
 
-            {/* <Text> this.state.alarms[this.state.openRow]: {this.state.alarms[0].name} </Text> */}
-            <Text> this.state.openRow: {this.state.openRow} </Text>
-            {/* {console.log("TIME:", this.state.alarms)} */}
-            {/* <Text> TIME: {this.state.alarms[this.state.openRow].alarm_hour} </Text> */}
-            <Text> TIME: {String((this.state.alarms[this.state.openRow].alarm_hour) + ":" + (this.state.alarms[this.state.openRow].alarm_minute))} </Text>
-
-            {/* {console.log("this.state.alarms", this.state.alarms)} */}
-            {/* {console.log("this.state.openRow", this.state.openRow)}
-            {console.log("TIME:", String((this.state.alarms[this.state.openRow].alarm_hour) + ":" + (this.state.alarms[this.state.openRow].alarm_minute)))} */}
-
             <DatePicker
               style={{height: 75, width: 200, color: "black"}}
-              date= {String((this.state.alarms[this.state.openRow].alarm_hour) + ":" + (this.state.alarms[this.state.openRow].alarm_minute))} // Starts timepicker at current time
+              date= {String((this.state.alarms[this.state.openRow].alarm_hour) + ":" + (this.state.alarms[this.state.openRow].alarm_minute))} // Starts timepicker at current alarm time
               mode="time"
               format="HH:mm"
               confirmBtnText="Confirm"
@@ -1286,7 +1263,7 @@ const styles = StyleSheet.create({
   },
 
   inputText:{
-    padding: 20,
+    padding: 10,
     height: 50,
     color:"black",
     fontSize: 16
