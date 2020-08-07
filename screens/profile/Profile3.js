@@ -181,7 +181,6 @@ class ProfileScreen extends Component {
 
     return (
 
-      <ThemeContext.Consumer>{(themeContext) => (
       <NotificationContext.Consumer>{(notificationContext) => {
         //const { isLightMode, toggleTheme } = themeContext;
 
@@ -471,7 +470,6 @@ class ProfileScreen extends Component {
         
       </ScrollView>
     )}}</NotificationContext.Consumer>
-  )}</ThemeContext.Consumer>
     );
   }
 }
