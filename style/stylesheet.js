@@ -36,7 +36,7 @@ const appStyles = StyleSheet.create({
 
   inputView: {
     width: "80%",
-    backgroundColor: Colors.APPBACKGROUNDCOLOR,
+    backgroundColor: APPBACKGROUNDCOLOR,
     borderColor: "black",
     borderWidth: 0.9,
     borderRadius: 25,

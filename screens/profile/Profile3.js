@@ -192,7 +192,6 @@ class ProfileScreen extends Component {
           const BadgedIcon = withBadge(notificationCount)(BaseIcon);
 
           return (
-            <View style={{color: theme.APPBACKGROUNDCOLOR, flex:1,}}>
 
             <ScrollView
               style={{
@@ -322,6 +321,7 @@ class ProfileScreen extends Component {
                   containerStyle={{
                     ...profileStyles.listItemContainer,
                     backgroundColor: theme.APPBACKGROUNDCOLOR,
+                    color: theme.APPTEXTBLACK,
                   }}
                   onPress={() => openNotifications()}
                   leftIcon={
@@ -343,7 +343,8 @@ class ProfileScreen extends Component {
                     title="Notifications"
                     containerStyle={{
                       ...profileStyles.listItemContainer,
-                      borderColor: theme.APPBACKGROUNDCOLOR,
+                      backgroundColor: theme.APPBACKGROUNDCOLOR,
+                      color: theme.APPTEXTBLACK,
                     }}
                     onPress={() => openNotifications()}
                     leftIcon={
@@ -364,7 +365,11 @@ class ProfileScreen extends Component {
                 <ListItem
                   hideChevron
                   title="Dark Mode"
-                  containerStyle={profileStyles.listItemContainer}
+                  containerStyle={{
+                    ...profileStyles.listItemContainer,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                    color: theme.APPTEXTBLACK,
+                  }}
                   rightElement={
                     <Switch
                       onValueChange={toggleTheme}
@@ -387,7 +392,11 @@ class ProfileScreen extends Component {
                   title="Birthday"
                   rightTitleStyle={{ fontSize: 18 }}
                   rightElement={<BirthdayPicker />}
-                  containerStyle={profileStyles.listItemContainer}
+                  containerStyle={{
+                    ...profileStyles.listItemContainer,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                    color: theme.APPTEXTBLACK,
+                  }}
                   leftIcon={
                     <BaseIcon
                       containerStyle={{ backgroundColor: "#FAD291" }}
@@ -437,7 +446,11 @@ class ProfileScreen extends Component {
                     />
                   }
                   rightTitleStyle={{ fontSize: 15 }}
-                  containerStyle={profileStyles.listItemContainer}
+                  containerStyle={{
+                    ...profileStyles.listItemContainer,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                    color: theme.APPTEXTBLACK,
+                  }}
                   leftIcon={
                     <BaseIcon
                       containerStyle={{ backgroundColor: "#57DCE7" }}
@@ -452,7 +465,11 @@ class ProfileScreen extends Component {
               <View>
                 <ListItem
                   title="About Us"
-                  containerStyle={profileStyles.listItemContainer}
+                  containerStyle={{
+                    ...profileStyles.listItemContainer,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                    color: theme.APPTEXTBLACK,
+                  }}
                   onPress={() => {
                     Linking.openURL(
                       "https://www.github.com/2020summerstartup/social-alarm"
@@ -476,7 +493,11 @@ class ProfileScreen extends Component {
                       "https://www.github.com/2020summerstartup/social-alarm"
                     );
                   }}
-                  containerStyle={profileStyles.listItemContainer}
+                  containerStyle={{
+                    ...profileStyles.listItemContainer,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                    color: theme.APPTEXTBLACK,
+                  }}
                   leftIcon={
                     <BaseIcon
                       containerStyle={{
@@ -497,7 +518,11 @@ class ProfileScreen extends Component {
                       "https://www.github.com/2020summerstartup/social-alarm"
                     );
                   }}
-                  containerStyle={profileStyles.listItemContainer}
+                  containerStyle={{
+                    ...profileStyles.listItemContainer,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                    color: theme.APPTEXTBLACK,
+                  }}
                   leftIcon={
                     <BaseIcon
                       containerStyle={{
@@ -521,7 +546,6 @@ class ProfileScreen extends Component {
                 <Text style={profileStyles.logo}>Sign Out</Text>
               </TouchableOpacity>
             </ScrollView>
-            </View>
           )
         }}
       </NotificationContext.Consumer>

@@ -30,6 +30,7 @@ import {
   APPINPUTVIEW,
 } from "../../style/constants";
 import { appStyles, alarmStyles } from "../../style/stylesheet";
+import { NotificationContext } from "../../contexts/NotificationContext";
 
 export default class Groups extends Component {
   constructor(props) {
@@ -589,24 +590,38 @@ export default class Groups extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <NotificationContext.Consumer>{(notificationContext) => {
+        //const { isDarkMode, toggleTheme } = themeContext;
+
+        const {
+          isDarkMode,
+          light,
+          dark,
+        } = notificationContext;
+
+        const theme = isDarkMode ? dark : light;
+
+        return(
+      
+      
+      <View style={{...styles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
         {/* **************************************** CREATE NEW GROUP MODAL **************************************** */}
         <Modal visible={this.state.createModalOpen} animationType="slide">
           {/* this allows for dismiss keyboard when tapping anywhere functionality */}
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View style={appStyles.modalContainer}>
+            <View style={{...appStyles.modalContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
               {/* close group modal icon */}
               <MaterialIcons
                 name="close"
                 size={24}
-                style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
+                style={{ ...appStyles.modalToggle, ...appStyles.modalClose, color: theme.APPTEXTRED }}
                 onPress={() => this.setState({ createModalOpen: false })}
               />
-              <Text style={styles.logo}>Create Group</Text>
+              <Text style={{...styles.logo, color: theme.APPTEXTRED}}>Create Group</Text>
               {/* text input for create new group */}
-              <View style={appStyles.inputView}>
+              <View style={{...appStyles.inputView, backgroundColor: theme.APPINPUTVIEW}}>
                 <TextInput
-                  style={appStyles.inputText}
+                  style={{...appStyles.inputText}}
                   placeholder="group name..."
                   placeholderTextColor="#003f5c"
                   onChangeText={(text) => {
@@ -616,7 +631,7 @@ export default class Groups extends Component {
               </View>
               {/* create new group button */}
               <TouchableOpacity
-                style={appStyles.loginBtn}
+                style={{...appStyles.loginBtn, backgroundColor: theme.APPTEXTRED}}
                 onPress={() =>
                   this.createGroup(this.state.groupName.trim(), this.user)
                 }
@@ -631,7 +646,7 @@ export default class Groups extends Component {
         <Modal visible={this.state.groupModalOpen} animationType="slide">
           {/* this allows for touch anywhere and keyboard dismisses functionality */}
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View style={appStyles.modalContainer}>
+            <View style={{...appStyles.modalContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
               <View style={styles.buttonContainer}>
                 {/* delete group button */}
                 {this.user.email == this.state.groupAdminClicked && (
@@ -641,7 +656,7 @@ export default class Groups extends Component {
                     style={{
                       ...appStyles.modalToggle,
                       ...appStyles.modalClose,
-                      ...{ justifyContent: "flex-start" },
+                      justifyContent: "flex-start", color: theme.APPTEXTRED,
                     }}
                     color="#333"
                     onPress={() =>
@@ -680,7 +695,7 @@ export default class Groups extends Component {
                   style={{
                     ...appStyles.modalToggle,
                     ...appStyles.modalClose,
-                    ...{ justifyContent: "flex-end" },
+                    justifyContent: "flex-end", color: theme.APPTEXTRED,
                   }}
                   onPress={() => this.setState({ groupModalOpen: false })}
                 />
@@ -690,22 +705,13 @@ export default class Groups extends Component {
               <Text
                 adjustsFontSizeToFit
                 numberOfLines={1}
-                style={{ ...styles.logo, ...{ marginTop: 5 } }}
+                style={{ ...styles.logo, marginTop: 5, color: theme.APPTEXTRED }}
               >
                 {this.state.groupNameClicked}
               </Text>
 
-              {
-                // text that says if someone is the admin
-                /*(this.state.groupAdminClicked == this.user.email) && (
-                <View>
-                  <Text>you are the admin</Text>
-                </View>
-              ) */
-              }
-
               {/* text input to add a group member */}
-              <View style={appStyles.inputView}>
+              <View style={{...appStyles.inputView, backgroundColor: theme.APPINPUTVIEW}}>
                 <TextInput
                   ref={(input) => {
                     this.textInput = input;
@@ -721,21 +727,21 @@ export default class Groups extends Component {
               </View>
               {/* add member button */}
               <TouchableOpacity
-                style={{ ...appStyles.loginBtn, ...{ marginTop: 10 } }}
+                style={{ ...appStyles.loginBtn, marginTop: 10, backgroundColor: theme.APPTEXTRED }}
                 onPress={() =>
                   this.addUser(this.state.addUser.trim(), this.state.groupIdClicked)
                 }
               >
-                <Text style={appStyles.buttonText}> add member</Text>
+                <Text style={{...appStyles.buttonText, color: theme.APPTEXTWHITE}}> add member</Text>
               </TouchableOpacity>
 
               {/* number of members in the group text */}
-              <Text style={styles.wordText}>
+              <Text style={{...styles.wordText, color: theme.APPTEXTBLUE}}>
                 Members: {this.state.groupMembers.length}
               </Text>
 
               {/* text that displays who the admin is */}
-              <Text style={styles.wordText}>
+              <Text style={{...styles.wordText, color: theme.APPTEXTBLUE}}>
                 Admin: {this.state.groupAdminClicked}
               </Text>
               {
@@ -748,15 +754,15 @@ export default class Groups extends Component {
                         return (
                           // "button"  that displays group members
                           <TouchableHighlight
-                            underlayColor={APPINPUTVIEW}
-                            style={styles.alarmBanner}
+                            underlayColor={theme.APPINPUTVIEW}
+                            style={{...styles.alarmBanner, backgroundColor: theme.APPTEXTRED}}
                             key={person}
                           >
                             <Text
                               adjustsFontSizeToFit
                               numberOfLines={1}
                               // allowFontScaling
-                              style={styles.memberText}
+                              style={{...styles.memberText, color: theme.APPTEXTWHITE}}
                             >
                               {person}
                             </Text>
@@ -773,16 +779,16 @@ export default class Groups extends Component {
                 this.user.email == this.state.groupAdminClicked && (
                   <SwipeListView
                     style={{ width: "95%" }}
-                    underlayColor={APPINPUTVIEW}
+                    underlayColor={theme.APPINPUTVIEW}
                     keyExtractor={(item) => item} // specifying id as the key to prevent the key warning
                     data={this.state.groupMembers}
                     renderItem={({ item }) => (
                       // button that contains user's name
-                      <TouchableHighlight style={styles.alarmBanner}>
+                      <TouchableHighlight style={{...styles.alarmBanner, backgroundColor: theme.APPTEXTRED}}>
                         <Text
                           adjustsFontSizeToFit
                           numberOfLines={1}
-                          style={styles.memberText}
+                          style={{...styles.memberText, color: theme.APPTEXTWHITE}}
                         >
                           {item}
                         </Text>
@@ -806,14 +812,14 @@ export default class Groups extends Component {
         {/* **************************************** ACTUAL PAGE ************************************************* */}
 
         <View style={styles.center}>
-          <Text style={styles.logo}>Groups</Text>
+          <Text style={{...styles.logo, color: theme.APPTEXTRED}}>Groups</Text>
         </View>
 
         {/* add new group button */}
         <MaterialIcons
           name="add"
           size={24}
-          style={appStyles.modalToggle}
+          style={{...appStyles.modalToggle, color: theme.APPTEXTRED}}
           onPress={() => this.setState({ createModalOpen: true })}
         />
         {/*
@@ -849,14 +855,14 @@ export default class Groups extends Component {
             // buttons for what groups user is in
             <TouchableHighlight
               // color when clicked
-              underlayColor={APPINPUTVIEW}
-              style={styles.alarmBanner}
+              underlayColor={theme.APPINPUTVIEW}
+              style={{...styles.alarmBanner, backgroundColor: theme.APPTEXTRED}}
               onPress={() => this.groupModal(item.name, item.id)}
             >
               <Text
                 adjustsFontSizeToFit
                 numberOfLines={1}
-                style={styles.alarmText}
+                style={{...styles.alarmText, color: theme.APPTEXTWHITE}}
               >
                 {item.name}
               </Text>
@@ -872,6 +878,7 @@ export default class Groups extends Component {
           onSwipeValueChange={this.onSwipeValueChange}
         />
       </View>
+        )}}</NotificationContext.Consumer>
     );
   }
 }
