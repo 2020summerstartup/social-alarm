@@ -15,9 +15,7 @@ import {
   TouchableHighlight,
 } from "react-native";
 import {
-  Avatar,
   ListItem,
-  ThemeContext,
   withBadge,
 } from "react-native-elements";
 import { auth, db } from "../../firebase/firebase";
