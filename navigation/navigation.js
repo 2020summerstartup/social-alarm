@@ -44,7 +44,7 @@ function MyTabs() {
 
     <NotificationContext.Consumer>{(context) => {
       
-      const {notificationCount, setNotificationCount, isDarkMode, light,dark} = context
+      const {notificationCount, setNotificationCount, isDarkMode, light, dark} = context
 
       const theme = isDarkMode ? dark : light
 
