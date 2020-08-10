@@ -77,7 +77,7 @@ export default class Groups extends Component {
           // modal closes
           this.setState({ createModalOpen: false });
 
-          // add  group to user's doc
+          // add group to user's doc
           db.collection("users")
             .doc(user.email)
             .update({
@@ -473,7 +473,7 @@ export default class Groups extends Component {
     );
   };
 
-  // called when user  presses trash can (from Sidney's code)
+  // called when user presses trash can (from Sidney's code)
   // for indiv group modal
   deleteRowModal = (rowMap, rowKey) => {
     this.closeRow(rowMap, rowKey);
@@ -507,14 +507,9 @@ export default class Groups extends Component {
     }
   };
 
-  // idk what this does - from Sidney's code
+  // idk what this does - from Sidney's code (Sidney here: just good for debugging)
   onRowDidOpen = (rowKey) => {
-    //console.log("This row opened", rowKey);
-  };
-
-  // idk what this does - from Sidney's code
-  onSwipeValueChange = (swipeData) => {
-    const { key, value } = swipeData;
+    console.log("This row opened", rowKey);
   };
 
   // called in componentDidMount
@@ -560,12 +555,13 @@ export default class Groups extends Component {
       .then((doc) => {
         //  if the doc exists
         if (doc.exists) {
-          // get the  groups from the user's doc - store in some state to display
+          // get the groups from the user's doc - store in some state to display
           const groupsData = [];
           for (var i = 0; i < doc.data().groups.length; i++) {
             groupsData.push({
               name: doc.data().groups[i].name,
               id: doc.data().groups[i].id,
+              color: doc.data().groups[i].color
             });
           }
           this.setState({ groups: groupsData });
@@ -850,7 +846,8 @@ export default class Groups extends Component {
             <TouchableHighlight
               // color when clicked
               underlayColor={APPINPUTVIEW}
-              style={styles.alarmBanner}
+              // style={styles.alarmBanner}
+              style={[styles.alarmBanner, {backgroundColor: item.color}]}
               onPress={() => this.groupModal(item.name, item.id)}
             >
               <Text
