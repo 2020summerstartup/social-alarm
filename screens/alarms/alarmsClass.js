@@ -784,9 +784,9 @@ export default class Alarms extends Component {
                 )}
                 renderHiddenItem={renderHiddenItem}
                 leftOpenValue={85}
-                rightOpenValue={-160}
-                previewRowKey={'1'}
-                previewOpenValue={-50}
+                rightOpenValue={-145}
+                previewRowKey={"1"}
+                previewOpenValue={85}
                 previewOpenDelay={500}
                 onRowDidOpen={onRowDidOpen}
                 onSwipeValueChange={onSwipeValueChange}
@@ -1362,7 +1362,7 @@ const styles = StyleSheet.create({
     top: 0,
     width: 90,
     backgroundColor: '#56D945',
-    left: 25,
+    left: 20,
     marginTop: 0,
     marginBottom: 10,
     paddingTop: 0,
