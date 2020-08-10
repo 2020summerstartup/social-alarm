@@ -1,11 +1,10 @@
 # Alarmium
 
-#### A team of three students, Anna Singer, Sidney Taylor and Shifa Somji, from Harvey Mudd College co-founded Alarmium in June 2020, aiming to connect friends and family with group alarms. 
+```
+A team of three students, Anna Singer, Sidney Taylor and Shifa Somji, from Harvey Mudd College co-founded Alarmium in June 2020, aiming to connect friends and family with group alarms. 
 
-#### Set alarms and share them with a group to remind others of an event!
-
-![alt text](https://github.com/2020summerstartup/social-alarm/blob/shifa/assets/alarmpage.png?raw=true)
-
+Set alarms and share them with a group to remind others of an event!
+```
 
 ## Install
 ```
