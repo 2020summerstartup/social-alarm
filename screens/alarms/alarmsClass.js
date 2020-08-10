@@ -12,26 +12,18 @@ import * as Permissions from 'expo-permissions';
 import { MaterialIcons } from "@expo/vector-icons";
 
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
-import { APPBACKGROUNDCOLOR, APPTEXTBLUE, APPTEXTRED } from '../../style/constants';
+import { APPBACKGROUNDCOLOR, APPTEXTBLUE, APPTEXTRED, APPINPUTVIEW } from '../../style/constants';
 import { appStyles } from '../../style/stylesheet';
 import DatePicker from 'react-native-datepicker';
 import RNPickerSelect from 'react-native-picker-select';
 
-
-//import getStyleSheet from '../../style/theme';
-
 import Firebase from "../../firebase/firebase";
 
 import { db, auth } from "../../firebase/firebase";
+import { NotificationContext } from '../../contexts/NotificationContext';
 
 const moment = require("moment");
 
-// TopBanner formats the title and modal button along the top of the screen
-function TopBanner({ children }){
-  return(
-    <View style = {styles.topBanner}>{children}</View>
-  )
-};
 
 // An AlarmBanner is one alarm displayed in the list of alarms
 function AlarmBanner({ children, color }){
@@ -104,6 +96,10 @@ export default class Alarms extends Component {
             listOfKeys: [],
         }
     }
+
+    static contextType = NotificationContext;
+
+    
 
     // Updates the local alarms array with user's unique alarms that are stored in the user's doc in Firebase
     getFirebaseUsersAlarmsFromUsersDoc(){
@@ -492,6 +488,7 @@ export default class Alarms extends Component {
   
       // Updates state with which row(alarm) was pressed and opened
       onRowDidOpen = async(rowKey) => {
+        
         // console.log('This row opened rowKey', rowKey);
         const prevIndex = props.alarms.findIndex(item => item.key === rowKey);
         // console.log('This row opened prevIndex', prevIndex);
@@ -711,27 +708,36 @@ export default class Alarms extends Component {
     };
 
     render(){
+      const { isDarkMode, light, dark } = this.context
+      const theme =  isDarkMode ? dark : light; 
+
+      // TopBanner formats the title and modal button along the top of the screen
+function TopBanner({ children }){
+  return(
+    <View style = {{...styles.topBanner, backgroundColor: theme.APPBACKGROUNDCOLOR}}>{children}</View>
+  )
+};
       return(
-        <View style={styles.container}>
+        <View style={{...styles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
           <TopBanner>
-              <Text style={styles.pageTitle}>Alarms</Text>
+              <Text style={{...styles.pageTitle, color: theme.APPTEXTRED}}>Alarms</Text>
 
               {/*BEGINNING OF MODAL FOR ADD ALARM */}
               <MaterialIcons
                   name="add"
                   size={24}
-                  style={appStyles.modalToggle}
+                  style={{...appStyles.modalToggle, color: theme.APPTEXTRED}}
                   onPress={() => this.setState({ newAlarmModalOpen: true })}
               />
               <Modal visible={this.state.newAlarmModalOpen} animationType="slide">
-              <View style={appStyles.modalContainer}>
+              <View style={{...appStyles.modalContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
                   <MaterialIcons
                   name="close"
                   size={24}
-                  style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
+                  style={{ ...appStyles.modalToggle, ...appStyles.modalClose, color: theme.APPTEXTRED }}
                   onPress={() => this.setState({ newAlarmModalOpen: false })}
                   />
-                  <Text style={appStyles.logo}> Set a new alarm </Text>
+                  <Text style={{...appStyles.logo, color: theme.APPTEXTRED}}> Set a new alarm </Text>
 
                     <DatePicker
                       style={{height: 75, width: 200, color: "black"}}
@@ -756,11 +762,11 @@ export default class Alarms extends Component {
                       // }}
                     />
 
-                  <View style={styles.inputView}>
+                  <View style={{...styles.inputView, backgroundColor: APPINPUTVIEW}}>
                     <TextInput
                       style={styles.inputText}
                       placeholder="Alarm title..."
-                      placeholderTextColor="#003f5c"
+                      placeholderTextColor={APPTEXTBLUE}
                       onChangeText={(text) => this.setState({newAlarmText: text})}
                     />
                   </View>
@@ -802,7 +808,7 @@ export default class Alarms extends Component {
 
           </TopBanner>
         
-          <View style={styles.scrollViewContainer}>
+          <View style={{...styles.scrollViewContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
               {/* Useful print statements on screen for debugging */}
               {/* <Text>Your expo push token: {expoPushToken}</Text>
               <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -825,14 +831,14 @@ export default class Alarms extends Component {
 
           {/* BEGINNING OF MODAL FOR GROUP PICKER */}
           <Modal visible={this.state.groupPickerModalOpen} animationType="slide">
-          <View style={appStyles.modalContainer}>
+          <View style={{...appStyles.modalContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
               <MaterialIcons
               name="close"
               size={24}
-              style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
+              style={{ ...appStyles.modalToggle, ...appStyles.modalClose, color:  theme.APPTEXTRED }}
               onPress={() => this.setState({ groupPickerModalOpen: false })}
               />
-              <Text style={appStyles.logo}> Select a group </Text>
+              <Text style={{...appStyles.logo, color: theme.APPTEXTRED}}> Select a group </Text>
 
               {/* https://github.com/lawnstarter/react-native-picker-select */} 
               <RNPickerSelect
@@ -845,14 +851,14 @@ export default class Alarms extends Component {
                   { fontWeight: 'normal',
                     color: 'red',
                     placeholder: {
-                      color: "#fb5b5a",
+                      color: theme.APPTEXTRED,
                       fontSize: 20,
                       alignSelf: 'center',
                       alignItems: 'center',
                       justifyContent: 'center',
                     },
                     inputIOS: {
-                      color: APPTEXTBLUE,
+                      color: theme.APPTEXTBLUE,
                       fontSize: 20,
                       alignSelf: 'center',
                       alignItems: 'center',
@@ -867,7 +873,7 @@ export default class Alarms extends Component {
               <Text></Text>
 
               <TouchableOpacity
-                style={{ ...appStyles.loginBtn, ...{ marginTop: 10 } }}
+                style={{ ...appStyles.loginBtn, marginTop: 10, backgroundColor: theme.APPTEXTRED }}
                 onPress={async() =>
                   this.updateFirebaseGroupsDoc()
                 }
