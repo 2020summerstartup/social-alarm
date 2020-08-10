@@ -11,16 +11,18 @@ class NotificationContextProvider extends Component {
       APPTEXTBLUE: "#003f5c", // blue color, this color looks like black for most text so think about changing it
       APPTEXTRED: "#fb5b5a", // pink/redish color, button color
       APPTEXTWHITE: "white", // white, color for some text
-      APPINPUTVIEW: "#465881", // bluish color for text inputs
+      APPINPUTVIEW: "white", // bluish color for text inputs  // "#465881"
       APPTEXTBLACK: "black",
+      APPBUTTONPRESS: "#465881",
     },
     dark: {
       APPBACKGROUNDCOLOR: "black",
       APPTEXTBLUE: "#fb5b5a", // blue color, this color looks like black for most text so think about changing it
       APPTEXTRED: "#003f5c", // pink/redish color, button color
       APPTEXTWHITE: "black", // white, color for some text
-      APPINPUTVIEW: "#465881", // bluish color for text inputs
+      APPINPUTVIEW: "white", // bluish color for text inputs
       APPTEXTBLACK: "white",
+      APPBUTTONPRESS: "#465881",
     },
   };
 

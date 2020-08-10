@@ -13,7 +13,7 @@ import {
   Keyboard,
 } from "react-native";
 import { auth } from "../../firebase/firebase";
-import {appStyles} from '../../style/stylesheet';
+import { appStyles } from "../../style/stylesheet";
 import { NotificationContext } from "../../contexts/NotificationContext";
 
 /* login.js
@@ -51,65 +51,92 @@ export default function Login({ navigation }) {
   };
 
   return (
-    <NotificationContext.Consumer>{(context) => {
+    <NotificationContext.Consumer>
+      {(context) => {
+        const { isDarkMode, light, dark } = context;
 
-      const {
-        isDarkMode,
-        light,
-        dark,
-      } = context;
+        const theme = isDarkMode ? dark : light;
 
-      const theme = isDarkMode ? dark : light;
+        return (
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View
+              style={{
+                ...appStyles.loginContainer,
+                backgroundColor: theme.APPBACKGROUNDCOLOR,
+              }}
+            >
+              <Text style={{ ...appStyles.logo, color: theme.APPTEXTRED }}>
+                Group Alarm
+              </Text>
+              {/* text input fields (email, password) */}
+              <View
+                style={{
+                  ...appStyles.inputView,
+                  backgroundColor: theme.APPINPUTVIEW,
+                }}
+              >
+                <TextInput
+                  style={appStyles.inputText}
+                  placeholder="Email..."
+                  placeholderTextColor="#003f5c"
+                  keyboardType="email-address"
+                  onChangeText={(text) => {
+                    setEmail(text);
+                  }}
+                />
+              </View>
 
-      return(
+              <View
+                style={{
+                  ...appStyles.inputView,
+                  backgroundColor: theme.APPINPUTVIEW,
+                }}
+              >
+                <TextInput
+                  secureTextEntry
+                  style={appStyles.inputText}
+                  placeholder="Password..."
+                  placeholderTextColor="#003f5c"
+                  onChangeText={(text) => setPassword(text)}
+                />
+              </View>
 
-    
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={{...appStyles.loginContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
-        <Text style={{...appStyles.logo, color: theme.APPTEXTRED}}>Group Alarm</Text>
-        {/* text input fields (email, password) */}
-        <View style={{...appStyles.inputView, backgroundColor: theme.APPINPUTVIEW}}>
-          <TextInput
-            style={appStyles.inputText}
-            placeholder="Email..."
-            placeholderTextColor="#003f5c"
-            keyboardType="email-address"
-            onChangeText={(text) => {
-              setEmail(text);
-            }}
-          />
-        </View>
+              {/* forgot password button */}
+              <TouchableOpacity
+                onPress={() => navigation.navigate("ForgotPassword")}
+              >
+                <Text style={{ ...appStyles.forgot, color: theme.APPTEXTBLUE }}>
+                  Forgot Password?
+                </Text>
+              </TouchableOpacity>
 
-        <View style={{...appStyles.inputView, backgroundColor: theme.APPINPUTVIEW}}>
-          <TextInput
-            secureTextEntry
-            style={appStyles.inputText}
-            placeholder="Password..."
-            placeholderTextColor="#003f5c"
-            onChangeText={(text) => setPassword(text)}
-          />
-        </View>
+              {/* login button */}
+              <TouchableOpacity
+                style={{
+                  ...appStyles.loginBtn,
+                  backgroundColor: theme.APPTEXTRED,
+                }}
+                onPress={() => this.loginUser(email.trim(), password)}
+              >
+                <Text
+                  style={{ ...appStyles.loginText, color: theme.APPTEXTBLUE }}
+                >
+                  LOGIN
+                </Text>
+              </TouchableOpacity>
 
-        {/* forgot password button */}
-        <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
-          <Text style={{...appStyles.forgot, color: theme.APPTEXTBLUE}}>Forgot Password?</Text>
-        </TouchableOpacity>
-
-        {/* login button */}
-        <TouchableOpacity
-          style={{...appStyles.loginBtn, backgroundColor: theme.APPTEXTRED}}
-          onPress={() => this.loginUser(email.trim(), password)}
-        >
-          <Text style={{...appStyles.loginText, color: theme.APPTEXTBLUE}}>LOGIN</Text>
-        </TouchableOpacity>
-
-        {/* signup button */}
-        <TouchableOpacity onPress={() => this.signUpUser()}>
-          <Text style={{...appStyles.loginText, color: theme.APPTEXTBLUE}}>Signup</Text>
-        </TouchableOpacity>
-      </View>
-    </TouchableWithoutFeedback>
-      )}}</NotificationContext.Consumer>
+              {/* signup button */}
+              <TouchableOpacity onPress={() => this.signUpUser()}>
+                <Text
+                  style={{ ...appStyles.loginText, color: theme.APPTEXTBLUE }}
+                >
+                  Signup
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableWithoutFeedback>
+        );
+      }}
+    </NotificationContext.Consumer>
   );
 }
-
