@@ -15,6 +15,7 @@ import SwitchExample, {switchValue} from '../../components/toggleSwitch';
 import { APPBACKGROUNDCOLOR } from '../../style/constants';
 import { appStyles } from '../../style/stylesheet';
 import DatePicker from 'react-native-datepicker';
+// import DatePicker from 'react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 
 //import getStyleSheet from '../../style/theme';
