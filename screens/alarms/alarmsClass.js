@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, Modal, AsyncStorage, Animated, Image, TouchableHighlight } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import Chevron from './downChevron';
+import Chevron from '../../components/downChevron';
 
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
@@ -921,14 +921,14 @@ export default class Alarms extends Component {
     /*Runs when page refreshes: Initialization*/
     componentDidMount(){
       this.isComponentMounted = true;
-      console.log("this.isComponentMounted componentDidMount")
+      // console.log("this.isComponentMounted componentDidMount")
       this.componentDidMountHelper();
     }
 
     /*Async function called by componentDidMount */
     componentDidMountHelper = async () => {
         if(this.isComponentMounted){
-        console.log("this.isComponentMounted componentDidMountHelper")
+        // console.log("this.isComponentMounted componentDidMountHelper")
 
         // Removes all alarms
         this.removeAllAlarms();

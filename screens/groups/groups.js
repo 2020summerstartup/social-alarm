@@ -22,12 +22,18 @@ import { db, auth } from "../../firebase/firebase";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 
+import RNPickerSelect from 'react-native-picker-select';
+import Chevron from '../../components/downChevron';
+
 import {
   APPBACKGROUNDCOLOR,
   APPTEXTRED,
   APPTEXTWHITE,
   APPTEXTBLUE,
   APPINPUTVIEW,
+  ALARMCOLORMINT,
+  ALARMCOLORMAROON,
+  ALARMCOLORPINK
 } from "../../style/constants";
 import { appStyles, alarmStyles } from "../../style/stylesheet";
 
@@ -52,6 +58,8 @@ export default class Groups extends Component {
       groupMembers: [],
       // the text input in add user field of group specific modal
       addUser: "",
+      // color for the group's alarms
+      groupAlarmColor: ""
     };
   }
 
@@ -106,11 +114,12 @@ export default class Groups extends Component {
 
   // called when user presses one of the group buttons
   // opens group modal and sets it all  up
-  groupModal = (groupName, groupId) => {
+  groupModal = (groupName, groupId, groupColor) => {
     // opens modal, stores some info in some state
     this.setState({ groupModalOpen: true });
     this.setState({ groupNameClicked: groupName });
     this.setState({ groupIdClicked: groupId });
+    this.setState({ groupAlarmColor: groupColor});
 
     // groupId  should alway be a string
     if (typeof groupId == "string") {
@@ -583,6 +592,37 @@ export default class Groups extends Component {
       });
   }
 
+  // Called from RNPickerSelect in GroupModal
+  // Updates the group color in user's doc in Firebase
+  updateGroupColor(value){
+    console.log("updateGroupColor(" + value + ")")
+
+    // Update user's doc in Firebase
+    // Step 1: Remove old data from groups array
+    db.collection("users")
+        .doc(auth.currentUser.email)
+        .update({
+          groups: Firebase.firestore.FieldValue.arrayRemove({
+            color: this.state.groupAlarmColor, 
+            id: this.state.groupIdClicked,
+            name: this.state.groupNameClicked
+          }),
+      });
+
+    // Step 2: Add updated data back to groups array
+    db.collection("users")
+      .doc(this.user.email)
+      .update({
+        groups: Firebase.firestore.FieldValue.arrayUnion({
+          color: value, 
+          id: this.state.groupIdClicked,
+          name: this.state.groupNameClicked
+        })
+      });
+
+    this.setState({groupAlarmColor: value})
+  }
+  
   render() {
     return (
       <View style={styles.container}>
@@ -700,6 +740,38 @@ export default class Groups extends Component {
               ) */
               }
 
+              {/* Pick color for group */}
+              <RNPickerSelect
+                onValueChange={(value) => this.updateGroupColor(value)}
+                items={[
+                  {label: "Mint", value: ALARMCOLORMINT, color: ALARMCOLORMINT},
+                  {label: "Maroon", value: ALARMCOLORMAROON, color: ALARMCOLORMAROON},
+                  {label: "Pink", value: ALARMCOLORPINK, color: ALARMCOLORPINK},
+                ]}
+                // Object to overide the default text placeholder for the PickerSelect
+                placeholder={{label: "Select a group color", value: "0"}}
+                style={
+                  { placeholder: {
+                      color: APPTEXTRED,
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    },
+                    inputIOS: {
+                      color: APPTEXTBLUE,
+                      fontSize: 20,
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }
+                  }
+                }
+                doneText={"Select"}
+                Icon={() => {return <Chevron size={1.5} color="gray" />;}}
+              />
+
               {/* text input to add a group member */}
               <View style={appStyles.inputView}>
                 <TextInput
@@ -715,6 +787,7 @@ export default class Groups extends Component {
                   }}
                 />
               </View>
+
               {/* add member button */}
               <TouchableOpacity
                 style={{ ...appStyles.loginBtn, ...{ marginTop: 10 } }}
@@ -795,6 +868,7 @@ export default class Groups extends Component {
                   />
                 )
               }
+
             </View>
           </TouchableWithoutFeedback>
         </Modal>
@@ -822,7 +896,7 @@ export default class Groups extends Component {
                 <TouchableOpacity
                   style={styles.alarmBanner}
                   key={group.id}
-                  onPress={() => this.groupModal(group.name, group.id)}
+                  onPress={() => this.groupModal(group.name, group.id, group.color)}
                 >
                   <Text
                     adjustsFontSizeToFit
@@ -848,7 +922,7 @@ export default class Groups extends Component {
               underlayColor={APPINPUTVIEW}
               // style={styles.alarmBanner}
               style={[styles.alarmBanner, {backgroundColor: item.color}]}
-              onPress={() => this.groupModal(item.name, item.id)}
+              onPress={() => this.groupModal(item.name, item.id, item.color)}
             >
               <Text
                 adjustsFontSizeToFit
