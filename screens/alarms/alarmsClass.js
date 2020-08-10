@@ -164,21 +164,32 @@ export default class Alarms extends Component {
 
           // Loops through all the documents corresponding to the user's groups and adds the alarms to state
           for (var i = 0; i < groupsData.length; i++){
+            let groupAlarmColor = groupsData[i].color;
             db.collection("groups")
             .doc(groupsData[i].id)
             .get()
             .then((doc) => {
               if (doc.exists) {
+                
                 // get the groups from the user's doc - store in some state to display
                 const alarmsData = [];
-                for (var i = 0; i < doc.data().alarms.length; i++) {
+                for (var j = 0; j < doc.data().alarms.length; j++) {
+
+                  // get the color that the group alarm should display with
+                  // var keySplitArray = doc.data().alarms[j].key.split(":");
+                  // console.log("groupsData[i].id", groupsData[i].id)
+                  // if (groupsData[i].id == keySplitArray[0]){
+                  //   var groupAlarmColor = groupsData[i].color;
+                  //   console.log("groupAlarmColor", groupAlarmColor)
+                  // }
                   alarmsData.push({
-                    alarm_hour: doc.data().alarms[i].alarm_hour,
-                    alarm_minute: doc.data().alarms[i].alarm_minute,
-                    key: doc.data().alarms[i].key,
-                    name: doc.data().alarms[i].name,
-                    switch: doc.data().alarms[i].switch,
-                    color: doc.data().alarms[i].color
+                    alarm_hour: doc.data().alarms[j].alarm_hour,
+                    alarm_minute: doc.data().alarms[j].alarm_minute,
+                    key: doc.data().alarms[j].key,
+                    name: doc.data().alarms[j].name,
+                    switch: doc.data().alarms[j].switch,
+                    // color: doc.data().alarms[j].color, 
+                    color: groupAlarmColor
                   });
                 }
                 alarmList = this.state.alarms;
@@ -341,16 +352,10 @@ export default class Alarms extends Component {
 
       // determine the color from the group
       for (var i = 0; i < this.state.groupsArray.length; i++){
-        console.log("this.state.groupsArray.length", this.state.groupsArray.length)
-        console.log("this.state.groupsArray[i].id", this.state.groupsArray[i].id)
-        console.log("this.state.groupIdClicked", this.state.groupIdClicked)
         if (this.state.groupsArray[i].id == this.state.groupIdClicked){
-          console.log("this.state.groupsArray[i].color", this.state.groupsArray[i].color)
           var groupAlarmColor = this.state.groupsArray[i].color
         }
       }
-
-      console.log("groupAlarmColor", groupAlarmColor)
 
       // add new alarm to local state alarm array
       this.state.alarms.push(
