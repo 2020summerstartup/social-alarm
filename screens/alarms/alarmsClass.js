@@ -1,4 +1,4 @@
-// This is the most updated alarms page file as of 8/7/20
+// This is the most updated alarms page file as of 8/10/20
 
 // Import statements
 import React, { Component } from 'react';
@@ -109,7 +109,6 @@ export default class Alarms extends Component {
             openRow: 0,
             currentMaxKey: 0,
             listOfKeys: [],
-            mounted: false,
         }
     }
 
@@ -157,6 +156,8 @@ export default class Alarms extends Component {
               id: doc.data().groups[i].id,
               color: doc.data().groups[i].color,
               key: i,
+              label: String(i),
+              value: String(i)
             });
           }
           // Update the state with the user's groups
@@ -764,7 +765,7 @@ export default class Alarms extends Component {
           {/* Renders the alarm banners as swipable components */}
           <SwipeListView
                 // These are all specified by SwipeListView
-                keyExtractor ={(item) => item.id} // specifying id as the key to prevent the key warning
+                keyExtractor ={(item) => String(item.key)} // specifying id as the key to prevent the key warning
                 data = {props.alarms}
                 renderItem={({ item }) => (
                   <View>
@@ -905,17 +906,15 @@ export default class Alarms extends Component {
 
     /*Runs when page refreshes: Initialization*/
     componentDidMount(){
-      // this.setState( {mounted: true} );
       this.isComponentMounted = true;
-      console.log("componentDidMount")
+      console.log("this.isComponentMounted componentDidMount")
       this.componentDidMountHelper();
     }
 
     /*Async function called by componentDidMount */
     componentDidMountHelper = async () => {
-      // if(this.state.mounted){
         if(this.isComponentMounted){
-        console.log("this.mounted componentDidMountHelper")
+        console.log("this.isComponentMounted componentDidMountHelper")
 
         // Removes all alarms
         this.removeAllAlarms();
@@ -945,21 +944,18 @@ export default class Alarms extends Component {
         };
       }
       else{
-        console.log("this.mounted componentDidMountHelper")
+        console.log("this.isComponentMounted == false in componentDidMountHelper")
         return;
       }
     };
 
     componentWillUnmount(){
       console.log("componentWillUnmount")
-      // this.setState( {mounted: false} );
       this.isComponentMounted = false;
     }
 
       /* MODAL FOR EDIT ALARM */
     editAlarmModal(){
-      // console.log("this.state.editAlarmModalOpen", this.state.editAlarmModalOpen)
-      // console.log("props.editAlarmModalOpen", props.editAlarmModalOpen)
       return(
         <Modal visible={this.state.editAlarmModalOpen} animationType="slide">
         <View style={appStyles.modalContainer}>
@@ -1045,17 +1041,6 @@ export default class Alarms extends Component {
                       showIcon={false}
                       minuteInterval={1}
                       onDateChange={(time) => this.setState({ newAlarmTime: time })}
-                      // customStyles={{
-                      //   // dateInput:{
-                      //   //   color: "black"
-                      //   // },
-                      //   btnTextConfirm:{
-                      //     color: "lightgreen"
-                      //   },
-                      //   btnCancel:{
-                      //     color: "red"
-                      //   }
-                      // }}
                     />
 
                   <View style={styles.inputView}>
@@ -1143,7 +1128,7 @@ export default class Alarms extends Component {
                 items={this.state.groupsArray}
 
                 // Object to overide the default text placeholder for the PickerSelect
-                placeholder={{"label": "Click here to select a group", value: "0"}}
+                placeholder={{label: "Click here to select a group", value: "0"}}
                 style={
                   { fontWeight: 'normal',
                     color: 'red',
@@ -1177,70 +1162,12 @@ export default class Alarms extends Component {
 
               </View>
           </Modal>
-          {/*END OF MODAL FOR GROUP PICKER */}
+          {/* END OF MODAL FOR GROUP PICKER */}
 
 
+          {/* BEGINNING OF EDIT ALARM MODAL */}
           <this.editAlarmModal/>
-
-          {/* BEGINNING OF MODAL FOR EDIT ALARM */}
-          {/* <Modal visible={this.state.editAlarmModalOpen} animationType="slide">
-          <View style={appStyles.modalContainer}>
-              <MaterialIcons
-              name="close"
-              size={24}
-              style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
-              onPress={() => this.setState({ editAlarmModalOpen: false })}
-              />
-              <Text style={styles.pageTitle}> Edit Alarm </Text> */}
-
-              {/* <Text> this.state.alarms[this.state.openRow]: {this.state.alarms[0].name} </Text> */}
-              {/* <Text> this.state.openRow: {this.state.openRow} </Text> */}
-              {/* <Text> TIME: {String((this.state.alarms[this.state.openRow].alarm_hour) + ":" + (this.state.alarms[this.state.openRow].alarm_minute))} </Text> */}
-
-              {/* {console.log("this.state.alarms", this.state.alarms)} */}
-              {/* {console.log("this.state.openRow", this.state.openRow)}
-              {console.log("TIME:", String((this.state.alarms[this.state.openRow].alarm_hour) + ":" + (this.state.alarms[this.state.openRow].alarm_minute)))} */}
-
-              {/* <DatePicker
-                style={{height: 75, width: 200, color: "black"}}
-                // date= {String((this.state.alarms[this.state.openRow].alarm_hour) + ":" + (this.state.alarms[this.state.openRow].alarm_minute))} // Starts timepicker at current time (except always AM?)
-                date= {"20:00"} // Starts timepicker at current time (except always AM?)
-                mode="time"
-                format="HH:mm"
-                confirmBtnText="Confirm"
-                cancelBtnText="Cancel"
-                showIcon={false}
-                minuteInterval={1}
-                onDateChange={(time) => this.setState({ newAlarmTime: time })}
-              /> */}
-
-              {/* <View style={styles.inputView}>
-                <TextInput
-                  style={styles.inputText}
-                  placeholder="Alarm title..."
-                  placeholderTextColor="#003f5c"
-                  onChangeText={(text) => this.setState({newAlarmText: text})}
-                />
-              </View> */}
-
-              {/* <Button
-                title="Split the time"
-                onPress={ async() =>
-                  this.splitTime()
-                }
-              /> */}
-
-              {/* <Button
-                title="Update Alarm"
-                color="lightgreen"
-                onPress={ async() =>
-                  this.updateFirebaseAfterPlusGroup()
-                }
-              /> */}
-
-              {/* </View> */}
-          {/* </Modal> */}
-          {/*END OF MODAL FOR EDIT ALARM */}
+          {/* END OF EDIT ALARM MODAL */}
 
         </View>
       );
