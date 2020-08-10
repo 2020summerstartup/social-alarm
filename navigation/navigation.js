@@ -7,7 +7,6 @@ import ProfileScreen from "../screens/profile/profile";
 import { NavigationContainer } from "@react-navigation/native";
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../style/constants';
 
-
 /* navigation.js
  * bottom tab navigator for signed in user
  * contains: alarms, groups and profile
@@ -39,6 +38,7 @@ function MyTabs() {
         inactiveBackgroundColor: APPBACKGROUNDCOLOR,
       }}
     >
+      {/* Screen for alarms page */}
       <Tab.Screen
         name="Alarms"
         component={AlarmScreen}
@@ -53,6 +53,7 @@ function MyTabs() {
           ),
         }}
       />
+      {/* Screen for groups page */}
       <Tab.Screen
         name="Groups"
         component={GroupScreen}
@@ -61,23 +62,9 @@ function MyTabs() {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account-group" color={color} size={size} /> // Default color and size: white and 20
           ),
-          //tabBarVisible: false,
         }}
       />
-      {/*<Tab.Screen
-        name="Stopwatch"
-        component={StopwatchScreen}
-        options={{
-          tabBarLabel: "Stopwatch",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="clock-fast"
-              color={color}
-              size={size}
-            />
-          ),
-        }}
-      />*/}
+      {/* Screen for profile page */}
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
