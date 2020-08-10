@@ -30,9 +30,6 @@ class NotificationContextProvider extends Component {
 
   toggleTheme = () => {
     this.setState({ isDarkMode: !this.state.isDarkMode });
-    if(this.state.background == "white") {
-        this.setState({background: "black"})
-    }
   };
 
   render() {
