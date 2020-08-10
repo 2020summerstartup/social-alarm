@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { auth } from "../../firebase/firebase";
 import {appStyles} from '../../style/stylesheet';
+import { NotificationContext } from "../../contexts/NotificationContext";
 
 /* login.js
  * Login screen
@@ -50,11 +51,24 @@ export default function Login({ navigation }) {
   };
 
   return (
+    <NotificationContext.Consumer>{(context) => {
+
+      const {
+        isDarkMode,
+        light,
+        dark,
+      } = context;
+
+      const theme = isDarkMode ? dark : light;
+
+      return(
+
+    
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={appStyles.loginContainer}>
-        <Text style={appStyles.logo}>Group Alarm</Text>
+      <View style={{...appStyles.loginContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
+        <Text style={{...appStyles.logo, color: theme.APPTEXTRED}}>Group Alarm</Text>
         {/* text input fields (email, password) */}
-        <View style={appStyles.inputView}>
+        <View style={{...appStyles.inputView, backgroundColor: theme.APPINPUTVIEW}}>
           <TextInput
             style={appStyles.inputText}
             placeholder="Email..."
@@ -66,7 +80,7 @@ export default function Login({ navigation }) {
           />
         </View>
 
-        <View style={appStyles.inputView}>
+        <View style={{...appStyles.inputView, backgroundColor: theme.APPINPUTVIEW}}>
           <TextInput
             secureTextEntry
             style={appStyles.inputText}
@@ -78,23 +92,24 @@ export default function Login({ navigation }) {
 
         {/* forgot password button */}
         <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
-          <Text style={appStyles.forgot}>Forgot Password?</Text>
+          <Text style={{...appStyles.forgot, color: theme.APPTEXTBLUE}}>Forgot Password?</Text>
         </TouchableOpacity>
 
         {/* login button */}
         <TouchableOpacity
-          style={appStyles.loginBtn}
+          style={{...appStyles.loginBtn, backgroundColor: theme.APPTEXTRED}}
           onPress={() => this.loginUser(email.trim(), password)}
         >
-          <Text style={appStyles.loginText}>LOGIN</Text>
+          <Text style={{...appStyles.loginText, color: theme.APPTEXTBLUE}}>LOGIN</Text>
         </TouchableOpacity>
 
         {/* signup button */}
         <TouchableOpacity onPress={() => this.signUpUser()}>
-          <Text style={appStyles.loginText}>Signup</Text>
+          <Text style={{...appStyles.loginText, color: theme.APPTEXTBLUE}}>Signup</Text>
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
+      )}}</NotificationContext.Consumer>
   );
 }
 
