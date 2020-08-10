@@ -369,7 +369,7 @@ class ProfileScreen extends Component {
                   leftIcon={
                     <BaseIcon
                       containerStyle={{
-                        backgroundColor: "#FFADF2",
+                        backgroundColor: "#A4C8F0",
                       }}
                       icon={{
                         type: "ionicon",
@@ -467,7 +467,7 @@ class ProfileScreen extends Component {
                   }} // we can change this later
                   leftIcon={
                     <BaseIcon
-                      containerStyle={{ backgroundColor: "#A4C8F0" }}
+                      containerStyle={{ backgroundColor: "#FFADF2" }}
                       icon={{
                         type: "ionicon",
                         name: "md-information-circle",
