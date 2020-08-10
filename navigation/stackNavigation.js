@@ -26,19 +26,20 @@ const HomeStack = createStackNavigator(
     Login: {
       screen: Login,
       navigationOptions: {
-        title: "Login",
+        title: "",
       },
     },
     SignUp: {
       screen: SignUp,
       navigationOptions: {
-        title: "Sign Up",
+        title: "",
+
       },
     },
     ForgotPassword: {
       screen: ForgotPassword,
       navigationOptions: {
-        title: "Forgot Password",
+        title: "",
       },
     },
   },
@@ -46,6 +47,7 @@ const HomeStack = createStackNavigator(
     defaultNavigationOptions: {
       headerStyle: { backgroundColor: APPBACKGROUNDCOLOR, height: 60 },
       headerTintColor: APPTEXTRED,
+      headerTransparent: true,
     },
   }
 );
