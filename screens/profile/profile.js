@@ -66,7 +66,6 @@ const BirthdayPicker = () => {
   // TO DO: replace the "select birthday" button title with the date
   const handleConfirm = (date) => {
     hideDatePicker();
-    // console.log(date.toString());
   };
 
   return (
@@ -321,12 +320,10 @@ class ProfileScreen extends Component {
                   onPress={() => openNotifications()}
                   leftIcon={
                     <BaseIcon
-                      // probably want to change the color
-                      containerStyle={{ backgroundColor: "#A4C8F0" }}
+                      containerStyle={{ backgroundColor: APPTEXTRED }}
                       icon={{
                         type: "ionicon",
-                        //TODO: FIX THIS
-                        name: "ios-moon",
+                        name: "ios-notifications",
                       }}
                     />
                   }
@@ -344,12 +341,10 @@ class ProfileScreen extends Component {
                     onPress={() => openNotifications()}
                     leftIcon={
                       <BadgedIcon
-                        // probably want to change the color
-                        containerStyle={{ backgroundColor: "#A4C8F0" }}
+                        containerStyle={{ backgroundColor: APPTEXTRED }}
                         icon={{
                           type: "ionicon",
-                          //TODO: FIX THIS
-                          name: "ios-moon",
+                          name: "ios-notifications",
                         }}
                       />
                     }
