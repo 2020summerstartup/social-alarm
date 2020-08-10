@@ -179,8 +179,6 @@ class ProfileScreen extends Component {
           changeTheme = async () => {
             AsyncStorage.setItem("theme", isDarkMode ? "light" : "dark");
             await toggleTheme();
-            
-            
           };
 
           const BadgedIcon = withBadge(notificationCount)(BaseIcon);
@@ -196,12 +194,12 @@ class ProfileScreen extends Component {
               {/* this part shows the user's name and email */}
               <View style={profileStyles.userRow}>
                 <View>
-                  <Text style={{ fontSize: 30, color: theme.APPTEXTBLUE }}>
+                  <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK }}>
                     {this.state.name}
                   </Text>
                   <Text
                     style={{
-                      color: theme.APPTEXTBLUE,
+                      color: theme.APPTEXTBLACK,
                       fontSize: 25,
                     }}
                   >

@@ -788,14 +788,14 @@ export default class Groups extends Component {
 
                     {/* number of members in the group text */}
                     <Text
-                      style={{ ...styles.wordText, color: theme.APPTEXTBLUE }}
+                      style={{ ...styles.wordText, color: theme.APPTEXTBLACK }}
                     >
                       Members: {this.state.groupMembers.length}
                     </Text>
 
                     {/* text that displays who the admin is */}
                     <Text
-                      style={{ ...styles.wordText, color: theme.APPTEXTBLUE }}
+                      style={{ ...styles.wordText, color: theme.APPTEXTBLACK }}
                     >
                       Admin: {this.state.groupAdminClicked}
                     </Text>
