@@ -9,8 +9,10 @@ import Landing from "../screens/landing/landingCarousel";
 
 /* stackNavigation.js
  * stack navigator for not signed in user
- * contains: login, sign up, forgot password
+ * contains: login, sign up, forgot password, landing
  * login is main page, has buttons that go to sign up and forgot password
+ *
+ * landing is default page
  *
  */
 
@@ -20,8 +22,8 @@ const HomeStack = createStackNavigator(
       screen: Landing,
       navigationOptions: {
         title: "",
-        headerShown: false
-      }
+        headerShown: false,
+      },
     },
     Login: {
       screen: Login,
@@ -33,7 +35,6 @@ const HomeStack = createStackNavigator(
       screen: SignUp,
       navigationOptions: {
         title: "",
-
       },
     },
     ForgotPassword: {
