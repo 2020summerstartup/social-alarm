@@ -893,29 +893,6 @@ export default class Groups extends Component {
                 style={{ ...appStyles.modalToggle, color: theme.APPTEXTRED }}
                 onPress={() => this.setState({ createModalOpen: true })}
               />
-              {/*
-        // this is my old code if we wanna bring it back ever
-        // for scrollview list of groups (instead of swipe list)
-        <ScrollView style={{ width: "95%" }}>
-          {this.state.groups &&
-            this.state.groups.map((group) => {
-              return (
-                <TouchableOpacity
-                  style={styles.alarmBanner}
-                  key={group.id}
-                  onPress={() => this.groupModal(group.name, group.id)}
-                >
-                  <Text
-                    adjustsFontSizeToFit
-                    numberOfLines={1}
-                    style={styles.alarmText}
-                  >
-                    {group.name}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView> */}
 
               {/* swipelist of all groups user is in */}
               <SwipeListView
