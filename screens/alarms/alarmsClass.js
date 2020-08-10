@@ -1165,7 +1165,7 @@ function TopBanner({ children }){
                 Icon={() => {return <Chevron size={1.5} color="gray" />;}}
               />
 
-/*
+              {/*
               <Text></Text>
 
               <TouchableOpacity
@@ -1173,7 +1173,7 @@ function TopBanner({ children }){
                 onPress={async() =>
                   this.updateFirebaseGroupsDoc()
                   
-                  */
+                */}
 
                 
               <Button
