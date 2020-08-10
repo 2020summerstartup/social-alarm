@@ -44,13 +44,14 @@ function MyTabs() {
 
     <NotificationContext.Consumer>{(context) => {
       
-      const {notificationCount, setNotificationCount} = context
+      const {notificationCount, setNotificationCount, isDarkMode, light, dark} = context
+
+      const theme = isDarkMode ? dark : light
 
       initializeNotifications = () => {
         db.collection("users").doc(auth.currentUser.email).get().then((doc) => {
           setNotificationCount(doc.data().alertQueue.length.toString())
         })
-
       }
 
 
@@ -60,9 +61,9 @@ function MyTabs() {
     <Tab.Navigator
     initialRoutename="Alarms" // After user signs in, go to alarms page
     tabBarOptions={{
-      activeTintColor: APPTEXTRED, // This makes the button pink when you're on that page
-      activeBackgroundColor: APPBACKGROUNDCOLOR,
-      inactiveBackgroundColor: APPBACKGROUNDCOLOR,
+      activeTintColor: theme.APPTEXTRED, // This makes the button pink when you're on that page
+      activeBackgroundColor: theme.APPBACKGROUNDCOLOR,
+      inactiveBackgroundColor: theme.APPBACKGROUNDCOLOR,
     }}
   >
     <Tab.Screen

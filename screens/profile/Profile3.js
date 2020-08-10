@@ -15,9 +15,7 @@ import {
   TouchableHighlight,
 } from "react-native";
 import {
-  Avatar,
   ListItem,
-  ThemeContext,
   withBadge,
 } from "react-native-elements";
 import { auth, db } from "../../firebase/firebase";
@@ -43,6 +41,7 @@ import Chevron from "./Chevron";
 // sets the styles for all the icons
 import BaseIcon from "./Icon";
 import { NotificationContext } from "../../contexts/NotificationContext";
+import { color } from "react-native-reanimated";
 
 /* profile3.js
  * profile screen
@@ -125,6 +124,7 @@ class ProfileScreen extends Component {
 
       notificationsModal: false,
       notifications: [],
+      theme: {},
 
       timeZoneSelected: "",
       timezoneArray: [
@@ -163,31 +163,49 @@ class ProfileScreen extends Component {
     return (
       <NotificationContext.Consumer>
         {(notificationContext) => {
-          //const { isLightMode, toggleTheme } = themeContext;
 
           const {
             notificationCount,
             setNotificationCount,
+            isDarkMode,
+            toggleTheme,
+            light,
+            dark,
           } = notificationContext;
+
+          const theme = isDarkMode ? dark : light;
 
           openNotifications = () => {
             this.setState({ notificationsModal: true });
             setNotificationCount(0);
           };
 
+          changeTheme = async () => {
+            AsyncStorage.setItem("theme", isDarkMode ? "light" : "dark");
+            await toggleTheme();
+            
+            
+          };
+
           const BadgedIcon = withBadge(notificationCount)(BaseIcon);
 
           return (
-            <ScrollView style={profileStyles.scroll}>
+
+            <ScrollView
+              style={{
+                ...profileStyles.scroll,
+                backgroundColor: theme.APPBACKGROUNDCOLOR,
+              }}
+            >
               {/* this part shows the user's name and email */}
               <View style={profileStyles.userRow}>
                 <View>
-                  <Text style={{ fontSize: 30, color: APPTEXTBLUE }}>
+                  <Text style={{ fontSize: 30, color: theme.APPTEXTBLUE }}>
                     {this.state.name}
                   </Text>
                   <Text
                     style={{
-                      color: APPTEXTBLUE,
+                      color: theme.APPTEXTBLUE,
                       fontSize: 25,
                     }}
                   >
@@ -197,32 +215,46 @@ class ProfileScreen extends Component {
               </View>
 
               {/* This is supposed to show an avatar but it doesn't show up, styling issues?
+
         <Avatar
           rounded
           icon={{name: 'user', type: 'font-awesome'}}
           activeOpacity={0.7}
           containerStyle={{flex: 2, marginLeft: 20, marginTop: 115}}
         />*/}
+
               {/* Not really sure if we want this, was in the tutorial so I kept it */}
 
               <Modal
                 visible={this.state.notificationsModal}
                 animationType="slide"
               >
-                <View style={{ alignItems: "center", flex: 1 }}>
+                <View
+                  style={{
+                    alignItems: "center",
+                    flex: 1,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                  }}
+                >
                   <MaterialIcons
                     name="close"
                     size={24}
                     style={{
                       ...appStyles.modalClose,
                       ...appStyles.modalToggle,
-                      ...{ margin: 20 },
+                      ...{ margin: 20, color: theme.APPTEXTRED },
                     }}
-                    color={APPTEXTRED}
+                    color={theme.APPTEXTRED}
                     onPress={() => this.closeNotifications()}
                   />
 
-                  <Text style={{ ...styles.logo, fontSize: 36 }}>
+                  <Text
+                    style={{
+                      ...styles.logo,
+                      fontSize: 36,
+                      color: theme.APPTEXTRED,
+                    }}
+                  >
                     {" "}
                     Notifications
                   </Text>
@@ -234,6 +266,7 @@ class ProfileScreen extends Component {
                         fontSize: 22,
                         fontWeight: "normal",
                         paddingTop: 30,
+                        color: theme.APPTEXTRED,
                       }}
                     >
                       you have no new notifications
@@ -245,18 +278,29 @@ class ProfileScreen extends Component {
                       this.state.notifications.map((notification) => {
                         return (
                           <TouchableHighlight
-                            style={styles.alarmBanner}
+                            style={{
+                              ...styles.alarmBanner,
+                              color: theme.APPTEXTRED,
+                            }}
                             key={notification.body}
                           >
                             <View>
                               <Text
                                 adjustsFontSizeToFit
                                 numberOfLines={1}
-                                style={styles.titleText}
+                                style={{
+                                  ...styles.titleText,
+                                  color: theme.APPTEXTWHITE,
+                                }}
                               >
                                 {notification.title}
                               </Text>
-                              <Text style={styles.bodyText}>
+                              <Text
+                                style={{
+                                  ...styles.bodyText,
+                                  color: theme.APPTEXTWHITE,
+                                }}
+                              >
                                 {notification.body}
                               </Text>
                             </View>
@@ -268,10 +312,38 @@ class ProfileScreen extends Component {
               </Modal>
 
               <View>
+
+              {notificationCount == 0 && (
+                <ListItem
+                  title="Notifications"
+                  containerStyle={{
+                    ...profileStyles.listItemContainer,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                  }}
+                  titleStyle={{color: theme.APPTEXTBLACK}}
+                  onPress={() => openNotifications()}
+                  leftIcon={
+                    <BaseIcon
+                      // probably want to change the color
+                      containerStyle={{ backgroundColor: "#A4C8F0" }}
+                      icon={{
+                        type: "ionicon",
+                        //TODO: FIX THIS
+                        name: "ios-moon",
+                      }}
+                    />
+                  }
+                  rightIcon={<Chevron />}
+                />
+              )}
                 {notificationCount > 0 && (
                   <ListItem
                     title="Notifications"
-                    containerStyle={profileStyles.listItemContainer}
+                    containerStyle={{
+                      ...profileStyles.listItemContainer,
+                      backgroundColor: theme.APPBACKGROUNDCOLOR,
+                    }}
+                    titleStyle={{color: theme.APPTEXTBLACK}}
                     onPress={() => openNotifications()}
                     leftIcon={
                       <BadgedIcon
@@ -288,34 +360,18 @@ class ProfileScreen extends Component {
                   />
                 )}
 
-                {notificationCount == 0 && (
-                  <ListItem
-                    title="Notifications"
-                    containerStyle={profileStyles.listItemContainer}
-                    onPress={() => openNotifications()}
-                    leftIcon={
-                      <BaseIcon
-                        // probably want to change the color
-                        containerStyle={{ backgroundColor: "#A4C8F0" }}
-                        icon={{
-                          type: "ionicon",
-                          //TODO: FIX THIS
-                          name: "ios-moon",
-                        }}
-                      />
-                    }
-                    rightIcon={<Chevron />}
-                  />
-                )}
-
                 <ListItem
                   hideChevron
                   title="Dark Mode"
-                  containerStyle={profileStyles.listItemContainer}
+                  containerStyle={{
+                    ...profileStyles.listItemContainer,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                  }}
+                  titleStyle={{color: theme.APPTEXTBLACK}}
                   rightElement={
                     <Switch
-                      onValueChange={this.toggleSwitch}
-                      value={this.state.switchValue}
+                      onValueChange={() => changeTheme()}
+                      value={isDarkMode}
                     />
                   }
                   leftIcon={
@@ -334,7 +390,11 @@ class ProfileScreen extends Component {
                   title="Birthday"
                   rightTitleStyle={{ fontSize: 18 }}
                   rightElement={<BirthdayPicker />}
-                  containerStyle={profileStyles.listItemContainer}
+                  containerStyle={{
+                    ...profileStyles.listItemContainer,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                  }}
+                  titleStyle={{color: theme.APPTEXTBLACK}}
                   leftIcon={
                     <BaseIcon
                       containerStyle={{ backgroundColor: "#FAD291" }}
@@ -360,9 +420,9 @@ class ProfileScreen extends Component {
                       }}
                       style={{
                         fontWeight: "normal",
-                        color: "black",
+                        color: theme.APPTEXTBLACK,
                         placeholder: {
-                          color: "black",
+                          color: theme.APPTEXTBLACK,
                           fontSize: 18,
                           alignSelf: "center",
                           alignItems: "center",
@@ -371,7 +431,7 @@ class ProfileScreen extends Component {
                           marginTop: 8,
                         },
                         inputIOS: {
-                          color: "black",
+                          color: theme.APPTEXTBLACK,
                           fontSize: 18,
                           marginRight: 12,
                           marginTop: 8,
@@ -384,7 +444,11 @@ class ProfileScreen extends Component {
                     />
                   }
                   rightTitleStyle={{ fontSize: 15 }}
-                  containerStyle={profileStyles.listItemContainer}
+                  containerStyle={{
+                    ...profileStyles.listItemContainer,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                  }}
+                  titleStyle={{color: theme.APPTEXTBLACK}}
                   leftIcon={
                     <BaseIcon
                       containerStyle={{ backgroundColor: "#57DCE7" }}
@@ -399,7 +463,11 @@ class ProfileScreen extends Component {
               <View>
                 <ListItem
                   title="About Us"
-                  containerStyle={profileStyles.listItemContainer}
+                  containerStyle={{
+                    ...profileStyles.listItemContainer,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                  }}
+                  titleStyle={{color: theme.APPTEXTBLACK}}
                   onPress={() => {
                     Linking.openURL(
                       "https://www.github.com/2020summerstartup/social-alarm"
@@ -423,7 +491,11 @@ class ProfileScreen extends Component {
                       "https://www.github.com/2020summerstartup/social-alarm"
                     );
                   }}
-                  containerStyle={profileStyles.listItemContainer}
+                  containerStyle={{
+                    ...profileStyles.listItemContainer,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                  }}
+                  titleStyle={{color: theme.APPTEXTBLACK}}
                   leftIcon={
                     <BaseIcon
                       containerStyle={{
@@ -444,7 +516,11 @@ class ProfileScreen extends Component {
                       "https://www.github.com/2020summerstartup/social-alarm"
                     );
                   }}
-                  containerStyle={profileStyles.listItemContainer}
+                  containerStyle={{
+                    ...profileStyles.listItemContainer,
+                    backgroundColor: theme.APPBACKGROUNDCOLOR,
+                  }}
+                  titleStyle={{color: theme.APPTEXTBLACK}}
                   leftIcon={
                     <BaseIcon
                       containerStyle={{
@@ -462,13 +538,13 @@ class ProfileScreen extends Component {
 
               {/* Sign out button */}
               <TouchableOpacity
-                style={profileStyles.loginBtn}
+                style={{...profileStyles.loginBtn, backgroundColor: theme.APPTEXTRED}}
                 onPress={() => this.signOutUser()}
               >
                 <Text style={profileStyles.logo}>Sign Out</Text>
               </TouchableOpacity>
             </ScrollView>
-          );
+          )
         }}
       </NotificationContext.Consumer>
     );
