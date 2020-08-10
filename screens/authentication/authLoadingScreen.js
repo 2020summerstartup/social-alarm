@@ -5,8 +5,10 @@ import {
   StatusBar,
   View,
   StyleSheet,
+  Appearance,
 } from "react-native";
 import { auth } from "../../firebase/firebase";
+import { NotificationContext } from "../../contexts/NotificationContext";
 
 /* authLoadingScreen.js
  * Auth loading screen
@@ -18,6 +20,8 @@ import { auth } from "../../firebase/firebase";
  */
 
 class AuthLoadingScreen extends React.Component {
+  static contextType = NotificationContext;
+
   componentDidMount() {
     this._bootstrapAsync();
   }
@@ -27,15 +31,28 @@ class AuthLoadingScreen extends React.Component {
     var self = this;
     const userToken = await AsyncStorage.getItem("email");
     const password = await AsyncStorage.getItem("password");
+    const theme = await AsyncStorage.getItem("theme");
+    const { isDarkMode, toggleTheme } = this.context;
+
     if (userToken && password) {
+      if (
+        (theme == "dark" && !isDarkMode) ||
+        (theme == "light" && isDarkMode)
+      ) {
+        toggleTheme();
+      }
       auth
         .signInWithEmailAndPassword(userToken, password)
         .then(function (user) {
           self.props.navigation.navigate("App");
         });
     } else {
-      // This will switch to the App screen or Auth screen and this loading
-      // screen will be unmounted and thrown away.
+      // if user generally prefers dark mode - dark mode will be on
+      const colorScheme = Appearance.getColorScheme();
+      if (colorScheme === "dark") {
+        toggleTheme();
+      }
+      // navigate to auth stuff
       this.props.navigation.navigate("Auth");
     }
   };

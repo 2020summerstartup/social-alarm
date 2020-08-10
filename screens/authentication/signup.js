@@ -15,6 +15,7 @@ import {
 import { db, auth } from "../../firebase/firebase";
 import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
 import {appStyles} from '../../style/stylesheet';
+import { NotificationContext } from "../../contexts/NotificationContext";
 
 /* signup.js
  * SignUp screen
@@ -66,10 +67,18 @@ export default function SignUp({ navigation }) {
   };
 
   return (
+
+    <NotificationContext.Consumer>{(context) => {
+      const { isDarkMode, light, dark } = context;
+
+        const theme = isDarkMode ? dark : light;
+
+      return (
+
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
-        <Text style={styles.logo}>Sign Up</Text>
-        <View style={appStyles.inputView}>
+      <View style={{...styles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
+        <Text style={{...styles.logo, color: theme.APPTEXTRED}}>Sign Up</Text>
+        <View style={{...appStyles.inputView, backgroundColor: theme.APPINPUTVIEW}}>
           <TextInput
             style={appStyles.inputText}
             placeholder="Name..."
@@ -80,7 +89,7 @@ export default function SignUp({ navigation }) {
             }}
           />
         </View>
-        <View style={appStyles.inputView}>
+        <View style={{...appStyles.inputView, backgroundColor: theme.APPINPUTVIEW}}>
           {/* text inputs - email, password, confirm password */}
           <TextInput
             style={appStyles.inputText}
@@ -93,7 +102,7 @@ export default function SignUp({ navigation }) {
           />
         </View>
 
-        <View style={appStyles.inputView}>
+        <View style={{...appStyles.inputView, backgroundColor: theme.APPINPUTVIEW}}>
           <TextInput
             secureTextEntry
             style={appStyles.inputText}
@@ -105,7 +114,7 @@ export default function SignUp({ navigation }) {
           />
         </View>
 
-        <View style={appStyles.inputView}>
+        <View style={{...appStyles.inputView, backgroundColor: theme.APPINPUTVIEW}}>
           <TextInput
             secureTextEntry
             style={appStyles.inputText}
@@ -119,15 +128,16 @@ export default function SignUp({ navigation }) {
 
         {/* sign up button */}
         <TouchableOpacity
-          style={appStyles.loginBtn}
+          style={{...appStyles.loginBtn, backgroundColor: theme.APPTEXTRED}}
           onPress={() =>
             this.signUpUser(email.trim(), password, confirmPassword, name.trim())
           }
         >
-          <Text style={appStyles.loginText}>SIGN UP</Text>
+          <Text style={{...appStyles.loginText, color: theme.APPTEXTBLUE}}>SIGN UP</Text>
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
+    )}}</NotificationContext.Consumer>
   );
 }
 
