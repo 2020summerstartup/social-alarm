@@ -70,7 +70,7 @@ const BirthdayPicker = () => {
 
   return (
     <View>
-      <Button title="Select birthday" onPress={showDatePicker} />
+      <Button title="Select birthday" onPress={showDatePicker}/>
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
