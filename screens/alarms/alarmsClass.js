@@ -743,7 +743,7 @@ export default class Alarms extends Component {
               <Text style={styles.backTextWhite}>+Group</Text>
             </TouchableOpacity>
 
-            {/*Edit button */}
+            {/* Edit button */}
             <TouchableOpacity
                 style={[styles.backRightBtn, styles.backRightBtnCenter]}
                 onPress={() => 
@@ -771,25 +771,32 @@ export default class Alarms extends Component {
         <View>
           {/* Renders the alarm banners as swipable components */}
           <SwipeListView
-                // These are all specified by SwipeListView
-                keyExtractor ={(item) => String(item.key)} // specifying id as the key to prevent the key warning
-                data = {props.alarms}
-                renderItem={({ item }) => (
-                  <View>
-                    <AlarmBanner color={item.color}>
-                        <AlarmDetails title={item.name} hour={item.alarm_hour} minute={item.alarm_minute}/>
-                        <SwitchExample/>
-                    </AlarmBanner>
-                  </View>
-                )}
-                renderHiddenItem={renderHiddenItem}
-                leftOpenValue={85}
-                rightOpenValue={-145}
-                previewRowKey={"1"}
-                previewOpenValue={85}
-                previewOpenDelay={500}
-                onRowDidOpen={onRowDidOpen}
-                onSwipeValueChange={onSwipeValueChange}
+            // These are all specified by SwipeListView
+            keyExtractor ={(item) => String(item.key)} // specifying id as the key to prevent the key warning
+            data = {props.alarms}
+            renderItem={({ item }) => (
+              // Uncommenting TouchableHighlight code below would enable edit alarm modal to open when the alarm banner is pressed. As of rn though, TouchableHighlight press to open edit alarm modal doesn't update state so wrong alarm data is displayed in edit modal... The code is currently implementing the edit feature using swipe and click edit button because I didn't want to create a use conflict between clicking the alarm banner to edit and pressing the switch. 
+
+              // <TouchableHighlight 
+              // onPress={() => 
+              //   this.setState( {editAlarmModalOpen: true} )}
+              // >
+              <View>
+                <AlarmBanner color={item.color}>
+                    <AlarmDetails title={item.name} hour={item.alarm_hour} minute={item.alarm_minute}/>
+                    <SwitchExample/>
+                </AlarmBanner>
+              </View>
+              // </TouchableHighlight>
+            )}
+            renderHiddenItem={renderHiddenItem}
+            leftOpenValue={85}
+            rightOpenValue={-145}
+            previewRowKey={"1"}
+            previewOpenValue={85}
+            previewOpenDelay={500}
+            onRowDidOpen={onRowDidOpen}
+            onSwipeValueChange={onSwipeValueChange}
         />
         </View>
       )
@@ -963,7 +970,7 @@ export default class Alarms extends Component {
 
       /* MODAL FOR EDIT ALARM */
     editAlarmModal(){
-      return(
+        return(
         <Modal visible={this.state.editAlarmModalOpen} animationType="slide">
         <View style={appStyles.modalContainer}>
             <MaterialIcons

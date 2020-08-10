@@ -791,7 +791,7 @@ export default class Groups extends Component {
                     previewOpenValue={-80}
                     previewOpenDelay={500}
                     onRowDidOpen={this.onRowDidOpen}
-                    onSwipeValueChange={this.onSwipeValueChange}
+                    // onSwipeValueChange={this.onSwipeValueChange}
                   />
                 )
               }
@@ -866,7 +866,7 @@ export default class Groups extends Component {
           previewOpenValue={-80}
           previewOpenDelay={500}
           onRowDidOpen={this.onRowDidOpen}
-          onSwipeValueChange={this.onSwipeValueChange}
+          // onSwipeValueChange={this.onSwipeValueChange}
         />
       </View>
     );
