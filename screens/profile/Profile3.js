@@ -161,10 +161,8 @@ class ProfileScreen extends Component {
 
   render() {
     return (
-      //<ThemeContext.Consumer>{(themeContext) => (
       <NotificationContext.Consumer>
         {(notificationContext) => {
-          //const { isDarkMode, toggleTheme } = themeContext;
 
           const {
             notificationCount,
@@ -180,12 +178,13 @@ class ProfileScreen extends Component {
           openNotifications = () => {
             this.setState({ notificationsModal: true });
             setNotificationCount(0);
-            console.log(isDarkMode);
           };
 
-          changeTheme = () => {
-            //this.setState({darkTheme: !this.state.darkTheme,})
-            toggleTheme;
+          changeTheme = async () => {
+            AsyncStorage.setItem("theme", isDarkMode ? "light" : "dark");
+            await toggleTheme();
+            
+            
           };
 
           const BadgedIcon = withBadge(notificationCount)(BaseIcon);
@@ -371,7 +370,7 @@ class ProfileScreen extends Component {
                   titleStyle={{color: theme.APPTEXTBLACK}}
                   rightElement={
                     <Switch
-                      onValueChange={toggleTheme}
+                      onValueChange={() => changeTheme()}
                       value={isDarkMode}
                     />
                   }

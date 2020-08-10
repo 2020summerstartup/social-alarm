@@ -7,6 +7,8 @@ import {
   StyleSheet,
 } from "react-native";
 import { auth } from "../../firebase/firebase";
+import { NotificationContext } from "../../contexts/NotificationContext";
+
 
 /* authLoadingScreen.js
  * Auth loading screen
@@ -18,6 +20,9 @@ import { auth } from "../../firebase/firebase";
  */
 
 class AuthLoadingScreen extends React.Component {
+
+  static contextType  = NotificationContext;
+
   componentDidMount() {
     this._bootstrapAsync();
   }
@@ -27,7 +32,14 @@ class AuthLoadingScreen extends React.Component {
     var self = this;
     const userToken = await AsyncStorage.getItem("email");
     const password = await AsyncStorage.getItem("password");
+    const theme = await AsyncStorage.getItem("theme")
+    const { isDarkMode, toggleTheme } = this.context
+
     if (userToken && password) {
+      if((theme == "dark" && !isDarkMode) || (theme == "light" && isDarkMode)) {
+        toggleTheme()
+
+      } 
       auth
         .signInWithEmailAndPassword(userToken, password)
         .then(function (user) {
