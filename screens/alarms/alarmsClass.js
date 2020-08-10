@@ -12,15 +12,20 @@ import * as Permissions from 'expo-permissions';
 import { MaterialIcons } from "@expo/vector-icons";
 
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
-import { APPBACKGROUNDCOLOR } from '../../style/constants';
+import { APPBACKGROUNDCOLOR, APPTEXTBLUE, APPTEXTRED } from '../../style/constants';
 import { appStyles } from '../../style/stylesheet';
 import DatePicker from 'react-native-datepicker';
 // import DatePicker from 'react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 
+
 //import getStyleSheet from '../../style/theme';
 
+import Firebase from "../../firebase/firebase";
+
+
 import * as firebase from "firebase";
+
 import { db, auth } from "../../firebase/firebase";
 
 const moment = require("moment");
@@ -288,7 +293,7 @@ export default class Alarms extends Component {
       db.collection("users")
         .doc(auth.currentUser.email)
         .update({
-          alarms: firebase.firestore.FieldValue.arrayUnion({
+          alarms: Firebase.firestore.FieldValue.arrayUnion({
             name: name, 
             alarm_hour: alarm_hour, 
             alarm_minute: alarm_minute, 
@@ -424,6 +429,7 @@ export default class Alarms extends Component {
             db.collection("groups")
               .doc(this.state.groupIdClicked)
               .update({
+
                 alarms: firebase.firestore.FieldValue.arrayUnion({
                   name: newAlarm.name, 
                   alarm_hour: newAlarm.alarm_hour,
@@ -1030,7 +1036,7 @@ export default class Alarms extends Component {
                   style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                   onPress={() => this.setState({ newAlarmModalOpen: false })}
                   />
-                  <Text style={styles.pageTitle}> Set a new alarm </Text>
+                  <Text style={appStyles.logo}> Set a new alarm </Text>
 
                     <DatePicker
                       style={{height: 75, width: 200, color: "black"}}
@@ -1053,6 +1059,7 @@ export default class Alarms extends Component {
                     />
                   </View>
 
+                  {/*
                   <Button
                     title="Split the time"
                     onPress={ async() =>
@@ -1119,6 +1126,7 @@ export default class Alarms extends Component {
               style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
               onPress={() => this.setState({ groupPickerModalOpen: false })}
               />
+
               <Text style={styles.pageTitle}> Select a group </Text>
               {/* {console.log("this.state.groupsArray[0]", this.state.groupsArray[0])} */}
               {/* {console.log("this.state.groupsArray[0].label before RNPickerSelect", this.state.groupsArray[0].label)} */}
@@ -1141,7 +1149,7 @@ export default class Alarms extends Component {
                       justifyContent: 'center',
                     },
                     inputIOS: {
-                      color: "#fb5b5a",
+                      color: APPTEXTBLUE,
                       fontSize: 20,
                       alignSelf: 'center',
                       alignItems: 'center',
@@ -1216,7 +1224,7 @@ const styles = StyleSheet.create({
     width:"100%",
     backgroundColor: APPBACKGROUNDCOLOR,
     height: 110,
-    paddingTop: 30,
+    paddingTop: 25,
     paddingBottom: 0,
     padding: 15,
     alignSelf: 'center',
@@ -1232,11 +1240,11 @@ const styles = StyleSheet.create({
 
   pageTitle:{
     padding: 20,
-    color: "#fb5b5a",
-    fontSize: 40,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop:0,
+    fontWeight: "bold",
+    fontSize: 50,
+    color: APPTEXTRED,
+    alignItems: "center",
   },
 
   inputText:{

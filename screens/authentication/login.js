@@ -17,7 +17,6 @@ import {appStyles} from '../../style/stylesheet';
 
 /* login.js
  * Login screen
- * also contains firebase configs
  *
  */
 
@@ -43,18 +42,13 @@ export default function Login({ navigation }) {
           navigation.navigate("App");
         })
         .catch(function (error) {
-          Alert.alert("Oops!", error.toString().substring(6), [{ text: "ok" }]);
+          Alert.alert("Oops!", error.toString().substring(6), [{ text: "OK" }]);
         });
     } catch (error) {
       console.log(error.toString());
-      //Alert.alert('Oops!', error.toString(), [{text:'ok'}]);
     }
   };
-  /*
-    if (!firebase.apps.length) {
-      firebase.initializeApp({});
-    }
-*/
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={appStyles.loginContainer}>
@@ -90,7 +84,7 @@ export default function Login({ navigation }) {
         {/* login button */}
         <TouchableOpacity
           style={appStyles.loginBtn}
-          onPress={() => this.loginUser(email, password)}
+          onPress={() => this.loginUser(email.trim(), password)}
         >
           <Text style={appStyles.loginText}>LOGIN</Text>
         </TouchableOpacity>

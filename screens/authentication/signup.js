@@ -22,9 +22,6 @@ import {appStyles} from '../../style/stylesheet';
  */
 
 export default function SignUp({ navigation }) {
-  //const firebase = require("firebase");
-  // Required for side-effects
-  // require("firebase/firestore");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,31 +48,38 @@ export default function SignUp({ navigation }) {
                 uid: user.user.uid,
                 alarms: [],
                 groups: [],
+                alertQueue: [],
               })
               .then(navigation.navigate("App"))
               .catch(console.log("idk"));
           })
           .catch(function (error) {
-            Alert.alert("Oops!", error.toString(), [{ text: "ok" }]);
+            Alert.alert("Oops!", error.toString(), [{ text: "OK" }]);
           });
       } else {
         console.log("passwords dont match");
-        Alert.alert("Oops!", "your passwords don't match", [{ text: "ok" }]);
-        // TODO: make this pop up on app
+        Alert.alert("Oops!", "your passwords don't match", [{ text: "OK" }]);
       }
     } catch (error) {
       console.log(error.toString());
     }
   };
-  /*
-  if (!firebase.apps.length) {
-    firebase.initializeApp({});
-  } */
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
         <Text style={styles.logo}>Sign Up</Text>
+        <View style={appStyles.inputView}>
+          <TextInput
+            style={appStyles.inputText}
+            placeholder="Name..."
+            placeholderTextColor="#003f5c"
+            autoCorrect={false}
+            onChangeText={(text) => {
+              setName(text);
+            }}
+          />
+        </View>
         <View style={appStyles.inputView}>
           {/* text inputs - email, password, confirm password */}
           <TextInput
@@ -113,23 +117,11 @@ export default function SignUp({ navigation }) {
           />
         </View>
 
-        <View style={appStyles.inputView}>
-          <TextInput
-            style={appStyles.inputText}
-            placeholder="Name..."
-            placeholderTextColor="#003f5c"
-            autoCorrect={false}
-            onChangeText={(text) => {
-              setName(text);
-            }}
-          />
-        </View>
-
         {/* sign up button */}
         <TouchableOpacity
           style={appStyles.loginBtn}
           onPress={() =>
-            this.signUpUser(email, password, confirmPassword, name)
+            this.signUpUser(email.trim(), password, confirmPassword, name.trim())
           }
         >
           <Text style={appStyles.loginText}>SIGN UP</Text>
@@ -153,5 +145,6 @@ const styles = StyleSheet.create({
     fontSize: 50,
     color: APPTEXTRED,
     marginBottom: 20,
+    marginTop: 80,
   },
 });

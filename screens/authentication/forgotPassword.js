@@ -32,18 +32,14 @@ export default function Login({ navigation }) {
       .sendPasswordResetEmail(email)
       .then(function () {
         Alert.alert("Great!", "An email has been sent to your account", [
-          { text: "ok", onPress: () => navigation.pop() },
+          { text: "OK", onPress: () => navigation.pop() },
         ]);
       })
       .catch(function (error) {
-        Alert.alert("Oops!", error.toString().substring(6), [{ text: "ok" }]);
+        Alert.alert("Oops!", error.toString().substring(6), [{ text: "OK" }]);
       });
   };
-  /*
-    if (!firebase.apps.length) {
-      firebase.initializeApp({});
-    }
-*/
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={appStyles.loginContainer}>
@@ -65,7 +61,7 @@ export default function Login({ navigation }) {
         {/* forgot pass button */}
         <TouchableOpacity
           style={appStyles.loginBtn}
-          onPress={() => this.forgotPass(email)}
+          onPress={() => this.forgotPass(email.trim())}
         >
           <Text style={appStyles.loginText}>Send password reset email</Text>
         </TouchableOpacity>
