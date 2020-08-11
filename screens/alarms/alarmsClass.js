@@ -683,11 +683,8 @@ export default class Alarms extends Component {
         newData.splice(prevIndex, 1);
         this.setState({ alarms: newData });
 
-        /* The alarm data is either in the user's doc or the group's doc. 
-        The alarm data does not exist in both docs simultaneously
-        but this function deletes it from both docs so that the data gets 
-        deleted without having to figure out where the alarm data is */
-
+        // If the alarm is a personal alarm (key does not contain a ":"), then remove the alarm from the groups's doc in firebase
+        if (String(props.alarms[prevIndex].key).includes(":") == false){
         // Remove the alarm from the user's doc in firebase
         db.collection("users")
           .doc(auth.currentUser.email)
@@ -701,25 +698,28 @@ export default class Alarms extends Component {
               color: props.alarms[prevIndex].color
             }),
           });
+        }
 
-        // Remove the alarm from the groups's doc in firebase
-        var groupIDSplitArray = props.alarms[prevIndex].key.split(":")
-        db.collection("groups")
-          .doc(groupIDSplitArray[0])
-          .update({
-            alarms: firebase.firestore.FieldValue.arrayRemove({
-              name: props.alarms[prevIndex].name,
-              alarm_hour: props.alarms[prevIndex].alarm_hour,
-              alarm_minute: props.alarms[prevIndex].alarm_minute, 
-              switch: props.alarms[prevIndex].switch, 
-              key: props.alarms[prevIndex].key,
-              color: props.alarms[prevIndex].color
-            }),
-          });
-        
-        // Remove the alarm from the local array that displays
-        this.removeAlarm(props.alarms[prevIndex].name, props.alarms);
-      };
+        // If the alarm is a group alarm (key contains a ":"), then remove the alarm from the groups's doc in firebase
+        if (String(props.alarms[prevIndex].key).includes(":")){
+          var groupIDSplitArray = props.alarms[prevIndex].key.split(":")
+          db.collection("groups")
+            .doc(groupIDSplitArray[0])
+            .update({
+              alarms: firebase.firestore.FieldValue.arrayRemove({
+                name: props.alarms[prevIndex].name,
+                alarm_hour: props.alarms[prevIndex].alarm_hour,
+                alarm_minute: props.alarms[prevIndex].alarm_minute, 
+                switch: props.alarms[prevIndex].switch, 
+                key: props.alarms[prevIndex].key,
+                color: props.alarms[prevIndex].color
+              }),
+            });
+          
+          // Remove the alarm from the local array that displays
+          this.removeAlarm(props.alarms[prevIndex].name, props.alarms);
+        };
+      }
   
       // Updates state with which row(alarm) was pressed and opened
       // onRowDidOpen = async(rowKey) => {
@@ -738,7 +738,7 @@ export default class Alarms extends Component {
       const renderHiddenItem = (data, rowMap) => (
         <View style={alarmStyles.rowBack}>
 
-            {/*+Groups button */}
+            {/*+Group button */}
             <TouchableOpacity
                 style={[alarmStyles.backLeftBtn]}
                 onPress={() => 
@@ -1070,7 +1070,6 @@ export default class Alarms extends Component {
                     />
                   </View>
 
-                  {/*
                   <Button
                     title="Split the time"
                     onPress={ async() =>
@@ -1121,12 +1120,12 @@ export default class Alarms extends Component {
           </View>
 
           {/* Useful button during testing */}
-          <Button
+          {/* <Button
             title="Print user email to console"
             onPress={ async() =>
               console.log("auth.currentUser.email:", auth.currentUser.email)
             }
-          />
+          /> */}
 
           {/* BEGINNING OF MODAL FOR GROUP PICKER */}
           <Modal visible={this.state.groupPickerModalOpen} animationType="slide">
