@@ -14,6 +14,7 @@ import {
   Keyboard,
   Image,
   TouchableHighlight,
+  RefreshControl,
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Firebase from "../../firebase/firebase";
@@ -51,6 +52,8 @@ export default class Groups extends Component {
       groupMembers: [],
       // the text input in add user field of group specific modal
       addUser: "",
+      // swipe to refresh functionality
+      mainPageRefreshing: false,
     };
   }
 
@@ -59,6 +62,8 @@ export default class Groups extends Component {
 
   // current user
   user = auth.currentUser;
+
+  
 
   // called when user hits create group button in create group modal
   // creates a group in firebase and adds it to local state
@@ -552,6 +557,10 @@ export default class Groups extends Component {
   // called when the component launches/mounts
   // sets up all local state
   componentDidMount() {
+    this.initializeState()
+  }
+
+  initializeState() {
     // get the user's document from collection
     db.collection("users")
       .doc(auth.currentUser.email)
@@ -567,13 +576,23 @@ export default class Groups extends Component {
               id: doc.data().groups[i].id,
             });
           }
-          this.setState({ groups: groupsData });
+          this.setState({ groups: groupsData }, () => this.setState({mainPageRefreshing: false}));
         }
       })
       .catch(function (error) {
         console.log(error);
       });
+
+      console.log("hey")
+
   }
+
+  onRefreshMainPage() {
+    this.setState({mainPageRefreshing: true})
+    this.initializeState()
+
+  }
+  
 
   render() {
     // context (global state) stuff
@@ -879,6 +898,11 @@ export default class Groups extends Component {
           style={{ width: "95%" }}
           keyExtractor={(item) => item.id} // specifying id as the key to prevent the key warning
           data={this.state.groups}
+          refreshControl={
+            <RefreshControl refreshing={this.state.mainPageRefreshing} 
+            onRefresh={this.onRefreshMainPage.bind(this)} tintColor={theme.APPTEXTBLACK}
+            />
+          }
           renderItem={({ item }) => (
             // buttons for what groups user is in
             <TouchableHighlight
