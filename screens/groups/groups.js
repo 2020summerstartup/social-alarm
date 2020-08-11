@@ -620,6 +620,17 @@ export default class Groups extends Component {
         })
       });
 
+    // // remove old alarm from local state group array
+    // this.state.groups.splice(this.state.openRow, 1)
+
+    // // add updated group to local state group array
+    // this.state.groups.push(
+    //   {color: value, 
+    //   id: this.state.groupIdClicked,
+    //   name: this.state.groupNameClicked}
+    // )
+    // console.log("this.state.groups after edit color change", this.state.groups)
+
     this.setState({groupAlarmColor: value})
   }
   
@@ -779,7 +790,7 @@ export default class Groups extends Component {
                     this.textInput = input;
                   }}
                   style={appStyles.inputText}
-                  placeholder="add group member..."
+                  placeholder="Add group member..."
                   placeholderTextColor="#003f5c"
                   keyboardType="email-address"
                   onChangeText={(text) => {

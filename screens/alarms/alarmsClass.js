@@ -12,20 +12,24 @@ import * as Permissions from 'expo-permissions';
 import { MaterialIcons } from "@expo/vector-icons";
 
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
-import { APPBACKGROUNDCOLOR, APPTEXTBLUE, APPTEXTRED } from '../../style/constants';
-import { appStyles } from '../../style/stylesheet';
+import {
+  APPBACKGROUNDCOLOR,
+  APPTEXTRED,
+  APPTEXTWHITE,
+  APPTEXTBLUE,
+  APPINPUTVIEW,
+  ALARMCOLORMINT,
+  ALARMCOLORMAROON,
+  ALARMCOLORPINK
+} from "../../style/constants";
+import { appStyles, alarmStyles } from "../../style/stylesheet";
+
 import DatePicker from 'react-native-datepicker';
 // import DatePicker from 'react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 
-
-//import getStyleSheet from '../../style/theme';
-
 import Firebase from "../../firebase/firebase";
-
-
 import * as firebase from "firebase";
-
 import { db, auth } from "../../firebase/firebase";
 
 const moment = require("moment");
@@ -33,14 +37,14 @@ const moment = require("moment");
 // TopBanner formats the title and modal button along the top of the screen
 function TopBanner({ children }){
   return(
-    <View style = {styles.topBanner}>{children}</View>
+    <View style = {alarmStyles.topBanner}>{children}</View>
   )
 };
 
 // An AlarmBanner is one alarm displayed in the list of alarms
 function AlarmBanner({ children, color }){
   return(
-      <View style={[styles.alarmBanner, {backgroundColor: color}]}>
+      <View style={[alarmStyles.alarmBanner, {backgroundColor: color}]}>
         {children}
       </View>
   )
@@ -70,12 +74,12 @@ function AlarmDetails({title, hour, minute}){
     minute = "0" + minute;
   }
   return (
-      <View style={styles.alarmDetails}>
-          <Text style={styles.alarmTime} adjustsFontSizeToFitnumberOfLines={1}>
+      <View style={alarmStyles.alarmDetails}>
+          <Text style={alarmStyles.alarmTime} adjustsFontSizeToFitnumberOfLines={1}>
           {/* <Text  adjustsFontSizeToFitnumberOfLines={1}> */}
             {hour}:{minute}{ampm}
           </Text>
-          <Text style={styles.alarmText}>{title}</Text>
+          <Text style={alarmStyles.alarmText}>{title}</Text>
       </View>
   )
 };
@@ -732,35 +736,35 @@ export default class Alarms extends Component {
   
       // Renders the buttons behind the alarm banners
       const renderHiddenItem = (data, rowMap) => (
-        <View style={styles.rowBack}>
+        <View style={alarmStyles.rowBack}>
 
             {/*+Groups button */}
             <TouchableOpacity
-                style={[styles.backLeftBtn]}
+                style={[alarmStyles.backLeftBtn]}
                 onPress={() => 
                   this.setState( {groupPickerModalOpen: true} )}
             >
-              <Text style={styles.backTextWhite}>+Group</Text>
+              <Text style={alarmStyles.backTextWhite}>+Group</Text>
             </TouchableOpacity>
 
             {/* Edit button */}
             <TouchableOpacity
-                style={[styles.backRightBtn, styles.backRightBtnCenter]}
+                style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnCenter]}
                 onPress={() => 
                   this.setState( {editAlarmModalOpen: true} )}
             >
-              <Text style={styles.backTextWhite}>Edit</Text>
+              <Text style={alarmStyles.backTextWhite}>Edit</Text>
             </TouchableOpacity>
   
             {/*Trash button */}
             <TouchableOpacity
-                style={[styles.backRightBtn, styles.backRightBtnRight]}
+                style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnRight]}
                 onPress={() => deleteRow(rowMap, data.item.key)}
             >
-              <View style={[styles.trash]}>
+              <View style={[alarmStyles.trash]}>
                   <Image
                       source={require('../../assets/trash.png')}
-                      style={styles.trash}
+                      style={alarmStyles.trash}
                   />
               </View>
             </TouchableOpacity>
@@ -979,7 +983,7 @@ export default class Alarms extends Component {
             style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
             onPress={() => this.setState({ editAlarmModalOpen: false })}
             />
-            <Text style={styles.pageTitle}> Edit Alarm </Text>
+            <Text style={alarmStyles.pageTitle}> Edit Alarm </Text>
 
             <DatePicker
               style={{height: 75, width: 200, color: "black"}}
@@ -993,9 +997,9 @@ export default class Alarms extends Component {
               onDateChange={(time) => this.setState({ newAlarmTime: time })}
             />
 
-            <View style={styles.inputView}>
+            <View style={appStyles.inputView}>
               <TextInput
-                style={styles.inputText}
+                style={appStyles.inputText}
                 placeholder={this.state.alarms[this.state.openRow].name}
                 placeholderTextColor="#003f5c"
                 onChangeText={(text) => this.setState({newAlarmText: text})}
@@ -1024,9 +1028,9 @@ export default class Alarms extends Component {
 
     render(){
       return(
-        <View style={styles.container}>
+        <View style={alarmStyles.container}>
           <TopBanner>
-              <Text style={styles.pageTitle}>Alarms</Text>
+              <Text style={alarmStyles.pageTitle}>Alarms</Text>
 
               {/*BEGINNING OF MODAL FOR ADD ALARM */}
               <MaterialIcons
@@ -1057,9 +1061,9 @@ export default class Alarms extends Component {
                       onDateChange={(time) => this.setState({ newAlarmTime: time })}
                     />
 
-                  <View style={styles.inputView}>
+                  <View style={appStyles.inputView}>
                     <TextInput
-                      style={styles.inputText}
+                      style={appStyles.inputText}
                       placeholder="Alarm title..."
                       placeholderTextColor="#003f5c"
                       onChangeText={(text) => this.setState({newAlarmText: text})}
@@ -1075,12 +1079,12 @@ export default class Alarms extends Component {
                   />
 
                   {/* Useful print statements on modal page for debugging */}
-                  {/* <Text style={styles.inputText}> time:{this.state.newAlarmTime} </Text>
-                  <Text style={styles.inputText}> hour:{this.state.newAlarmHour} </Text>
-                  <Text style={styles.inputText}> minute:{this.state.newAlarmMinute}</Text>
-                  <Text style={styles.inputText}> title:{this.state.newAlarmText}</Text> */}
+                  {/* <Text style={appStyles.inputText}> time:{this.state.newAlarmTime} </Text>
+                  <Text style={appStyles.inputText}> hour:{this.state.newAlarmHour} </Text>
+                  <Text style={appStyles.inputText}> minute:{this.state.newAlarmMinute}</Text>
+                  <Text style={appStyles.inputText}> title:{this.state.newAlarmText}</Text> */}
 
-                  <Button style={styles.button}
+                  <Button style={alarmStyles.button}
                   title="Set Alarm"
                   onPress={ async() =>
                     this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.currentMaxKey + 1, "#fb5b5a", this.state.alarms)
@@ -1103,7 +1107,7 @@ export default class Alarms extends Component {
 
           </TopBanner>
         
-          <View style={styles.scrollViewContainer}>
+          <View style={alarmStyles.scrollViewContainer}>
               {/* Useful print statements on screen for debugging */}
               {/* <Text>Your expo push token: {expoPushToken}</Text>
               <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -1134,7 +1138,7 @@ export default class Alarms extends Component {
               onPress={() => this.setState({ groupPickerModalOpen: false })}
               />
 
-              <Text style={styles.pageTitle}> Select a group </Text>
+              <Text style={alarmStyles.pageTitle}> Select a group </Text>
               {/* {console.log("this.state.groupsArray[0]", this.state.groupsArray[0])} */}
               {/* {console.log("this.state.groupsArray[0].label before RNPickerSelect", this.state.groupsArray[0].label)} */}
 
@@ -1198,220 +1202,4 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// Styles (to do: incorporate global styles sheet)
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 100,
-  },
-
-  scrollViewContainer: {
-    flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 30,
-    paddingBottom: 10,
-    padding: 0
-  },
-
-  timerContainer: {
-    flexDirection: "row",
-  },
-
-  lapTimer:{
-    width: 25,
-  },
-
-  topBanner:{
-    flexDirection : "row",
-    width:"100%",
-    backgroundColor: APPBACKGROUNDCOLOR,
-    height: 110,
-    paddingTop: 25,
-    paddingBottom: 0,
-    padding: 15,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: "space-between",
-  },
-
-  Text:{
-    height:50,
-    color: "white",
-    fontSize: 16
-  },
-
-  pageTitle:{
-    padding: 20,
-    paddingTop:0,
-    fontWeight: "bold",
-    fontSize: 50,
-    color: APPTEXTRED,
-    alignItems: "center",
-  },
-
-  inputText:{
-    padding: 10,
-    height: 50,
-    color:"black",
-    fontSize: 16
-  },
-
-  inputView:{
-    width:"75%",
-    backgroundColor:APPBACKGROUNDCOLOR,
-    borderColor:"black",
-    borderWidth: 1,
-    borderRadius:25,
-    height:50,
-    marginBottom:20,
-    justifyContent:"center",
-    padding:20
-  },
-
-  alarmTime: {
-    color: "#ffffff",
-    fontSize: 40,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-  },
-
-  alarmText: {
-    color: "#ffffff",
-    fontSize: 16,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-  },
-
-  alarmBanner: {
-    flex: 1,
-    flexDirection : "row",
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 0,
-    marginBottom: 10,
-    paddingTop: 0,
-    paddingBottom: 0,
-    width: "95%",
-    borderRadius: 15
-  },
-
-  alarmDetails: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    width: 100,
-  },
-
-  scrollView: {
-    alignSelf: 'stretch',
-    alignContent: 'center',
-  }, 
-
-  button: {
-    width: 60,
-    height: 60,
-    backgroundColor:"#465881",
-    alignItems: 'center',
-    justifyContent:"center",
-    borderRadius: 30,
-    marginBottom: 20,
-    padding:20
-  }, 
-
-  buttonTitle: {
-    color: "#ffffff",
-    fontSize: 40,
-  },
-
-  buttonBorder: {
-    color: "#ffffff",
-    width: 56, 
-    height: 56, 
-    borderRadius: 28, 
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  rowFront: {
-    alignItems: 'center',
-    backgroundColor: '#CCC',
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
-    justifyContent: 'center',
-    height: 50,
-  },
-
-  backTextWhite: {
-    color: '#FFF',
-  },
-
-  rowBack: {
-      alignItems: 'center',
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingLeft: 15,
-      width: "95%"
-  },
-
-  backLeftBtn:{
-    alignItems: 'center',
-    bottom: 0,
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    width: 90,
-    backgroundColor: '#56D945',
-    left: 20,
-    marginTop: 0,
-    marginBottom: 10,
-    paddingTop: 0,
-    paddingBottom: 0,
-    borderTopLeftRadius: 15,
-    borderBottomLeftRadius: 15,
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-  },
-
-  backRightBtn: {
-      alignItems: 'center',
-      bottom: 0,
-      justifyContent: 'center',
-      position: 'absolute',
-      top: 0,
-      width: 75,
-  },
-
-  backRightBtnCenter: {
-      backgroundColor: 'grey',
-      right: 75,
-      marginTop: 0,
-      marginBottom: 10,
-      paddingTop: 0,
-      paddingBottom: 0,
-      borderTopLeftRadius: 0,
-      borderBottomLeftRadius: 0,
-  },
-
-  backRightBtnRight: {
-      backgroundColor: 'red',
-      right: 0,
-      marginTop: 0,
-      marginBottom: 10,
-      paddingTop: 0,
-      paddingBottom: 0,
-      borderTopRightRadius: 15,
-      borderBottomRightRadius: 15,
-  },
-  trash: {
-      height: 25,
-      width: 25,
-  },
-})
+// Styles com from global stylesheet.js

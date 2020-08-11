@@ -28,16 +28,18 @@ const appStyles = StyleSheet.create({
 
   logo: {
     fontWeight: "bold",
-    fontSize: 50,
+    fontSize: 45,
     color: APPTEXTRED,
+    marginTop: 30,
     marginBottom: 40,
+    alignItems: "center",
   },
 
   inputView: {
-    width: "80%",
+    width: "75%",
     backgroundColor: APPBACKGROUNDCOLOR,
     borderColor: "black",
-    borderWidth: 0.9,
+    borderWidth: 1,
     borderRadius: 25,
     height: 50,
     marginBottom: 20,
@@ -46,8 +48,10 @@ const appStyles = StyleSheet.create({
   },
 
   inputText: {
+    padding: 10,
+    fontSize: 16,
     height: 50,
-    color: APPTEXTBLUE,
+    color: APPINPUTVIEW,
   },
 
   forgot: {
@@ -101,15 +105,6 @@ const appStyles = StyleSheet.create({
     fontSize: 16,
     padding: 10,
   },
-
-  logo: {
-    marginTop: 30,
-    fontWeight: "bold",
-    fontSize: 50,
-    color: APPTEXTRED,
-    marginBottom: 18,
-    alignItems: "center",
-  },
 });
 
 
@@ -121,7 +116,7 @@ const alarmStyles = StyleSheet.create({
     backgroundColor: APPBACKGROUNDCOLOR,
     alignItems: "center",
     justifyContent: "center",
-    height: 100,
+    paddingTop: 25
   },
 
   scrollViewContainer: {
@@ -134,17 +129,12 @@ const alarmStyles = StyleSheet.create({
     padding: 0,
   },
 
-  timerContainer: {
-    flexDirection: "row",
-  },
-
   topBanner: {
     flexDirection: "row",
     width: "100%",
-    backgroundColor: APPTEXTWHITE,
-    // backgroundColor: APPBACKGROUNDCOLOR,
+    backgroundColor: APPBACKGROUNDCOLOR,
     height: 110,
-    paddingTop: 30,
+    paddingTop: 0,
     paddingBottom: 0,
     padding: 15,
     alignSelf: "center",
@@ -161,16 +151,16 @@ const alarmStyles = StyleSheet.create({
   pageTitle: {
     padding: 20,
     color: APPTEXTRED,
-    fontSize: 40,
+    fontSize: 50,
+    fontWeight: "bold",
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
   },
 
   alarmTime: {
     color: APPTEXTWHITE,
-    fontSize: 45,
+    fontSize: 40,
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
@@ -185,7 +175,6 @@ const alarmStyles = StyleSheet.create({
   alarmBanner: {
     flex: 1,
     flexDirection: "row",
-    backgroundColor: APPTEXTRED,
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "space-between",
@@ -199,9 +188,9 @@ const alarmStyles = StyleSheet.create({
 
   alarmDetails: {
     flex: 1,
-    backgroundColor: APPTEXTRED,
     alignItems: "center",
     justifyContent: "center",
+    alignSelf: 'center',
     width: "100%",
     borderRadius: 15,
   },
@@ -209,42 +198,20 @@ const alarmStyles = StyleSheet.create({
   button: {
     width: 60,
     height: 60,
+    backgroundColor:"#465881",
+    alignItems: 'center',
+    justifyContent:"center",
     borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  buttonTitle: {
-    color: APPTEXTWHITE,
-    fontSize: 40,
-  },
-
-  buttonBorder: {
-    color: APPTEXTWHITE,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    borderWidth: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    marginBottom: 20,
+    padding: 20
   },
   
-  rowFront: {
-    alignItems: "center",
-    backgroundColor: "#CCC",
-    borderBottomColor: "black",
-    borderBottomWidth: 1,
-    justifyContent: "center",
-    height: 50,
-  },
-
   backTextWhite: {
     color: "#FFF",
   },
 
   rowBack: {
     alignItems: "center",
-    // backgroundColor: '#DDD',
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -259,8 +226,8 @@ const alarmStyles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     width: 90,
-    backgroundColor: 'green',
-    left: 25,
+    backgroundColor: '#56D945',
+    left: 20,
     marginTop: 0,
     marginBottom: 10,
     paddingTop: 0,
@@ -281,7 +248,7 @@ const alarmStyles = StyleSheet.create({
   },
 
   backRightBtnCenter: {
-      backgroundColor: 'blue',
+      backgroundColor: 'grey',
       right: 75,
       marginTop: 0,
       marginBottom: 10,
