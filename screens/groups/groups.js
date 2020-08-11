@@ -875,7 +875,7 @@ export default class Groups extends Component {
                       </TouchableHighlight>
                     )}
                     renderHiddenItem={this.renderHiddenItemModal}
-                    leftOpenValue={75}
+                    leftOpenValue={0}
                     rightOpenValue={-160}
                     previewRowKey={"0"}
                     previewOpenValue={-80}
@@ -892,8 +892,8 @@ export default class Groups extends Component {
 
         {/* **************************************** ACTUAL PAGE ************************************************* */}
 
-        <View style={alarmStyles.topBanner}>
-          <Text style={styles.logo}>Groups</Text>
+        <View style={alarmStyles.topBanner}>          
+          <Text style={alarmStyles.pageTitle}>Groups</Text>
 
           {/* add new group button */}
           <MaterialIcons
@@ -952,7 +952,7 @@ export default class Groups extends Component {
             </TouchableHighlight>
           )}
           renderHiddenItem={this.renderHiddenItem}
-          leftOpenValue={75}
+          leftOpenValue={0}
           rightOpenValue={-160}
           previewRowKey={"0"}
           previewOpenValue={-80}
