@@ -63,6 +63,10 @@ function MyTabs() {
       activeTintColor: theme.APPTEXTRED, // This makes the button pink when you're on that page
       activeBackgroundColor: theme.APPBACKGROUNDCOLOR,
       inactiveBackgroundColor: theme.APPBACKGROUNDCOLOR,
+      style: {
+        borderTopWidth: 0,
+        borderTopColor: "transparent",
+      }
     }}
   >
     <Tab.Screen
