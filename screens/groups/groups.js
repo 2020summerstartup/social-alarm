@@ -685,7 +685,7 @@ export default class Groups extends Component {
           {/* this allows for touch anywhere and keyboard dismisses functionality */}
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={appStyles.modalContainer}>
-              <View style={styles.buttonContainer}>
+              <View style={alarmStyles.topBanner}>
 
                 {/* close indiv group modal button */}
                 <MaterialIcons
@@ -698,9 +698,7 @@ export default class Groups extends Component {
                   }}
                   onPress={() => this.setState({ groupModalOpen: false })}
                 />
-                                                            
-                <Text>                                                                </Text>
-
+                                                      
                 {/* delete group button */}
                 {this.user.email == this.state.groupAdminClicked && (
                   <MaterialIcons
@@ -1060,10 +1058,8 @@ const styles = StyleSheet.create({
   },
 
   buttonContainer: {
-    marginTop: 10,
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingTop: 10,
   },
 });
