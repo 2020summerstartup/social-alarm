@@ -187,8 +187,7 @@ class ProfileScreen extends Component {
           <View style={{...profileStyles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
             {/* this part shows the user's name and email */}
             <View style={profileStyles.userRow}>
-              <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK }}>
-                {this.state.name} {'\n'}
+              <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK }}>{this.state.name.replace('<br/>', '\n')}
               </Text>
               <Text
                 style={{
@@ -522,15 +521,16 @@ class ProfileScreen extends Component {
                   rightIcon={<Chevron />}
                 />
               </View>
-
-              {/* Sign out button */}
-              <TouchableOpacity
-                style={{...profileStyles.loginBtn, backgroundColor: theme.APPTEXTRED}}
-                onPress={() => this.signOutUser()}
-              >
-                <Text style={profileStyles.logo}>Sign Out</Text>
-              </TouchableOpacity>
             </ScrollView>
+
+            {/* Sign out button */}
+            <TouchableOpacity
+              style={{...profileStyles.loginBtn, backgroundColor: theme.APPTEXTRED}}
+              onPress={() => this.signOutUser()}
+            >
+              <Text style={profileStyles.logo}>Sign Out</Text>
+            </TouchableOpacity>
+
           </View>
           )
         }}

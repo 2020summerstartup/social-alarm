@@ -312,9 +312,9 @@ const profileStyles = StyleSheet.create({
     backgroundColor: 'white',
 
     // these lines fit the container to the entire screen
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
-    marginLeft: 0,
+    //height: Dimensions.get('window').height,
+    // width: Dimensions.get('window').width,
+    // marginLeft: 0,
   },
   scroll: {
     backgroundColor: 'white',
@@ -327,7 +327,7 @@ const profileStyles = StyleSheet.create({
     alignItems: 'flex-start',
     // flexDirection: 'row',
     paddingBottom: 30,
-    paddingLeft: 15,
+    paddingLeft: 25,
     paddingRight: 15,
     paddingTop: 30,
   },
@@ -353,7 +353,7 @@ const profileStyles = StyleSheet.create({
     backgroundColor: APPTEXTRED,
     borderRadius: 15,
     height: 40,
-    width: 0.85 * Dimensions.get('screen').width, // sign out button is 90% of the screen's width
+    width: 0.85 * Dimensions.get('screen').width, // sign out button is 85% of the screen's width
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
