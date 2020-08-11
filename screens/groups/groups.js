@@ -223,45 +223,22 @@ export default class Groups extends Component {
   // deletes a user from a group
   // called when user deletes themself from a group OR
   // admin deletes someone from a group
-  // TODO: split this in to two methods
   deleteUser(group, groupId, userDeleted) {
+    if(userDeleted == this.user.email) {
+      this.deleteSelf(group, groupId);
+      return;
+    }
     var self = this;
 
-    // alert that is added to a user's page
-    var alert = {};
-
-    if (userDeleted == this.user.email) {
-      // alert is empty if same person
-      alert = {};
-
-      // updating state if user is deleting themself
-      // updates the groups displayed on main page
-      const newGroups = self.state.groups;
-      for (var i = 0; i < newGroups.length; i++) {
-        if (newGroups[i].id == groupId) {
-          newGroups.splice(i, 1);
-        }
+    // updating state if admin deleted someone else
+    // updates the members displayed on open modal
+    const newMembers = self.state.groupMembers;
+    for (var i = 0; i < newMembers.length; i++) {
+      if (newMembers[i] == userDeleted) {
+        newMembers.splice(i, 1);
       }
-      self.setState({ groups: newGroups });
-      // close  modal (bc they aren't in the group anymore)
-      self.setState({ groupModalOpen: false });
-    } else {
-      alert = {
-        title: "Group deleted",
-        body:
-          self.user.email + ' has deleted you from the group "' + group + '"',
-      };
-
-      // updating state if admin deleted someone else
-      // updates the members displayed on open modal
-      const newMembers = self.state.groupMembers;
-      for (var i = 0; i < newMembers.length; i++) {
-        if (newMembers[i] == userDeleted) {
-          newMembers.splice(i, 1);
-        }
-      }
-      self.setState({ groupMembers: newMembers });
     }
+    self.setState({ groupMembers: newMembers });
 
     // user side firebase (delete's group from user's doc)
     db.collection("users")
@@ -271,7 +248,65 @@ export default class Groups extends Component {
           id: groupId,
           name: group,
         }),
-        alertQueue: Firebase.firestore.FieldValue.arrayUnion(alert),
+        alertQueue: Firebase.firestore.FieldValue.arrayUnion({
+          title: "Group deleted",
+          body:
+            self.user.email + ' has deleted you from the group "' + group + '"',
+        }),
+      })
+      .then(() => {
+        // group side firebase (deletes user from group's doc)
+        db.collection("groups")
+          .doc(groupId)
+          .get()
+          .then(function (doc) {
+            // if they are the last member in the group, delete the group document
+            if (doc.data().members.length <= 1) {
+              db.collection("groups")
+                .doc(groupId)
+                .delete()
+                .then(() => console.log("doc deleted"));
+            } else {
+                db.collection("groups")
+                  .doc(groupId)
+                  .update({
+                    members: Firebase.firestore.FieldValue.arrayRemove(
+                      userDeleted
+                    ),
+                  });
+              }
+            }
+          );
+      })
+      .catch((error) => console.log(error))
+      .catch((error) => console.log(error));
+  }
+
+  // deletes a user from a group
+  // called when user deletes themself from a group
+  deleteSelf(group, groupId) {
+    var self = this;
+    var userDeleted = this.user.email;
+
+    // updates state - the groups displayed on main page
+    const newGroups = self.state.groups;
+    for (var i = 0; i < newGroups.length; i++) {
+      if (newGroups[i].id == groupId) {
+        newGroups.splice(i, 1);
+      }
+    }
+    self.setState({ groups: newGroups });
+    // close modal (bc they aren't in the group anymore)
+    self.setState({ groupModalOpen: false });
+
+    // user side firebase (delete's group from user's doc)
+    db.collection("users")
+      .doc(userDeleted)
+      .update({
+        groups: Firebase.firestore.FieldValue.arrayRemove({
+          id: groupId,
+          name: group,
+        }),
       })
       .then(() => {
         // group side firebase (deletes user from group's doc)
@@ -287,7 +322,7 @@ export default class Groups extends Component {
                 .then(() => console.log("doc deleted"));
             } else {
               // else just remove the user from the group's doc
-              if (userDeleted == self.user.email) {
+              if (userDeleted == doc.data().adminEmail) {
                 // if admin is deleted - choose new admin
                 var newAdmin = doc.data().members[1];
                 db.collection("groups")
@@ -308,6 +343,7 @@ export default class Groups extends Component {
                     }),
                   });
               } else {
+                // else just delete user from groups doc
                 db.collection("groups")
                   .doc(groupId)
                   .update({
