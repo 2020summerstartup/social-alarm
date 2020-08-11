@@ -286,7 +286,7 @@ class ProfileScreen extends Component {
                     <TouchableHighlight
                       style={{
                         ...styles.alarmBanner,
-                        color: theme.APPTEXTRED,
+                        backgroundColor: theme.APPTEXTRED,
                       }}
                       key={notification.body}
                     >

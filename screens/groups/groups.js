@@ -129,11 +129,11 @@ export default class Groups extends Component {
         }
         this.setState({ groupMembers: groupMem });
         this.setState({ groupAdminClicked: doc.data().adminEmail });
-    });
+      });
   };
 
   // called when user tries to add someone to a group
-  // adds user the group (provided they can be added), 
+  // adds user the group (provided they can be added),
   // adds this to user's notifications, and updates local state
   addUser = (userName, groupId) => {
     //  this is needed, not totally sure why (see stack overfloe below) -anna
@@ -214,12 +214,14 @@ export default class Groups extends Component {
         .catch((error) => console.log(error));
     } else {
       // if nothing was entered in the text input - alert
-      Alert.alert("Oops!", "Please enter a valid email address", [{ text: "OK" }]);
+      Alert.alert("Oops!", "Please enter a valid email address", [
+        { text: "OK" },
+      ]);
     }
   };
 
   // deletes a user from a group
-  // called when user deletes themself from a group OR 
+  // called when user deletes themself from a group OR
   // admin deletes someone from a group
   // TODO: split this in to two methods
   deleteUser(group, groupId, userDeleted) {
@@ -345,30 +347,38 @@ export default class Groups extends Component {
         const groupMembers = doc.data().members;
         // go through all member's user doc and delete that group
         for (var i = 0; i < groupMembers.length; i++) {
-          var alert = {};
           // admin shouldn't get this alert since they deleted the group
           if (groupMembers[i] != doc.data().adminEmail) {
-            alert = {
-              title: "Group deleted",
-              body: self.user.email + ' has deleted the group "' + group + '"',
-            };
-          }
-          // delete group from user's doc
-          // also add a notification to user
-          db.collection("users")
+            // delete group from user's doc
+            // also add a notification to user
+            db.collection("users")
             .doc(groupMembers[i])
             .update({
               groups: Firebase.firestore.FieldValue.arrayRemove({
                 id: groupId,
                 name: group,
               }),
-              alertQueue: Firebase.firestore.FieldValue.arrayUnion(alert),
+              alertQueue: Firebase.firestore.FieldValue.arrayUnion({
+                title: "Group deleted",
+                body: self.user.email + ' has deleted the group "' + group + '"',
+              }),
+            });
+          } else {
+
+            // delete group from user's doc
+          // also add a notification to user
+          db.collection("users")
+          .doc(groupMembers[i])
+          .update({
+            groups: Firebase.firestore.FieldValue.arrayRemove({
+              id: groupId,
+              name: group,
             })
+          });
+          }
         }
         // delete group doc
-        db.collection("groups")
-          .doc(groupId)
-          .delete()
+        db.collection("groups").doc(groupId).delete();
       });
   }
 
@@ -376,7 +386,6 @@ export default class Groups extends Component {
   // for main page
   renderHiddenItem = (data, rowMap) => (
     <View style={alarmStyles.rowBack}>
-
       <TouchableOpacity
         style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnCenter]}
         onPress={() => this.closeRow(rowMap, data.item.id)}
@@ -464,7 +473,10 @@ export default class Groups extends Component {
     this.closeRow(rowMap, rowKey);
 
     // if the person is not trying to delete themselves and is not the admin, return
-    if ( rowKey != this.user.email && this.user.email != this.state.groupAdminClicked ) {
+    if (
+      rowKey != this.user.email &&
+      this.user.email != this.state.groupAdminClicked
+    ) {
       return;
     } else {
       // double check with user - make sure they want to delete via alert
@@ -570,7 +582,6 @@ export default class Groups extends Component {
   }
 
   render() {
-
     // context (global state) stuff
     const { isDarkMode, light, dark } = this.context;
 
@@ -604,7 +615,9 @@ export default class Groups extends Component {
                 }}
                 onPress={() => this.setState({ createModalOpen: false })}
               />
-              <Text style={{ ...appStyles.groupsLogo, color: theme.APPTEXTRED }}>
+              <Text
+                style={{ ...appStyles.groupsLogo, color: theme.APPTEXTRED }}
+              >
                 Create Group
               </Text>
               {/* text input for create new group */}
@@ -853,7 +866,7 @@ export default class Groups extends Component {
 
         {/* **************************************** ACTUAL PAGE ********************************************************** */}
 
-        <View style={{alignItems: "center"}}>
+        <View style={{ alignItems: "center" }}>
           <Text style={{ ...appStyles.groupsLogo, color: theme.APPTEXTRED }}>
             Groups
           </Text>
