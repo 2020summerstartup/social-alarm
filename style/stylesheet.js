@@ -308,6 +308,14 @@ const alarmStyles = StyleSheet.create({
 });
 
 const profileStyles = StyleSheet.create({
+  container: {
+    backgroundColor: 'white',
+
+    // these lines fit the container to the entire screen
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
+    marginLeft: 0,
+  },
   scroll: {
     backgroundColor: 'white',
 
@@ -316,12 +324,12 @@ const profileStyles = StyleSheet.create({
     width: Dimensions.get('window').width,
   },
   userRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingBottom: 40,
+    alignItems: 'flex-start',
+    // flexDirection: 'row',
+    paddingBottom: 30,
     paddingLeft: 15,
     paddingRight: 15,
-    paddingTop: 40,
+    paddingTop: 30,
   },
   userImage: {
     marginRight: 12,

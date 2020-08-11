@@ -45,7 +45,7 @@ import { color } from "react-native-reanimated";
 
 /* profile3.js
  * profile screen
- * has push notifications, birthday, time zone, about us,
+ * has push notifications, dark mode, birthday, time zone, about us,
  * share our app, and send feedback
  * feel free to change or delete any of these
  */
@@ -63,7 +63,6 @@ const BirthdayPicker = () => {
     setDatePickerVisibility(false);
   };
 
-  // TO DO: replace the "select birthday" button title with the date
   const handleConfirm = (date) => {
     hideDatePicker();
   };
@@ -185,28 +184,28 @@ class ProfileScreen extends Component {
 
           return (
 
+          <View style={{...profileStyles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
+            {/* this part shows the user's name and email */}
+            <View style={profileStyles.userRow}>
+              <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK }}>
+                {this.state.name} {'\n'}
+              </Text>
+              <Text
+                style={{
+                  color: theme.APPTEXTBLACK,
+                  fontSize: 25,
+                }}
+              >
+                {this.state.email}
+              </Text>
+            </View>
+
             <ScrollView
               style={{
                 ...profileStyles.scroll,
                 backgroundColor: theme.APPBACKGROUNDCOLOR,
               }}
             >
-              {/* this part shows the user's name and email */}
-              <View style={profileStyles.userRow}>
-                <View>
-                  <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK }}>
-                    {this.state.name}
-                  </Text>
-                  <Text
-                    style={{
-                      color: theme.APPTEXTBLACK,
-                      fontSize: 25,
-                    }}
-                  >
-                    {this.state.email}
-                  </Text>
-                </View>
-              </View>
 
               {/* This is supposed to show an avatar but it doesn't show up, styling issues?
 
@@ -216,8 +215,6 @@ class ProfileScreen extends Component {
           activeOpacity={0.7}
           containerStyle={{flex: 2, marginLeft: 20, marginTop: 115}}
         />*/}
-
-              {/* Not really sure if we want this, was in the tutorial so I kept it */}
 
               <Modal
                 visible={this.state.notificationsModal}
@@ -534,6 +531,7 @@ class ProfileScreen extends Component {
                 <Text style={profileStyles.logo}>Sign Out</Text>
               </TouchableOpacity>
             </ScrollView>
+          </View>
           )
         }}
       </NotificationContext.Consumer>
