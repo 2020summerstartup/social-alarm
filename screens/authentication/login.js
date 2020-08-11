@@ -35,14 +35,17 @@ export default function Login({ navigation }) {
   // logs user in via firebase, navigates to App page (bottom tab navigator)
   loginUser = async (email, password) => {
     try {
+      // set login credentials in local storage
       await AsyncStorage.setItem("email", email);
-      await AsyncStorage.setItem("abcd123", password);
+      await AsyncStorage.setItem("password", password);
+      // sign user in with firebase and navigate to App
       auth
         .signInWithEmailAndPassword(email, password)
         .then(function (user) {
           navigation.navigate("App");
         })
         .catch(function (error) {
+          // have an alert notifying user if there's an error
           Alert.alert("Oops!", error.toString().substring(6), [{ text: "OK" }]);
         });
     } catch (error) {
@@ -53,11 +56,13 @@ export default function Login({ navigation }) {
   return (
     <NotificationContext.Consumer>
       {(context) => {
+        // determines appropriate theme
         const { isDarkMode, light, dark } = context;
 
         const theme = isDarkMode ? dark : light;
 
         return (
+          // dismisses keyboard when user presses anywhere
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View
               style={{

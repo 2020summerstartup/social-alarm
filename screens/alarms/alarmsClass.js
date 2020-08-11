@@ -107,6 +107,7 @@ export default class Alarms extends Component {
         }
     }
 
+    // context (global state) stuff
     static contextType = NotificationContext;
 
     
@@ -1011,15 +1012,16 @@ export default class Alarms extends Component {
     }
 
     render(){
+      // context  (global state) stuff
       const { isDarkMode, light, dark } = this.context
       const theme =  isDarkMode ? dark : light; 
 
       // TopBanner formats the title and modal button along the top of the screen
-function TopBanner({ children }){
-  return(
-    <View style = {{...styles.topBanner, backgroundColor: theme.APPBACKGROUNDCOLOR}}>{children}</View>
-  )
-};
+      function TopBanner({ children }){
+        return(
+          <View style = {{...styles.topBanner, backgroundColor: theme.APPBACKGROUNDCOLOR}}>{children}</View>
+        )
+      };
       return(
         <View style={{...styles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
           <TopBanner>

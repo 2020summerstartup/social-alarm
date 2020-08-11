@@ -14,10 +14,7 @@ import {
   Modal,
   TouchableHighlight,
 } from "react-native";
-import {
-  ListItem,
-  withBadge,
-} from "react-native-elements";
+import { ListItem, withBadge } from "react-native-elements";
 import { auth, db } from "../../firebase/firebase";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RNPickerSelect from "react-native-picker-select";
@@ -45,7 +42,7 @@ import { color } from "react-native-reanimated";
 
 /* profile3.js
  * profile screen
- * has push notifications, birthday, time zone, about us,
+ * has notifications, birthday, time zone, about us,
  * share our app, and send feedback
  * feel free to change or delete any of these
  */
@@ -66,15 +63,16 @@ const BirthdayPicker = () => {
   // TO DO: replace the "select birthday" button title with the date
   const handleConfirm = (date) => {
     hideDatePicker();
+    // console.log(date.toString());
   };
 
   return (
     <View>
-      <Button title="Select birthday" onPress={showDatePicker}/>
+      <Button title="Select birthday" onPress={showDatePicker} />
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
-        minimumDate={new Date(1950, 0, 1)}
+        minimumDate={new Date(1900, 0, 1)}
         maximumDate={new Date(2020, 11, 31)}
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
@@ -88,20 +86,27 @@ const BirthdayPicker = () => {
 class ProfileScreen extends Component {
   // sign out functionality
   signOutUser = async () => {
+    // remove auth credentials from local storage
     await AsyncStorage.removeItem("email");
     await AsyncStorage.removeItem("password");
-    //navigation.navigate("Auth");
+    //sign user out with firebase
     auth
       .signOut()
       .then(() => {
         // this reloads the page
+        // TODO: try to get navigation to work again?
+        // I couldn't get navigation stuff to work so instead
+        // we're reloading the page and then it will display the
+        // auth screen
         DevSettings.reload();
       })
       .catch((error) => console.log(error));
   };
 
   componentDidMount() {
+    // gets user's email and name from AsyncStorage
     this.getEmailName();
+    // gets notifications from firebase and stores them in state
     this.getNotifications();
   }
 
@@ -117,28 +122,30 @@ class ProfileScreen extends Component {
     super(props);
 
     this.state = {
-      switchValue: false,
       name: "", // this is the user's name
       email: "", // this is the user's email
 
-      notificationsModal: false,
-      notifications: [],
-      theme: {},
+      notificationsModal: false, // controls if the notifications modal  is open
+      notifications: [], // all the notifications from firebase
 
       timeZoneSelected: "",
       timezoneArray: [
-        { label: 'Eastern Time', value: 'EST' },
-        { label: 'Central Time', value: 'CST' },
-        { label: 'Mountain Time', value: 'MST' },
-        { label: 'Pacific Time', value: 'PST' },
-      ]
+        { label: "AST", value: "AST" },
+        { label: "EST", value: "EST" },
+        { label: "CST", value: "CST" },
+        { label: "MST", value: "MST" },
+        { label: "PST", value: "PST" },
+        { label: "AKST", value: "AKST" },
+        { label: "HST", value: "HST" },
+      ],
     };
   }
 
-  toggleSwitch = (value) => {
-    this.setState({ switchValue: value });
-  };
+  // context (global state) stuff
+  static contextType = NotificationContext;
 
+  // called in componentDidMount
+  // stores notifications (alertQueue) from firebase in state
   getNotifications = () => {
     db.collection("users")
       .doc(auth.currentUser.email)
@@ -148,6 +155,8 @@ class ProfileScreen extends Component {
       });
   };
 
+  // called when user closes notification modal
+  // closes  modal and deletes notififcations from firebase
   closeNotifications = () => {
     this.setState({ notificationsModal: false });
     db.collection("users").doc(auth.currentUser.email).update({
@@ -156,59 +165,62 @@ class ProfileScreen extends Component {
   };
 
   render() {
+    // context (global state) stuff
+    const {
+      notificationCount,
+      setNotificationCount,
+      isDarkMode,
+      toggleTheme,
+      light,
+      dark,
+    } = this.context;
+
+    const theme = isDarkMode ? dark : light;
+
+    // called when user opens notifications modal
+    // opens modal and sets global state notification count to 0
+    openNotifications = () => {
+      this.setState({ notificationsModal: true });
+      setNotificationCount(0);
+    };
+
+    // called when user toggles theme button
+    // stores new theme in AsyncStorage and toggles theme
+    changeTheme = async () => {
+      // themes are switched bc they are toggled after this
+      AsyncStorage.setItem("theme", isDarkMode ? "light" : "dark");
+      await toggleTheme();
+    };
+
+    // this allows notifications icon to have a lil badge when there are notifications
+    // https://react-native-elements.github.io/react-native-elements/docs/badge#withbadge-higher-order-component
+    const BadgedIcon = withBadge(notificationCount)(BaseIcon);
+
     return (
-      <NotificationContext.Consumer>
-        {(notificationContext) => {
-
-          const {
-            notificationCount,
-            setNotificationCount,
-            isDarkMode,
-            toggleTheme,
-            light,
-            dark,
-          } = notificationContext;
-
-          const theme = isDarkMode ? dark : light;
-
-          openNotifications = () => {
-            this.setState({ notificationsModal: true });
-            setNotificationCount(0);
-          };
-
-          changeTheme = async () => {
-            AsyncStorage.setItem("theme", isDarkMode ? "light" : "dark");
-            await toggleTheme();
-          };
-
-          const BadgedIcon = withBadge(notificationCount)(BaseIcon);
-
-          return (
-
-            <ScrollView
+      <ScrollView
+        style={{
+          ...profileStyles.scroll,
+          backgroundColor: theme.APPBACKGROUNDCOLOR,
+        }}
+      >
+        {/* this part shows the user's name and email */}
+        <View style={profileStyles.userRow}>
+          <View>
+            <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK }}>
+              {this.state.name}
+            </Text>
+            <Text
               style={{
-                ...profileStyles.scroll,
-                backgroundColor: theme.APPBACKGROUNDCOLOR,
+                color: theme.APPTEXTBLACK,
+                fontSize: 25,
               }}
             >
-              {/* this part shows the user's name and email */}
-              <View style={profileStyles.userRow}>
-                <View>
-                  <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK }}>
-                    {this.state.name}
-                  </Text>
-                  <Text
-                    style={{
-                      color: theme.APPTEXTBLACK,
-                      fontSize: 25,
-                    }}
-                  >
-                    {this.state.email}
-                  </Text>
-                </View>
-              </View>
+              {this.state.email}
+            </Text>
+          </View>
+        </View>
 
-              {/* This is supposed to show an avatar but it doesn't show up, styling issues?
+        {/* This is supposed to show an avatar but it doesn't show up, styling issues?
 
         <Avatar
           rounded
@@ -217,326 +229,339 @@ class ProfileScreen extends Component {
           containerStyle={{flex: 2, marginLeft: 20, marginTop: 115}}
         />*/}
 
-              {/* Not really sure if we want this, was in the tutorial so I kept it */}
+        {/* Not really sure if we want this, was in the tutorial so I kept it */}
 
-              <Modal
-                visible={this.state.notificationsModal}
-                animationType="slide"
+        {/* NOTIFICATIONS MODAL */}
+        <Modal visible={this.state.notificationsModal} animationType="slide">
+          <View
+            style={{
+              alignItems: "center",
+              flex: 1,
+              backgroundColor: theme.APPBACKGROUNDCOLOR,
+            }}
+          >
+            <MaterialIcons
+              name="close"
+              size={24}
+              style={{
+                ...appStyles.modalClose,
+                ...appStyles.modalToggle,
+                ...{ margin: 20, color: theme.APPTEXTRED },
+              }}
+              color={theme.APPTEXTRED}
+              onPress={() => this.closeNotifications()}
+            />
+
+            <Text
+              style={{
+                ...styles.logo,
+                fontSize: 36,
+                color: theme.APPTEXTRED,
+              }}
+            >
+              {" "}
+              Notifications{" "}
+            </Text>
+
+            {/* if there are no new notifications */}
+            {this.state.notifications.length == 0 && (
+              <Text
+                style={{
+                  ...styles.logo,
+                  fontSize: 22,
+                  fontWeight: "normal",
+                  paddingTop: 30,
+                  color: theme.APPTEXTRED,
+                }}
               >
-                <View
-                  style={{
-                    alignItems: "center",
-                    flex: 1,
-                    backgroundColor: theme.APPBACKGROUNDCOLOR,
-                  }}
-                >
-                  <MaterialIcons
-                    name="close"
-                    size={24}
-                    style={{
-                      ...appStyles.modalClose,
-                      ...appStyles.modalToggle,
-                      ...{ margin: 20, color: theme.APPTEXTRED },
-                    }}
-                    color={theme.APPTEXTRED}
-                    onPress={() => this.closeNotifications()}
-                  />
+                You have no new notifications
+              </Text>
+            )}
 
-                  <Text
-                    style={{
-                      ...styles.logo,
-                      fontSize: 36,
-                      color: theme.APPTEXTRED,
-                    }}
-                  >
-                    {" "}
-                    Notifications
-                  </Text>
-
-                  {this.state.notifications.length == 0 && (
-                    <Text
+            {/* if there are new notifications */}
+            <ScrollView style={{ width: "95%" }}>
+              {this.state.notifications &&
+                this.state.notifications.map((notification) => {
+                  return (
+                    <TouchableHighlight
                       style={{
-                        ...styles.logo,
-                        fontSize: 22,
-                        fontWeight: "normal",
-                        paddingTop: 30,
+                        ...styles.alarmBanner,
                         color: theme.APPTEXTRED,
                       }}
+                      key={notification.body}
                     >
-                      you have no new notifications
-                    </Text>
-                  )}
-
-                  <ScrollView style={{ width: "95%" }}>
-                    {this.state.notifications &&
-                      this.state.notifications.map((notification) => {
-                        return (
-                          <TouchableHighlight
-                            style={{
-                              ...styles.alarmBanner,
-                              color: theme.APPTEXTRED,
-                            }}
-                            key={notification.body}
-                          >
-                            <View>
-                              <Text
-                                adjustsFontSizeToFit
-                                numberOfLines={1}
-                                style={{
-                                  ...styles.titleText,
-                                  color: theme.APPTEXTWHITE,
-                                }}
-                              >
-                                {notification.title}
-                              </Text>
-                              <Text
-                                style={{
-                                  ...styles.bodyText,
-                                  color: theme.APPTEXTWHITE,
-                                }}
-                              >
-                                {notification.body}
-                              </Text>
-                            </View>
-                          </TouchableHighlight>
-                        );
-                      })}
-                  </ScrollView>
-                </View>
-              </Modal>
-
-              <View>
-
-              {notificationCount == 0 && (
-                <ListItem
-                  title="Notifications"
-                  containerStyle={{
-                    ...profileStyles.listItemContainer,
-                    backgroundColor: theme.APPBACKGROUNDCOLOR,
-                  }}
-                  titleStyle={{color: theme.APPTEXTBLACK}}
-                  onPress={() => openNotifications()}
-                  leftIcon={
-                    <BaseIcon
-                      containerStyle={{ backgroundColor: APPTEXTRED }}
-                      icon={{
-                        type: "ionicon",
-                        name: "ios-notifications",
-                      }}
-                    />
-                  }
-                  rightIcon={<Chevron />}
-                />
-              )}
-                {notificationCount > 0 && (
-                  <ListItem
-                    title="Notifications"
-                    containerStyle={{
-                      ...profileStyles.listItemContainer,
-                      backgroundColor: theme.APPBACKGROUNDCOLOR,
-                    }}
-                    titleStyle={{color: theme.APPTEXTBLACK}}
-                    onPress={() => openNotifications()}
-                    leftIcon={
-                      <BadgedIcon
-                        containerStyle={{ backgroundColor: APPTEXTRED }}
-                        icon={{
-                          type: "ionicon",
-                          name: "ios-notifications",
-                        }}
-                      />
-                    }
-                    rightIcon={<Chevron />}
-                  />
-                )}
-
-                <ListItem
-                  hideChevron
-                  title="Dark Mode"
-                  containerStyle={{
-                    ...profileStyles.listItemContainer,
-                    backgroundColor: theme.APPBACKGROUNDCOLOR,
-                  }}
-                  titleStyle={{color: theme.APPTEXTBLACK}}
-                  rightElement={
-                    <Switch
-                      onValueChange={() => changeTheme()}
-                      value={isDarkMode}
-                    />
-                  }
-                  leftIcon={
-                    <BaseIcon
-                      containerStyle={{
-                        backgroundColor: "#A4C8F0",
-                      }}
-                      icon={{
-                        type: "ionicon",
-                        name: "ios-moon",
-                      }}
-                    />
-                  }
-                />
-                <ListItem
-                  title="Birthday"
-                  rightTitleStyle={{ fontSize: 18 }}
-                  rightElement={<BirthdayPicker />}
-                  containerStyle={{
-                    ...profileStyles.listItemContainer,
-                    backgroundColor: theme.APPBACKGROUNDCOLOR,
-                  }}
-                  titleStyle={{color: theme.APPTEXTBLACK}}
-                  leftIcon={
-                    <BaseIcon
-                      containerStyle={{ backgroundColor: "#FAD291" }}
-                      icon={{
-                        type: "material",
-                        name: "cake",
-                      }}
-                    />
-                  }
-                />
-                <ListItem
-                  title="Time Zone"
-                  rightElement={
-                    <RNPickerSelect
-                      onValueChange={(value) =>
-                        this.setState({ timeZoneSelected: value })
-                      }
-                      items={this.state.timezoneArray}
-                      // Object to overide the default text placeholder for the PickerSelect
-                      placeholder={{
-                        label: "Select timezone",
-                        value: "select timezone",
-                      }}
-                      style={{
-                        fontWeight: "normal",
-                        color: theme.APPTEXTBLACK,
-                        placeholder: {
-                          color: theme.APPTEXTBLACK,
-                          fontSize: 18,
-                          alignSelf: "center",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          marginRight: 12,
-                          marginTop: 8,
-                        },
-                        inputIOS: {
-                          color: theme.APPTEXTBLACK,
-                          fontSize: 18,
-                          marginRight: 12,
-                          marginTop: 8,
-                          alignSelf: "center",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        },
-                      }}
-                      doneText={"Select"}
-                    />
-                  }
-                  rightTitleStyle={{ fontSize: 15 }}
-                  containerStyle={{
-                    ...profileStyles.listItemContainer,
-                    backgroundColor: theme.APPBACKGROUNDCOLOR,
-                  }}
-                  titleStyle={{color: theme.APPTEXTBLACK}}
-                  leftIcon={
-                    <BaseIcon
-                      containerStyle={{ backgroundColor: "#57DCE7" }}
-                      icon={{
-                        type: "font-awesome",
-                        name: "globe",
-                      }}
-                    />
-                  }
-                />
-              </View>
-              <View>
-                <ListItem
-                  title="About Us"
-                  containerStyle={{
-                    ...profileStyles.listItemContainer,
-                    backgroundColor: theme.APPBACKGROUNDCOLOR,
-                  }}
-                  titleStyle={{color: theme.APPTEXTBLACK}}
-                  onPress={() => {
-                    Linking.openURL(
-                      "https://www.github.com/2020summerstartup/social-alarm"
-                    );
-                  }} // we can change this later
-                  leftIcon={
-                    <BaseIcon
-                      containerStyle={{ backgroundColor: "#FFADF2" }}
-                      icon={{
-                        type: "ionicon",
-                        name: "md-information-circle",
-                      }}
-                    />
-                  }
-                  rightIcon={<Chevron />}
-                />
-                <ListItem
-                  title="Share our App"
-                  onPress={() => {
-                    Linking.openURL(
-                      "https://www.github.com/2020summerstartup/social-alarm"
-                    );
-                  }}
-                  containerStyle={{
-                    ...profileStyles.listItemContainer,
-                    backgroundColor: theme.APPBACKGROUNDCOLOR,
-                  }}
-                  titleStyle={{color: theme.APPTEXTBLACK}}
-                  leftIcon={
-                    <BaseIcon
-                      containerStyle={{
-                        backgroundColor: "#C47EFF",
-                      }}
-                      icon={{
-                        type: "entypo",
-                        name: "share",
-                      }}
-                    />
-                  }
-                  rightIcon={<Chevron />}
-                />
-                <ListItem
-                  title="Send Feedback"
-                  onPress={() => {
-                    Linking.openURL(
-                      "https://www.github.com/2020summerstartup/social-alarm"
-                    );
-                  }}
-                  containerStyle={{
-                    ...profileStyles.listItemContainer,
-                    backgroundColor: theme.APPBACKGROUNDCOLOR,
-                  }}
-                  titleStyle={{color: theme.APPTEXTBLACK}}
-                  leftIcon={
-                    <BaseIcon
-                      containerStyle={{
-                        backgroundColor: "#00C001",
-                      }}
-                      icon={{
-                        type: "materialicon",
-                        name: "feedback",
-                      }}
-                    />
-                  }
-                  rightIcon={<Chevron />}
-                />
-              </View>
-
-              {/* Sign out button */}
-              <TouchableOpacity
-                style={{...profileStyles.loginBtn, backgroundColor: theme.APPTEXTRED}}
-                onPress={() => this.signOutUser()}
-              >
-                <Text style={profileStyles.logo}>Sign Out</Text>
-              </TouchableOpacity>
+                      <View>
+                        <Text
+                          adjustsFontSizeToFit
+                          numberOfLines={1}
+                          style={{
+                            ...styles.titleText,
+                            color: theme.APPTEXTWHITE,
+                          }}
+                        >
+                          {notification.title}
+                        </Text>
+                        <Text
+                          style={{
+                            ...styles.bodyText,
+                            color: theme.APPTEXTWHITE,
+                          }}
+                        >
+                          {notification.body}
+                        </Text>
+                      </View>
+                    </TouchableHighlight>
+                  );
+                })}
             </ScrollView>
-          )
-        }}
-      </NotificationContext.Consumer>
+          </View>
+        </Modal>
+
+        <View>
+          {/* NOTIFICATION ICON ON MAIN PAGE */}
+          {/* if there are no new notifications - no badge */}
+          {notificationCount == 0 && (
+            <ListItem
+              title="Notifications"
+              containerStyle={{
+                ...profileStyles.listItemContainer,
+                backgroundColor: theme.APPBACKGROUNDCOLOR,
+              }}
+              titleStyle={{ color: theme.APPTEXTBLACK }}
+              onPress={() => openNotifications()}
+              leftIcon={
+                <BaseIcon
+                  // probably want to change the color
+                  containerStyle={{ backgroundColor: APPTEXTRED }}
+                  icon={{
+                    type: "ionicon",
+                    //TODO: FIX THIS
+                    name: "ios-notifications",
+                  }}
+                />
+              }
+              rightIcon={<Chevron />}
+            />
+          )}
+          {/* if there are new notifications - show badge */}
+          {notificationCount > 0 && (
+            <ListItem
+              title="Notifications"
+              containerStyle={{
+                ...profileStyles.listItemContainer,
+                backgroundColor: theme.APPBACKGROUNDCOLOR,
+              }}
+              titleStyle={{ color: theme.APPTEXTBLACK }}
+              onPress={() => openNotifications()}
+              leftIcon={
+                <BadgedIcon
+                  // probably want to change the color
+                  containerStyle={{ backgroundColor: APPTEXTRED }}
+                  icon={{
+                    type: "ionicon",
+                    //TODO: FIX THIS
+                    name: "ios-notifications",
+                  }}
+                />
+              }
+              rightIcon={<Chevron />}
+            />
+          )}
+
+          {/* DARK MODE ICON */}
+          <ListItem
+            hideChevron
+            title="Dark Mode"
+            containerStyle={{
+              ...profileStyles.listItemContainer,
+              backgroundColor: theme.APPBACKGROUNDCOLOR,
+            }}
+            titleStyle={{ color: theme.APPTEXTBLACK }}
+            rightElement={
+              <Switch onValueChange={() => changeTheme()} value={isDarkMode} />
+            }
+            leftIcon={
+              <BaseIcon
+                containerStyle={{
+                  backgroundColor: "#A4C8F0",
+                }}
+                icon={{
+                  type: "ionicon",
+                  name: "ios-moon",
+                }}
+              />
+            }
+          />
+
+          {/* BIRTHDAY ICON */}
+          <ListItem
+            title="Birthday"
+            rightTitleStyle={{ fontSize: 18 }}
+            rightElement={<BirthdayPicker />}
+            containerStyle={{
+              ...profileStyles.listItemContainer,
+              backgroundColor: theme.APPBACKGROUNDCOLOR,
+            }}
+            titleStyle={{ color: theme.APPTEXTBLACK }}
+            leftIcon={
+              <BaseIcon
+                containerStyle={{ backgroundColor: "#FAD291" }}
+                icon={{
+                  type: "material",
+                  name: "cake",
+                }}
+              />
+            }
+          />
+
+          {/* TIMEZONE ICON */}
+          <ListItem
+            title="Time Zone"
+            rightElement={
+              <RNPickerSelect
+                onValueChange={(value) =>
+                  this.setState({ timeZoneSelected: value })
+                }
+                items={this.state.timezoneArray}
+                // Object to overide the default text placeholder for the PickerSelect
+                placeholder={{
+                  label: "Select timezone",
+                  value: "select timezone",
+                }}
+                style={{
+                  fontWeight: "normal",
+                  color: theme.APPTEXTBLACK,
+                  placeholder: {
+                    color: theme.APPTEXTBLACK,
+                    fontSize: 18,
+                    alignSelf: "center",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginRight: 12,
+                    marginTop: 8,
+                  },
+                  inputIOS: {
+                    color: theme.APPTEXTBLACK,
+                    fontSize: 18,
+                    marginRight: 12,
+                    marginTop: 8,
+                    alignSelf: "center",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  },
+                }}
+                doneText={"Select"}
+              />
+            }
+            rightTitleStyle={{ fontSize: 15 }}
+            containerStyle={{
+              ...profileStyles.listItemContainer,
+              backgroundColor: theme.APPBACKGROUNDCOLOR,
+            }}
+            titleStyle={{ color: theme.APPTEXTBLACK }}
+            leftIcon={
+              <BaseIcon
+                containerStyle={{ backgroundColor: "#57DCE7" }}
+                icon={{
+                  type: "font-awesome",
+                  name: "globe",
+                }}
+              />
+            }
+          />
+        </View>
+        <View>
+          {/* ABOUT US ICON */}
+          <ListItem
+            title="About Us"
+            containerStyle={{
+              ...profileStyles.listItemContainer,
+              backgroundColor: theme.APPBACKGROUNDCOLOR,
+            }}
+            titleStyle={{ color: theme.APPTEXTBLACK }}
+            onPress={() => {
+              Linking.openURL(
+                "https://www.github.com/2020summerstartup/social-alarm"
+              );
+            }} // we can change this later
+            leftIcon={
+              <BaseIcon
+                containerStyle={{ backgroundColor: "#FFADF2" }}
+                icon={{
+                  type: "ionicon",
+                  name: "md-information-circle",
+                }}
+              />
+            }
+            rightIcon={<Chevron />}
+          />
+
+          {/* SHARE OUR APP ICON */}
+          <ListItem
+            title="Share our App"
+            onPress={() => {
+              Linking.openURL(
+                "https://www.github.com/2020summerstartup/social-alarm"
+              );
+            }}
+            containerStyle={{
+              ...profileStyles.listItemContainer,
+              backgroundColor: theme.APPBACKGROUNDCOLOR,
+            }}
+            titleStyle={{ color: theme.APPTEXTBLACK }}
+            leftIcon={
+              <BaseIcon
+                containerStyle={{
+                  backgroundColor: "#C47EFF",
+                }}
+                icon={{
+                  type: "entypo",
+                  name: "share",
+                }}
+              />
+            }
+            rightIcon={<Chevron />}
+          />
+
+          {/* SEND FEEDBACK ICON */}
+          <ListItem
+            title="Send Feedback"
+            onPress={() => {
+              Linking.openURL(
+                "https://www.github.com/2020summerstartup/social-alarm"
+              );
+            }}
+            containerStyle={{
+              ...profileStyles.listItemContainer,
+              backgroundColor: theme.APPBACKGROUNDCOLOR,
+            }}
+            titleStyle={{ color: theme.APPTEXTBLACK }}
+            leftIcon={
+              <BaseIcon
+                containerStyle={{
+                  backgroundColor: "#00C001",
+                }}
+                icon={{
+                  type: "materialicon",
+                  name: "feedback",
+                }}
+              />
+            }
+            rightIcon={<Chevron />}
+          />
+        </View>
+
+        {/* Sign out button */}
+        <TouchableOpacity
+          style={{
+            ...profileStyles.loginBtn,
+            backgroundColor: theme.APPTEXTRED,
+          }}
+          onPress={() => this.signOutUser()}
+        >
+          <Text style={profileStyles.logo}>Sign Out</Text>
+        </TouchableOpacity>
+      </ScrollView>
     );
   }
 }

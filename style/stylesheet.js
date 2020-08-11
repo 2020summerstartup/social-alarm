@@ -102,7 +102,7 @@ const appStyles = StyleSheet.create({
     padding: 10,
   },
 
-  logo: {
+  groupsLogo: {
     marginTop: 30,
     fontWeight: "bold",
     fontSize: 50,
