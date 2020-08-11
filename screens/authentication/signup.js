@@ -133,7 +133,7 @@ export default function SignUp({ navigation }) {
             this.signUpUser(email.trim(), password, confirmPassword, name.trim())
           }
         >
-          <Text style={{...appStyles.loginText, color: theme.APPTEXTBLUE}}>SIGN UP</Text>
+          <Text style={{...appStyles.loginText, color: theme.APPTEXTBLACK}}>SIGN UP</Text>
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
