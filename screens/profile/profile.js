@@ -3,7 +3,6 @@ import {
   ScrollView,
   Switch,
   StyleSheet,
-  Dimensions,
   Text,
   View,
   Linking,
@@ -13,6 +12,7 @@ import {
   Button,
   Modal,
   TouchableHighlight,
+  RefreshControl
 } from "react-native";
 import { ListItem, withBadge } from "react-native-elements";
 import { auth, db } from "../../firebase/firebase";
@@ -127,6 +127,8 @@ class ProfileScreen extends Component {
 
       notificationsModal: false, // controls if the notifications modal  is open
       notifications: [], // all the notifications from firebase
+
+      refresh: false,
 
       timeZoneSelected: "",
       timezoneArray: [
@@ -258,13 +260,23 @@ class ProfileScreen extends Component {
                 fontSize: 36,
                 color: theme.APPTEXTRED,
               }}
+            >Notifications</Text>
+
+            
+
+            
+            <ScrollView 
+            style={{ width: "95%" }}
+            refreshControl={
+              <RefreshControl refreshing={this.state.refresh} 
+              onRefresh={this.getNotifications.bind(this)} tintColor={theme.APPTEXTBLACK}
+              />
+            }
             >
-              {" "}
-              Notifications{" "}
-            </Text>
 
             {/* if there are no new notifications */}
             {this.state.notifications.length == 0 && (
+              <View style={{alignItems: "center"}}>
               <Text
                 style={{
                   ...styles.logo,
@@ -276,10 +288,10 @@ class ProfileScreen extends Component {
               >
                 You have no new notifications
               </Text>
+              </View>
             )}
-
+            
             {/* if there are new notifications */}
-            <ScrollView style={{ width: "95%" }}>
               {this.state.notifications &&
                 this.state.notifications.map((notification) => {
                   return (
