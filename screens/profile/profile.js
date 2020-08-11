@@ -37,7 +37,6 @@ import Chevron from "./Chevron";
 // sets the styles for all the icons
 import BaseIcon from "./Icon";
 import { NotificationContext } from "../../contexts/NotificationContext";
-import { color } from "react-native-reanimated";
 
 /* profile.js
  * profile screen
@@ -114,6 +113,7 @@ class ProfileScreen extends Component {
     this.setState({ timeZoneSelected: timeZone });
   }
 
+  // saves time zone in local storage
   setTimeZone = async (timezone) => {
     await AsyncStorage.setItem("timezone", timezone);
   }
@@ -130,7 +130,7 @@ class ProfileScreen extends Component {
       notifications: [],
       theme: {},
 
-      timeZoneSelected: "",
+      timeZoneSelected: "", // this is the time zone the user selected
       timezoneArray: [
         { label: 'Eastern Time', value: 'EST' },
         { label: 'Central Time', value: 'CST' },
@@ -403,7 +403,7 @@ class ProfileScreen extends Component {
                     <RNPickerSelect
                       onValueChange={(value) =>
                         {this.setState({ timeZoneSelected: value });
-                        this.setTimeZone(value)}
+                        this.setTimeZone(value)} // calls the function to save time zone in local storage
                       }
                       items={this.state.timezoneArray}
                       // Object to overide the default text placeholder for the PickerSelect
@@ -576,7 +576,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
 
-  // lol bad name - the button text
+  // the button text
   titleText: {
     color: APPTEXTWHITE,
     fontSize: 22,
