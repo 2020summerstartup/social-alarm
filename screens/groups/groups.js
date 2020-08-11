@@ -44,8 +44,6 @@ export default class Groups extends Component {
       groupName: "",
       // array of groups the user is in
       groups: [],
-      // array of new groups user is in
-      alertQueue: [],
       // info for group specific modal
       groupNameClicked: "",
       groupIdClicked: "",
@@ -170,7 +168,7 @@ export default class Groups extends Component {
                   self.setState({ groupMembers: groupMem });
 
                   // update added user's document so it contains new group info
-                  // also add a notification for user in their alertQueue
+                  // also add a notification for user in their notifications
                   db.collection("users")
                     .doc(userName)
                     .update({
@@ -178,7 +176,7 @@ export default class Groups extends Component {
                         name: doc2.data().groupName,
                         id: doc2.id,
                       }),
-                      alertQueue: Firebase.firestore.FieldValue.arrayUnion({
+                      notifications: Firebase.firestore.FieldValue.arrayUnion({
                         title: "New Group!",
                         body:
                           self.user.email +
@@ -248,7 +246,7 @@ export default class Groups extends Component {
           id: groupId,
           name: group,
         }),
-        alertQueue: Firebase.firestore.FieldValue.arrayUnion({
+        notifications: Firebase.firestore.FieldValue.arrayUnion({
           title: "Group deleted",
           body:
             self.user.email + ' has deleted you from the group "' + group + '"',
@@ -337,7 +335,7 @@ export default class Groups extends Component {
                 db.collection("users")
                   .doc(newAdmin)
                   .update({
-                    alertQueue: Firebase.firestore.FieldValue.arrayUnion({
+                    notifications: Firebase.firestore.FieldValue.arrayUnion({
                       title: "Congrats!",
                       body: "You are now the admin of group " + group,
                     }),
@@ -394,7 +392,7 @@ export default class Groups extends Component {
                 id: groupId,
                 name: group,
               }),
-              alertQueue: Firebase.firestore.FieldValue.arrayUnion({
+              notifications: Firebase.firestore.FieldValue.arrayUnion({
                 title: "Group deleted",
                 body: self.user.email + ' has deleted the group "' + group + '"',
               }),

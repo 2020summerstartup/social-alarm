@@ -145,13 +145,13 @@ class ProfileScreen extends Component {
   static contextType = NotificationContext;
 
   // called in componentDidMount
-  // stores notifications (alertQueue) from firebase in state
+  // stores notifications from firebase in state
   getNotifications = () => {
     db.collection("users")
       .doc(auth.currentUser.email)
       .get()
       .then((doc) => {
-        this.setState({ notifications: doc.data().alertQueue });
+        this.setState({ notifications: doc.data().notifications });
       });
   };
 
@@ -160,7 +160,7 @@ class ProfileScreen extends Component {
   closeNotifications = () => {
     this.setState({ notificationsModal: false });
     db.collection("users").doc(auth.currentUser.email).update({
-      alertQueue: [],
+      notifications: [],
     });
   };
 

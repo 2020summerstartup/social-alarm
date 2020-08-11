@@ -56,7 +56,7 @@ function MyTabs() {
             .doc(auth.currentUser.email)
             .get()
             .then((doc) => {
-              setNotificationCount(doc.data().alertQueue.length.toString());
+              setNotificationCount(doc.data().notifications.length.toString());
             });
         };
 
