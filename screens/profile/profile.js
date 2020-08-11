@@ -3,7 +3,6 @@ import {
   ScrollView,
   Switch,
   StyleSheet,
-  Dimensions,
   Text,
   View,
   Linking,
@@ -21,18 +20,15 @@ import {
 import { auth, db } from "../../firebase/firebase";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RNPickerSelect from "react-native-picker-select";
-import { profileStyles } from "../../style/stylesheet";
 
 import { MaterialIcons } from "@expo/vector-icons";
 
-import { appStyles } from "../../style/stylesheet";
+import { appStyles, profileStyles } from "../../style/stylesheet";
 
 import {
   APPBACKGROUNDCOLOR,
   APPTEXTRED,
-  APPTEXTBLUE,
   APPTEXTWHITE,
-  APPINPUTVIEW,
 } from "../../style/constants";
 
 // chevron is the greater than sign that's on the right of everything on the profile page
@@ -43,11 +39,10 @@ import BaseIcon from "./Icon";
 import { NotificationContext } from "../../contexts/NotificationContext";
 import { color } from "react-native-reanimated";
 
-/* profile3.js
+/* profile.js
  * profile screen
  * has push notifications, dark mode, birthday, time zone, about us,
  * share our app, and send feedback
- * feel free to change or delete any of these
  */
 
 // This is for the birthday picker
