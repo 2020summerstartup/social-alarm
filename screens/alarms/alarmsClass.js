@@ -20,7 +20,8 @@ import {
   APPINPUTVIEW,
   ALARMCOLORMINT,
   ALARMCOLORMAROON,
-  ALARMCOLORPINK
+  ALARMCOLORPINK,
+  ALARMCOLORDARKBLUE
 } from "../../style/constants";
 import { appStyles, alarmStyles } from "../../style/stylesheet";
 

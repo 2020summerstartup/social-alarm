@@ -34,7 +34,8 @@ import {
   DEFAULTGROUPCOLOR,
   ALARMCOLORMINT,
   ALARMCOLORMAROON,
-  ALARMCOLORPINK
+  ALARMCOLORPINK,
+  ALARMCOLORDARKBLUE
 } from "../../style/constants";
 import { appStyles, alarmStyles } from "../../style/stylesheet";
 
@@ -740,7 +741,7 @@ export default class Groups extends Component {
               <Text
                 adjustsFontSizeToFit
                 numberOfLines={1}
-                style={{ ...styles.logo, ...{ marginTop: 5 } }}
+                style={{ ...styles.logo, ...{ marginTop: 5 }, ...{ color: this.state.groupAlarmColor } }}
               >
                 {this.state.groupNameClicked}
               </Text>
@@ -755,18 +756,20 @@ export default class Groups extends Component {
               }
 
               {/* Pick color for group */}
+              <View style={{width: "100%", paddingBottom: 25}}>
               <RNPickerSelect
                 onValueChange={(value) => this.updateGroupColor(value)}
                 items={[
                   {label: "Mint", value: ALARMCOLORMINT, color: ALARMCOLORMINT},
                   {label: "Maroon", value: ALARMCOLORMAROON, color: ALARMCOLORMAROON},
                   {label: "Pink", value: ALARMCOLORPINK, color: ALARMCOLORPINK},
+                  {label: "Dark Blue", value: ALARMCOLORDARKBLUE, color: ALARMCOLORDARKBLUE},
                 ]}
                 // Object to overide the default text placeholder for the PickerSelect
-                placeholder={{label: "Select a group color", value: "0"}}
+                placeholder={{label: "Select a group color", value: "0", color: "black"}}
                 style={
                   { placeholder: {
-                      color: APPTEXTRED,
+                      color: this.state.groupAlarmColor,
                       fontSize: 20,
                       fontWeight: 'bold',
                       alignSelf: 'center',
@@ -785,6 +788,7 @@ export default class Groups extends Component {
                 doneText={"Select"}
                 Icon={() => {return <Chevron size={1.5} color="gray" />;}}
               />
+              </View>
 
               {/* text input to add a group member */}
               <View style={appStyles.inputView}>
@@ -804,7 +808,7 @@ export default class Groups extends Component {
 
               {/* add member button */}
               <TouchableOpacity
-                style={{ ...appStyles.loginBtn, ...{ marginTop: 10 } }}
+                style={{ ...appStyles.loginBtn, ...{ marginTop: 10}, ...{backgroundColor: this.state.groupAlarmColor} }}
                 onPress={() =>
                   this.addUser(this.state.addUser.trim(), this.state.groupIdClicked)
                 }
@@ -832,7 +836,7 @@ export default class Groups extends Component {
                           // "button"  that displays group members
                           <TouchableHighlight
                             underlayColor={APPINPUTVIEW}
-                            style={styles.alarmBanner}
+                            style={[styles.alarmBanner, {backgroundColor: this.state.groupAlarmColor}]}
                             key={person}
                           >
                             <Text
@@ -861,7 +865,9 @@ export default class Groups extends Component {
                     data={this.state.groupMembers}
                     renderItem={({ item }) => (
                       // button that contains user's name
-                      <TouchableHighlight style={styles.alarmBanner}>
+                      <TouchableHighlight
+                        style={[styles.alarmBanner, {backgroundColor: this.state.groupAlarmColor}]}
+                      >
                         <Text
                           adjustsFontSizeToFit
                           numberOfLines={1}
