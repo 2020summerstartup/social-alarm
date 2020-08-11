@@ -318,17 +318,17 @@ const profileStyles = StyleSheet.create({
   userRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    paddingBottom: 60,
+    paddingBottom: 40,
     paddingLeft: 15,
     paddingRight: 15,
-    paddingTop: 60,
+    paddingTop: 40,
   },
   userImage: {
     marginRight: 12,
   },
   listItemContainer: {
     height: 65,
-    borderWidth: 0.5,
+    borderWidth: 0,
     borderColor: APPBACKGROUNDCOLOR,
   },
   logo: {

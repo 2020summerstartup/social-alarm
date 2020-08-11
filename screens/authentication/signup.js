@@ -169,7 +169,6 @@ export default function SignUp({ navigation }) {
                   }}
                 />
               </View>
-
               {/* sign up button */}
               <TouchableOpacity
                 style={{
@@ -186,7 +185,7 @@ export default function SignUp({ navigation }) {
                 }
               >
                 <Text
-                  style={{ ...appStyles.loginText, color: theme.APPTEXTBLUE }}
+                  style={{ ...appStyles.loginText, color: theme.APPTEXTBLACK }}
                 >
                   SIGN UP
                 </Text>

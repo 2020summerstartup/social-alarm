@@ -661,7 +661,6 @@ export default class Groups extends Component {
                       justifyContent: "flex-start",
                       color: theme.APPTEXTRED,
                     }}
-                    color="#333"
                     onPress={() =>
                       Alert.alert(
                         "Warning",
@@ -763,12 +762,12 @@ export default class Groups extends Component {
               </TouchableOpacity>
 
               {/* number of members in the group text */}
-              <Text style={{ ...styles.wordText, color: theme.APPTEXTBLUE }}>
+              <Text style={{ ...styles.wordText, color: theme.APPTEXTBLACK }}>
                 Members: {this.state.groupMembers.length}
               </Text>
 
               {/* text that displays who the admin is */}
-              <Text style={{ ...styles.wordText, color: theme.APPTEXTBLUE }}>
+              <Text style={{ ...styles.wordText, color: theme.APPTEXTBLACK }}>
                 Admin: {this.state.groupAdminClicked}
               </Text>
               {

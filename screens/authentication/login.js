@@ -110,7 +110,7 @@ export default function Login({ navigation }) {
               <TouchableOpacity
                 onPress={() => navigation.navigate("ForgotPassword")}
               >
-                <Text style={{ ...appStyles.forgot, color: theme.APPTEXTBLUE }}>
+                <Text style={{ ...appStyles.forgot, color: theme.APPTEXTBLACK }}>
                   Forgot Password?
                 </Text>
               </TouchableOpacity>
@@ -124,7 +124,7 @@ export default function Login({ navigation }) {
                 onPress={() => this.loginUser(email.trim(), password)}
               >
                 <Text
-                  style={{ ...appStyles.loginText, color: theme.APPTEXTBLUE }}
+                  style={{ ...appStyles.loginText, color: theme.APPTEXTBLACK }}
                 >
                   LOGIN
                 </Text>
@@ -133,7 +133,7 @@ export default function Login({ navigation }) {
               {/* signup button */}
               <TouchableOpacity onPress={() => this.signUpUser()}>
                 <Text
-                  style={{ ...appStyles.loginText, color: theme.APPTEXTBLUE }}
+                  style={{ ...appStyles.loginText, color: theme.APPTEXTBLACK }}
                 >
                   Signup
                 </Text>

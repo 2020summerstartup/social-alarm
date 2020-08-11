@@ -5,8 +5,10 @@ import GroupScreen from "../screens/groups/groups";
 import AlarmScreen from "../screens/alarms/alarmsClass";
 import ProfileScreen from "../screens/profile/profile";
 import { NavigationContainer } from "@react-navigation/native";
-import { NotificationContext } from "../contexts/NotificationContext";
-import { db, auth } from "../firebase/firebase";
+
+import { NotificationContext }  from "../contexts/NotificationContext";
+import {db, auth} from "../firebase/firebase";
+
 
 /* navigation.js
  * bottom tab navigator for signed in user
@@ -139,6 +141,7 @@ function MyTabs() {
             )}
           </Tab.Navigator>
         );
+
       }}
     </NotificationContext.Consumer>
   );
