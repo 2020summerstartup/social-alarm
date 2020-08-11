@@ -45,7 +45,7 @@ import { color } from "react-native-reanimated";
 
 /* profile3.js
  * profile screen
- * has push notifications, birthday, time zone, about us,
+ * has notifications, birthday, time zone, about us,
  * share our app, and send feedback
  * feel free to change or delete any of these
  */
@@ -75,7 +75,7 @@ const BirthdayPicker = () => {
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
-        minimumDate={new Date(1950, 0, 1)}
+        minimumDate={new Date(1900, 0, 1)}
         maximumDate={new Date(2020, 11, 31)}
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
@@ -89,20 +89,27 @@ const BirthdayPicker = () => {
 class ProfileScreen extends Component {
   // sign out functionality
   signOutUser = async () => {
+    // remove auth credentials from local storage
     await AsyncStorage.removeItem("email");
     await AsyncStorage.removeItem("password");
-    //navigation.navigate("Auth");
+    //sign user out with firebase
     auth
       .signOut()
       .then(() => {
         // this reloads the page
+        // TODO: try to get navigation to work again?
+        // I couldn't get navigation stuff to work so instead
+        // we're reloading the page and then it will display the 
+        // auth screen
         DevSettings.reload();
       })
       .catch((error) => console.log(error));
   };
 
   componentDidMount() {
+    // gets user's email and name from AsyncStorage
     this.getEmailName();
+    // gets notifications from firebase and stores them in state
     this.getNotifications();
   }
 
@@ -118,13 +125,11 @@ class ProfileScreen extends Component {
     super(props);
 
     this.state = {
-      switchValue: false,
       name: "", // this is the user's name
       email: "", // this is the user's email
 
-      notificationsModal: false,
-      notifications: [],
-      theme: {},
+      notificationsModal: false, // controls if the notifications modal  is open
+      notifications: [], // all the notifications from firebase
 
       timeZoneSelected: "",
       timezoneArray: [
@@ -138,11 +143,10 @@ class ProfileScreen extends Component {
       ],
     };
   }
+  
 
-  toggleSwitch = (value) => {
-    this.setState({ switchValue: value });
-  };
-
+  // called in componentDidMount
+  // stores notifications (alertQueue) from firebase in state
   getNotifications = () => {
     db.collection("users")
       .doc(auth.currentUser.email)
@@ -152,6 +156,8 @@ class ProfileScreen extends Component {
       });
   };
 
+  // called when user closes notification modal
+  // closes  modal and deletes notififcations from firebase
   closeNotifications = () => {
     this.setState({ notificationsModal: false });
     db.collection("users").doc(auth.currentUser.email).update({
@@ -163,7 +169,7 @@ class ProfileScreen extends Component {
     return (
       <NotificationContext.Consumer>
         {(notificationContext) => {
-
+          // context (global state) stuff
           const {
             notificationCount,
             setNotificationCount,
@@ -175,18 +181,23 @@ class ProfileScreen extends Component {
 
           const theme = isDarkMode ? dark : light;
 
+          // called when user opens notifications modal
+          // opens modal and sets global state notification count to 0
           openNotifications = () => {
             this.setState({ notificationsModal: true });
             setNotificationCount(0);
           };
 
+          // called when user toggles theme button
+          // stores new theme in AsyncStorage and toggles theme
           changeTheme = async () => {
+            // themes are switched bc they are toggled after this 
             AsyncStorage.setItem("theme", isDarkMode ? "light" : "dark");
             await toggleTheme();
-            
-            
           };
 
+          // this allows notifications icon to have a lil badge when there are notifications
+          // https://react-native-elements.github.io/react-native-elements/docs/badge#withbadge-higher-order-component
           const BadgedIcon = withBadge(notificationCount)(BaseIcon);
 
           return (
@@ -225,6 +236,7 @@ class ProfileScreen extends Component {
 
               {/* Not really sure if we want this, was in the tutorial so I kept it */}
 
+              {/* NOTIFICATIONS MODAL */}
               <Modal
                 visible={this.state.notificationsModal}
                 animationType="slide"
@@ -254,11 +266,9 @@ class ProfileScreen extends Component {
                       fontSize: 36,
                       color: theme.APPTEXTRED,
                     }}
-                  >
-                    {" "}
-                    Notifications
-                  </Text>
+                  > Notifications </Text>
 
+                  {/* if there are no new notifications */}
                   {this.state.notifications.length == 0 && (
                     <Text
                       style={{
@@ -269,10 +279,11 @@ class ProfileScreen extends Component {
                         color: theme.APPTEXTRED,
                       }}
                     >
-                      you have no new notifications
+                      You have no new notifications
                     </Text>
                   )}
 
+                  {/* if there are new notifications */}
                   <ScrollView style={{ width: "95%" }}>
                     {this.state.notifications &&
                       this.state.notifications.map((notification) => {
@@ -313,6 +324,8 @@ class ProfileScreen extends Component {
 
               <View>
 
+              {/* NOTIFICATION ICON ON MAIN PAGE */}
+              {/* if there are no new notifications - no badge */}
               {notificationCount == 0 && (
                 <ListItem
                   title="Notifications"
@@ -336,6 +349,7 @@ class ProfileScreen extends Component {
                   rightIcon={<Chevron />}
                 />
               )}
+              {/* if there are new notifications - show badge */}
                 {notificationCount > 0 && (
                   <ListItem
                     title="Notifications"
@@ -360,6 +374,7 @@ class ProfileScreen extends Component {
                   />
                 )}
 
+                {/* DARK MODE ICON */}
                 <ListItem
                   hideChevron
                   title="Dark Mode"
@@ -386,6 +401,8 @@ class ProfileScreen extends Component {
                     />
                   }
                 />
+
+                {/* BIRTHDAY ICON */}
                 <ListItem
                   title="Birthday"
                   rightTitleStyle={{ fontSize: 18 }}
@@ -405,6 +422,8 @@ class ProfileScreen extends Component {
                     />
                   }
                 />
+
+                {/* TIMEZONE ICON */}
                 <ListItem
                   title="Time Zone"
                   rightElement={
@@ -461,6 +480,8 @@ class ProfileScreen extends Component {
                 />
               </View>
               <View>
+
+              {/* ABOUT US ICON */}
                 <ListItem
                   title="About Us"
                   containerStyle={{
@@ -484,6 +505,8 @@ class ProfileScreen extends Component {
                   }
                   rightIcon={<Chevron />}
                 />
+
+                {/* SHARE OUR APP ICON */}
                 <ListItem
                   title="Share our App"
                   onPress={() => {
@@ -509,6 +532,8 @@ class ProfileScreen extends Component {
                   }
                   rightIcon={<Chevron />}
                 />
+
+                {/* SEND FEEDBACK ICON */}
                 <ListItem
                   title="Send Feedback"
                   onPress={() => {
