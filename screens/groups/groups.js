@@ -54,6 +54,7 @@ export default class Groups extends Component {
       addUser: "",
       // swipe to refresh functionality
       mainPageRefreshing: false,
+      groupModalRefreshing: false,
     };
   }
 
@@ -132,6 +133,7 @@ export default class Groups extends Component {
         }
         this.setState({ groupMembers: groupMem });
         this.setState({ groupAdminClicked: doc.data().adminEmail });
+        this.setState({groupModalRefreshing: false})
       });
   };
 
@@ -582,9 +584,6 @@ export default class Groups extends Component {
       .catch(function (error) {
         console.log(error);
       });
-
-      console.log("hey")
-
   }
 
   onRefreshMainPage() {
@@ -592,7 +591,11 @@ export default class Groups extends Component {
     this.initializeState()
 
   }
-  
+
+  onRefreshGroupModal() {
+    this.setState({groupModalRefreshing: true})
+    this.groupModal(this.state.groupNameClicked, this.state.groupIdClicked)
+  }
 
   render() {
     // context (global state) stuff
@@ -801,7 +804,14 @@ export default class Groups extends Component {
                 // displays ScrollView of group members
                 // (so user doesn't have swipe to delete functionality)
                 this.user.email != this.state.groupAdminClicked && (
-                  <ScrollView style={{ width: "95%" }}>
+                  <ScrollView 
+                  style={{ width: "95%" }}
+                  refreshControl={
+                    <RefreshControl refreshing={this.state.groupModalRefreshing} 
+                    onRefresh={this.onRefreshGroupModal.bind(this)} tintColor={theme.APPTEXTBLACK}
+                    />
+                  }
+                  >
                     {this.state.groupMembers &&
                       this.state.groupMembers.map((person) => {
                         return (
@@ -842,6 +852,11 @@ export default class Groups extends Component {
                     underlayColor={theme.APPBUTTONPRESS}
                     keyExtractor={(item) => item} // specifying id as the key to prevent the key warning
                     data={this.state.groupMembers}
+                    refreshControl={
+                      <RefreshControl refreshing={this.state.groupModalRefreshing} 
+                      onRefresh={this.onRefreshGroupModal.bind(this)} tintColor={theme.APPTEXTBLACK}
+                      />
+                    }
                     renderItem={({ item }) => (
                       // button that contains user's name
                       <TouchableHighlight
