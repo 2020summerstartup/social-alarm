@@ -6,6 +6,12 @@ import {
 } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 
+/* timePicker.js
+ * allows you to pick a certain time
+ * used in alarmsClass
+ *
+ */
+
 export default class datepicker extends Component {
 
   constructor(props) {

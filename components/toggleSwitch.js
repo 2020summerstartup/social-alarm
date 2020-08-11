@@ -1,6 +1,12 @@
 import React from 'react';
 import { Switch, Text, View, StyleSheet } from 'react-native';
 
+/* toggleSwitch.js
+ * Basic toggle switch
+ * used in alarmsClass.js
+ *
+ */
+
 export default class App extends React.Component 
 {
   state = { switchValue: false };

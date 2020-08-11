@@ -1,6 +1,6 @@
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
-import { APPBACKGROUNDCOLOR, APPTEXTRED } from "../style/constants";
+import { APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE } from "../style/constants";
 
 import Login from "../screens/authentication/login";
 import SignUp from "../screens/authentication/signup";
@@ -9,8 +9,8 @@ import Landing from "../screens/landing/landingCarousel";
 
 /* stackNavigation.js
  * stack navigator for not signed in user
- * contains: login, sign up, forgot password
- * login is main page, has buttons that go to sign up and forgot password
+ * contains: landing, login, sign up, forgot password
+ * landing is main page, has buttons that go to sign up and login
  *
  */
 
@@ -46,7 +46,7 @@ const HomeStack = createStackNavigator(
   {
     defaultNavigationOptions: {
       headerStyle: { backgroundColor: APPBACKGROUNDCOLOR, height: 60 },
-      headerTintColor: APPTEXTRED,
+      headerTintColor: APPTEXTWHITE,
       headerTransparent: true,
     },
   }

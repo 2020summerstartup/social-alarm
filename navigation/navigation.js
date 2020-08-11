@@ -9,7 +9,6 @@ import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../style/constants';
 import { NotificationContext }  from "../contexts/NotificationContext";
 import {db, auth} from "../firebase/firebase";
 
-
 /* navigation.js
  * bottom tab navigator for signed in user
  * contains: alarms, groups and profile
@@ -64,6 +63,10 @@ function MyTabs() {
       activeTintColor: theme.APPTEXTRED, // This makes the button pink when you're on that page
       activeBackgroundColor: theme.APPBACKGROUNDCOLOR,
       inactiveBackgroundColor: theme.APPBACKGROUNDCOLOR,
+      style: {
+        borderTopWidth: 0,
+        borderTopColor: "transparent",
+      }
     }}
   >
     <Tab.Screen
