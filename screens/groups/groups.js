@@ -222,7 +222,9 @@ export default class Groups extends Component {
   // called when user deletes themself from a group OR
   // admin deletes someone from a group
   deleteUserFromGroup(group, groupId, userDeleted) {
-    if(userDeleted == this.user.email) {
+
+    // if deleteing themself - call deleteSelfFromGroup
+    if (userDeleted == this.user.email) {
       this.deleteSelfFromGroup(group, groupId);
       return;
     }
@@ -239,6 +241,7 @@ export default class Groups extends Component {
     self.setState({ groupMembers: newMembers });
 
     // user side firebase (delete's group from user's doc)
+    // also adds a lil notification for user
     db.collection("users")
       .doc(userDeleted)
       .update({
@@ -265,23 +268,23 @@ export default class Groups extends Component {
                 .delete()
                 .then(() => console.log("doc deleted"));
             } else {
-                db.collection("groups")
-                  .doc(groupId)
-                  .update({
-                    members: Firebase.firestore.FieldValue.arrayRemove(
-                      userDeleted
-                    ),
-                  });
-              }
+              // else just delete them from the group
+              db.collection("groups")
+                .doc(groupId)
+                .update({
+                  members: Firebase.firestore.FieldValue.arrayRemove(
+                    userDeleted
+                  ),
+                });
             }
-          );
+          });
       })
       .catch((error) => console.log(error))
       .catch((error) => console.log(error));
   }
 
   // deletes a user from a group
-  // called when user deletes themself from a group
+  // called when user deletes themself from a group (from deleteUserFromGroup)
   deleteSelfFromGroup(group, groupId) {
     var self = this;
     var userDeleted = this.user.email;
@@ -341,7 +344,7 @@ export default class Groups extends Component {
                     }),
                   });
               } else {
-                // else just delete user from groups doc
+                // else (admin not deleted) just delete user from groups doc
                 db.collection("groups")
                   .doc(groupId)
                   .update({
@@ -386,29 +389,29 @@ export default class Groups extends Component {
             // delete group from user's doc
             // also add a notification to user
             db.collection("users")
-            .doc(groupMembers[i])
-            .update({
-              groups: Firebase.firestore.FieldValue.arrayRemove({
-                id: groupId,
-                name: group,
-              }),
-              notifications: Firebase.firestore.FieldValue.arrayUnion({
-                title: "Group deleted",
-                body: self.user.email + ' has deleted the group "' + group + '"',
-              }),
-            });
+              .doc(groupMembers[i])
+              .update({
+                groups: Firebase.firestore.FieldValue.arrayRemove({
+                  id: groupId,
+                  name: group,
+                }),
+                notifications: Firebase.firestore.FieldValue.arrayUnion({
+                  title: "Group deleted",
+                  body:
+                    self.user.email + ' has deleted the group "' + group + '"',
+                }),
+              });
           } else {
-
             // delete group from user's doc
-          // also add a notification to user
-          db.collection("users")
-          .doc(groupMembers[i])
-          .update({
-            groups: Firebase.firestore.FieldValue.arrayRemove({
-              id: groupId,
-              name: group,
-            })
-          });
+            // also add a notification to user
+            db.collection("users")
+              .doc(groupMembers[i])
+              .update({
+                groups: Firebase.firestore.FieldValue.arrayRemove({
+                  id: groupId,
+                  name: group,
+                }),
+              });
           }
         }
         // delete group doc
@@ -495,7 +498,8 @@ export default class Groups extends Component {
         {
           text: "Yes",
           style: "destructive",
-          onPress: () => this.deleteUserFromGroup(groupName, rowKey, this.user.email),
+          onPress: () =>
+            this.deleteUserFromGroup(groupName, rowKey, this.user.email),
         },
       ]
     );
