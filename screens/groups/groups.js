@@ -135,7 +135,7 @@ export default class Groups extends Component {
   // called when user tries to add someone to a group
   // adds user the group (provided they can be added),
   // adds this to user's notifications, and updates local state
-  addUser = (userName, groupId) => {
+  addUserToGroup = (userName, groupId) => {
     //  this is needed, not totally sure why (see stack overfloe below) -anna
     // https://stackoverflow.com/questions/39191001/setstate-with-firebase-promise-in-react
     var self = this;
@@ -223,9 +223,9 @@ export default class Groups extends Component {
   // deletes a user from a group
   // called when user deletes themself from a group OR
   // admin deletes someone from a group
-  deleteUser(group, groupId, userDeleted) {
+  deleteUserFromGroup(group, groupId, userDeleted) {
     if(userDeleted == this.user.email) {
-      this.deleteSelf(group, groupId);
+      this.deleteSelfFromGroup(group, groupId);
       return;
     }
     var self = this;
@@ -284,7 +284,7 @@ export default class Groups extends Component {
 
   // deletes a user from a group
   // called when user deletes themself from a group
-  deleteSelf(group, groupId) {
+  deleteSelfFromGroup(group, groupId) {
     var self = this;
     var userDeleted = this.user.email;
 
@@ -497,7 +497,7 @@ export default class Groups extends Component {
         {
           text: "Yes",
           style: "destructive",
-          onPress: () => this.deleteUser(groupName, rowKey, this.user.email),
+          onPress: () => this.deleteUserFromGroup(groupName, rowKey, this.user.email),
         },
       ]
     );
@@ -524,9 +524,9 @@ export default class Groups extends Component {
           {
             text: "Yes",
             style: "destructive",
-            // if they  click yes, calls deleteUser
+            // if they  click yes, calls deleteUserFromGroup
             onPress: () =>
-              this.deleteUser(
+              this.deleteUserFromGroup(
                 this.state.groupNameClicked,
                 this.state.groupIdClicked,
                 rowKey
@@ -545,39 +545,6 @@ export default class Groups extends Component {
   // idk what this does - from Sidney's code
   onSwipeValueChange = (swipeData) => {
     const { key, value } = swipeData;
-  };
-
-  // NOT USED ANYMORE
-  // called in commented out portion of componentDidMount
-  // pings alerts for all new groups user is in
-  alertQueueFunction = (queue) => {
-    if (queue.length == 0) {
-      db.collection("users").doc(this.user.email).update({ alertQueue: [] });
-      // delete from firebase here
-      return;
-    } else {
-      var newAlert = queue.shift();
-      if (Object.keys(newAlert).length == 0) {
-        this.alertQueueFunction(queue);
-      } else {
-        Alert.alert(newAlert.title, newAlert.body, [
-          {
-            text: "Skip",
-            style: "cancel",
-            onPress: () =>
-              db
-                .collection("users")
-                .doc(this.user.email)
-                .update({ alertQueue: [] }),
-          },
-          {
-            text: "OK",
-            style: "default",
-            onPress: () => this.alertQueueFunction(queue),
-          },
-        ]);
-      }
-    }
   };
 
   // called when the component launches/mounts
@@ -599,17 +566,6 @@ export default class Groups extends Component {
             });
           }
           this.setState({ groups: groupsData });
-
-          // this is for the alert notifications
-          /*
-          const newGroupsData = [];
-          for (var i = 0; i < doc.data().alertQueue.length; i++) {
-            newGroupsData.push(doc.data().alertQueue[i]);
-          }
-          this.setState({ alertQueue: newGroupsData }, () =>
-            this.alertQueueFunction(this.state.alertQueue)
-          );
-          */
         }
       })
       .catch(function (error) {
@@ -794,7 +750,7 @@ export default class Groups extends Component {
                   backgroundColor: theme.APPTEXTRED,
                 }}
                 onPress={() =>
-                  this.addUser(
+                  this.addUserToGroup(
                     this.state.addUser.trim(),
                     this.state.groupIdClicked
                   )
