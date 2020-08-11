@@ -1043,13 +1043,13 @@ export default class Alarms extends Component {
 
     render(){
       return(
-        <View style={alarmStyles.container}>
+        <View style={appStyles.container}>
           <TopBanner>
               <Text style={alarmStyles.pageTitle}>Alarms</Text>
 
               {/*BEGINNING OF MODAL FOR ADD ALARM */}
               <MaterialIcons
-                  name="add"
+                  name="alarm-add"
                   size={24}
                   style={appStyles.modalToggle}
                   onPress={() => this.setState({ newAlarmModalOpen: true })}

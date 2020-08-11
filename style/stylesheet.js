@@ -15,8 +15,7 @@ const appStyles = StyleSheet.create({
     backgroundColor: APPBACKGROUNDCOLOR,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 50,
-    paddingBottom: 10,
+    paddingTop: 25,
   },
 
   loginContainer: {
@@ -91,7 +90,7 @@ const appStyles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     padding: 15,
-    paddingTop: 0,
+    paddingTop: 10,
   },
 
   modalClose: {
@@ -111,14 +110,6 @@ const appStyles = StyleSheet.create({
 // ********** NEW STYLESHEET **********
 
 const alarmStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 25
-  },
-
   scrollViewContainer: {
     flex: 1,
     backgroundColor: APPBACKGROUNDCOLOR,

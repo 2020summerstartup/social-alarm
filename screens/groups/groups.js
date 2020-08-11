@@ -642,7 +642,7 @@ export default class Groups extends Component {
   
   render() {
     return (
-      <View style={styles.container}>
+      <View style={appStyles.container}>
         {/* **************************************** CREATE NEW GROUP MODAL **************************************** */}
         <Modal visible={this.state.createModalOpen} animationType="slide">
           {/* this allows for dismiss keyboard when tapping anywhere functionality */}
@@ -892,17 +892,18 @@ export default class Groups extends Component {
 
         {/* **************************************** ACTUAL PAGE ************************************************* */}
 
-        <View style={styles.center}>
+        <View style={alarmStyles.topBanner}>
           <Text style={styles.logo}>Groups</Text>
+
+          {/* add new group button */}
+          <MaterialIcons
+            name="group-add"
+            size={24}
+            style={appStyles.modalToggle}
+            onPress={() => this.setState({ createModalOpen: true })}
+          />
         </View>
 
-        {/* add new group button */}
-        <MaterialIcons
-          name="add"
-          size={24}
-          style={appStyles.modalToggle}
-          onPress={() => this.setState({ createModalOpen: true })}
-        />
         {/*
         // this is my old code if we wanna bring it back ever
         // for scrollview list of groups (instead of swipe list)
