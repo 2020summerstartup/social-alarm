@@ -102,17 +102,24 @@ export default class Alarms extends Component {
         this.state = {
             // alarms: [],
             alarms: [{alarm_hour: 0, alarm_minute: 0, color: null, key: " ", name: " ", switch: true}],
+
+            // modal states
             newAlarmModalOpen: false,
             groupPickerModalOpen: false,
             editAlarmModalOpen: false,
+
+            // for Expo push notifications 
             expoPushToken: "",
             notification: false,
+            notificationListener: "",
+            responseListener: "",
+
+            // for adding a new alarm
             newAlarmTime: 0,
             newAlarmHour: 0,
             newAlarmMinute: 0,
             newAlarmText:"",
-            notificationListener: "",
-            responseListener: "",
+            
             newGroupName: "",
             groupsArray: [{label: "label", value: "value"}],
             groupIdClicked: "",

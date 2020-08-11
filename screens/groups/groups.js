@@ -60,8 +60,8 @@ export default class Groups extends Component {
       groupMembers: [],
       // the text input in add user field of group specific modal
       addUser: "",
-      // color for the group's alarms
-      groupAlarmColor: ""
+      // color to display group info
+      groupAlarmColor: DEFAULTGROUPCOLOR,
     };
   }
 
@@ -125,7 +125,7 @@ export default class Groups extends Component {
     this.setState({ groupIdClicked: groupId });
     this.setState({ groupAlarmColor: groupColor});
 
-    // groupId  should alway be a string
+    // groupId should always be a string
     if (typeof groupId == "string") {
       // gets group members,  stores them in state
       db.collection("groups")
@@ -449,7 +449,7 @@ export default class Groups extends Component {
     </View>
   );
 
-  // called when  user presses close
+  // called when user presses close
   // doesn't work fully for indiv group modal
   closeRow = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
@@ -457,7 +457,7 @@ export default class Groups extends Component {
     }
   };
 
-  // called when  user presses close
+  // called when user presses close
   // doesn't work fully for indiv group modal
   closeRowModal = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
@@ -624,16 +624,18 @@ export default class Groups extends Component {
         })
       });
 
-    // // remove old alarm from local state group array
-    // this.state.groups.splice(this.state.openRow, 1)
+    // sets prevIndex to the index of the selected alarm in the local state group array
+    const prevIndex = this.state.groups.findIndex((item) => item.id === this.state.groupIdClicked);
 
-    // // add updated group to local state group array
-    // this.state.groups.push(
-    //   {color: value, 
-    //   id: this.state.groupIdClicked,
-    //   name: this.state.groupNameClicked}
-    // )
-    // console.log("this.state.groups after edit color change", this.state.groups)
+    // remove old alarm from local state group array
+    this.state.groups.splice(prevIndex, 1)
+
+    // add updated group to local state group array
+    this.state.groups.push(
+      {color: value, 
+      id: this.state.groupIdClicked,
+      name: this.state.groupNameClicked}
+    )
 
     this.setState({groupAlarmColor: value})
   }
@@ -684,6 +686,21 @@ export default class Groups extends Component {
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={appStyles.modalContainer}>
               <View style={styles.buttonContainer}>
+
+                {/* close indiv group modal button */}
+                <MaterialIcons
+                  name="arrow-back"
+                  size={24}
+                  style={{
+                    ...appStyles.modalToggle,
+                    ...appStyles.modalClose,
+                    ...{ justifyContent: "flex-end" },
+                  }}
+                  onPress={() => this.setState({ groupModalOpen: false })}
+                />
+                                                            
+                <Text>                                                                </Text>
+
                 {/* delete group button */}
                 {this.user.email == this.state.groupAdminClicked && (
                   <MaterialIcons
@@ -715,26 +732,6 @@ export default class Groups extends Component {
                     }
                   />
                 )}
-
-                {this.user.email != this.state.groupAdminClicked && (
-                  //   i            i
-                  <Text>            </Text>
-                )}
-
-                {/*                                                                     */}
-                <Text>                                                                     </Text>
-
-                {/* close indiv group modal button */}
-                <MaterialIcons
-                  name="close"
-                  size={24}
-                  style={{
-                    ...appStyles.modalToggle,
-                    ...appStyles.modalClose,
-                    ...{ justifyContent: "flex-end" },
-                  }}
-                  onPress={() => this.setState({ groupModalOpen: false })}
-                />
               </View>
 
               {/* group name text */}
