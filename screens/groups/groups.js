@@ -31,6 +31,7 @@ import {
   APPTEXTWHITE,
   APPTEXTBLUE,
   APPINPUTVIEW,
+  DEFAULTGROUPCOLOR,
   ALARMCOLORMINT,
   ALARMCOLORMAROON,
   ALARMCOLORPINK
@@ -93,6 +94,7 @@ export default class Groups extends Component {
               groups: Firebase.firestore.FieldValue.arrayUnion({
                 name: name,
                 id: docRef.id,
+                color: DEFAULTGROUPCOLOR
               }),
             });
           // update user's groups in local state
@@ -103,6 +105,7 @@ export default class Groups extends Component {
           groupData.push({
             name: name,
             id: docRef.id,
+            color: DEFAULTGROUPCOLOR
           });
           this.setState({ groups: groupData });
         })
