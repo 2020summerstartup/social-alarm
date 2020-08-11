@@ -96,16 +96,27 @@ class ProfileScreen extends Component {
 
   componentDidMount() {
     this.getEmailName();
+    this.getTimeZone();
     this.getNotifications();
   }
 
-  // gets user email and name from async storage
+  // gets user email and name from local storage
   getEmailName = async () => {
     const userEmail = await AsyncStorage.getItem("email");
     const userName = await AsyncStorage.getItem("name");
     this.setState({ name: userName });
     this.setState({ email: userEmail });
   };
+
+  // gets time zone from local storage
+  getTimeZone = async () => {
+    const timeZone = await AsyncStorage.getItem("timezone");
+    this.setState({ timeZoneSelected: timeZone });
+  }
+
+  setTimeZone = async (timezone) => {
+    await AsyncStorage.setItem("timezone", timezone);
+  }
 
   constructor(props) {
     super(props);
@@ -391,7 +402,8 @@ class ProfileScreen extends Component {
                   rightElement={
                     <RNPickerSelect
                       onValueChange={(value) =>
-                        this.setState({ timeZoneSelected: value })
+                        {this.setState({ timeZoneSelected: value });
+                        this.setTimeZone(value)}
                       }
                       items={this.state.timezoneArray}
                       // Object to overide the default text placeholder for the PickerSelect
@@ -422,6 +434,7 @@ class ProfileScreen extends Component {
                         },
                       }}
                       doneText={"Select"}
+                      value={this.state.timeZoneSelected}
                     />
                   }
                   rightTitleStyle={{ fontSize: 15 }}
