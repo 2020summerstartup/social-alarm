@@ -158,6 +158,16 @@ const alarmStyles = StyleSheet.create({
     justifyContent: "center",
   },
 
+  modalTitle: {
+    padding: 20,
+    color: APPTEXTRED,
+    fontSize: 40,
+    fontWeight: "bold",
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   alarmTime: {
     color: APPTEXTWHITE,
     fontSize: 40,

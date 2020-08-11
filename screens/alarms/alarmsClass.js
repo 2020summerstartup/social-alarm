@@ -983,7 +983,7 @@ export default class Alarms extends Component {
             style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
             onPress={() => this.setState({ editAlarmModalOpen: false })}
             />
-            <Text style={alarmStyles.pageTitle}> Edit Alarm </Text>
+            <Text style={alarmStyles.modalTitle}> Edit Alarm </Text>
 
             <DatePicker
               style={{height: 75, width: 200, color: "black"}}
@@ -1047,7 +1047,7 @@ export default class Alarms extends Component {
                   style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
                   onPress={() => this.setState({ newAlarmModalOpen: false })}
                   />
-                  <Text style={appStyles.logo}> Set a new alarm </Text>
+                  <Text style={alarmStyles.modalTitle}> Set a new alarm </Text>
 
                     <DatePicker
                       style={{height: 75, width: 200, color: "black"}}
@@ -1138,7 +1138,7 @@ export default class Alarms extends Component {
               onPress={() => this.setState({ groupPickerModalOpen: false })}
               />
 
-              <Text style={alarmStyles.pageTitle}> Select a group </Text>
+              <Text style={alarmStyles.modalTitle}> Select a group </Text>
               {/* {console.log("this.state.groupsArray[0]", this.state.groupsArray[0])} */}
               {/* {console.log("this.state.groupsArray[0].label before RNPickerSelect", this.state.groupsArray[0].label)} */}
 
