@@ -434,13 +434,16 @@ export default class Alarms extends Component {
               .doc(this.state.groupIdClicked)
               .update({
 
+                // When alarms get added to a groups file, they do not get a color
+                // Their color is specified in the user's doc
+                // This makes it easier to delete them from Firebase in deleteRow and edit functions
                 alarms: firebase.firestore.FieldValue.arrayUnion({
                   name: newAlarm.name, 
                   alarm_hour: newAlarm.alarm_hour,
                   alarm_minute: newAlarm.alarm_minute, 
                   switch: newAlarm.switch, 
                   key: this.state.groupIdClicked + ":" + (maxKey),
-                  color: newAlarm.color,
+                  // color: newAlarm.color,
                 }),
             })
           }
@@ -500,7 +503,7 @@ export default class Alarms extends Component {
         alarm_minute: this.state.newAlarmMinute, 
         switch: this.state.alarms[this.state.openRow].switch,
         key: this.state.alarms[this.state.openRow].key,
-        color: "green"}
+        color: this.state.alarms[this.state.openRow].color}
       )
       console.log("this.state.alarms after", this.state.alarms)
 
@@ -516,7 +519,9 @@ export default class Alarms extends Component {
 
     updateFirebaseAfterEdit = () => new Promise(
       (resolve) => {
-        if (String(this.state.alarms[this.state.openRow].key).includes(":")){ // if the key includes ":" then the alarm is a group alarm so we want to update the group doc
+
+        // if the key includes ":" then the alarm is a group alarm so we want to update the group doc
+        if (String(this.state.alarms[this.state.openRow].key).includes(":")){ 
         console.log("Edit button: Updating group doc")
         console.log("this.state.alarms[this.state.openRow].key", this.state.alarms[this.state.openRow].key)
         // console.log("this.state.alarms[this.state.openRow].switch", this.state.alarms[this.state.openRow].switch)
@@ -566,14 +571,15 @@ export default class Alarms extends Component {
                   switch: this.state.alarms[this.state.openRow].switch, 
                   // key: this.state.alarms[this.state.openRow].key,
                   key: keySplitArray[0] + ":" + keySplitArray[1],
-                  color: "green", 
+                  color: this.state.alarms[this.state.openRow].color, 
                 }),
               })
           }
         });
 
       }
-      else{ // if the key doesn't include ":" then the alarm is a personal alarm so we want to update the user doc
+      // if the key doesn't include ":" then the alarm is a personal alarm so we want to update the user doc
+      else{ 
         console.log("Edit button: Updating user doc")
 
         db.collection("users")
@@ -611,7 +617,7 @@ export default class Alarms extends Component {
                     alarm_minute: this.state.newAlarmMinute,
                     switch: this.state.alarms[this.state.openRow].switch, 
                     key: this.state.alarms[this.state.openRow].key,
-                    color: "green", 
+                    color: this.state.alarms[this.state.openRow].color, 
                   }),
                 })
             }
@@ -689,30 +695,31 @@ export default class Alarms extends Component {
         db.collection("users")
           .doc(auth.currentUser.email)
           .update({
+              // Alarms in groups files do not have color
             alarms: firebase.firestore.FieldValue.arrayRemove({
               name: props.alarms[prevIndex].name,
               alarm_hour: props.alarms[prevIndex].alarm_hour,
               alarm_minute: props.alarms[prevIndex].alarm_minute, 
               switch: props.alarms[prevIndex].switch, 
               key: props.alarms[prevIndex].key,
-              color: props.alarms[prevIndex].color
             }),
           });
         }
 
         // If the alarm is a group alarm (key contains a ":"), then remove the alarm from the groups's doc in firebase
         if (String(props.alarms[prevIndex].key).includes(":")){
+          console.log("String(props.alarms[prevIndex].key).includes(:)")
           var groupIDSplitArray = props.alarms[prevIndex].key.split(":")
           db.collection("groups")
             .doc(groupIDSplitArray[0])
             .update({
+              // Alarms in groups files do not have color
               alarms: firebase.firestore.FieldValue.arrayRemove({
                 name: props.alarms[prevIndex].name,
                 alarm_hour: props.alarms[prevIndex].alarm_hour,
                 alarm_minute: props.alarms[prevIndex].alarm_minute, 
                 switch: props.alarms[prevIndex].switch, 
                 key: props.alarms[prevIndex].key,
-                color: props.alarms[prevIndex].color
               }),
             });
           
