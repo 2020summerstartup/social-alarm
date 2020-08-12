@@ -137,7 +137,7 @@ class ProfileScreen extends Component {
       name: "", // this is the user's name
       email: "", // this is the user's email
 
-      notificationsModalOpen: false, // controls if the notifications modal  is open
+      notificationsModal: false, // controls if the notifications modal  is open
       notifications: [], // all the notifications from firebase
 
       refresh: false,
@@ -169,7 +169,7 @@ class ProfileScreen extends Component {
   // called when user closes notification modal
   // closes  modal and deletes notififcations from firebase
   closeNotifications = () => {
-    this.setState({ notificationsModalOpen: false });
+    this.setState({ notificationsModal: false });
     db.collection("users").doc(auth.currentUser.email).update({
       notifications: [],
     });
@@ -191,7 +191,7 @@ class ProfileScreen extends Component {
     // called when user opens notifications modal
     // opens modal and sets global state notification count to 0
     openNotifications = () => {
-      this.setState({ notificationsModalOpen: true });
+      this.setState({ notificationsModal: true });
       setNotificationCount(0);
     };
 
@@ -232,7 +232,7 @@ class ProfileScreen extends Component {
       >
 
         {/* NOTIFICATIONS MODAL */}
-        <Modal visible={this.state.notificationsModalOpen} animationType="slide">
+        <Modal visible={this.state.notificationsModal} animationType="slide">
           <View
             style={{
               alignItems: "center",

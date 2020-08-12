@@ -50,7 +50,7 @@ export default class Groups extends Component {
       createModalOpen: false,
       groupModalOpen: false,
       // the text input box in create group modal
-      createGroupName: "",
+      groupName: "",
       // array of groups the user is in
       groups: [],
       // info for group specific modal
@@ -565,8 +565,12 @@ export default class Groups extends Component {
     console.log("This row opened", rowKey);
   };
 
-  // called in componentDidMount and onRefreshMainPage
-  // pulls from firebase to get user's groups and such
+  // called when the component launches/mounts
+  // sets up all local state
+  componentDidMount() {
+    this.initializeState()
+  }
+
   initializeState() {
     // get the user's document from collection
     db.collection("users")
@@ -584,7 +588,6 @@ export default class Groups extends Component {
               color: doc.data().groups[i].color
             });
           }
-          // update state for groups, then set refresher to false
           this.setState({ groups: groupsData }, () => this.setState({mainPageRefreshing: false}));
         }
       })
@@ -593,20 +596,12 @@ export default class Groups extends Component {
       });
   }
 
-  // called when user pull refreshes main page
-  // sets refresher to be on (mainPageRefreshing to true)
-  // and initializes (updates) all state through firebase
-  // note: refresher turns off (mainPageRefreshing to false) in initializeState
   onRefreshMainPage() {
     this.setState({mainPageRefreshing: true})
     this.initializeState()
 
   }
 
-  // called when user  pull refreshes indiv group modal
-  // sets refresher to be on (groupModalRefreshing to true)
-  // and updates groupModal state (group members) through firebase
-  // note: refresher turns off (groupModalRefreshing to false) in groupModal
   onRefreshGroupModal() {
     this.setState({groupModalRefreshing: true})
     this.groupModal(this.state.groupNameClicked, this.state.groupIdClicked)
@@ -653,13 +648,6 @@ export default class Groups extends Component {
     )
 
     this.setState({groupAlarmColor: value})
-  }
-
-  // called when the component launches/mounts
-  // sets up all local state
-  componentDidMount() {
-    // sets up all local state infirebase
-    this.initializeState()
   }
 
   render() {
@@ -709,7 +697,7 @@ export default class Groups extends Component {
                   placeholder="group name..."
                   placeholderTextColor="#003f5c"
                   onChangeText={(text) => {
-                    this.setState({ createGroupName: text });
+                    this.setState({ groupName: text });
                   }}
                 />
               </View>
@@ -720,7 +708,7 @@ export default class Groups extends Component {
                   backgroundColor: theme.APPTEXTRED,
                 }}
                 onPress={() =>
-                  this.createGroup(this.state.createGroupName.trim(), this.user)
+                  this.createGroup(this.state.groupName.trim(), this.user)
                 }
               >
                 <Text style={appStyles.buttonText}> Create group </Text>
@@ -843,8 +831,6 @@ export default class Groups extends Component {
                 }}
               >
                 <TextInput
-                  // don't fully understand this but it helps so i can 
-                  // clear the text input after a user submits a person
                   ref={(input) => {
                     this.textInput = input;
                   }}
@@ -894,10 +880,6 @@ export default class Groups extends Component {
                 this.user.email != this.state.groupAdminClicked && (
                   <ScrollView 
                   style={{ width: "95%" }}
-                  // swipe to refresh  functionality
-                  // refreshing: is it currently refreshing
-                  // omRefresh: what should it do when user  refreshes
-                  // tintColor: what color is the refreshing spinner
                   refreshControl={
                     <RefreshControl refreshing={this.state.groupModalRefreshing} 
                     onRefresh={this.onRefreshGroupModal.bind(this)} tintColor={theme.APPTEXTBLACK}
@@ -1022,10 +1004,6 @@ export default class Groups extends Component {
           style={{ width: "95%" , backgroundColor: theme.APPBACKGROUNDCOLOR}}
           keyExtractor={(item) => item.id} // specifying id as the key to prevent the key warning
           data={this.state.groups}
-          // swipe to refresh  functionality
-          // refreshing: is it currently refreshing
-          // omRefresh: what should it do when user  refreshes
-          // tintColor: what color is the refreshing spinner
           refreshControl={
             <RefreshControl refreshing={this.state.mainPageRefreshing} 
             onRefresh={this.onRefreshMainPage.bind(this)} tintColor={theme.APPTEXTBLACK}
