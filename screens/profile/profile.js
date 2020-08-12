@@ -170,7 +170,6 @@ const BirthdayPicker = () => {
     setDatePickerVisibility(false);
   };
 
-  // TO DO: replace the "select birthday" button title with the date
   const handleConfirm = (date) => {
     hideDatePicker();
     console.log(date.toString());
@@ -267,9 +266,6 @@ const BirthdayPicker = () => {
                 color: theme.APPTEXTRED,
               }}
             >Notifications</Text>
-
-            
-
             
             <ScrollView 
             style={{ width: "95%" }}
@@ -523,7 +519,7 @@ const BirthdayPicker = () => {
             titleStyle={{ color: theme.APPTEXTBLACK }}
             onPress={() => {
               Linking.openURL(
-                "https://www.github.com/2020summerstartup/social-alarm"
+                "https://www.linkedin.com/company/teamtime2020/?viewAsMember=true"
               );
             }} // we can change this later
             leftIcon={
@@ -543,7 +539,7 @@ const BirthdayPicker = () => {
             title="Share our App"
             onPress={() => {
               Linking.openURL(
-                "https://www.github.com/2020summerstartup/social-alarm"
+                "https://www.linkedin.com/company/teamtime2020/?viewAsMember=true"
               );
             }}
             containerStyle={{
@@ -570,7 +566,7 @@ const BirthdayPicker = () => {
             title="Send Feedback"
             onPress={() => {
               Linking.openURL(
-                "https://www.github.com/2020summerstartup/social-alarm"
+                "https://www.linkedin.com/company/teamtime2020/?viewAsMember=true"
               );
             }}
             containerStyle={{

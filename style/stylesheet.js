@@ -289,9 +289,8 @@ const profileStyles = StyleSheet.create({
     backgroundColor: 'white',
 
     // these lines fit the container to the entire screen
-    //height: Dimensions.get('window').height,
-    // width: Dimensions.get('window').width,
-    // marginLeft: 0,
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
   },
   scroll: {
     backgroundColor: 'white',
@@ -303,10 +302,10 @@ const profileStyles = StyleSheet.create({
   userRow: {
     alignItems: 'flex-start',
     // flexDirection: 'row',
-    paddingBottom: 15,
+    paddingBottom: 30,
     paddingLeft: 25,
     paddingRight: 15,
-    paddingTop: 30,
+    paddingTop: 40,
   },
   userImage: {
     marginRight: 12,
@@ -330,11 +329,12 @@ const profileStyles = StyleSheet.create({
     backgroundColor: APPTEXTRED,
     borderRadius: 15,
     height: 40,
-    width: 0.75 * Dimensions.get('screen').width, // sign out button is 85% of the screen's width
+    width: 0.75 * Dimensions.get('screen').width, // sign out button is 75% of the screen's width
     alignItems: "center",
     justifyContent: "center",
     marginTop: 10,
-    marginBottom: 30,
+    marginBottom: 80,
+    paddingTop: 2,
     marginLeft: 55,
   },
   birthdayBtn: {
