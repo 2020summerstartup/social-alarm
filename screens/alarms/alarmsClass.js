@@ -1057,18 +1057,18 @@ export default class Alarms extends Component {
       // TopBanner formats the title and modal button along the top of the screen
       function TopBanner({ children }){
         return(
-          <View style = {{...styles.topBanner, backgroundColor: theme.APPBACKGROUNDCOLOR}}>{children}</View>
+          <View style = {{...alarmStyles.topBanner, backgroundColor: theme.APPBACKGROUNDCOLOR}}>{children}</View>
         )
       };
       return(
-        <View style={appStyles.container}>
+        <View style={{...appStyles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
           <TopBanner>
               <Text style={alarmStyles.pageTitle}>Alarms</Text>
         
               {/*BEGINNING OF MODAL FOR ADD ALARM */}
               <MaterialIcons
                   name="alarm-add"
-                  size={24}
+                  size={36}
                   style={{...appStyles.modalToggle, color: theme.APPTEXTRED}}
                   onPress={() => this.setState({ newAlarmModalOpen: true })}
               />
