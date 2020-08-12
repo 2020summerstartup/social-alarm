@@ -170,7 +170,6 @@ const BirthdayPicker = () => {
     setDatePickerVisibility(false);
   };
 
-  // TO DO: replace the "select birthday" button title with the date
   const handleConfirm = (date) => {
     hideDatePicker();
     console.log(date.toString());
@@ -267,9 +266,6 @@ const BirthdayPicker = () => {
                 color: theme.APPTEXTRED,
               }}
             >Notifications</Text>
-
-            
-
             
             <ScrollView 
             style={{ width: "95%" }}
