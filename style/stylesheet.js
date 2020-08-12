@@ -75,10 +75,11 @@ const appStyles = StyleSheet.create({
 
   modalToggle: {
     marginBottom: 20,
-    //borderWidth: 1,
+    // borderWidth: 1,
     borderColor: APPTEXTRED,
     padding: 10,
     borderRadius: 10,
+    marginTop: 20,
 
     color: APPTEXTRED,
   },
