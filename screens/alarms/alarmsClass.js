@@ -2,7 +2,7 @@
 
 // Import statements
 import React, { Component } from 'react';
-import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, Modal, AsyncStorage, Animated, Image, TouchableHighlight } from 'react-native';
+import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, Modal, AsyncStorage, Animated, Image, TouchableHighlight, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import Chevron from '../../components/downChevron';
 
@@ -1032,6 +1032,8 @@ export default class Alarms extends Component {
                   onPress={() => this.setState({ newAlarmModalOpen: true })}
               />
               <Modal visible={this.state.newAlarmModalOpen} animationType="slide">
+              {/* this allows for dismiss keyboard when tapping anywhere functionality */}
+              <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
               <View style={{...appStyles.modalContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
                   <MaterialIcons
                   name="close"
@@ -1040,7 +1042,7 @@ export default class Alarms extends Component {
                   onPress={() => this.setState({ newAlarmModalOpen: false })}
                   />
 
-                  <Text style={{...alarmStyles.modalTitle, color: theme.APPTEXTRED}}> Set a new alarm </Text>
+                  <Text style={{...alarmStyles.modalTitle, color: theme.APPTEXTRED}}> Add New Alarm </Text>
 
                     <DatePicker
                       style={{height: 75, width: 200, color: "white"}}
@@ -1082,7 +1084,6 @@ export default class Alarms extends Component {
                   onPress={ async() =>
                     this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.currentMaxKey + 1, "#fb5b5a", this.state.alarms)
                     .then(this.setState({ newAlarmModalOpen: false }))
-                    // Add color wheel to specify color (rn hardcoded to the app red color)
                   }
                   />
 
@@ -1095,6 +1096,7 @@ export default class Alarms extends Component {
                   />
 
               </View>
+              </TouchableWithoutFeedback>
               </Modal>
               {/*END OF MODAL FOR ADD ALARM */}
 
