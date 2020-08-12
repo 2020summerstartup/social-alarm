@@ -47,7 +47,6 @@ const appStyles = StyleSheet.create({
   },
 
   inputText: {
-    padding: 10,
     fontSize: 16,
     height: 50,
     color: APPINPUTVIEW,
