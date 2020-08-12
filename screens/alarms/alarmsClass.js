@@ -452,7 +452,7 @@ export default class Alarms extends Component {
                 // When alarms get added to a groups file, they do not get a color
                 // Their color is specified in the user's doc
                 // This makes it easier to delete them from Firebase in deleteRow and edit functions
-                alarms: firebase.firestore.FieldValue.arrayUnion({
+                alarms: Firebase.firestore.FieldValue.arrayUnion({
                   name: newAlarm.name, 
                   alarm_hour: newAlarm.alarm_hour,
                   alarm_minute: newAlarm.alarm_minute, 
@@ -468,7 +468,7 @@ export default class Alarms extends Component {
       db.collection("users")
         .doc(auth.currentUser.email)
         .update({
-          alarms: firebase.firestore.FieldValue.arrayRemove({
+          alarms: Firebase.firestore.FieldValue.arrayRemove({
             name: newAlarm.name, 
             alarm_hour: newAlarm.alarm_hour,
             alarm_minute: newAlarm.alarm_minute, 
@@ -559,7 +559,7 @@ export default class Alarms extends Component {
             db.collection("groups")
               .doc(keySplitArray[0])
               .update({
-                alarms: firebase.firestore.FieldValue.arrayRemove({
+                alarms: Firebase.firestore.FieldValue.arrayRemove({
                   name: this.state.alarms[this.state.openRow].name,
                   alarm_hour: this.state.alarms[this.state.openRow].alarm_hour,
                   alarm_minute: this.state.alarms[this.state.openRow].alarm_minute, 
@@ -579,7 +579,7 @@ export default class Alarms extends Component {
             db.collection("groups")
               .doc(keySplitArray[0])
               .update({
-                alarms: firebase.firestore.FieldValue.arrayUnion({
+                alarms: Firebase.firestore.FieldValue.arrayUnion({
                   name: this.state.newAlarmText, 
                   alarm_hour: this.state.newAlarmHour, 
                   alarm_minute: this.state.newAlarmMinute,
@@ -606,7 +606,7 @@ export default class Alarms extends Component {
               db.collection("users")
                 .doc(auth.currentUser.email)
                 .update({
-                  alarms: firebase.firestore.FieldValue.arrayRemove({
+                  alarms: Firebase.firestore.FieldValue.arrayRemove({
                     name: this.state.alarms[this.state.openRow].name,
                     alarm_hour: this.state.alarms[this.state.openRow].alarm_hour,
                     alarm_minute: this.state.alarms[this.state.openRow].alarm_minute, 
@@ -626,7 +626,7 @@ export default class Alarms extends Component {
               db.collection("users")
                 .doc(auth.currentUser.email)
                 .update({
-                  alarms: firebase.firestore.FieldValue.arrayUnion({
+                  alarms: Firebase.firestore.FieldValue.arrayUnion({
                     name: this.state.newAlarmText, 
                     alarm_hour: this.state.newAlarmHour, 
                     alarm_minute: this.state.newAlarmMinute,
