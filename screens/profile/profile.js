@@ -212,7 +212,7 @@ class ProfileScreen extends Component {
       <View style={{...profileStyles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
         {/* this part shows the user's name and email */}
         <View style={profileStyles.userRow}>
-          <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK }}>{/*this.state.name.replace('<br/>', '\n')*/}
+          <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK }}>{/*this.state.name.replace ('<br/>', '\n')*/}
           </Text>
           <Text
             style={{

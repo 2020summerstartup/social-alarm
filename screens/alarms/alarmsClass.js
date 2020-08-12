@@ -326,7 +326,7 @@ export default class Alarms extends Component {
       await this.incrementCurrentMaxKey();
       // console.log("currentMaxKey after increment:", this.state.currentMaxKey)
       
-      // console.log("Updated users doc in firebase with one alarm")
+      // console.log("Updated users doc in Firebase with one alarm")
       
       // Return the list of all the scheduled notifications
       list = (await Notifications.getAllScheduledNotificationsAsync());
@@ -343,8 +343,8 @@ export default class Alarms extends Component {
       else {
           var print_list_new
           for (var i = 0; i < list.length; i++) {
+              print_list_new += "\n"
               print_list_new += list[i].identifier
-              print_list_new += " "
           }
           console.log("showAlarms:", print_list_new)
           return list;
@@ -365,16 +365,13 @@ export default class Alarms extends Component {
     )
 
     plusGroupButtonUpdate = async() => {
-      console.log("Updating local, notifications, and firebase after +Group button")
+      console.log("Updating local, notifications, and Firebase after +Group button")
 
       promise = await(this.listofKeys());
-      console.log("listOfKeys:", this.state.listOfKeys);
+      // console.log("listOfKeys:", this.state.listOfKeys);
 
       // Update Firebase (moves the alarm from user's doc to group's doc)
       promise = await(this.updateFirebaseAfterPlusGroup());
-
-      // Add new alarm data to the local alarm_array to display
-      console.log("this.state.alarms before plus group change alarm color", this.state.alarms)
 
       // determine the color from the group
       for (var i = 0; i < this.state.groupsArray.length; i++){
@@ -404,7 +401,7 @@ export default class Alarms extends Component {
     /*Updates the group's document in Firebase*/
     updateFirebaseAfterPlusGroup = () => new Promise (
       (resolve) => {
-      console.log("Updating", this.state.groupIdClicked, "in firebase")
+      console.log("Updating", this.state.groupIdClicked, "in Firebase")
 
       this.updateCurrentMaxKey();
       // console.log("currentMaxKey:", this.state.currentMaxKey)
@@ -431,7 +428,7 @@ export default class Alarms extends Component {
 
       console.log("newAlarm", newAlarm)
 
-      // Add the alarm to group doc in firebase
+      // Add the alarm to group doc in Firebase
       db.collection("groups")
         .doc(this.state.groupIdClicked)
         .get()
@@ -452,7 +449,7 @@ export default class Alarms extends Component {
                 // When alarms get added to a groups file, they do not get a color
                 // Their color is specified in the user's doc
                 // This makes it easier to delete them from Firebase in deleteRow and edit functions
-                alarms: firebase.firestore.FieldValue.arrayUnion({
+                alarms: Firebase.firestore.FieldValue.arrayUnion({
                   name: newAlarm.name, 
                   alarm_hour: newAlarm.alarm_hour,
                   alarm_minute: newAlarm.alarm_minute, 
@@ -464,11 +461,11 @@ export default class Alarms extends Component {
           }
       });
       
-      // Remove the alarm from the user's doc in firebase (so the alarm is only listed in the group's doc)
+      // Remove the alarm from the user's doc in Firebase (so the alarm is only listed in the group's doc)
       db.collection("users")
         .doc(auth.currentUser.email)
         .update({
-          alarms: firebase.firestore.FieldValue.arrayRemove({
+          alarms: Firebase.firestore.FieldValue.arrayRemove({
             name: newAlarm.name, 
             alarm_hour: newAlarm.alarm_hour,
             alarm_minute: newAlarm.alarm_minute, 
@@ -487,10 +484,16 @@ export default class Alarms extends Component {
 
     /*Updates the correct document in Firebase after an alarm gets editted*/
     editButtonUpdate = async() => {
-      console.log("Updating local, notifications, and firebase after alarm edit button")
+      console.log("Updating local, notifications, and Firebase after alarm edit button")
 
-      // Update correct firebase document where alarm data is stored 
+      // Update correct Firebase document where alarm data is stored 
       promise = await(this.updateFirebaseAfterEdit());
+
+      // Print the list of currently scheduled notifications to the console
+      // this.showAlarms();
+
+      // Remove the old alarm from the notification queue
+      promise = (await Notifications.cancelScheduledNotificationAsync(this.state.alarms[this.state.openRow].name))
 
       // Use the new alarm data to schedule a notification
       promise = (await Notifications.scheduleNotificationAsync({
@@ -508,9 +511,6 @@ export default class Alarms extends Component {
             }
         }));
 
-      // Add new alarm data to the local alarm_array to display
-      console.log("this.state.alarms before", this.state.alarms)
-
       // add new alarm to local state alarm array
       this.state.alarms.push(
         {name: this.state.newAlarmText, 
@@ -520,7 +520,6 @@ export default class Alarms extends Component {
         key: this.state.alarms[this.state.openRow].key,
         color: this.state.alarms[this.state.openRow].color}
       )
-      console.log("this.state.alarms after", this.state.alarms)
 
       // remove old alarm from local state alarm array
       this.state.alarms.splice(this.state.openRow, 1)
@@ -537,29 +536,20 @@ export default class Alarms extends Component {
 
         // if the key includes ":" then the alarm is a group alarm so we want to update the group doc
         if (String(this.state.alarms[this.state.openRow].key).includes(":")){ 
-        console.log("Edit button: Updating group doc")
-        console.log("this.state.alarms[this.state.openRow].key", this.state.alarms[this.state.openRow].key)
-        // console.log("this.state.alarms[this.state.openRow].switch", this.state.alarms[this.state.openRow].switch)
-
+        console.log("Edit button: Group alarm so updating group doc")
 
         // get the group that the alarm is part of (first part of key before ":")
         var keySplitArray = this.state.alarms[this.state.openRow].key.split(":")
-        console.log("keySplitArray[0]", keySplitArray[0])
-        console.log("this.state.alarms[this.state.openRow].key after split", this.state.alarms[this.state.openRow].key)
-
-        // console.log("this.state.alarms[this.state.openRow].name", this.state.alarms[this.state.openRow].name)
-        console.log("this.state.alarms[this.state.openRow].switch", this.state.alarms[this.state.openRow].switch)
 
         db.collection("groups")
         .doc(keySplitArray[0])
         .get()
         .then((doc) => {
           if (doc.exists) {
-            console.log("this.state.alarms[this.state.openRow].name", this.state.alarms[this.state.openRow].name)
             db.collection("groups")
               .doc(keySplitArray[0])
               .update({
-                alarms: firebase.firestore.FieldValue.arrayRemove({
+                alarms: Firebase.firestore.FieldValue.arrayRemove({
                   name: this.state.alarms[this.state.openRow].name,
                   alarm_hour: this.state.alarms[this.state.openRow].alarm_hour,
                   alarm_minute: this.state.alarms[this.state.openRow].alarm_minute, 
@@ -579,12 +569,11 @@ export default class Alarms extends Component {
             db.collection("groups")
               .doc(keySplitArray[0])
               .update({
-                alarms: firebase.firestore.FieldValue.arrayUnion({
+                alarms: Firebase.firestore.FieldValue.arrayUnion({
                   name: this.state.newAlarmText, 
                   alarm_hour: this.state.newAlarmHour, 
                   alarm_minute: this.state.newAlarmMinute,
-                  switch: this.state.alarms[this.state.openRow].switch, 
-                  // key: this.state.alarms[this.state.openRow].key,
+                  switch: this.state.alarms[this.state.openRow].switch,
                   key: keySplitArray[0] + ":" + keySplitArray[1],
                   color: this.state.alarms[this.state.openRow].color, 
                 }),
@@ -595,7 +584,7 @@ export default class Alarms extends Component {
       }
       // if the key doesn't include ":" then the alarm is a personal alarm so we want to update the user doc
       else{ 
-        console.log("Edit button: Updating user doc")
+        console.log("Edit button: Personal alarm so updating user doc")
 
         db.collection("users")
           .doc(auth.currentUser.email)
@@ -606,7 +595,7 @@ export default class Alarms extends Component {
               db.collection("users")
                 .doc(auth.currentUser.email)
                 .update({
-                  alarms: firebase.firestore.FieldValue.arrayRemove({
+                  alarms: Firebase.firestore.FieldValue.arrayRemove({
                     name: this.state.alarms[this.state.openRow].name,
                     alarm_hour: this.state.alarms[this.state.openRow].alarm_hour,
                     alarm_minute: this.state.alarms[this.state.openRow].alarm_minute, 
@@ -626,7 +615,7 @@ export default class Alarms extends Component {
               db.collection("users")
                 .doc(auth.currentUser.email)
                 .update({
-                  alarms: firebase.firestore.FieldValue.arrayUnion({
+                  alarms: Firebase.firestore.FieldValue.arrayUnion({
                     name: this.state.newAlarmText, 
                     alarm_hour: this.state.newAlarmHour, 
                     alarm_minute: this.state.newAlarmMinute,
@@ -638,7 +627,6 @@ export default class Alarms extends Component {
             }
           });
       }
-
       setTimeout(() => resolve(1234), 300)
       }
     )
@@ -696,7 +684,7 @@ export default class Alarms extends Component {
         }
       };
   
-      // Deletes alarm corresponding to touched row from local array and from firebase
+      // Deletes alarm corresponding to touched row from local array and from Firebase
       const deleteRow = (rowMap, rowKey) => {
         closeRow(rowMap, rowKey);
         const newData = [...props.alarms];
@@ -704,9 +692,9 @@ export default class Alarms extends Component {
         newData.splice(prevIndex, 1);
         this.setState({ alarms: newData });
 
-        // If the alarm is a personal alarm (key does not contain a ":"), then remove the alarm from the groups's doc in firebase
+        // If the alarm is a personal alarm (key does not contain a ":"), then remove the alarm from the groups's doc in Firebase
         if (String(props.alarms[prevIndex].key).includes(":") == false){
-        // Remove the alarm from the user's doc in firebase
+        // Remove the alarm from the user's doc in Firebase
         db.collection("users")
           .doc(auth.currentUser.email)
           .update({
@@ -720,7 +708,7 @@ export default class Alarms extends Component {
           });
         }
 
-        // If the alarm is a group alarm (key contains a ":"), then remove the alarm from the groups's doc in firebase
+        // If the alarm is a group alarm (key contains a ":"), then remove the alarm from the groups's doc in Firebase
         if (String(props.alarms[prevIndex].key).includes(":")){
           // console.log("String(props.alarms[prevIndex].key).includes(:)")
           var groupIDSplitArray = props.alarms[prevIndex].key.split(":")
@@ -728,7 +716,7 @@ export default class Alarms extends Component {
             .doc(groupIDSplitArray[0])
             .update({
               // Alarms in groups files do not have color
-              alarms: firebase.firestore.FieldValue.arrayRemove({
+              alarms: Firebase.firestore.FieldValue.arrayRemove({
                 name: props.alarms[prevIndex].name,
                 alarm_hour: props.alarms[prevIndex].alarm_hour,
                 alarm_minute: props.alarms[prevIndex].alarm_minute, 
@@ -737,7 +725,7 @@ export default class Alarms extends Component {
               }),
             });
           
-          // Remove the alarm from the local array that displays
+          // Cancel the specified alarm's push notification and remove the alarm from the local array
           this.removeAlarm(props.alarms[prevIndex].name, props.alarms);
         };
       }
@@ -802,7 +790,10 @@ export default class Alarms extends Component {
             keyExtractor ={(item) => String(item.key)} // specifying id as the key to prevent the key warning
             data = {props.alarms}
             renderItem={({ item }) => (
-              // Uncommenting TouchableHighlight code below would enable edit alarm modal to open when the alarm banner is pressed. As of rn though, TouchableHighlight press to open edit alarm modal doesn't update state so wrong alarm data is displayed in edit modal... The code is currently implementing the edit feature using swipe and click edit button because I didn't want to create a use conflict between clicking the alarm banner to edit and pressing the switch. 
+              // Uncommenting TouchableHighlight code below would enable edit alarm modal to open when the alarm banner is pressed. 
+              // As of rn though, TouchableHighlight press to open edit alarm modal doesn't update state so wrong alarm data is displayed in edit modal... 
+              // The code is currently implementing the edit feature using swipe and click edit button because I didn't want to create 
+              // a use conflict between clicking the alarm banner to edit and pressing the switch. 
 
               // <TouchableHighlight 
               // onPress={() => 
