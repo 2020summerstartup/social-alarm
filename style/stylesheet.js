@@ -79,6 +79,7 @@ const appStyles = StyleSheet.create({
     borderColor: APPTEXTRED,
     padding: 10,
     borderRadius: 10,
+    marginTop: 20,
 
     color: APPTEXTRED,
   },
