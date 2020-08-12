@@ -3,7 +3,6 @@ import {
   ScrollView,
   Switch,
   StyleSheet,
-  Dimensions,
   Text,
   View,
   Linking,
@@ -13,6 +12,7 @@ import {
   Button,
   Modal,
   TouchableHighlight,
+  RefreshControl
 } from "react-native";
 import { ListItem, withBadge } from "react-native-elements";
 import { auth, db } from "../../firebase/firebase";
@@ -137,10 +137,12 @@ class ProfileScreen extends Component {
       name: "", // this is the user's name
       email: "", // this is the user's email
 
-      notificationsModal: false, // controls if the notifications modal  is open
+      notificationsModalOpen: false, // controls if the notifications modal  is open
       notifications: [], // all the notifications from firebase
 
-      timeZoneSelected: "", // this is the time zone the user selected
+      refresh: false,
+
+      timeZoneSelected: "",
       timezoneArray: [
 	      { label: 'Eastern Time', value: 'EST' },
         { label: 'Central Time', value: 'CST' },
@@ -154,22 +156,22 @@ class ProfileScreen extends Component {
   static contextType = NotificationContext;
 
   // called in componentDidMount
-  // stores notifications (alertQueue) from firebase in state
+  // stores notifications from firebase in state
   getNotifications = () => {
     db.collection("users")
       .doc(auth.currentUser.email)
       .get()
       .then((doc) => {
-        this.setState({ notifications: doc.data().alertQueue });
+        this.setState({ notifications: doc.data().notifications });
       });
   };
 
   // called when user closes notification modal
   // closes  modal and deletes notififcations from firebase
   closeNotifications = () => {
-    this.setState({ notificationsModal: false });
+    this.setState({ notificationsModalOpen: false });
     db.collection("users").doc(auth.currentUser.email).update({
-      alertQueue: [],
+      notifications: [],
     });
   };
 
@@ -189,7 +191,7 @@ class ProfileScreen extends Component {
     // called when user opens notifications modal
     // opens modal and sets global state notification count to 0
     openNotifications = () => {
-      this.setState({ notificationsModal: true });
+      this.setState({ notificationsModalOpen: true });
       setNotificationCount(0);
     };
 
@@ -210,7 +212,7 @@ class ProfileScreen extends Component {
       <View style={{...profileStyles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
         {/* this part shows the user's name and email */}
         <View style={profileStyles.userRow}>
-          <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK }}>{this.state.name.replace('<br/>', '\n')}
+          <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK }}>{/*this.state.name.replace('<br/>', '\n')*/}
           </Text>
           <Text
             style={{
@@ -230,7 +232,7 @@ class ProfileScreen extends Component {
       >
 
         {/* NOTIFICATIONS MODAL */}
-        <Modal visible={this.state.notificationsModal} animationType="slide">
+        <Modal visible={this.state.notificationsModalOpen} animationType="slide">
           <View
             style={{
               alignItems: "center",
@@ -256,13 +258,23 @@ class ProfileScreen extends Component {
                 fontSize: 36,
                 color: theme.APPTEXTRED,
               }}
+            >Notifications</Text>
+
+            
+
+            
+            <ScrollView 
+            style={{ width: "95%" }}
+            refreshControl={
+              <RefreshControl refreshing={this.state.refresh} 
+              onRefresh={this.getNotifications.bind(this)} tintColor={theme.APPTEXTBLACK}
+              />
+            }
             >
-              {" "}
-              Notifications{" "}
-            </Text>
 
             {/* if there are no new notifications */}
             {this.state.notifications.length == 0 && (
+              <View style={{alignItems: "center"}}>
               <Text
                 style={{
                   ...styles.logo,
@@ -274,17 +286,17 @@ class ProfileScreen extends Component {
               >
                 You have no new notifications
               </Text>
+              </View>
             )}
-
+            
             {/* if there are new notifications */}
-            <ScrollView style={{ width: "95%" }}>
               {this.state.notifications &&
                 this.state.notifications.map((notification) => {
                   return (
                     <TouchableHighlight
                       style={{
                         ...styles.alarmBanner,
-                        color: theme.APPTEXTRED,
+                        backgroundColor: theme.APPTEXTRED,
                       }}
                       key={notification.body}
                     >
