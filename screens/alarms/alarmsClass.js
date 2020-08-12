@@ -1009,7 +1009,7 @@ export default class Alarms extends Component {
             <Text style={alarmStyles.modalTitle}> Edit Alarm </Text>
 
             <DatePicker
-              style={{height: 75, width: 200, color: "black"}}
+              style={{height: 75, width: 200}}
               date= {String((this.state.alarms[this.state.openRow].alarm_hour) + ":" + (this.state.alarms[this.state.openRow].alarm_minute))} // Starts timepicker at current alarm time
               mode="time"
               format="HH:mm"
@@ -1018,6 +1018,9 @@ export default class Alarms extends Component {
               showIcon={false}
               minuteInterval={1}
               onDateChange={(time) => this.setState({ newAlarmTime: time })}
+              customStyles={{
+                datePicker:{backgroundColor: '#A9A9A9'}
+              }}
             />
 
             <View style={appStyles.inputView}>
@@ -1093,6 +1096,9 @@ export default class Alarms extends Component {
                       showIcon={false}
                       minuteInterval={1}
                       onDateChange={(time) => this.setState({ newAlarmTime: time })}
+                      customStyles={{
+                        datePicker:{backgroundColor: '#A9A9A9'}
+                      }}
                     />
 
                   <View style={appStyles.inputView}>
