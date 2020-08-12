@@ -47,41 +47,6 @@ import { color } from "react-native-reanimated";
  * feel free to change or delete any of these
  */
 
-// This is for the birthday picker
-const BirthdayPicker = () => {
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-
-  // shows the date picker
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  // TO DO: replace the "select birthday" button title with the date
-  const handleConfirm = (date) => {
-    hideDatePicker();
-    // console.log(date.toString());
-  };
-
-  return (
-    <View>
-      <Button title="Select birthday" onPress={showDatePicker} />
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        minimumDate={new Date(1900, 0, 1)}
-        maximumDate={new Date(2020, 11, 31)}
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-        style={profileStyles.birthdayBtn}
-        headerTextIOS={"When's your birthday?"}
-      />
-    </View>
-  );
-};
 
 class ProfileScreen extends Component {
   // sign out functionality
@@ -115,8 +80,8 @@ class ProfileScreen extends Component {
   // gets user email and name from async storage
   getEmailName = async () => {
     const userEmail = await AsyncStorage.getItem("email");
-    const userName = await AsyncStorage.getItem("name");
-    this.setState({ name: userName });
+    //const userName = await AsyncStorage.getItem("name");
+    //this.setState({ name: userName });
     this.setState({ email: userEmail });
   };
 
@@ -136,6 +101,7 @@ class ProfileScreen extends Component {
     this.state = {
       name: "", // this is the user's name
       email: "", // this is the user's email
+      birthday: "",
 
       notificationsModal: false, // controls if the notifications modal  is open
       notifications: [], // all the notifications from firebase
@@ -163,6 +129,8 @@ class ProfileScreen extends Component {
       .get()
       .then((doc) => {
         this.setState({ notifications: doc.data().notifications });
+        this.setState({name: doc.data().name})
+        this.setState({birthday: doc.data().birthday})
       });
   };
 
@@ -188,11 +156,51 @@ class ProfileScreen extends Component {
 
     const theme = isDarkMode ? dark : light;
 
+
+// This is for the birthday picker
+const BirthdayPicker = () => {
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  // shows the date picker
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  // TO DO: replace the "select birthday" button title with the date
+  const handleConfirm = (date) => {
+    hideDatePicker();
+    console.log(date.toString());
+    this.setState({birthday: date.toString().substring(4, 15)})
+    db.collection("users").doc(this.state.email).update({birthday: date.toString().substring(4, 15)})
+  };
+
+  return (
+    <View>
+      <Button title="Select birthday" onPress={showDatePicker} />
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        minimumDate={new Date(1900, 0, 1)}
+        maximumDate={new Date(2020, 11, 31)}
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+        style={profileStyles.birthdayBtn}
+        headerTextIOS={"When's your birthday?"}
+      />
+    </View>
+  );
+};
+
     // called when user opens notifications modal
     // opens modal and sets global state notification count to 0
     openNotifications = () => {
       this.setState({ notificationsModal: true });
       setNotificationCount(0);
+      console.log(this.state.birthday)
     };
 
     // called when user toggles theme button
@@ -212,7 +220,7 @@ class ProfileScreen extends Component {
       <View style={{...profileStyles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
         {/* this part shows the user's name and email */}
         <View style={profileStyles.userRow}>
-          <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK }}>{/*this.state.name.replace('<br/>', '\n')*/}
+          <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK, }}>{this.state.name.replace ('<br/>', '\n')}
           </Text>
           <Text
             style={{
@@ -400,7 +408,8 @@ class ProfileScreen extends Component {
           />
 
           {/* BIRTHDAY ICON */}
-          <ListItem
+          {this.state.birthday == "" && (
+            <ListItem
             title="Birthday"
             rightTitleStyle={{ fontSize: 18 }}
             rightElement={<BirthdayPicker />}
@@ -419,6 +428,31 @@ class ProfileScreen extends Component {
               />
             }
           />
+          )} 
+
+
+          {this.state.birthday.length > 0 && (
+            <ListItem
+            title="Birthday"
+            rightTitleStyle={{ fontSize: 18 }}
+            rightElement={<Text style={{color: theme.APPTEXTBLACK, fontSize: 16}}>{this.state.birthday}</Text>}
+            containerStyle={{
+              ...profileStyles.listItemContainer,
+              backgroundColor: theme.APPBACKGROUNDCOLOR,
+            }}
+            titleStyle={{ color: theme.APPTEXTBLACK }}
+            leftIcon={
+              <BaseIcon
+                containerStyle={{ backgroundColor: "#FAD291" }}
+                icon={{
+                  type: "material",
+                  name: "cake",
+                }}
+              />
+            }
+          />
+          )} 
+          
 
           {/* TIMEZONE ICON */}
           <ListItem

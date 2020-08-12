@@ -303,10 +303,10 @@ const profileStyles = StyleSheet.create({
   userRow: {
     alignItems: 'flex-start',
     // flexDirection: 'row',
-    paddingBottom: 30,
+    paddingBottom: 15,
     paddingLeft: 25,
     paddingRight: 15,
-    paddingTop: 60,
+    paddingTop: 30,
   },
   userImage: {
     marginRight: 12,
