@@ -636,7 +636,7 @@ export default class Groups extends Component {
 
     return (
 
-      <View style={appStyles.container}>
+      <View style={{...appStyles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
         {/* **************************************** CREATE NEW GROUP MODAL **************************************** */}
         <Modal visible={this.state.createModalOpen} animationType="slide">
           {/* this allows for dismiss keyboard when tapping anywhere functionality */}
@@ -697,8 +697,8 @@ export default class Groups extends Component {
         <Modal visible={this.state.groupModalOpen} animationType="slide">
           {/* this allows for touch anywhere and keyboard dismisses functionality */}
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View style={appStyles.modalContainer}>
-              <View style={alarmStyles.topBanner}>
+            <View style={{...appStyles.modalContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
+              <View style={{...alarmStyles.topBanner, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
 
                 {/* close indiv group modal button */}
                 <MaterialIcons
@@ -707,7 +707,8 @@ export default class Groups extends Component {
                   style={{
                     ...appStyles.modalToggle,
                     ...appStyles.modalClose,
-                    ...{ justifyContent: "flex-end" },
+                    justifyContent: "flex-end",
+                    color: theme.APPTEXTRED
                   }}
                   onPress={() => this.setState({ groupModalOpen: false })}
                 />
@@ -749,7 +750,7 @@ export default class Groups extends Component {
               <Text
                 adjustsFontSizeToFit
                 numberOfLines={1}
-                style={{ ...styles.logo, ...{ marginTop: 5 }, ...{ color: this.state.groupAlarmColor } }}
+                style={{ ...appStyles.logo, ...{ marginTop: 5 }, ...{ color: this.state.groupAlarmColor } }}
               >
                 {this.state.groupNameClicked}
               </Text>
@@ -860,7 +861,7 @@ export default class Groups extends Component {
                           // "button"  that displays group members
                           <TouchableHighlight
                             underlayColor={APPINPUTVIEW}
-                            style={[styles.alarmBanner, {backgroundColor: this.state.groupAlarmColor}]}
+                            style={[alarmStyles.alarmBanner, {backgroundColor: this.state.groupAlarmColor}]}
                             key={person}
                           >
                             <Text
@@ -894,7 +895,7 @@ export default class Groups extends Component {
                     renderItem={({ item }) => (
                       // button that contains user's name
                       <TouchableHighlight
-                        style={[styles.alarmBanner, {backgroundColor: this.state.groupAlarmColor}]}
+                        style={[alarmStyles.alarmBanner, {backgroundColor: this.state.groupAlarmColor}]}
                       >
                         <Text
                           adjustsFontSizeToFit
@@ -926,13 +927,17 @@ export default class Groups extends Component {
 
         {/* **************************************** ACTUAL PAGE ********************************************************** */}
 
-        <View style={alarmStyles.topBanner}>          
-          <Text style={alarmStyles.pageTitle}>Groups</Text>
+        <View style={{...alarmStyles.topBanner, backgroundColor: theme.APPBACKGROUNDCOLOR}}>          
+          <Text style={{...alarmStyles.pageTitle, color: theme.APPTEXTRED}}>Groups</Text>
 
           {/* add new group button */}
           <MaterialIcons
             name="group-add"
+<<<<<<< HEAD
             size={36}
+=======
+            size={24}
+>>>>>>> aa668890f402c765fb0ec69f3dff594d6722e018
             style={{...appStyles.modalToggle, color: theme.APPTEXTRED}}
             onPress={() => this.setState({ createModalOpen: true })}
           />
@@ -946,14 +951,14 @@ export default class Groups extends Component {
             this.state.groups.map((group) => {
               return (
                 <TouchableOpacity
-                  style={styles.alarmBanner}
+                  style={alarmStyles.alarmBanner}
                   key={group.id}
                   onPress={() => this.groupModal(group.name, group.id, group.color)}
                 >
                   <Text
                     adjustsFontSizeToFit
                     numberOfLines={1}
-                    style={styles.alarmText}
+                    style={alarmStyles.alarmText}
                   >
                     {group.name}
                   </Text>
@@ -964,15 +969,20 @@ export default class Groups extends Component {
 
         {/* swipelist of all groups user is in */}
         <SwipeListView
-          style={{ width: "95%" }}
+          style={{ width: "95%" , backgroundColor: theme.APPBACKGROUNDCOLOR}}
           keyExtractor={(item) => item.id} // specifying id as the key to prevent the key warning
           data={this.state.groups}
           renderItem={({ item }) => (
             // buttons for what groups user is in
             <TouchableHighlight
               // color when clicked
+<<<<<<< HEAD
               underlayColor={"#fc8c8b"}
               style={[styles.alarmBanner, {backgroundColor: item.color}]}
+=======
+              underlayColor={APPINPUTVIEW}
+              style={[alarmStyles.alarmBanner, {backgroundColor: item.color}]}
+>>>>>>> aa668890f402c765fb0ec69f3dff594d6722e018
               onPress={() => this.groupModal(item.name, item.id, item.color)}
             >
               <Text
