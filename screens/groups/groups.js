@@ -933,11 +933,7 @@ export default class Groups extends Component {
           {/* add new group button */}
           <MaterialIcons
             name="group-add"
-<<<<<<< HEAD
             size={36}
-=======
-            size={24}
->>>>>>> aa668890f402c765fb0ec69f3dff594d6722e018
             style={{...appStyles.modalToggle, color: theme.APPTEXTRED}}
             onPress={() => this.setState({ createModalOpen: true })}
           />
@@ -976,13 +972,8 @@ export default class Groups extends Component {
             // buttons for what groups user is in
             <TouchableHighlight
               // color when clicked
-<<<<<<< HEAD
               underlayColor={"#fc8c8b"}
-              style={[styles.alarmBanner, {backgroundColor: item.color}]}
-=======
-              underlayColor={APPINPUTVIEW}
               style={[alarmStyles.alarmBanner, {backgroundColor: item.color}]}
->>>>>>> aa668890f402c765fb0ec69f3dff594d6722e018
               onPress={() => this.groupModal(item.name, item.id, item.color)}
             >
               <Text

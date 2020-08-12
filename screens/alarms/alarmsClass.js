@@ -1063,11 +1063,7 @@ export default class Alarms extends Component {
       return(
         <View style={{...appStyles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
           <TopBanner>
-<<<<<<< HEAD
-              <Text style={{...alarmStyles.pageTitle}}>Alarms</Text>
-=======
               <Text style={{...alarmStyles.pageTitle, color: theme.APPTEXTRED}}>Alarms</Text>
->>>>>>> aa668890f402c765fb0ec69f3dff594d6722e018
         
               {/*BEGINNING OF MODAL FOR ADD ALARM */}
               <MaterialIcons
