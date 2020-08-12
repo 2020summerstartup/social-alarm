@@ -75,7 +75,7 @@ const appStyles = StyleSheet.create({
 
   modalToggle: {
     marginBottom: 20,
-    borderWidth: 1,
+    //borderWidth: 1,
     borderColor: APPTEXTRED,
     padding: 10,
     borderRadius: 10,
@@ -102,6 +102,15 @@ const appStyles = StyleSheet.create({
     color: APPTEXTWHITE,
     fontSize: 16,
     padding: 10,
+  },
+  
+  groupsLogo: {
+    marginTop: 30,
+    fontWeight: "bold",
+    fontSize: 50,
+    color: APPTEXTRED,
+    marginBottom: 18,
+    alignItems: "center",
   },
 });
 
@@ -275,18 +284,26 @@ const alarmStyles = StyleSheet.create({
 });
 
 const profileStyles = StyleSheet.create({
+  container: {
+    backgroundColor: 'white',
+
+    // these lines fit the container to the entire screen
+    //height: Dimensions.get('window').height,
+    // width: Dimensions.get('window').width,
+    // marginLeft: 0,
+  },
   scroll: {
     backgroundColor: 'white',
 
     // these lines fit the container to the entire screen
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
+    // height: Dimensions.get('window').height,
+    // width: Dimensions.get('window').width,
   },
   userRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingBottom: 60,
-    paddingLeft: 15,
+    alignItems: 'flex-start',
+    // flexDirection: 'row',
+    paddingBottom: 30,
+    paddingLeft: 25,
     paddingRight: 15,
     paddingTop: 60,
   },
@@ -295,7 +312,7 @@ const profileStyles = StyleSheet.create({
   },
   listItemContainer: {
     height: 65,
-    borderWidth: 0.5,
+    borderWidth: 0,
     borderColor: APPBACKGROUNDCOLOR,
   },
   logo: {
@@ -312,12 +329,12 @@ const profileStyles = StyleSheet.create({
     backgroundColor: APPTEXTRED,
     borderRadius: 15,
     height: 40,
-    width: 0.85 * Dimensions.get('screen').width, // sign out button is 90% of the screen's width
+    width: 0.75 * Dimensions.get('screen').width, // sign out button is 85% of the screen's width
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 10,
-    marginLeft: 30,
+    marginTop: 10,
+    marginBottom: 30,
+    marginLeft: 55,
   },
   birthdayBtn: {
     width: 300,

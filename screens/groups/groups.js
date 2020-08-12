@@ -38,6 +38,7 @@ import {
   ALARMCOLORDARKBLUE
 } from "../../style/constants";
 import { appStyles, alarmStyles } from "../../style/stylesheet";
+import { NotificationContext } from "../../contexts/NotificationContext";
 
 export default class Groups extends Component {
   constructor(props) {
@@ -65,9 +66,14 @@ export default class Groups extends Component {
     };
   }
 
+  // context (global state) stuff
+  static contextType = NotificationContext;
+
+  // current user
   user = auth.currentUser;
 
   // called when user hits create group button in create group modal
+  // creates a group in firebase and adds it to local state
   createGroup = (name, user) => {
     // if group length is too small - no group made, instead alert
     if (name.length < 3) {
@@ -124,7 +130,7 @@ export default class Groups extends Component {
     this.setState({ groupNameClicked: groupName });
     this.setState({ groupIdClicked: groupId });
     this.setState({ groupAlarmColor: groupColor});
-
+    
     // groupId should always be a string
     if (typeof groupId == "string") {
       // gets group members,  stores them in state
@@ -143,8 +149,10 @@ export default class Groups extends Component {
   };
 
   // called when user tries to add someone to a group
+  // adds user the group (provided they can be added), 
+  // adds this to user's notifications, and updates local state
   addUser = (userName, groupId) => {
-    //  this is needed - talk to anna to explain more
+    //  this is needed, not totally sure why (see stack overfloe below) -anna
     // https://stackoverflow.com/questions/39191001/setstate-with-firebase-promise-in-react
     var self = this;
     if (userName) {
@@ -166,7 +174,7 @@ export default class Groups extends Component {
 
                   // clear text input
                   self.textInput.clear();
-                  //  dismisses the  keyboard
+                  // dismisses the keyboard
                   Keyboard.dismiss();
 
                   // update screen by updating local state
@@ -177,7 +185,8 @@ export default class Groups extends Component {
                   groupMem.push(userName);
                   self.setState({ groupMembers: groupMem });
 
-                  // update user's document so it contains new group info
+                  // update added user's document so it contains new group info
+                  // also add a notification for user in their alertQueue
                   db.collection("users")
                     .doc(userName)
                     .update({
@@ -221,14 +230,18 @@ export default class Groups extends Component {
         .catch((error) => console.log(error));
     } else {
       // if nothing was entered in the text input - alert
-      Alert.alert("Oops!", "This user does not exist", [{ text: "OK" }]);
+      Alert.alert("Oops!", "Please enter a valid email address", [{ text: "OK" }]);
     }
   };
 
   // deletes a user from a group
+  // called when user deletes themself from a group OR 
+  // admin deletes someone from a group
+  // TODO: split this in to two methods
   deleteUser(group, groupId, userDeleted) {
     var self = this;
 
+    // alert that is added to a user's page
     var alert = {};
 
     if (userDeleted == this.user.email) {
@@ -290,7 +303,7 @@ export default class Groups extends Component {
               // else just remove the user from the group's doc
               if (userDeleted == self.user.email) {
                 // if admin is deleted - choose new admin
-                var newAdmin = doc.data().members[1]
+                var newAdmin = doc.data().members[1];
                 db.collection("groups")
                   .doc(groupId)
                   .update({
@@ -300,12 +313,14 @@ export default class Groups extends Component {
                     ),
                   });
                 // give new admin a lil notification now
-                db.collection("users").doc(newAdmin).update({
-                  alertQueue: Firebase.firestore.FieldValue.arrayUnion({
-                    title: "Congrats!",
-                    body: "You are now the admin of group " + group,
-                  }),
-                })
+                db.collection("users")
+                  .doc(newAdmin)
+                  .update({
+                    alertQueue: Firebase.firestore.FieldValue.arrayUnion({
+                      title: "Congrats!",
+                      body: "You are now the admin of group " + group,
+                    }),
+                  });
               } else {
                 db.collection("groups")
                   .doc(groupId)
@@ -322,21 +337,10 @@ export default class Groups extends Component {
       .catch((error) => console.log(error));
   }
 
-  // deletes group doc, the group  from all members user doc, and updates local state
   // called when admin wants to delete a group
+  // deletes group doc,the group from all members user doc, and updates local state
   deleteGroup(group, groupId) {
     var self = this;
-
-    if (
-      // if the person is not trying to delete themselves and is not the admin, return
-      // this probably won't happen since that button only appears for admin now..
-      this.user.email != this.state.groupAdminClicked
-    ) {
-      Alert.alert("Oops!", "Only the group admin can delete a group", [
-        { text: "OK" },
-      ]);
-      return;
-    }
 
     // updates the groups displayed on main page - state stuff
     const newGroups = self.state.groups;
@@ -348,8 +352,6 @@ export default class Groups extends Component {
     self.setState({ groups: newGroups });
     self.setState({ groupModalOpen: false });
 
-    // could also possibly use state here, but I don't want things to get messed up
-    // if they are accidentally not the same
     // get group doc
     db.collection("groups")
       .doc(groupId)
@@ -361,13 +363,14 @@ export default class Groups extends Component {
         for (var i = 0; i < groupMembers.length; i++) {
           var alert = {};
           // admin shouldn't get this alert since they deleted the group
-          if(groupMembers[i] != doc.data().adminEmail) {
+          if (groupMembers[i] != doc.data().adminEmail) {
             alert = {
               title: "Group deleted",
-              body:
-                self.user.email + ' has deleted the group "' + group + '"',
+              body: self.user.email + ' has deleted the group "' + group + '"',
             };
           }
+          // delete group from user's doc
+          // also add a notification to user
           db.collection("users")
             .doc(groupMembers[i])
             .update({
@@ -377,30 +380,18 @@ export default class Groups extends Component {
               }),
               alertQueue: Firebase.firestore.FieldValue.arrayUnion(alert),
             })
-            .then(console.log("deleted from " + groupMembers[i]));
         }
         // delete group doc
         db.collection("groups")
           .doc(groupId)
           .delete()
-          .then(() => {
-            console.log(group + " deleted");
-          });
       });
   }
 
   // hidden items in swipe list - from Sidney's code
   // for main page
   renderHiddenItem = (data, rowMap) => (
-    // might take the first one out..
     <View style={alarmStyles.rowBack}>
-      {/*
-      <TouchableOpacity
-        style={[alarmStyles.backLeftBtn]}
-        onPress={() => console.log("Pressed share alarm with group button")}
-      >
-        <Text style={alarmStyles.backTextWhite}>+ Alarm</Text>
-  </TouchableOpacity> */}
 
       <TouchableOpacity
         style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnCenter]}
@@ -426,7 +417,6 @@ export default class Groups extends Component {
   // hidden items in swipe list - from Sidney's code
   // for indiv group modal
   renderHiddenItemModal = (data, rowMap) => (
-    // might take the first one out..
     <View style={alarmStyles.rowBack}>
       <TouchableOpacity
         style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnCenter]}
@@ -465,7 +455,7 @@ export default class Groups extends Component {
     }
   };
 
-  // called when user  presses trash can (from Sidney's code)
+  // called when user presses trash can (from Sidney's code)
   // for main page
   deleteRow = (rowMap, rowKey) => {
     this.closeRow(rowMap, rowKey);
@@ -491,14 +481,11 @@ export default class Groups extends Component {
   deleteRowModal = (rowMap, rowKey) => {
     this.closeRow(rowMap, rowKey);
 
-    if (
-      // if the person is not trying to delete themselves and is not the admin, return
-      rowKey != this.user.email &&
-      this.user.email != this.state.groupAdminClicked
-    ) {
+    // if the person is not trying to delete themselves and is not the admin, return
+    if ( rowKey != this.user.email && this.user.email != this.state.groupAdminClicked ) {
       return;
     } else {
-      //  double check with user - make sure they want to delete via alert
+      // double check with user - make sure they want to delete via alert
       Alert.alert(
         "Warning",
         "Are you sure you want to delete " + rowKey + " from this group?",
@@ -525,7 +512,8 @@ export default class Groups extends Component {
     console.log("This row opened", rowKey);
   };
 
-  // called in componentDidMount
+  // NOT USED ANYMORE
+  // called in commented out portion of componentDidMount
   // pings alerts for all new groups user is in
   alertQueueFunction = (queue) => {
     if (queue.length == 0) {
@@ -558,15 +546,14 @@ export default class Groups extends Component {
   };
 
   // called when the component launches/mounts
-  // this is like a react native method that automatically gets called
-  //  when the component  mounts
+  // sets up all local state
   componentDidMount() {
     // get the user's document from collection
     db.collection("users")
       .doc(auth.currentUser.email)
       .get()
       .then((doc) => {
-        //  if the doc exists
+        // if the doc exists
         if (doc.exists) {
           // get the groups from the user's doc - store in some state to display
           const groupsData = [];
@@ -578,7 +565,7 @@ export default class Groups extends Component {
             });
           }
           this.setState({ groups: groupsData });
-          
+
           // this is for the alert notifications
           /*
           const newGroupsData = [];
@@ -641,25 +628,48 @@ export default class Groups extends Component {
   }
   
   render() {
+
+    // context (global state) stuff
+    const { isDarkMode, light, dark } = this.context;
+
+    const theme = isDarkMode ? dark : light;
+
     return (
+
       <View style={appStyles.container}>
         {/* **************************************** CREATE NEW GROUP MODAL **************************************** */}
         <Modal visible={this.state.createModalOpen} animationType="slide">
           {/* this allows for dismiss keyboard when tapping anywhere functionality */}
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View style={appStyles.modalContainer}>
+            <View
+              style={{
+                ...appStyles.modalContainer,
+                backgroundColor: theme.APPBACKGROUNDCOLOR,
+              }}
+            >
               {/* close group modal icon */}
               <MaterialIcons
                 name="close"
                 size={24}
-                style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
+                style={{
+                  ...appStyles.modalToggle,
+                  ...appStyles.modalClose,
+                  color: theme.APPTEXTRED,
+                }}
                 onPress={() => this.setState({ createModalOpen: false })}
               />
-              <Text style={styles.logo}>Create Group</Text>
+              <Text style={{ ...appStyles.groupsLogo, color: theme.APPTEXTRED }}>
+                Create Group
+              </Text>
               {/* text input for create new group */}
-              <View style={appStyles.inputView}>
+              <View
+                style={{
+                  ...appStyles.inputView,
+                  backgroundColor: theme.APPINPUTVIEW,
+                }}
+              >
                 <TextInput
-                  style={appStyles.inputText}
+                  style={{ ...appStyles.inputText }}
                   placeholder="group name..."
                   placeholderTextColor="#003f5c"
                   onChangeText={(text) => {
@@ -669,7 +679,10 @@ export default class Groups extends Component {
               </View>
               {/* create new group button */}
               <TouchableOpacity
-                style={appStyles.loginBtn}
+                style={{
+                  ...appStyles.loginBtn,
+                  backgroundColor: theme.APPTEXTRED,
+                }}
                 onPress={() =>
                   this.createGroup(this.state.groupName.trim(), this.user)
                 }
@@ -680,7 +693,7 @@ export default class Groups extends Component {
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* **************************************** INDIVIDUAL GROUP MODAL **************************************** */}
+        {/* **************************************** INDIVIDUAL GROUP MODAL ************************************************* */}
         <Modal visible={this.state.groupModalOpen} animationType="slide">
           {/* this allows for touch anywhere and keyboard dismisses functionality */}
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -707,9 +720,9 @@ export default class Groups extends Component {
                     style={{
                       ...appStyles.modalToggle,
                       ...appStyles.modalClose,
-                      ...{ justifyContent: "flex-start" },
+                      justifyContent: "flex-start",
+                      color: theme.APPTEXTRED,
                     }}
-                    color="#333"
                     onPress={() =>
                       Alert.alert(
                         "Warning",
@@ -786,7 +799,12 @@ export default class Groups extends Component {
               </View>
 
               {/* text input to add a group member */}
-              <View style={appStyles.inputView}>
+              <View
+                style={{
+                  ...appStyles.inputView,
+                  backgroundColor: theme.APPINPUTVIEW,
+                }}
+              >
                 <TextInput
                   ref={(input) => {
                     this.textInput = input;
@@ -805,24 +823,35 @@ export default class Groups extends Component {
               <TouchableOpacity
                 style={{ ...appStyles.loginBtn, ...{ marginTop: 10}, ...{backgroundColor: this.state.groupAlarmColor} }}
                 onPress={() =>
-                  this.addUser(this.state.addUser.trim(), this.state.groupIdClicked)
+                  this.addUser(
+                    this.state.addUser.trim(),
+                    this.state.groupIdClicked
+                  )
                 }
               >
-                <Text style={appStyles.buttonText}> add member</Text>
+                <Text
+                  style={{
+                    ...appStyles.buttonText,
+                    color: theme.APPTEXTWHITE,
+                  }}
+                >
+                  add member
+                </Text>
               </TouchableOpacity>
 
               {/* number of members in the group text */}
-              <Text style={styles.wordText}>
+              <Text style={{ ...styles.wordText, color: theme.APPTEXTBLACK }}>
                 Members: {this.state.groupMembers.length}
               </Text>
 
               {/* text that displays who the admin is */}
-              <Text style={styles.wordText}>
+              <Text style={{ ...styles.wordText, color: theme.APPTEXTBLACK }}>
                 Admin: {this.state.groupAdminClicked}
               </Text>
               {
-                // IF USER  IS NOT ADMIN
+                // IF USER IS NOT ADMIN
                 // displays ScrollView of group members
+                // (so user doesn't have swipe to delete functionality)
                 this.user.email != this.state.groupAdminClicked && (
                   <ScrollView style={{ width: "95%" }}>
                     {this.state.groupMembers &&
@@ -838,7 +867,10 @@ export default class Groups extends Component {
                               adjustsFontSizeToFit
                               numberOfLines={1}
                               // allowFontScaling
-                              style={styles.memberText}
+                              style={{
+                                ...styles.memberText,
+                                color: theme.APPTEXTWHITE,
+                              }}
                             >
                               {person}
                             </Text>
@@ -852,10 +884,11 @@ export default class Groups extends Component {
               {
                 // IF USER IS ADMIN
                 // displays a swipelist of all members in the group
+                // (so admin has swipe to delete functionality)
                 this.user.email == this.state.groupAdminClicked && (
                   <SwipeListView
                     style={{ width: "95%" }}
-                    underlayColor={APPINPUTVIEW}
+                    underlayColor={theme.APPBUTTONPRESS}
                     keyExtractor={(item) => item} // specifying id as the key to prevent the key warning
                     data={this.state.groupMembers}
                     renderItem={({ item }) => (
@@ -866,7 +899,10 @@ export default class Groups extends Component {
                         <Text
                           adjustsFontSizeToFit
                           numberOfLines={1}
-                          style={styles.memberText}
+                          style={{
+                            ...styles.memberText,
+                            color: theme.APPTEXTWHITE,
+                          }}
                         >
                           {item}
                         </Text>
@@ -888,7 +924,7 @@ export default class Groups extends Component {
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* **************************************** ACTUAL PAGE ************************************************* */}
+        {/* **************************************** ACTUAL PAGE ********************************************************** */}
 
         <View style={alarmStyles.topBanner}>          
           <Text style={alarmStyles.pageTitle}>Groups</Text>
@@ -936,14 +972,13 @@ export default class Groups extends Component {
             <TouchableHighlight
               // color when clicked
               underlayColor={APPINPUTVIEW}
-              // style={styles.alarmBanner}
               style={[styles.alarmBanner, {backgroundColor: item.color}]}
               onPress={() => this.groupModal(item.name, item.id, item.color)}
             >
               <Text
                 adjustsFontSizeToFit
                 numberOfLines={1}
-                style={styles.alarmText}
+                style={{ ...styles.groupNameText, color: theme.APPTEXTWHITE }}
               >
                 {item.name}
               </Text>
@@ -978,7 +1013,7 @@ const styles = StyleSheet.create({
   },
 
   // the banner
-  alarmBanner: {
+  banner: {
     flex: 1,
     flexDirection: "row",
     backgroundColor: APPTEXTRED,
@@ -994,7 +1029,7 @@ const styles = StyleSheet.create({
   },
 
   // lol bad name - the button text
-  alarmText: {
+  groupNameText: {
     color: APPTEXTWHITE,
     fontSize: 30,
     alignItems: "flex-start",
@@ -1015,46 +1050,6 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     paddingVertical: 10,
-  },
-
-  logo: {
-    marginTop: 30,
-    fontWeight: "bold",
-    fontSize: 50,
-    color: APPTEXTRED,
-    marginBottom: 18,
-    alignItems: "center",
-  },
-
-  // old group card stuff
-  groupCard: {
-    //marginBottom: 20,
-    //borderWidth: 1,
-    borderColor: APPTEXTRED,
-    padding: 10,
-    alignSelf: "center",
-    color: APPTEXTRED,
-    fontSize: 24,
-    alignItems: "flex-start",
-  },
-
-  center: {
-    alignItems: "center",
-  },
-
-  // old group card stuff
-  groups: {
-    alignItems: "flex-start",
-    borderRadius: 6,
-    marginLeft: 16,
-    elevation: 3,
-    backgroundColor: "black",
-    shadowOffset: { width: 1, height: 1 },
-    shadowColor: "#031821",
-    shadowOpacity: 0.7,
-    shadowRadius: 2,
-    marginHorizontal: 4,
-    marginVertical: 6,
   },
 
   buttonContainer: {

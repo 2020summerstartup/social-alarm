@@ -13,8 +13,13 @@ import {
   Keyboard,
 } from "react-native";
 import { db, auth } from "../../firebase/firebase";
-import {APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE} from '../../style/constants';
-import {appStyles} from '../../style/stylesheet';
+import {
+  APPBACKGROUNDCOLOR,
+  APPTEXTRED,
+  APPTEXTWHITE,
+} from "../../style/constants";
+import { appStyles } from "../../style/stylesheet";
+import { NotificationContext } from "../../contexts/NotificationContext";
 
 /* signup.js
  * SignUp screen
@@ -22,7 +27,7 @@ import {appStyles} from '../../style/stylesheet';
  */
 
 export default function SignUp({ navigation }) {
-
+  // states - contains info that user entered
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -32,14 +37,18 @@ export default function SignUp({ navigation }) {
   // if passwords match, signs user up (and logs them in) and navigates to App
   signUpUser = async (email, password, confirmPassword, name) => {
     try {
+      // if user enters same passwords
       if (password == confirmPassword) {
+        // save login credentials in local storage
         await AsyncStorage.setItem("email", email);
         await AsyncStorage.setItem("name", name);
         await AsyncStorage.setItem("password", password);
 
+        // sign up user in firebase
         auth
           .createUserWithEmailAndPassword(email, password)
           .then(function (user) {
+            // create a doc for user in firebase and initializes some things
             db.collection("users")
               .doc(email)
               .set({
@@ -54,9 +63,11 @@ export default function SignUp({ navigation }) {
               .catch(console.log("idk"));
           })
           .catch(function (error) {
+            // if an error occurs - alert user
             Alert.alert("Oops!", error.toString(), [{ text: "OK" }]);
           });
       } else {
+        // if passwords don't match alert user
         console.log("passwords dont match");
         Alert.alert("Oops!", "your passwords don't match", [{ text: "OK" }]);
       }
@@ -66,68 +77,124 @@ export default function SignUp({ navigation }) {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
-        <Text style={styles.logo}>Sign Up</Text>
-        <View style={appStyles.inputView}>
-          <TextInput
-            style={appStyles.inputText}
-            placeholder="Name..."
-            placeholderTextColor="#003f5c"
-            autoCorrect={false}
-            onChangeText={(text) => {
-              setName(text);
-            }}
-          />
-        </View>
-        <View style={appStyles.inputView}>
-          {/* text inputs - email, password, confirm password */}
-          <TextInput
-            style={appStyles.inputText}
-            placeholder="Email..."
-            placeholderTextColor="#003f5c"
-            keyboardType="email-address"
-            onChangeText={(text) => {
-              setEmail(text);
-            }}
-          />
-        </View>
+    <NotificationContext.Consumer>
+      {(context) => {
+        // context (theme) stuff
+        const { isDarkMode, light, dark } = context;
 
-        <View style={appStyles.inputView}>
-          <TextInput
-            secureTextEntry
-            style={appStyles.inputText}
-            placeholder="Password..."
-            placeholderTextColor="#003f5c"
-            onChangeText={(text) => {
-              setPassword(text);
-            }}
-          />
-        </View>
+        const theme = isDarkMode ? dark : light;
 
-        <View style={appStyles.inputView}>
-          <TextInput
-            secureTextEntry
-            style={appStyles.inputText}
-            placeholder="Confirm password..."
-            placeholderTextColor="#003f5c"
-            onChangeText={(text) => {
-              setConfirmPassword(text);
-            }}
-          />
-        </View>
+        return (
+          // if user taps anywhere keyboard goes away
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View
+              style={{
+                ...styles.container,
+                backgroundColor: theme.APPBACKGROUNDCOLOR,
+              }}
+            >
+              {/* logo text */}
+              <Text style={{ ...styles.logo, color: theme.APPTEXTRED }}>
+                Sign Up
+              </Text>
 
-        {/* sign up button */}
-        <TouchableOpacity
-          style={appStyles.loginBtn}
-          onPress={() =>
-            this.signUpUser(email.trim(), password, confirmPassword, name.trim())
-          }
-        >
-          <Text style={appStyles.loginText}>SIGN UP</Text>
-        </TouchableOpacity>
-      </View>
-    </TouchableWithoutFeedback>
+              {/* name text input */}
+              <View
+                style={{
+                  ...appStyles.inputView,
+                  backgroundColor: theme.APPINPUTVIEW,
+                }}
+              >
+                <TextInput
+                  style={appStyles.inputText}
+                  placeholder="Name..."
+                  placeholderTextColor="#003f5c"
+                  autoCorrect={false}
+                  onChangeText={(text) => {
+                    setName(text);
+                  }}
+                />
+              </View>
+
+              {/* email text input */}
+              <View
+                style={{
+                  ...appStyles.inputView,
+                  backgroundColor: theme.APPINPUTVIEW,
+                }}
+              >
+                <TextInput
+                  style={appStyles.inputText}
+                  placeholder="Email..."
+                  placeholderTextColor="#003f5c"
+                  keyboardType="email-address"
+                  onChangeText={(text) => {
+                    setEmail(text);
+                  }}
+                />
+              </View>
+
+              {/* password text input */}
+              <View
+                style={{
+                  ...appStyles.inputView,
+                  backgroundColor: theme.APPINPUTVIEW,
+                }}
+              >
+                <TextInput
+                  secureTextEntry
+                  style={appStyles.inputText}
+                  placeholder="Password..."
+                  placeholderTextColor="#003f5c"
+                  onChangeText={(text) => {
+                    setPassword(text);
+                  }}
+                />
+              </View>
+
+              {/* confirm password text input */}
+              <View
+                style={{
+                  ...appStyles.inputView,
+                  backgroundColor: theme.APPINPUTVIEW,
+                }}
+              >
+                <TextInput
+                  secureTextEntry
+                  style={appStyles.inputText}
+                  placeholder="Confirm password..."
+                  placeholderTextColor="#003f5c"
+                  onChangeText={(text) => {
+                    setConfirmPassword(text);
+                  }}
+                />
+              </View>
+              {/* sign up button */}
+              <TouchableOpacity
+                style={{
+                  ...appStyles.loginBtn,
+                  backgroundColor: theme.APPTEXTRED,
+                }}
+                onPress={() =>
+                  this.signUpUser(
+                    email.trim(),
+                    password,
+                    confirmPassword,
+                    name.trim()
+                  )
+                }
+              >
+                <Text
+                  style={{ ...appStyles.loginText, color: theme.APPTEXTBLACK }}
+                >
+                  SIGN UP
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableWithoutFeedback>
+        );
+      }}
+    </NotificationContext.Consumer>
   );
 }
 
@@ -137,7 +204,6 @@ const styles = StyleSheet.create({
     backgroundColor: APPBACKGROUNDCOLOR,
     alignItems: "center",
     paddingTop: 20,
-    //justifyContent: "center",
   },
 
   logo: {

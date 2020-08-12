@@ -124,7 +124,6 @@ export default class Landing extends Component{
               />
             </View>
 
-
             <Button
                 title="Login"
                 style={styles.loginBtn}
@@ -149,7 +148,6 @@ const styles = StyleSheet.create({
         backgroundColor: APPTEXTRED,
         borderRadius: 5,
         padding: 8,
-        //margin: 8,
     },
     loginBtn: {
         backgroundColor: APPTEXTWHITE,
