@@ -29,14 +29,18 @@ export default function Login({ navigation }) {
   // forgotPass - called when user hits forgot password button
   // sends reset password email to email in text box
   forgotPass = (email) => {
+    // send password reset email
     auth
       .sendPasswordResetEmail(email)
       .then(function () {
+        // if it works - send an alert so user knows an email was sent
         Alert.alert("Great!", "An email has been sent to your account", [
+          // when user presses ok - navigates them back to login
           { text: "OK", onPress: () => navigation.pop() },
         ]);
       })
       .catch(function (error) {
+        // error - send alert
         Alert.alert("Oops!", error.toString().substring(6), [{ text: "OK" }]);
       });
   };
@@ -44,11 +48,13 @@ export default function Login({ navigation }) {
   return (
     <NotificationContext.Consumer>
       {(context) => {
+        // dark mode theme stuff
         const { isDarkMode, light, dark } = context;
 
         const theme = isDarkMode ? dark : light;
 
         return (
+          // if user taps anywhere keyboard goes away
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View
               style={{
@@ -56,6 +62,7 @@ export default function Login({ navigation }) {
                 backgroundColor: theme.APPBACKGROUNDCOLOR,
               }}
             >
+              {/* forogt password "logo" text */}
               <Text style={{ ...styles.logoTop, color: theme.APPTEXTRED }}>
                 Forgot
               </Text>

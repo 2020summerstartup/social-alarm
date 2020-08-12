@@ -20,6 +20,7 @@ import { NotificationContext } from "../../contexts/NotificationContext";
  */
 
 class AuthLoadingScreen extends React.Component {
+  // context(global state) - to see if user is in dark mode
   static contextType = NotificationContext;
 
   componentDidMount() {
@@ -27,6 +28,7 @@ class AuthLoadingScreen extends React.Component {
   }
 
   // Fetch the token from storage then navigate to our appropriate place
+  // also determines which theme to be in
   _bootstrapAsync = async () => {
     var self = this;
     const userToken = await AsyncStorage.getItem("email");
@@ -34,19 +36,23 @@ class AuthLoadingScreen extends React.Component {
     const theme = await AsyncStorage.getItem("theme");
     const { isDarkMode, toggleTheme } = this.context;
 
+    // if user is logged in
     if (userToken && password) {
+      // if the themes don't match - make it correct
       if (
         (theme == "dark" && !isDarkMode) ||
         (theme == "light" && isDarkMode)
       ) {
         toggleTheme();
       }
+      // sign in user with firebase
       auth
         .signInWithEmailAndPassword(userToken, password)
         .then(function (user) {
           self.props.navigation.navigate("App");
         });
     } else {
+      // user is not signed in
       // if user generally prefers dark mode - dark mode will be on
       const colorScheme = Appearance.getColorScheme();
       if (colorScheme === "dark") {

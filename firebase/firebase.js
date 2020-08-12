@@ -4,6 +4,7 @@ import * as firebase from "firebase";
 import "firebase/firestore";
 import "firebase/auth";
 
+// firebase configuration 
 var firebaseConfig = {
   apiKey: "AIzaSyA2J1UBQxi63ZHx3-WN7C2pTOZRh1MJ3bI",
   authDomain: "social-alarm-2b903.firebaseapp.com",
@@ -17,6 +18,7 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+// export all firebase things
 export const auth = firebase.auth();
 export const db = firebase.firestore();
 
