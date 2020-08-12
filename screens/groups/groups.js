@@ -22,12 +22,20 @@ import { db, auth } from "../../firebase/firebase";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 
+import RNPickerSelect from 'react-native-picker-select';
+import Chevron from '../../components/downChevron';
+
 import {
   APPBACKGROUNDCOLOR,
   APPTEXTRED,
   APPTEXTWHITE,
   APPTEXTBLUE,
   APPINPUTVIEW,
+  DEFAULTGROUPCOLOR,
+  ALARMCOLORMINT,
+  ALARMCOLORMAROON,
+  ALARMCOLORPINK,
+  ALARMCOLORDARKBLUE
 } from "../../style/constants";
 import { appStyles, alarmStyles } from "../../style/stylesheet";
 import { NotificationContext } from "../../contexts/NotificationContext";
@@ -53,6 +61,8 @@ export default class Groups extends Component {
       groupMembers: [],
       // the text input in add user field of group specific modal
       addUser: "",
+      // color to display group info
+      groupAlarmColor: DEFAULTGROUPCOLOR,
     };
   }
 
@@ -83,7 +93,7 @@ export default class Groups extends Component {
           // modal closes
           this.setState({ createModalOpen: false });
 
-          // add  group to user's doc
+          // add group to user's doc
           db.collection("users")
             .doc(user.email)
             .update({
@@ -91,6 +101,7 @@ export default class Groups extends Component {
               groups: Firebase.firestore.FieldValue.arrayUnion({
                 name: name,
                 id: docRef.id,
+                color: DEFAULTGROUPCOLOR
               }),
             });
           // update user's groups in local state
@@ -101,6 +112,7 @@ export default class Groups extends Component {
           groupData.push({
             name: name,
             id: docRef.id,
+            color: DEFAULTGROUPCOLOR
           });
           this.setState({ groups: groupData });
         })
@@ -112,24 +124,28 @@ export default class Groups extends Component {
 
   // called when user presses one of the group buttons
   // opens group modal and sets it all  up
-  groupModal = (groupName, groupId) => {
+  groupModal = (groupName, groupId, groupColor) => {
     // opens modal, stores some info in some state
     this.setState({ groupModalOpen: true });
     this.setState({ groupNameClicked: groupName });
     this.setState({ groupIdClicked: groupId });
-
-    // gets group members,  stores them in state
-    db.collection("groups")
-      .doc(groupId)
-      .get()
-      .then((doc) => {
-        const groupMem = [];
-        for (var i = 0; i < doc.data().members.length; i++) {
-          groupMem.push(doc.data().members[i]);
-        }
-        this.setState({ groupMembers: groupMem });
-        this.setState({ groupAdminClicked: doc.data().adminEmail });
-    });
+    this.setState({ groupAlarmColor: groupColor});
+    
+    // groupId should always be a string
+    if (typeof groupId == "string") {
+      // gets group members,  stores them in state
+      db.collection("groups")
+        .doc(groupId)
+        .get()
+        .then((doc) => {
+          const groupMem = [];
+          for (var i = 0; i < doc.data().members.length; i++) {
+            groupMem.push(doc.data().members[i]);
+          }
+          this.setState({ groupMembers: groupMem });
+          this.setState({ groupAdminClicked: doc.data().adminEmail });
+        });
+    }
   };
 
   // called when user tries to add someone to a group
@@ -423,14 +439,16 @@ export default class Groups extends Component {
     </View>
   );
 
-  // called when user presses close on main page
+  // called when user presses close
+  // doesn't work fully for indiv group modal
   closeRow = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
       rowMap[rowKey].closeRow();
     }
   };
 
-  // called when user presses close on indiv group modal
+  // called when user presses close
+  // doesn't work fully for indiv group modal
   closeRowModal = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
       rowMap[rowKey].closeRow();
@@ -489,14 +507,9 @@ export default class Groups extends Component {
     }
   };
 
-  // idk what this does - from Sidney's code
+  // idk what this does - from Sidney's code (Sidney here: just good for debugging)
   onRowDidOpen = (rowKey) => {
-    //console.log("This row opened", rowKey);
-  };
-
-  // idk what this does - from Sidney's code
-  onSwipeValueChange = (swipeData) => {
-    const { key, value } = swipeData;
+    console.log("This row opened", rowKey);
   };
 
   // NOT USED ANYMORE
@@ -542,12 +555,13 @@ export default class Groups extends Component {
       .then((doc) => {
         // if the doc exists
         if (doc.exists) {
-          // get the  groups from the user's doc - store in some state to display
+          // get the groups from the user's doc - store in some state to display
           const groupsData = [];
           for (var i = 0; i < doc.data().groups.length; i++) {
             groupsData.push({
               name: doc.data().groups[i].name,
               id: doc.data().groups[i].id,
+              color: doc.data().groups[i].color
             });
           }
           this.setState({ groups: groupsData });
@@ -569,6 +583,50 @@ export default class Groups extends Component {
       });
   }
 
+  // Called from RNPickerSelect in GroupModal
+  // Updates the group color in user's doc in Firebase
+  updateGroupColor(value){
+    console.log("updateGroupColor(" + value + ")")
+
+    // Update user's doc in Firebase
+    // Step 1: Remove old data from groups array
+    db.collection("users")
+        .doc(auth.currentUser.email)
+        .update({
+          groups: Firebase.firestore.FieldValue.arrayRemove({
+            color: this.state.groupAlarmColor, 
+            id: this.state.groupIdClicked,
+            name: this.state.groupNameClicked
+          }),
+      });
+
+    // Step 2: Add updated data back to groups array
+    db.collection("users")
+      .doc(this.user.email)
+      .update({
+        groups: Firebase.firestore.FieldValue.arrayUnion({
+          color: value, 
+          id: this.state.groupIdClicked,
+          name: this.state.groupNameClicked
+        })
+      });
+
+    // sets prevIndex to the index of the selected alarm in the local state group array
+    const prevIndex = this.state.groups.findIndex((item) => item.id === this.state.groupIdClicked);
+
+    // remove old alarm from local state group array
+    this.state.groups.splice(prevIndex, 1)
+
+    // add updated group to local state group array
+    this.state.groups.push(
+      {color: value, 
+      id: this.state.groupIdClicked,
+      name: this.state.groupNameClicked}
+    )
+
+    this.setState({groupAlarmColor: value})
+  }
+  
   render() {
 
     // context (global state) stuff
@@ -577,13 +635,9 @@ export default class Groups extends Component {
     const theme = isDarkMode ? dark : light;
 
     return (
-      <View
-        style={{
-          ...styles.container,
-          backgroundColor: theme.APPBACKGROUNDCOLOR,
-        }}
-      >
-        {/* **************************************** CREATE NEW GROUP MODAL *************************************************** */}
+
+      <View style={appStyles.container}>
+        {/* **************************************** CREATE NEW GROUP MODAL **************************************** */}
         <Modal visible={this.state.createModalOpen} animationType="slide">
           {/* this allows for dismiss keyboard when tapping anywhere functionality */}
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -643,13 +697,21 @@ export default class Groups extends Component {
         <Modal visible={this.state.groupModalOpen} animationType="slide">
           {/* this allows for touch anywhere and keyboard dismisses functionality */}
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View
-              style={{
-                ...appStyles.modalContainer,
-                backgroundColor: theme.APPBACKGROUNDCOLOR,
-              }}
-            >
-              <View style={styles.buttonContainer}>
+            <View style={appStyles.modalContainer}>
+              <View style={alarmStyles.topBanner}>
+
+                {/* close indiv group modal button */}
+                <MaterialIcons
+                  name="arrow-back"
+                  size={24}
+                  style={{
+                    ...appStyles.modalToggle,
+                    ...appStyles.modalClose,
+                    ...{ justifyContent: "flex-end" },
+                  }}
+                  onPress={() => this.setState({ groupModalOpen: false })}
+                />
+                                                      
                 {/* delete group button */}
                 {this.user.email == this.state.groupAdminClicked && (
                   <MaterialIcons
@@ -681,41 +743,60 @@ export default class Groups extends Component {
                     }
                   />
                 )}
-
-                {this.user.email != this.state.groupAdminClicked && (
-                  //   i            i
-                  <Text>            </Text>
-                )}
-
-                {/*                                                                     */}
-                <Text>                                                                     </Text>
-
-                {/* close indiv group modal button */}
-                <MaterialIcons
-                  name="close"
-                  size={24}
-                  style={{
-                    ...appStyles.modalToggle,
-                    ...appStyles.modalClose,
-                    justifyContent: "flex-end",
-                    color: theme.APPTEXTRED,
-                  }}
-                  onPress={() => this.setState({ groupModalOpen: false })}
-                />
               </View>
 
               {/* group name text */}
               <Text
                 adjustsFontSizeToFit
                 numberOfLines={1}
-                style={{
-                  ...appStyles.groupsLogo,
-                  marginTop: 5,
-                  color: theme.APPTEXTRED,
-                }}
+                style={{ ...styles.logo, ...{ marginTop: 5 }, ...{ color: this.state.groupAlarmColor } }}
               >
                 {this.state.groupNameClicked}
               </Text>
+
+              {
+                // text that says if someone is the admin
+                /*(this.state.groupAdminClicked == this.user.email) && (
+                <View>
+                  <Text>you are the admin</Text>
+                </View>
+              ) */
+              }
+
+              {/* Pick color for group */}
+              <View style={{width: "100%", paddingBottom: 25}}>
+              <RNPickerSelect
+                onValueChange={(value) => this.updateGroupColor(value)}
+                items={[
+                  {label: "Mint", value: ALARMCOLORMINT, color: ALARMCOLORMINT},
+                  {label: "Maroon", value: ALARMCOLORMAROON, color: ALARMCOLORMAROON},
+                  {label: "Pink", value: ALARMCOLORPINK, color: ALARMCOLORPINK},
+                  {label: "Dark Blue", value: ALARMCOLORDARKBLUE, color: ALARMCOLORDARKBLUE},
+                ]}
+                // Object to overide the default text placeholder for the PickerSelect
+                placeholder={{label: "Select a group color", value: "0", color: "black"}}
+                style={
+                  { placeholder: {
+                      color: this.state.groupAlarmColor,
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    },
+                    inputIOS: {
+                      color: APPTEXTBLUE,
+                      fontSize: 20,
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }
+                  }
+                }
+                doneText={"Select"}
+                Icon={() => {return <Chevron size={1.5} color="gray" />;}}
+              />
+              </View>
 
               {/* text input to add a group member */}
               <View
@@ -729,7 +810,7 @@ export default class Groups extends Component {
                     this.textInput = input;
                   }}
                   style={appStyles.inputText}
-                  placeholder="add group member..."
+                  placeholder="Add group member..."
                   placeholderTextColor="#003f5c"
                   keyboardType="email-address"
                   onChangeText={(text) => {
@@ -737,13 +818,10 @@ export default class Groups extends Component {
                   }}
                 />
               </View>
+
               {/* add member button */}
               <TouchableOpacity
-                style={{
-                  ...appStyles.loginBtn,
-                  marginTop: 10,
-                  backgroundColor: theme.APPTEXTRED,
-                }}
+                style={{ ...appStyles.loginBtn, ...{ marginTop: 10}, ...{backgroundColor: this.state.groupAlarmColor} }}
                 onPress={() =>
                   this.addUser(
                     this.state.addUser.trim(),
@@ -781,11 +859,8 @@ export default class Groups extends Component {
                         return (
                           // "button"  that displays group members
                           <TouchableHighlight
-                            underlayColor={theme.APPBUTTONPRESS}
-                            style={{
-                              ...styles.banner,
-                              backgroundColor: theme.APPTEXTRED,
-                            }}
+                            underlayColor={APPINPUTVIEW}
+                            style={[styles.alarmBanner, {backgroundColor: this.state.groupAlarmColor}]}
                             key={person}
                           >
                             <Text
@@ -819,10 +894,7 @@ export default class Groups extends Component {
                     renderItem={({ item }) => (
                       // button that contains user's name
                       <TouchableHighlight
-                        style={{
-                          ...styles.banner,
-                          backgroundColor: theme.APPTEXTRED,
-                        }}
+                        style={[styles.alarmBanner, {backgroundColor: this.state.groupAlarmColor}]}
                       >
                         <Text
                           adjustsFontSizeToFit
@@ -837,35 +909,58 @@ export default class Groups extends Component {
                       </TouchableHighlight>
                     )}
                     renderHiddenItem={this.renderHiddenItemModal}
-                    leftOpenValue={75}
+                    leftOpenValue={0}
                     rightOpenValue={-160}
                     previewRowKey={"0"}
                     previewOpenValue={-80}
                     previewOpenDelay={500}
                     onRowDidOpen={this.onRowDidOpen}
-                    onSwipeValueChange={this.onSwipeValueChange}
+                    // onSwipeValueChange={this.onSwipeValueChange}
                   />
                 )
               }
+
             </View>
           </TouchableWithoutFeedback>
         </Modal>
 
         {/* **************************************** ACTUAL PAGE ********************************************************** */}
 
-        <View style={{alignItems: "center"}}>
-          <Text style={{ ...appStyles.groupsLogo, color: theme.APPTEXTRED }}>
-            Groups
-          </Text>
+        <View style={alarmStyles.topBanner}>          
+          <Text style={alarmStyles.pageTitle}>Groups</Text>
+
+          {/* add new group button */}
+          <MaterialIcons
+            name="group-add"
+            size={24}
+            style={appStyles.modalToggle}
+            onPress={() => this.setState({ createModalOpen: true })}
+          />
         </View>
 
-        {/* add new group button */}
-        <MaterialIcons
-          name="add"
-          size={24}
-          style={{ ...appStyles.modalToggle, color: theme.APPTEXTRED }}
-          onPress={() => this.setState({ createModalOpen: true })}
-        />
+        {/*
+        // this is my old code if we wanna bring it back ever
+        // for scrollview list of groups (instead of swipe list)
+        <ScrollView style={{ width: "95%" }}>
+          {this.state.groups &&
+            this.state.groups.map((group) => {
+              return (
+                <TouchableOpacity
+                  style={styles.alarmBanner}
+                  key={group.id}
+                  onPress={() => this.groupModal(group.name, group.id, group.color)}
+                >
+                  <Text
+                    adjustsFontSizeToFit
+                    numberOfLines={1}
+                    style={styles.alarmText}
+                  >
+                    {group.name}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView> */}
 
         {/* swipelist of all groups user is in */}
         <SwipeListView
@@ -876,12 +971,9 @@ export default class Groups extends Component {
             // buttons for what groups user is in
             <TouchableHighlight
               // color when clicked
-              underlayColor={theme.APPBUTTONPRESS}
-              style={{
-                ...styles.banner,
-                backgroundColor: theme.APPTEXTRED,
-              }}
-              onPress={() => this.groupModal(item.name, item.id)}
+              underlayColor={APPINPUTVIEW}
+              style={[styles.alarmBanner, {backgroundColor: item.color}]}
+              onPress={() => this.groupModal(item.name, item.id, item.color)}
             >
               <Text
                 adjustsFontSizeToFit
@@ -893,13 +985,13 @@ export default class Groups extends Component {
             </TouchableHighlight>
           )}
           renderHiddenItem={this.renderHiddenItem}
-          leftOpenValue={75}
+          leftOpenValue={0}
           rightOpenValue={-160}
           previewRowKey={"0"}
           previewOpenValue={-80}
           previewOpenDelay={500}
           onRowDidOpen={this.onRowDidOpen}
-          onSwipeValueChange={this.onSwipeValueChange}
+          // onSwipeValueChange={this.onSwipeValueChange}
         />
       </View>
     );
@@ -961,10 +1053,8 @@ const styles = StyleSheet.create({
   },
 
   buttonContainer: {
-    marginTop: 10,
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingTop: 10,
   },
 });
