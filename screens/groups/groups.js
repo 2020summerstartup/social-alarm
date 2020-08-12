@@ -749,7 +749,7 @@ export default class Groups extends Component {
               <Text
                 adjustsFontSizeToFit
                 numberOfLines={1}
-                style={{ ...styles.logo, ...{ marginTop: 5 }, ...{ color: this.state.groupAlarmColor } }}
+                style={{ ...appStyles.logo, ...{ marginTop: 5 }, ...{ color: this.state.groupAlarmColor } }}
               >
                 {this.state.groupNameClicked}
               </Text>
@@ -860,7 +860,7 @@ export default class Groups extends Component {
                           // "button"  that displays group members
                           <TouchableHighlight
                             underlayColor={APPINPUTVIEW}
-                            style={[styles.alarmBanner, {backgroundColor: this.state.groupAlarmColor}]}
+                            style={[alarmStyles.alarmBanner, {backgroundColor: this.state.groupAlarmColor}]}
                             key={person}
                           >
                             <Text
@@ -894,7 +894,7 @@ export default class Groups extends Component {
                     renderItem={({ item }) => (
                       // button that contains user's name
                       <TouchableHighlight
-                        style={[styles.alarmBanner, {backgroundColor: this.state.groupAlarmColor}]}
+                        style={[alarmStyles.alarmBanner, {backgroundColor: this.state.groupAlarmColor}]}
                       >
                         <Text
                           adjustsFontSizeToFit
@@ -946,14 +946,14 @@ export default class Groups extends Component {
             this.state.groups.map((group) => {
               return (
                 <TouchableOpacity
-                  style={styles.alarmBanner}
+                  style={alarmStyles.alarmBanner}
                   key={group.id}
                   onPress={() => this.groupModal(group.name, group.id, group.color)}
                 >
                   <Text
                     adjustsFontSizeToFit
                     numberOfLines={1}
-                    style={styles.alarmText}
+                    style={alarmStyles.alarmText}
                   >
                     {group.name}
                   </Text>
@@ -972,7 +972,7 @@ export default class Groups extends Component {
             <TouchableHighlight
               // color when clicked
               underlayColor={APPINPUTVIEW}
-              style={[styles.alarmBanner, {backgroundColor: item.color}]}
+              style={[alarmStyles.alarmBanner, {backgroundColor: item.color}]}
               onPress={() => this.groupModal(item.name, item.id, item.color)}
             >
               <Text

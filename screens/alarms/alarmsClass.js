@@ -1057,7 +1057,7 @@ export default class Alarms extends Component {
       // TopBanner formats the title and modal button along the top of the screen
       function TopBanner({ children }){
         return(
-          <View style = {{...styles.topBanner, backgroundColor: theme.APPBACKGROUNDCOLOR}}>{children}</View>
+          <View style = {{...alarmStyles.topBanner, backgroundColor: theme.APPBACKGROUNDCOLOR}}>{children}</View>
         )
       };
       return(
