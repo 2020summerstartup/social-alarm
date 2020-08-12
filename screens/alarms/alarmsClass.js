@@ -1068,7 +1068,7 @@ export default class Alarms extends Component {
               {/*BEGINNING OF MODAL FOR ADD ALARM */}
               <MaterialIcons
                   name="alarm-add"
-                  size={24}
+                  size={36}
                   style={{...appStyles.modalToggle, color: theme.APPTEXTRED}}
                   onPress={() => this.setState({ newAlarmModalOpen: true })}
               />
