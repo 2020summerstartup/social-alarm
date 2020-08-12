@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Button, View, Switch, Text, TextInput, Platform, TouchableOpacity, Modal, AsyncStorage, Animated, Image, TouchableHighlight } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import Chevron from './downChevron';
+import Chevron from '../../components/downChevron';
 
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
@@ -12,8 +12,20 @@ import * as Permissions from 'expo-permissions';
 import { MaterialIcons } from "@expo/vector-icons";
 
 import SwitchExample, {switchValue} from '../../components/toggleSwitch';
-import { APPBACKGROUNDCOLOR, APPTEXTBLUE, APPTEXTRED, APPINPUTVIEW } from '../../style/constants';
-import { appStyles } from '../../style/stylesheet';
+
+import {
+  APPBACKGROUNDCOLOR,
+  APPTEXTRED,
+  APPTEXTWHITE,
+  APPTEXTBLUE,
+  APPINPUTVIEW,
+  ALARMCOLORMINT,
+  ALARMCOLORMAROON,
+  ALARMCOLORPINK,
+  ALARMCOLORDARKBLUE
+} from "../../style/constants";
+import { appStyles, alarmStyles } from "../../style/stylesheet";
+
 import DatePicker from 'react-native-datepicker';
 // import DatePicker from 'react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
@@ -25,11 +37,17 @@ import { NotificationContext } from '../../contexts/NotificationContext';
 
 const moment = require("moment");
 
+// TopBanner formats the title and modal button along the top of the screen
+function TopBanner({ children }){
+  return(
+    <View style = {alarmStyles.topBanner}>{children}</View>
+  )
+};
 
 // An AlarmBanner is one alarm displayed in the list of alarms
 function AlarmBanner({ children, color }){
   return(
-      <View style={[styles.alarmBanner, {backgroundColor: color}]}>
+      <View style={[alarmStyles.alarmBanner, {backgroundColor: color}]}>
         {children}
       </View>
   )
@@ -59,12 +77,12 @@ function AlarmDetails({title, hour, minute}){
     minute = "0" + minute;
   }
   return (
-      <View style={styles.alarmDetails}>
-          <Text style={styles.alarmTime} adjustsFontSizeToFitnumberOfLines={1}>
+      <View style={alarmStyles.alarmDetails}>
+          <Text style={alarmStyles.alarmTime} adjustsFontSizeToFitnumberOfLines={1}>
           {/* <Text  adjustsFontSizeToFitnumberOfLines={1}> */}
             {hour}:{minute}{ampm}
           </Text>
-          <Text style={styles.alarmText}>{title}</Text>
+          <Text style={alarmStyles.alarmText}>{title}</Text>
       </View>
   )
 };
@@ -86,17 +104,24 @@ export default class Alarms extends Component {
         this.state = {
             // alarms: [],
             alarms: [{alarm_hour: 0, alarm_minute: 0, color: null, key: " ", name: " ", switch: true}],
+
+            // modal states
             newAlarmModalOpen: false,
             groupPickerModalOpen: false,
             editAlarmModalOpen: false,
+
+            // for Expo push notifications 
             expoPushToken: "",
             notification: false,
+            notificationListener: "",
+            responseListener: "",
+
+            // for adding a new alarm
             newAlarmTime: 0,
             newAlarmHour: 0,
             newAlarmMinute: 0,
             newAlarmText:"",
-            notificationListener: "",
-            responseListener: "",
+            
             newGroupName: "",
             groupsArray: [{label: "label", value: "value"}],
             groupIdClicked: "",
@@ -209,7 +234,7 @@ export default class Alarms extends Component {
 
     /*Uses the list of alarms to set the push notifications*/
     async makeAlarms(alarm_array){
-      console.log("makeAlarms")
+      // console.log("makeAlarms")
       alarm_array.forEach(async(list_item) => {
           if (list_item.switch == true){
               promise = (await Notifications.scheduleNotificationAsync({
@@ -237,7 +262,7 @@ export default class Alarms extends Component {
     /*Cancels the specified alarm's push notification and removes the specified alarm from the alarm array*/
     async removeAlarm(identifier, alarm_array){ // identifier should be a string
       Notifications.cancelScheduledNotificationAsync(identifier)
-      console.log("cancelled", identifier)
+      // console.log("cancelled", identifier)
   
       // Remove the alarm from the array
       for (var i = 0; i < alarm_array.length; i++) {
@@ -299,9 +324,9 @@ export default class Alarms extends Component {
 
       // Increment the currentMaxKey now that we've added an alarm with key: currentMaxKey + 1
       await this.incrementCurrentMaxKey();
-      console.log("currentMaxKey after increment:", this.state.currentMaxKey)
+      // console.log("currentMaxKey after increment:", this.state.currentMaxKey)
       
-      console.log("Updated users doc in firebase with one alarm")
+      // console.log("Updated users doc in firebase with one alarm")
       
       // Return the list of all the scheduled notifications
       list = (await Notifications.getAllScheduledNotificationsAsync());
@@ -424,13 +449,16 @@ export default class Alarms extends Component {
               .doc(this.state.groupIdClicked)
               .update({
 
+                // When alarms get added to a groups file, they do not get a color
+                // Their color is specified in the user's doc
+                // This makes it easier to delete them from Firebase in deleteRow and edit functions
                 alarms: Firebase.firestore.FieldValue.arrayUnion({
                   name: newAlarm.name, 
                   alarm_hour: newAlarm.alarm_hour,
                   alarm_minute: newAlarm.alarm_minute, 
                   switch: newAlarm.switch, 
                   key: this.state.groupIdClicked + ":" + (maxKey),
-                  color: newAlarm.color,
+                  // color: newAlarm.color,
                 }),
             })
           }
@@ -490,7 +518,7 @@ export default class Alarms extends Component {
         alarm_minute: this.state.newAlarmMinute, 
         switch: this.state.alarms[this.state.openRow].switch,
         key: this.state.alarms[this.state.openRow].key,
-        color: "green"}
+        color: this.state.alarms[this.state.openRow].color}
       )
       console.log("this.state.alarms after", this.state.alarms)
 
@@ -506,7 +534,9 @@ export default class Alarms extends Component {
 
     updateFirebaseAfterEdit = () => new Promise(
       (resolve) => {
-        if (String(this.state.alarms[this.state.openRow].key).includes(":")){ // if the key includes ":" then the alarm is a group alarm so we want to update the group doc
+
+        // if the key includes ":" then the alarm is a group alarm so we want to update the group doc
+        if (String(this.state.alarms[this.state.openRow].key).includes(":")){ 
         console.log("Edit button: Updating group doc")
         console.log("this.state.alarms[this.state.openRow].key", this.state.alarms[this.state.openRow].key)
         // console.log("this.state.alarms[this.state.openRow].switch", this.state.alarms[this.state.openRow].switch)
@@ -556,14 +586,15 @@ export default class Alarms extends Component {
                   switch: this.state.alarms[this.state.openRow].switch, 
                   // key: this.state.alarms[this.state.openRow].key,
                   key: keySplitArray[0] + ":" + keySplitArray[1],
-                  color: "green", 
+                  color: this.state.alarms[this.state.openRow].color, 
                 }),
               })
           }
         });
 
       }
-      else{ // if the key doesn't include ":" then the alarm is a personal alarm so we want to update the user doc
+      // if the key doesn't include ":" then the alarm is a personal alarm so we want to update the user doc
+      else{ 
         console.log("Edit button: Updating user doc")
 
         db.collection("users")
@@ -601,7 +632,7 @@ export default class Alarms extends Component {
                     alarm_minute: this.state.newAlarmMinute,
                     switch: this.state.alarms[this.state.openRow].switch, 
                     key: this.state.alarms[this.state.openRow].key,
-                    color: "green", 
+                    color: this.state.alarms[this.state.openRow].color, 
                   }),
                 })
             }
@@ -673,11 +704,8 @@ export default class Alarms extends Component {
         newData.splice(prevIndex, 1);
         this.setState({ alarms: newData });
 
-        /* The alarm data is either in the user's doc or the group's doc. 
-        The alarm data does not exist in both docs simultaneously
-        but this function deletes it from both docs so that the data gets 
-        deleted without having to figure out where the alarm data is */
-
+        // If the alarm is a personal alarm (key does not contain a ":"), then remove the alarm from the groups's doc in firebase
+        if (String(props.alarms[prevIndex].key).includes(":") == false){
         // Remove the alarm from the user's doc in firebase
         db.collection("users")
           .doc(auth.currentUser.email)
@@ -688,37 +716,40 @@ export default class Alarms extends Component {
               alarm_minute: props.alarms[prevIndex].alarm_minute, 
               switch: props.alarms[prevIndex].switch, 
               key: props.alarms[prevIndex].key,
-              color: props.alarms[prevIndex].color
             }),
           });
+        }
 
-        // Remove the alarm from the groups's doc in firebase
-        var groupIDSplitArray = props.alarms[prevIndex].key.split(":")
-        db.collection("groups")
-          .doc(groupIDSplitArray[0])
-          .update({
-            alarms: Firebase.firestore.FieldValue.arrayRemove({
-              name: props.alarms[prevIndex].name,
-              alarm_hour: props.alarms[prevIndex].alarm_hour,
-              alarm_minute: props.alarms[prevIndex].alarm_minute, 
-              switch: props.alarms[prevIndex].switch, 
-              key: props.alarms[prevIndex].key,
-              color: props.alarms[prevIndex].color
-            }),
-          });
-        
-        // Remove the alarm from the local array that displays
-        this.removeAlarm(props.alarms[prevIndex].name, props.alarms);
-      };
+        // If the alarm is a group alarm (key contains a ":"), then remove the alarm from the groups's doc in firebase
+        if (String(props.alarms[prevIndex].key).includes(":")){
+          // console.log("String(props.alarms[prevIndex].key).includes(:)")
+          var groupIDSplitArray = props.alarms[prevIndex].key.split(":")
+          db.collection("groups")
+            .doc(groupIDSplitArray[0])
+            .update({
+              // Alarms in groups files do not have color
+              alarms: firebase.firestore.FieldValue.arrayRemove({
+                name: props.alarms[prevIndex].name,
+                alarm_hour: props.alarms[prevIndex].alarm_hour,
+                alarm_minute: props.alarms[prevIndex].alarm_minute, 
+                switch: props.alarms[prevIndex].switch, 
+                key: props.alarms[prevIndex].key,
+              }),
+            });
+          
+          // Remove the alarm from the local array that displays
+          this.removeAlarm(props.alarms[prevIndex].name, props.alarms);
+        };
+      }
   
       // Updates state with which row(alarm) was pressed and opened
 
       // onRowDidOpen = async(rowKey) => {
       onRowDidOpen = (rowKey) => {
-        console.log('This row opened rowKey', rowKey);
+        // console.log('This row opened rowKey', rowKey);
 
         const prevIndex = props.alarms.findIndex(item => item.key === rowKey);
-        console.log('This row opened prevIndex', prevIndex);
+        // console.log('This row opened prevIndex', prevIndex);
         this.setState({ openRow: Number(prevIndex)});
       };
   
@@ -728,35 +759,35 @@ export default class Alarms extends Component {
   
       // Renders the buttons behind the alarm banners
       const renderHiddenItem = (data, rowMap) => (
-        <View style={styles.rowBack}>
+        <View style={alarmStyles.rowBack}>
 
-            {/*+Groups button */}
+            {/*+Group button */}
             <TouchableOpacity
-                style={[styles.backLeftBtn]}
+                style={[alarmStyles.backLeftBtn]}
                 onPress={() => 
                   this.setState( {groupPickerModalOpen: true} )}
             >
-              <Text style={styles.backTextWhite}>+Group</Text>
+              <Text style={alarmStyles.backTextWhite}>+Group</Text>
             </TouchableOpacity>
 
-            {/*Edit button */}
+            {/* Edit button */}
             <TouchableOpacity
-                style={[styles.backRightBtn, styles.backRightBtnCenter]}
+                style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnCenter]}
                 onPress={() => 
                   this.setState( {editAlarmModalOpen: true} )}
             >
-              <Text style={styles.backTextWhite}>Edit</Text>
+              <Text style={alarmStyles.backTextWhite}>Edit</Text>
             </TouchableOpacity>
   
             {/*Trash button */}
             <TouchableOpacity
-                style={[styles.backRightBtn, styles.backRightBtnRight]}
+                style={[alarmStyles.backRightBtn, alarmStyles.backRightBtnRight]}
                 onPress={() => deleteRow(rowMap, data.item.key)}
             >
-              <View style={[styles.trash]}>
+              <View style={[alarmStyles.trash]}>
                   <Image
                       source={require('../../assets/trash.png')}
-                      style={styles.trash}
+                      style={alarmStyles.trash}
                   />
               </View>
             </TouchableOpacity>
@@ -767,25 +798,32 @@ export default class Alarms extends Component {
         <View>
           {/* Renders the alarm banners as swipable components */}
           <SwipeListView
-                // These are all specified by SwipeListView
-                keyExtractor ={(item) => String(item.key)} // specifying id as the key to prevent the key warning
-                data = {props.alarms}
-                renderItem={({ item }) => (
-                  <View>
-                    <AlarmBanner color={item.color}>
-                        <AlarmDetails title={item.name} hour={item.alarm_hour} minute={item.alarm_minute}/>
-                        <SwitchExample/>
-                    </AlarmBanner>
-                  </View>
-                )}
-                renderHiddenItem={renderHiddenItem}
-                leftOpenValue={85}
-                rightOpenValue={-160}
-                previewRowKey={'1'}
-                previewOpenValue={-50}
-                previewOpenDelay={500}
-                onRowDidOpen={onRowDidOpen}
-                onSwipeValueChange={onSwipeValueChange}
+            // These are all specified by SwipeListView
+            keyExtractor ={(item) => String(item.key)} // specifying id as the key to prevent the key warning
+            data = {props.alarms}
+            renderItem={({ item }) => (
+              // Uncommenting TouchableHighlight code below would enable edit alarm modal to open when the alarm banner is pressed. As of rn though, TouchableHighlight press to open edit alarm modal doesn't update state so wrong alarm data is displayed in edit modal... The code is currently implementing the edit feature using swipe and click edit button because I didn't want to create a use conflict between clicking the alarm banner to edit and pressing the switch. 
+
+              // <TouchableHighlight 
+              // onPress={() => 
+              //   this.setState( {editAlarmModalOpen: true} )}
+              // >
+              <View>
+                <AlarmBanner color={item.color}>
+                    <AlarmDetails title={item.name} hour={item.alarm_hour} minute={item.alarm_minute}/>
+                    <SwitchExample/>
+                </AlarmBanner>
+              </View>
+              // </TouchableHighlight>
+            )}
+            renderHiddenItem={renderHiddenItem}
+            leftOpenValue={85}
+            rightOpenValue={-145}
+            previewRowKey={"1"}
+            previewOpenValue={85}
+            previewOpenDelay={500}
+            onRowDidOpen={onRowDidOpen}
+            onSwipeValueChange={onSwipeValueChange}
         />
         </View>
       )
@@ -910,14 +948,14 @@ export default class Alarms extends Component {
     /*Runs when page refreshes: Initialization*/
     componentDidMount(){
       this.isComponentMounted = true;
-      console.log("this.isComponentMounted componentDidMount")
+      // console.log("this.isComponentMounted componentDidMount")
       this.componentDidMountHelper();
     }
 
     /*Async function called by componentDidMount */
     componentDidMountHelper = async () => {
         if(this.isComponentMounted){
-        console.log("this.isComponentMounted componentDidMountHelper")
+        // console.log("this.isComponentMounted componentDidMountHelper")
 
         // Removes all alarms
         this.removeAllAlarms();
@@ -953,13 +991,13 @@ export default class Alarms extends Component {
     };
 
     componentWillUnmount(){
-      console.log("componentWillUnmount")
+      // console.log("componentWillUnmount")
       this.isComponentMounted = false;
     }
 
       /* MODAL FOR EDIT ALARM */
     editAlarmModal(){
-      return(
+        return(
         <Modal visible={this.state.editAlarmModalOpen} animationType="slide">
         <View style={appStyles.modalContainer}>
             <MaterialIcons
@@ -968,7 +1006,7 @@ export default class Alarms extends Component {
             style={{ ...appStyles.modalToggle, ...appStyles.modalClose }}
             onPress={() => this.setState({ editAlarmModalOpen: false })}
             />
-            <Text style={styles.pageTitle}> Edit Alarm </Text>
+            <Text style={alarmStyles.modalTitle}> Edit Alarm </Text>
 
             <DatePicker
               style={{height: 75, width: 200, color: "black"}}
@@ -982,9 +1020,9 @@ export default class Alarms extends Component {
               onDateChange={(time) => this.setState({ newAlarmTime: time })}
             />
 
-            <View style={styles.inputView}>
+            <View style={appStyles.inputView}>
               <TextInput
-                style={styles.inputText}
+                style={appStyles.inputText}
                 placeholder={this.state.alarms[this.state.openRow].name}
                 placeholderTextColor="#003f5c"
                 onChangeText={(text) => this.setState({newAlarmText: text})}
@@ -1019,17 +1057,17 @@ export default class Alarms extends Component {
       // TopBanner formats the title and modal button along the top of the screen
       function TopBanner({ children }){
         return(
-          <View style = {{...styles.topBanner, backgroundColor: theme.APPBACKGROUNDCOLOR}}>{children}</View>
+          <View style = {{...alarmStyles.topBanner, backgroundColor: theme.APPBACKGROUNDCOLOR}}>{children}</View>
         )
       };
       return(
-        <View style={{...styles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
+        <View style={{...appStyles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
           <TopBanner>
-              <Text style={{...styles.pageTitle, color: theme.APPTEXTRED}}>Alarms</Text>
-
+              <Text style={{...alarmStyles.pageTitle, color: theme.APPTEXTRED}}>Alarms</Text>
+        
               {/*BEGINNING OF MODAL FOR ADD ALARM */}
               <MaterialIcons
-                  name="add"
+                  name="alarm-add"
                   size={24}
                   style={{...appStyles.modalToggle, color: theme.APPTEXTRED}}
                   onPress={() => this.setState({ newAlarmModalOpen: true })}
@@ -1042,10 +1080,11 @@ export default class Alarms extends Component {
                   style={{ ...appStyles.modalToggle, ...appStyles.modalClose, color: theme.APPTEXTRED }}
                   onPress={() => this.setState({ newAlarmModalOpen: false })}
                   />
-                  <Text style={{...appStyles.logo, color: theme.APPTEXTRED}}> Set a new alarm </Text>
+
+                  <Text style={{...alarmStyles.modalTitle, color: theme.APPTEXTRED}}> Set a new alarm </Text>
 
                     <DatePicker
-                      style={{height: 75, width: 200, color: "black"}}
+                      style={{height: 75, width: 200, color: "white"}}
                       date= {moment().format("LTS")} // Starts timepicker at current time (except always AM?)
                       mode="time"
                       format="HH:mm"
@@ -1056,16 +1095,16 @@ export default class Alarms extends Component {
                       onDateChange={(time) => this.setState({ newAlarmTime: time })}
                     />
 
-                  <View style={{...styles.inputView, backgroundColor: APPINPUTVIEW}}>
+                  <View style={appStyles.inputView}>
+                    
                     <TextInput
-                      style={styles.inputText}
+                      style={appStyles.inputText}
                       placeholder="Alarm title..."
                       placeholderTextColor={APPTEXTBLUE}
                       onChangeText={(text) => this.setState({newAlarmText: text})}
                     />
                   </View>
 
-                  {/*
                   <Button
                     title="Split the time"
                     onPress={ async() =>
@@ -1074,12 +1113,12 @@ export default class Alarms extends Component {
                   />
 
                   {/* Useful print statements on modal page for debugging */}
-                  {/* <Text style={styles.inputText}> time:{this.state.newAlarmTime} </Text>
-                  <Text style={styles.inputText}> hour:{this.state.newAlarmHour} </Text>
-                  <Text style={styles.inputText}> minute:{this.state.newAlarmMinute}</Text>
-                  <Text style={styles.inputText}> title:{this.state.newAlarmText}</Text> */}
+                  {/* <Text style={appStyles.inputText}> time:{this.state.newAlarmTime} </Text>
+                  <Text style={appStyles.inputText}> hour:{this.state.newAlarmHour} </Text>
+                  <Text style={appStyles.inputText}> minute:{this.state.newAlarmMinute}</Text>
+                  <Text style={appStyles.inputText}> title:{this.state.newAlarmText}</Text> */}
 
-                  <Button style={styles.button}
+                  <Button style={alarmStyles.button}
                   title="Set Alarm"
                   onPress={ async() =>
                     this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.currentMaxKey + 1, "#fb5b5a", this.state.alarms)
@@ -1102,7 +1141,7 @@ export default class Alarms extends Component {
 
           </TopBanner>
         
-          <View style={{...styles.scrollViewContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
+          <View style={{...alarmStyles.scrollViewContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
               {/* Useful print statements on screen for debugging */}
               {/* <Text>Your expo push token: {expoPushToken}</Text>
               <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -1116,12 +1155,13 @@ export default class Alarms extends Component {
           </View>
 
           {/* Useful button during testing */}
-          <Button
+
+          {/* <Button
             title="Print user email to console"
             onPress={ async() =>
               console.log("auth.currentUser.email:", auth.currentUser.email)
             }
-          />
+          /> */}
 
           {/* BEGINNING OF MODAL FOR GROUP PICKER */}
           <Modal visible={this.state.groupPickerModalOpen} animationType="slide">
@@ -1132,10 +1172,11 @@ export default class Alarms extends Component {
               style={{ ...appStyles.modalToggle, ...appStyles.modalClose, color:  theme.APPTEXTRED }}
               onPress={() => this.setState({ groupPickerModalOpen: false })}
               />
-              <Text style={{...styles.pageTitle, color: theme.APPTEXTRED}}> Select a group </Text>
+
+              <Text style={{...alarmStyles.modalTitle, color: theme.APPTEXTRED}}> Select a group </Text>
+
               {/* {console.log("this.state.groupsArray[0]", this.state.groupsArray[0])} */}
               {/* {console.log("this.state.groupsArray[0].label before RNPickerSelect", this.state.groupsArray[0].label)} */}
-
 
               {/* https://github.com/lawnstarter/react-native-picker-select */} 
               <RNPickerSelect
@@ -1209,220 +1250,4 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// Styles (to do: incorporate global styles sheet)
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 100,
-  },
-
-  scrollViewContainer: {
-    flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 30,
-    paddingBottom: 10,
-    padding: 0
-  },
-
-  timerContainer: {
-    flexDirection: "row",
-  },
-
-  lapTimer:{
-    width: 25,
-  },
-
-  topBanner:{
-    flexDirection : "row",
-    width:"100%",
-    backgroundColor: APPBACKGROUNDCOLOR,
-    height: 110,
-    paddingTop: 25,
-    paddingBottom: 0,
-    padding: 15,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: "space-between",
-  },
-
-  Text:{
-    height:50,
-    color: "white",
-    fontSize: 16
-  },
-
-  pageTitle:{
-    padding: 20,
-    paddingTop:0,
-    fontWeight: "bold",
-    fontSize: 50,
-    color: APPTEXTRED,
-    alignItems: "center",
-  },
-
-  inputText:{
-    padding: 10,
-    height: 50,
-    color:"black",
-    fontSize: 16
-  },
-
-  inputView:{
-    width:"75%",
-    backgroundColor:APPBACKGROUNDCOLOR,
-    borderColor:"black",
-    borderWidth: 1,
-    borderRadius:25,
-    height:50,
-    marginBottom:10,
-    justifyContent:"center",
-    padding:10
-  },
-
-  alarmTime: {
-    color: "#ffffff",
-    fontSize: 40,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-  },
-
-  alarmText: {
-    color: "#ffffff",
-    fontSize: 16,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-  },
-
-  alarmBanner: {
-    flex: 1,
-    flexDirection : "row",
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 0,
-    marginBottom: 10,
-    paddingTop: 0,
-    paddingBottom: 0,
-    width: "95%",
-    borderRadius: 15
-  },
-
-  alarmDetails: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    width: 100,
-  },
-
-  scrollView: {
-    alignSelf: 'stretch',
-    alignContent: 'center',
-  }, 
-
-  button: {
-    width: 60,
-    height: 60,
-    backgroundColor:"#465881",
-    alignItems: 'center',
-    justifyContent:"center",
-    borderRadius: 30,
-    marginBottom: 20,
-    padding:20
-  }, 
-
-  buttonTitle: {
-    color: "#ffffff",
-    fontSize: 40,
-  },
-
-  buttonBorder: {
-    color: "#ffffff",
-    width: 56, 
-    height: 56, 
-    borderRadius: 28, 
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  rowFront: {
-    alignItems: 'center',
-    backgroundColor: '#CCC',
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
-    justifyContent: 'center',
-    height: 50,
-  },
-
-  backTextWhite: {
-    color: '#FFF',
-  },
-
-  rowBack: {
-      alignItems: 'center',
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingLeft: 15,
-      width: "95%"
-  },
-
-  backLeftBtn:{
-    alignItems: 'center',
-    bottom: 0,
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    width: 90,
-    backgroundColor: '#56D945',
-    left: 25,
-    marginTop: 0,
-    marginBottom: 10,
-    paddingTop: 0,
-    paddingBottom: 0,
-    borderTopLeftRadius: 15,
-    borderBottomLeftRadius: 15,
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-  },
-
-  backRightBtn: {
-      alignItems: 'center',
-      bottom: 0,
-      justifyContent: 'center',
-      position: 'absolute',
-      top: 0,
-      width: 75,
-  },
-
-  backRightBtnCenter: {
-      backgroundColor: 'grey',
-      right: 75,
-      marginTop: 0,
-      marginBottom: 10,
-      paddingTop: 0,
-      paddingBottom: 0,
-      borderTopLeftRadius: 0,
-      borderBottomLeftRadius: 0,
-  },
-
-  backRightBtnRight: {
-      backgroundColor: 'red',
-      right: 0,
-      marginTop: 0,
-      marginBottom: 10,
-      paddingTop: 0,
-      paddingBottom: 0,
-      borderTopRightRadius: 15,
-      borderBottomRightRadius: 15,
-  },
-  trash: {
-      height: 25,
-      width: 25,
-  },
-})
+// Styles com from global stylesheet.js

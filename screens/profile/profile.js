@@ -106,8 +106,10 @@ class ProfileScreen extends Component {
   componentDidMount() {
     // gets user's email and name from AsyncStorage
     this.getEmailName();
+    this.getTimeZone();
     // gets notifications from firebase and stores them in state
     this.getNotifications();
+    
   }
 
   // gets user email and name from async storage
@@ -117,6 +119,16 @@ class ProfileScreen extends Component {
     this.setState({ name: userName });
     this.setState({ email: userEmail });
   };
+
+  // gets time zone from local storage
+  getTimeZone = async () => {
+    const timeZone = await AsyncStorage.getItem("timezone");
+    this.setState({ timeZoneSelected: timeZone });
+  }
+  // saves time zone in local storage
+  setTimeZone = async (timezone) => {
+    await AsyncStorage.setItem("timezone", timezone);
+  }
 
   constructor(props) {
     super(props);
@@ -132,14 +144,11 @@ class ProfileScreen extends Component {
 
       timeZoneSelected: "",
       timezoneArray: [
-        { label: "AST", value: "AST" },
-        { label: "EST", value: "EST" },
-        { label: "CST", value: "CST" },
-        { label: "MST", value: "MST" },
-        { label: "PST", value: "PST" },
-        { label: "AKST", value: "AKST" },
-        { label: "HST", value: "HST" },
-      ],
+	      { label: 'Eastern Time', value: 'EST' },
+        { label: 'Central Time', value: 'CST' },
+        { label: 'Mountain Time', value: 'MST' },
+        { label: 'Pacific Time', value: 'PST' },	  
+      ]	      
     };
   }
 
@@ -199,39 +208,28 @@ class ProfileScreen extends Component {
     const BadgedIcon = withBadge(notificationCount)(BaseIcon);
 
     return (
+
+      <View style={{...profileStyles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
+        {/* this part shows the user's name and email */}
+        <View style={profileStyles.userRow}>
+          <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK }}>{/*this.state.name.replace('<br/>', '\n')*/}
+          </Text>
+          <Text
+            style={{
+              color: theme.APPTEXTBLACK,
+              fontSize: 25,
+            }}
+          >
+            {this.state.email}
+          </Text>
+        </View>
+
       <ScrollView
         style={{
           ...profileStyles.scroll,
           backgroundColor: theme.APPBACKGROUNDCOLOR,
         }}
       >
-        {/* this part shows the user's name and email */}
-        <View style={profileStyles.userRow}>
-          <View>
-            <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK }}>
-              {this.state.name}
-            </Text>
-            <Text
-              style={{
-                color: theme.APPTEXTBLACK,
-                fontSize: 25,
-              }}
-            >
-              {this.state.email}
-            </Text>
-          </View>
-        </View>
-
-        {/* This is supposed to show an avatar but it doesn't show up, styling issues?
-
-        <Avatar
-          rounded
-          icon={{name: 'user', type: 'font-awesome'}}
-          activeOpacity={0.7}
-          containerStyle={{flex: 2, marginLeft: 20, marginTop: 115}}
-        />*/}
-
-        {/* Not really sure if we want this, was in the tutorial so I kept it */}
 
         {/* NOTIFICATIONS MODAL */}
         <Modal visible={this.state.notificationsModalOpen} animationType="slide">
@@ -343,11 +341,9 @@ class ProfileScreen extends Component {
               onPress={() => openNotifications()}
               leftIcon={
                 <BaseIcon
-                  // probably want to change the color
                   containerStyle={{ backgroundColor: APPTEXTRED }}
                   icon={{
                     type: "ionicon",
-                    //TODO: FIX THIS
                     name: "ios-notifications",
                   }}
                 />
@@ -367,11 +363,9 @@ class ProfileScreen extends Component {
               onPress={() => openNotifications()}
               leftIcon={
                 <BadgedIcon
-                  // probably want to change the color
                   containerStyle={{ backgroundColor: APPTEXTRED }}
                   icon={{
                     type: "ionicon",
-                    //TODO: FIX THIS
                     name: "ios-notifications",
                   }}
                 />
@@ -432,8 +426,9 @@ class ProfileScreen extends Component {
             rightElement={
               <RNPickerSelect
                 onValueChange={(value) =>
-                  this.setState({ timeZoneSelected: value })
-                }
+                  {this.setState({ timeZoneSelected: value });
+                  this.setTimeZone(value)}
+                }	                      
                 items={this.state.timezoneArray}
                 // Object to overide the default text placeholder for the PickerSelect
                 placeholder={{
@@ -463,6 +458,7 @@ class ProfileScreen extends Component {
                   },
                 }}
                 doneText={"Select"}
+                value={this.state.timeZoneSelected}
               />
             }
             rightTitleStyle={{ fontSize: 15 }}
@@ -562,18 +558,17 @@ class ProfileScreen extends Component {
             rightIcon={<Chevron />}
           />
         </View>
+      </ScrollView>
 
+      
         {/* Sign out button */}
         <TouchableOpacity
-          style={{
-            ...profileStyles.loginBtn,
-            backgroundColor: theme.APPTEXTRED,
-          }}
+          style={{...profileStyles.loginBtn, backgroundColor: theme.APPTEXTRED}}
           onPress={() => this.signOutUser()}
         >
           <Text style={profileStyles.logo}>Sign Out</Text>
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     );
   }
 }

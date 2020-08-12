@@ -15,8 +15,7 @@ const appStyles = StyleSheet.create({
     backgroundColor: APPBACKGROUNDCOLOR,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 50,
-    paddingBottom: 10,
+    paddingTop: 25,
   },
 
   loginContainer: {
@@ -28,16 +27,18 @@ const appStyles = StyleSheet.create({
 
   logo: {
     fontWeight: "bold",
-    fontSize: 50,
+    fontSize: 45,
     color: APPTEXTRED,
+    marginTop: 30,
     marginBottom: 40,
+    alignItems: "center",
   },
 
   inputView: {
-    width: "80%",
+    width: "75%",
     backgroundColor: APPBACKGROUNDCOLOR,
     borderColor: "black",
-    borderWidth: 0.9,
+    borderWidth: 1,
     borderRadius: 25,
     height: 50,
     marginBottom: 20,
@@ -46,8 +47,9 @@ const appStyles = StyleSheet.create({
   },
 
   inputText: {
+    fontSize: 16,
     height: 50,
-    color: APPTEXTBLUE,
+    color: APPINPUTVIEW,
   },
 
   forgot: {
@@ -87,7 +89,7 @@ const appStyles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     padding: 15,
-    paddingTop: 0,
+    paddingTop: 10,
   },
 
   modalClose: {
@@ -101,7 +103,7 @@ const appStyles = StyleSheet.create({
     fontSize: 16,
     padding: 10,
   },
-
+  
   groupsLogo: {
     marginTop: 30,
     fontWeight: "bold",
@@ -116,35 +118,22 @@ const appStyles = StyleSheet.create({
 // ********** NEW STYLESHEET **********
 
 const alarmStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: APPBACKGROUNDCOLOR,
-    alignItems: "center",
-    justifyContent: "center",
-    height: 100,
-  },
-
   scrollViewContainer: {
     flex: 1,
     backgroundColor: APPBACKGROUNDCOLOR,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 30,
-    paddingBottom: 10,
+    paddingTop: 0,
+    paddingBottom: 0,
     padding: 0,
-  },
-
-  timerContainer: {
-    flexDirection: "row",
   },
 
   topBanner: {
     flexDirection: "row",
     width: "100%",
-    backgroundColor: APPTEXTWHITE,
-    // backgroundColor: APPBACKGROUNDCOLOR,
-    height: 110,
-    paddingTop: 30,
+    backgroundColor: APPBACKGROUNDCOLOR,
+    height: 100,
+    paddingTop: 0,
     paddingBottom: 0,
     padding: 15,
     alignSelf: "center",
@@ -161,16 +150,26 @@ const alarmStyles = StyleSheet.create({
   pageTitle: {
     padding: 20,
     color: APPTEXTRED,
-    fontSize: 40,
+    fontSize: 50,
+    fontWeight: "bold",
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
+  },
+
+  modalTitle: {
     padding: 20,
+    color: APPTEXTRED,
+    fontSize: 40,
+    fontWeight: "bold",
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   alarmTime: {
     color: APPTEXTWHITE,
-    fontSize: 45,
+    fontSize: 40,
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
@@ -185,7 +184,6 @@ const alarmStyles = StyleSheet.create({
   alarmBanner: {
     flex: 1,
     flexDirection: "row",
-    backgroundColor: APPTEXTRED,
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "space-between",
@@ -199,9 +197,9 @@ const alarmStyles = StyleSheet.create({
 
   alarmDetails: {
     flex: 1,
-    backgroundColor: APPTEXTRED,
     alignItems: "center",
     justifyContent: "center",
+    alignSelf: 'center',
     width: "100%",
     borderRadius: 15,
   },
@@ -209,42 +207,20 @@ const alarmStyles = StyleSheet.create({
   button: {
     width: 60,
     height: 60,
+    backgroundColor:"#465881",
+    alignItems: 'center',
+    justifyContent:"center",
     borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  buttonTitle: {
-    color: APPTEXTWHITE,
-    fontSize: 40,
-  },
-
-  buttonBorder: {
-    color: APPTEXTWHITE,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    borderWidth: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    marginBottom: 20,
+    padding: 20
   },
   
-  rowFront: {
-    alignItems: "center",
-    backgroundColor: "#CCC",
-    borderBottomColor: "black",
-    borderBottomWidth: 1,
-    justifyContent: "center",
-    height: 50,
-  },
-
   backTextWhite: {
     color: "#FFF",
   },
 
   rowBack: {
     alignItems: "center",
-    // backgroundColor: '#DDD',
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -259,8 +235,8 @@ const alarmStyles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     width: 90,
-    backgroundColor: 'green',
-    left: 25,
+    backgroundColor: '#56D945',
+    left: 20,
     marginTop: 0,
     marginBottom: 10,
     paddingTop: 0,
@@ -281,7 +257,7 @@ const alarmStyles = StyleSheet.create({
   },
 
   backRightBtnCenter: {
-      backgroundColor: 'blue',
+      backgroundColor: 'grey',
       right: 75,
       marginTop: 0,
       marginBottom: 10,
@@ -308,20 +284,28 @@ const alarmStyles = StyleSheet.create({
 });
 
 const profileStyles = StyleSheet.create({
+  container: {
+    backgroundColor: 'white',
+
+    // these lines fit the container to the entire screen
+    //height: Dimensions.get('window').height,
+    // width: Dimensions.get('window').width,
+    // marginLeft: 0,
+  },
   scroll: {
     backgroundColor: 'white',
 
     // these lines fit the container to the entire screen
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
+    // height: Dimensions.get('window').height,
+    // width: Dimensions.get('window').width,
   },
   userRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingBottom: 40,
-    paddingLeft: 15,
+    alignItems: 'flex-start',
+    // flexDirection: 'row',
+    paddingBottom: 30,
+    paddingLeft: 25,
     paddingRight: 15,
-    paddingTop: 40,
+    paddingTop: 60,
   },
   userImage: {
     marginRight: 12,
@@ -345,12 +329,12 @@ const profileStyles = StyleSheet.create({
     backgroundColor: APPTEXTRED,
     borderRadius: 15,
     height: 40,
-    width: 0.85 * Dimensions.get('screen').width, // sign out button is 90% of the screen's width
+    width: 0.75 * Dimensions.get('screen').width, // sign out button is 85% of the screen's width
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 10,
-    marginLeft: 30,
+    marginTop: 10,
+    marginBottom: 30,
+    marginLeft: 55,
   },
   birthdayBtn: {
     width: 300,
