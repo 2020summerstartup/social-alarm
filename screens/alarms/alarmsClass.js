@@ -1043,7 +1043,7 @@ function TopBanner({ children }){
                   <Text style={{...appStyles.logo, color: theme.APPTEXTRED}}> Set a new alarm </Text>
 
                     <DatePicker
-                      style={{height: 75, width: 200, color: "black"}}
+                      style={{height: 75, width: 200, color: "white"}}
                       date= {moment().format("LTS")} // Starts timepicker at current time (except always AM?)
                       mode="time"
                       format="HH:mm"

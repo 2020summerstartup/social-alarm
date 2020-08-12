@@ -57,9 +57,15 @@ const BirthdayPicker = () => {
     setDatePickerVisibility(false);
   };
 
-  const handleConfirm = (date) => {
+  const handleConfirm = () => {
     hideDatePicker();
   };
+
+  const setDate = (event, date) => {
+    console.log(date);
+    // this.setState({ birthday: date});
+  };
+
 
   return (
     <View>
@@ -73,6 +79,7 @@ const BirthdayPicker = () => {
         onCancel={hideDatePicker}
         style={profileStyles.birthdayBtn}
         headerTextIOS={"When's your birthday?"}
+        onChange={setDate}
       />
     </View>
   );
@@ -125,6 +132,8 @@ class ProfileScreen extends Component {
       switchValue: false,
       name: "", // this is the user's name
       email: "", // this is the user's email
+
+      birthday: "",
 
       notificationsModal: false,
       notifications: [],
