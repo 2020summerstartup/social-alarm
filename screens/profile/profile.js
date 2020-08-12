@@ -519,7 +519,7 @@ const BirthdayPicker = () => {
             titleStyle={{ color: theme.APPTEXTBLACK }}
             onPress={() => {
               Linking.openURL(
-                "https://www.github.com/2020summerstartup/social-alarm"
+                "https://www.linkedin.com/company/teamtime2020/?viewAsMember=true"
               );
             }} // we can change this later
             leftIcon={
@@ -539,7 +539,7 @@ const BirthdayPicker = () => {
             title="Share our App"
             onPress={() => {
               Linking.openURL(
-                "https://www.github.com/2020summerstartup/social-alarm"
+                "https://www.linkedin.com/company/teamtime2020/?viewAsMember=true"
               );
             }}
             containerStyle={{
@@ -566,7 +566,7 @@ const BirthdayPicker = () => {
             title="Send Feedback"
             onPress={() => {
               Linking.openURL(
-                "https://www.github.com/2020summerstartup/social-alarm"
+                "https://www.linkedin.com/company/teamtime2020/?viewAsMember=true"
               );
             }}
             containerStyle={{
