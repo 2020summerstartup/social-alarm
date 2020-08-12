@@ -190,31 +190,23 @@ export default class Alarms extends Component {
 
           // Loops through all the documents corresponding to the user's groups and adds the alarms to state
           for (var i = 0; i < groupsData.length; i++){
+            // gets the group color to add to the new alarm
             let groupAlarmColor = groupsData[i].color;
+
             db.collection("groups")
             .doc(groupsData[i].id)
             .get()
             .then((doc) => {
               if (doc.exists) {
-                
-                // get the groups from the user's doc - store in some state to display
+                // get the alarms from the group's doc - store in some state to display
                 const alarmsData = [];
                 for (var j = 0; j < doc.data().alarms.length; j++) {
-
-                  // get the color that the group alarm should display with
-                  // var keySplitArray = doc.data().alarms[j].key.split(":");
-                  // console.log("groupsData[i].id", groupsData[i].id)
-                  // if (groupsData[i].id == keySplitArray[0]){
-                  //   var groupAlarmColor = groupsData[i].color;
-                  //   console.log("groupAlarmColor", groupAlarmColor)
-                  // }
                   alarmsData.push({
                     alarm_hour: doc.data().alarms[j].alarm_hour,
                     alarm_minute: doc.data().alarms[j].alarm_minute,
                     key: doc.data().alarms[j].key,
                     name: doc.data().alarms[j].name,
                     switch: doc.data().alarms[j].switch,
-                    // color: doc.data().alarms[j].color, 
                     color: groupAlarmColor
                   });
                 }
@@ -271,7 +263,7 @@ export default class Alarms extends Component {
           }
       }
 
-      this.setState({alarms: alarm_array}) //, () => console.log("this.state.alarms from removeAlarm:", this.state.alarms));
+      this.setState({alarms: alarm_array})
     };
 
     
@@ -324,9 +316,6 @@ export default class Alarms extends Component {
 
       // Increment the currentMaxKey now that we've added an alarm with key: currentMaxKey + 1
       await this.incrementCurrentMaxKey();
-      // console.log("currentMaxKey after increment:", this.state.currentMaxKey)
-      
-      // console.log("Updated users doc in Firebase with one alarm")
       
       // Return the list of all the scheduled notifications
       list = (await Notifications.getAllScheduledNotificationsAsync());
@@ -351,7 +340,7 @@ export default class Alarms extends Component {
       }
     }
 
-    /*Updates state with listOfKeys*/
+    /* Updates state with listOfKeys */
     listofKeys = () => new Promise(
       (resolve) => {
         var list = []
@@ -359,7 +348,7 @@ export default class Alarms extends Component {
           list.push(this.state.alarms[i].key)
         }
         // Updates state
-        this.setState( {listOfKeys: list}) // , () => {console.log("listOfKeys:", this.state.listOfKeys); })
+        this.setState( {listOfKeys: list})
         setTimeout(() => resolve(1234), 300)
       }
     )
@@ -368,7 +357,6 @@ export default class Alarms extends Component {
       console.log("Updating local, notifications, and Firebase after +Group button")
 
       promise = await(this.listofKeys());
-      // console.log("listOfKeys:", this.state.listOfKeys);
 
       // Update Firebase (moves the alarm from user's doc to group's doc)
       promise = await(this.updateFirebaseAfterPlusGroup());
@@ -389,7 +377,6 @@ export default class Alarms extends Component {
         key: this.state.singleAlarm.switch,
         color: groupAlarmColor}
       )
-      console.log("this.state.alarms after plus group change alarm color", this.state.alarms)
 
       // remove old alarm from local state alarm array
       this.state.alarms.splice(this.state.openRow, 1)
@@ -404,13 +391,10 @@ export default class Alarms extends Component {
       console.log("Updating", this.state.groupIdClicked, "in Firebase")
 
       this.updateCurrentMaxKey();
-      // console.log("currentMaxKey:", this.state.currentMaxKey)
-      // await(this.listofKeys());
-      // console.log("listOfKeys:", this.state.listOfKeys);
 
       for (var i = 0; i < this.state.currentMaxKey + 1; i++) {
         if (this.state.listOfKeys.includes(i)){
-          console.log("this.state.listOfKeys.includes(i)")
+          // console.log("this.state.listOfKeys.includes(i)")
           for (var j = 0; j < this.state.alarms.length; j++) {
             if (this.state.alarms[j].key == this.state.alarms[this.state.openRow].key){
               var newAlarm = {
@@ -425,8 +409,6 @@ export default class Alarms extends Component {
           }
         }
       }
-
-      console.log("newAlarm", newAlarm)
 
       // Add the alarm to group doc in Firebase
       db.collection("groups")
@@ -488,9 +470,6 @@ export default class Alarms extends Component {
 
       // Update correct Firebase document where alarm data is stored 
       promise = await(this.updateFirebaseAfterEdit());
-
-      // Print the list of currently scheduled notifications to the console
-      // this.showAlarms();
 
       // Remove the old alarm from the notification queue
       promise = (await Notifications.cancelScheduledNotificationAsync(this.state.alarms[this.state.openRow].name))
@@ -591,7 +570,6 @@ export default class Alarms extends Component {
           .get()
           .then((doc) => {
             if (doc.exists) {
-              // console.log("this.state.alarms[this.state.openRow].name", this.state.alarms[this.state.openRow].name)
               db.collection("users")
                 .doc(auth.currentUser.email)
                 .update({
@@ -710,7 +688,6 @@ export default class Alarms extends Component {
 
         // If the alarm is a group alarm (key contains a ":"), then remove the alarm from the groups's doc in Firebase
         if (String(props.alarms[prevIndex].key).includes(":")){
-          // console.log("String(props.alarms[prevIndex].key).includes(:)")
           var groupIDSplitArray = props.alarms[prevIndex].key.split(":")
           db.collection("groups")
             .doc(groupIDSplitArray[0])
@@ -731,13 +708,8 @@ export default class Alarms extends Component {
       }
   
       // Updates state with which row(alarm) was pressed and opened
-
-      // onRowDidOpen = async(rowKey) => {
       onRowDidOpen = (rowKey) => {
-        // console.log('This row opened rowKey', rowKey);
-
         const prevIndex = props.alarms.findIndex(item => item.key === rowKey);
-        // console.log('This row opened prevIndex', prevIndex);
         this.setState({ openRow: Number(prevIndex)});
       };
   
@@ -836,7 +808,6 @@ export default class Alarms extends Component {
         comparison = -2;
       } 
       else if (Ah == Bh) {
-        // console.log("same hour")
         if (Am > Bm) {
           comparison = 1;
         } else if (Am < Bm){
@@ -939,22 +910,20 @@ export default class Alarms extends Component {
     /*Runs when page refreshes: Initialization*/
     componentDidMount(){
       this.isComponentMounted = true;
-      // console.log("this.isComponentMounted componentDidMount")
+      // console.log("componentDidMount, this.isComponentMounted:", this.isComponentMounted)
       this.componentDidMountHelper();
     }
 
     /*Async function called by componentDidMount */
     componentDidMountHelper = async () => {
         if(this.isComponentMounted){
-        // console.log("this.isComponentMounted componentDidMountHelper")
+        // console.log("componentDidMountHelper, this.isComponentMounted:", this.isComponentMounted)
 
         // Removes all alarms
         this.removeAllAlarms();
 
         // Waits for Firebase related initialization functions to run
         const promise = await this.getFirebase();
-        
-        // console.log("this.state.groupsArray[0].label", this.state.groupsArray[0].label)
 
         // Uses alarms array to make the alarms
         this.makeAlarms(this.state.alarms);
@@ -967,7 +936,6 @@ export default class Alarms extends Component {
 
         // let the_subscription;
         this.state.notificationListener = Notifications.addNotificationReceivedListener(notification => this.setState({ notification: notification}))
-
         // this.state.responseListener = Notifications.addNotificationResponseReceivedListener(response => {console.log("Response:", response)});
       
         return () => {
@@ -1165,9 +1133,6 @@ export default class Alarms extends Component {
               />
 
               <Text style={{...alarmStyles.modalTitle, color: theme.APPTEXTRED}}> Select a group </Text>
-
-              {/* {console.log("this.state.groupsArray[0]", this.state.groupsArray[0])} */}
-              {/* {console.log("this.state.groupsArray[0].label before RNPickerSelect", this.state.groupsArray[0].label)} */}
 
               {/* https://github.com/lawnstarter/react-native-picker-select */} 
               <RNPickerSelect
