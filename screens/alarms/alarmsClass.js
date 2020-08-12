@@ -209,7 +209,7 @@ export default class Alarms extends Component {
 
     /*Uses the list of alarms to set the push notifications*/
     async makeAlarms(alarm_array){
-      console.log("makeAlarms")
+      // console.log("makeAlarms")
       alarm_array.forEach(async(list_item) => {
           if (list_item.switch == true){
               promise = (await Notifications.scheduleNotificationAsync({
@@ -237,7 +237,7 @@ export default class Alarms extends Component {
     /*Cancels the specified alarm's push notification and removes the specified alarm from the alarm array*/
     async removeAlarm(identifier, alarm_array){ // identifier should be a string
       Notifications.cancelScheduledNotificationAsync(identifier)
-      console.log("cancelled", identifier)
+      // console.log("cancelled", identifier)
   
       // Remove the alarm from the array
       for (var i = 0; i < alarm_array.length; i++) {
@@ -299,9 +299,9 @@ export default class Alarms extends Component {
 
       // Increment the currentMaxKey now that we've added an alarm with key: currentMaxKey + 1
       await this.incrementCurrentMaxKey();
-      console.log("currentMaxKey after increment:", this.state.currentMaxKey)
+      // console.log("currentMaxKey after increment:", this.state.currentMaxKey)
       
-      console.log("Updated users doc in firebase with one alarm")
+      // console.log("Updated users doc in firebase with one alarm")
       
       // Return the list of all the scheduled notifications
       list = (await Notifications.getAllScheduledNotificationsAsync());
@@ -715,10 +715,10 @@ export default class Alarms extends Component {
 
       // onRowDidOpen = async(rowKey) => {
       onRowDidOpen = (rowKey) => {
-        console.log('This row opened rowKey', rowKey);
+        // console.log('This row opened rowKey', rowKey);
 
         const prevIndex = props.alarms.findIndex(item => item.key === rowKey);
-        console.log('This row opened prevIndex', prevIndex);
+        // console.log('This row opened prevIndex', prevIndex);
         this.setState({ openRow: Number(prevIndex)});
       };
   
@@ -910,14 +910,14 @@ export default class Alarms extends Component {
     /*Runs when page refreshes: Initialization*/
     componentDidMount(){
       this.isComponentMounted = true;
-      console.log("this.isComponentMounted componentDidMount")
+      // console.log("this.isComponentMounted componentDidMount")
       this.componentDidMountHelper();
     }
 
     /*Async function called by componentDidMount */
     componentDidMountHelper = async () => {
         if(this.isComponentMounted){
-        console.log("this.isComponentMounted componentDidMountHelper")
+        // console.log("this.isComponentMounted componentDidMountHelper")
 
         // Removes all alarms
         this.removeAllAlarms();
@@ -953,7 +953,7 @@ export default class Alarms extends Component {
     };
 
     componentWillUnmount(){
-      console.log("componentWillUnmount")
+      // console.log("componentWillUnmount")
       this.isComponentMounted = false;
     }
 
@@ -1045,7 +1045,7 @@ export default class Alarms extends Component {
                   <Text style={{...appStyles.logo, color: theme.APPTEXTRED}}> Set a new alarm </Text>
 
                     <DatePicker
-                      style={{height: 75, width: 200, color: "black"}}
+                      style={{height: 75, width: 200, color: "white"}}
                       date= {moment().format("LTS")} // Starts timepicker at current time (except always AM?)
                       mode="time"
                       format="HH:mm"
@@ -1116,12 +1116,13 @@ export default class Alarms extends Component {
           </View>
 
           {/* Useful button during testing */}
+          {/*
           <Button
             title="Print user email to console"
             onPress={ async() =>
               console.log("auth.currentUser.email:", auth.currentUser.email)
             }
-          />
+          />*/}
 
           {/* BEGINNING OF MODAL FOR GROUP PICKER */}
           <Modal visible={this.state.groupPickerModalOpen} animationType="slide">

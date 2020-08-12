@@ -308,20 +308,28 @@ const alarmStyles = StyleSheet.create({
 });
 
 const profileStyles = StyleSheet.create({
+  container: {
+    backgroundColor: 'white',
+
+    // these lines fit the container to the entire screen
+    //height: Dimensions.get('window').height,
+    // width: Dimensions.get('window').width,
+    // marginLeft: 0,
+  },
   scroll: {
     backgroundColor: 'white',
 
     // these lines fit the container to the entire screen
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
+    // height: Dimensions.get('window').height,
+    // width: Dimensions.get('window').width,
   },
   userRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingBottom: 40,
-    paddingLeft: 15,
+    alignItems: 'flex-start',
+    // flexDirection: 'row',
+    paddingBottom: 30,
+    paddingLeft: 25,
     paddingRight: 15,
-    paddingTop: 40,
+    paddingTop: 60,
   },
   userImage: {
     marginRight: 12,
@@ -345,12 +353,12 @@ const profileStyles = StyleSheet.create({
     backgroundColor: APPTEXTRED,
     borderRadius: 15,
     height: 40,
-    width: 0.85 * Dimensions.get('screen').width, // sign out button is 90% of the screen's width
+    width: 0.75 * Dimensions.get('screen').width, // sign out button is 85% of the screen's width
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 10,
-    marginLeft: 30,
+    marginTop: 10,
+    marginBottom: 30,
+    marginLeft: 55,
   },
   birthdayBtn: {
     width: 300,
