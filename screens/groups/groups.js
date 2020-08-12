@@ -933,7 +933,7 @@ export default class Groups extends Component {
           <MaterialIcons
             name="group-add"
             size={36}
-            style={appStyles.modalToggle}
+            style={{...appStyles.modalToggle, color: theme.APPTEXTRED}}
             onPress={() => this.setState({ createModalOpen: true })}
           />
         </View>
