@@ -1061,9 +1061,9 @@ export default class Alarms extends Component {
         )
       };
       return(
-        <View style={appStyles.container}>
+        <View style={{...appStyles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
           <TopBanner>
-              <Text style={alarmStyles.pageTitle}>Alarms</Text>
+              <Text style={{...alarmStyles.pageTitle, color: theme.APPTEXTRED}}>Alarms</Text>
         
               {/*BEGINNING OF MODAL FOR ADD ALARM */}
               <MaterialIcons
@@ -1081,7 +1081,7 @@ export default class Alarms extends Component {
                   onPress={() => this.setState({ newAlarmModalOpen: false })}
                   />
 
-                  <Text style={alarmStyles.modalTitle}> Set a new alarm </Text>
+                  <Text style={{...alarmStyles.modalTitle, color: theme.APPTEXTRED}}> Set a new alarm </Text>
 
                     <DatePicker
                       style={{height: 75, width: 200, color: "white"}}
@@ -1141,7 +1141,7 @@ export default class Alarms extends Component {
 
           </TopBanner>
         
-          <View style={alarmStyles.scrollViewContainer}>
+          <View style={{...alarmStyles.scrollViewContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
               {/* Useful print statements on screen for debugging */}
               {/* <Text>Your expo push token: {expoPushToken}</Text>
               <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -1173,7 +1173,7 @@ export default class Alarms extends Component {
               onPress={() => this.setState({ groupPickerModalOpen: false })}
               />
 
-              <Text style={alarmStyles.modalTitle}> Select a group </Text>
+              <Text style={{...alarmStyles.modalTitle, color: theme.APPTEXTRED}}> Select a group </Text>
 
               {/* {console.log("this.state.groupsArray[0]", this.state.groupsArray[0])} */}
               {/* {console.log("this.state.groupsArray[0].label before RNPickerSelect", this.state.groupsArray[0].label)} */}
