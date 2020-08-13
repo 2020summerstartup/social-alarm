@@ -1,5 +1,5 @@
 // signup.js
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import "react-native-gesture-handler";
 import {
   StyleSheet,
@@ -27,6 +27,15 @@ import * as  yup from  "yup";
  * SignUp screen
  *
  */
+
+
+const reviewSchema = yup.object({
+  name: yup.string().required(),
+  email: yup.string().required().email(),
+  password: yup.string().required().min(6),
+  confirmPassword: yup.string().required().min(6),
+})
+
 
 export default function SignUp({ navigation }) {
   // states - contains info that user entered
@@ -101,11 +110,28 @@ export default function SignUp({ navigation }) {
                 Sign Up
               </Text>
 
+              <Formik
+                initialValues={{ name: "", email: "", password: "", confirmPassword: "" }}
+                validationSchema={reviewSchema}
+                onSubmit={(values) => {
+                  signUpUser(
+                    values.email.trim(),
+                    values.password,
+                    values.confirmPassword,
+                    values.name.trim()
+                  )
+                }}
+              >
+                {(props) => (
+                  <Fragment>
+
               {/* name text input */}
               <View
                 style={{
                   ...appStyles.inputView,
                   backgroundColor: theme.APPINPUTVIEW,
+                  marginBottom: 2,
+                  marginTop: 5,
                 }}
               >
                 <TextInput
@@ -113,17 +139,20 @@ export default function SignUp({ navigation }) {
                   placeholder="Name..."
                   placeholderTextColor="#003f5c"
                   autoCorrect={false}
-                  onChangeText={(text) => {
-                    setName(text);
-                  }}
+                  value={props.values.name}
+                  onBlur={props.handleBlur("name")}
+                  onChangeText={props.handleChange("name")}
                 />
               </View>
+              <Text style={{color: "red"}}>{props.touched.name && props.errors.name}</Text>
 
               {/* email text input */}
               <View
                 style={{
                   ...appStyles.inputView,
                   backgroundColor: theme.APPINPUTVIEW,
+                  marginBottom: 2,
+                  marginTop: 5,
                 }}
               >
                 <TextInput
@@ -131,17 +160,20 @@ export default function SignUp({ navigation }) {
                   placeholder="Email..."
                   placeholderTextColor="#003f5c"
                   keyboardType="email-address"
-                  onChangeText={(text) => {
-                    setEmail(text);
-                  }}
+                  value={props.values.email}
+                  onBlur={props.handleBlur("email")}
+                  onChangeText={props.handleChange("email")}
                 />
               </View>
+              <Text style={{color: "red"}}>{props.touched.email && props.errors.email}</Text>
 
               {/* password text input */}
               <View
                 style={{
                   ...appStyles.inputView,
                   backgroundColor: theme.APPINPUTVIEW,
+                  marginBottom: 2,
+                  marginTop: 5,
                 }}
               >
                 <TextInput
@@ -149,17 +181,20 @@ export default function SignUp({ navigation }) {
                   style={appStyles.inputText}
                   placeholder="Password..."
                   placeholderTextColor="#003f5c"
-                  onChangeText={(text) => {
-                    setPassword(text);
-                  }}
+                  value={props.values.password}
+                  onBlur={props.handleBlur("password")}
+                  onChangeText={props.handleChange("password")}
                 />
               </View>
+              <Text style={{color: "red"}}>{props.touched.password && props.errors.password}</Text>
 
               {/* confirm password text input */}
               <View
                 style={{
                   ...appStyles.inputView,
                   backgroundColor: theme.APPINPUTVIEW,
+                  marginBottom: 2,
+                  marginTop: 5,
                 }}
               >
                 <TextInput
@@ -167,25 +202,19 @@ export default function SignUp({ navigation }) {
                   style={appStyles.inputText}
                   placeholder="Confirm password..."
                   placeholderTextColor="#003f5c"
-                  onChangeText={(text) => {
-                    setConfirmPassword(text);
-                  }}
+                  value={props.values.confirmPassword}
+                  onBlur={props.handleBlur("confirmPassword")}
+                  onChangeText={props.handleChange("confirmPassword")}
                 />
               </View>
+              <Text style={{color: "red"}}>{props.touched.confirmPassword && props.errors.confirmPassword}</Text>
               {/* sign up button */}
               <TouchableOpacity
                 style={{
                   ...appStyles.loginBtn,
                   backgroundColor: theme.APPTEXTRED,
                 }}
-                onPress={() =>
-                  this.signUpUser(
-                    email.trim(),
-                    password,
-                    confirmPassword,
-                    name.trim()
-                  )
-                }
+                onPress={props.handleSubmit}
               >
                 <Text
                   style={{ ...appStyles.loginText, color: theme.APPTEXTBLACK }}
@@ -193,6 +222,10 @@ export default function SignUp({ navigation }) {
                   SIGN UP
                 </Text>
               </TouchableOpacity>
+
+              </Fragment>
+                )}
+                </Formik>
             </View>
           </TouchableWithoutFeedback>
         );

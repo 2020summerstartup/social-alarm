@@ -84,7 +84,7 @@ export default function Login({ navigation }) {
                 initialValues={{ email: "", password: "" }}
                 validationSchema={reviewSchema}
                 onSubmit={(values) => {
-                  loginUser(values.email, values.password);
+                  loginUser(values.email.trim(), values.password);
                 }}
               >
                 {(props) => (
@@ -93,6 +93,9 @@ export default function Login({ navigation }) {
                       style={{
                         ...appStyles.inputView,
                         backgroundColor: theme.APPINPUTVIEW,
+                        marginBottom: 2,
+                        marginTop: 5,
+                        
                       }}
                     >
                       <TextInput
@@ -112,6 +115,8 @@ export default function Login({ navigation }) {
                       style={{
                         ...appStyles.inputView,
                         backgroundColor: theme.APPINPUTVIEW,
+                        marginBottom: 2,
+                        marginTop: 5,
                       }}
                     >
                       <TextInput
@@ -125,7 +130,7 @@ export default function Login({ navigation }) {
                       />
                     </View>
 
-                    <Text style={{color: "red"}}>{props.touched.password && props.errors.password}</Text>
+                    <Text style={{color: "red", marginBottom: 10}}>{props.touched.password && props.errors.password}</Text>
 
                     {/* forgot password button */}
                     <TouchableOpacity
