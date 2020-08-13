@@ -709,7 +709,7 @@ export default class Groups extends Component {
               >
                 <TextInput
                   style={{ ...appStyles.inputText }}
-                  placeholder="group name..."
+                  placeholder="Group name..."
                   placeholderTextColor="#003f5c"
                   onChangeText={(text) => {
                     this.setState({ groupName: text });

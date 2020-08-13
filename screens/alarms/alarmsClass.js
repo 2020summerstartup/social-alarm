@@ -977,6 +977,12 @@ export default class Alarms extends Component {
               showIcon={false}
               minuteInterval={1}
               onDateChange={(time) => this.setState({ newAlarmTime: time })}
+              customStyles={{
+                datePicker:{backgroundColor: '#A9A9A9'},
+                dateInput:{borderColor: APPBACKGROUNDCOLOR, borderRadius: 25, height: 50, width: "75%"},
+                dateText:{fontSize: 30, color: 'black', fontWeight: "normal"},
+                placeholderText: {}
+              }}
             />
 
             <View style={appStyles.inputView}>
@@ -1032,71 +1038,74 @@ export default class Alarms extends Component {
                   onPress={() => this.setState({ newAlarmModalOpen: true })}
               />
               <Modal visible={this.state.newAlarmModalOpen} animationType="slide">
-              {/* this allows for dismiss keyboard when tapping anywhere functionality */}
-              <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-              <View style={{...appStyles.modalContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
-                  <MaterialIcons
-                  name="close"
-                  size={24}
-                  style={{ ...appStyles.modalToggle, ...appStyles.modalClose, color: theme.APPTEXTRED }}
-                  onPress={() => this.setState({ newAlarmModalOpen: false })}
-                  />
+                {/* this allows for dismiss keyboard when tapping anywhere functionality */}
+                <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+                  <View style={{...appStyles.modalContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
+                      <MaterialIcons
+                      name="close"
+                      size={24}
+                      style={{ ...appStyles.modalToggle, ...appStyles.modalClose, color: theme.APPTEXTRED }}
+                      onPress={() => this.setState({ newAlarmModalOpen: false })}
+                      />
 
-                  <Text style={{...alarmStyles.modalTitle, color: theme.APPTEXTRED}}> Add New Alarm </Text>
+                      <Text style={{...alarmStyles.modalTitle, color: theme.APPTEXTRED}}> Add Alarm </Text>
 
-                    <DatePicker
-                      style={{height: 75, width: 200, color: "white"}}
-                      date= {moment().format("LTS")} // Starts timepicker at current time (except always AM?)
-                      mode="time"
-                      format="HH:mm"
-                      confirmBtnText="Confirm"
-                      cancelBtnText="Cancel"
-                      showIcon={false}
-                      minuteInterval={1}
-                      onDateChange={(time) => this.setState({ newAlarmTime: time })}
-                    />
+                        <DatePicker
+                          style={{height: 75, width: 200, color: "white"}}
+                          date= {moment().format("LTS")} // Starts timepicker at current time (except always AM?)
+                          mode="time"
+                          placeholder="select date"
+                          format="HH:mm"
+                          confirmBtnText="Confirm"
+                          cancelBtnText="Cancel"
+                          showIcon={false}
+                          minuteInterval={1}
+                          onDateChange={(time) => this.setState({ newAlarmTime: time })}
+                          customStyles={{
+                            datePicker: {backgroundColor: '#A9A9A9'},
+                            dateInput: {borderColor: APPBACKGROUNDCOLOR, borderRadius: 25, height: 50, width: "75%"},
+                            dateText: {fontSize: 30, color: 'black', fontWeight: "normal"},
+                            placeholderText: {}
+                          }}
+                        />
 
-                  <View style={appStyles.inputView}>
-                    
-                    <TextInput
-                      style={appStyles.inputText}
-                      placeholder="Alarm title..."
-                      placeholderTextColor={APPTEXTBLUE}
-                      onChangeText={(text) => this.setState({newAlarmText: text})}
-                    />
+                      <View style={appStyles.inputView}>
+                        
+                        <TextInput
+                          style={appStyles.inputText}
+                          placeholder="Alarm title..."
+                          placeholderTextColor={APPTEXTBLUE}
+                          onChangeText={(text) => this.setState({newAlarmText: text})}
+                        />
+                      </View>
+
+                      {/* <Button
+                        title="Split the time"
+                        onPress={ async() =>
+                          this.splitTime()
+                        }
+                      /> */}
+
+                      {/* Useful print statements on modal page for debugging */}
+                      {/* <Text style={appStyles.inputText}> time:{this.state.newAlarmTime} </Text>
+                      <Text style={appStyles.inputText}> hour:{this.state.newAlarmHour} </Text>
+                      <Text style={appStyles.inputText}> minute:{this.state.newAlarmMinute}</Text>
+                      <Text style={appStyles.inputText}> title:{this.state.newAlarmText}</Text> */}
+
+                      {/* Add alarm button */}
+                      <TouchableOpacity
+                        style={{...appStyles.loginBtn, backgroundColor: theme.APPTEXTRED,}}
+                        // title="Set Alarm"
+                        onPress={ async() =>
+                          this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.currentMaxKey + 1, "#fb5b5a", this.state.alarms)
+                          .then(this.setState({ newAlarmModalOpen: false }))
+                        }
+                        >
+                        <Text style={appStyles.buttonText}> Add alarm </Text>
+                      </TouchableOpacity>
+
                   </View>
-
-                  <Button
-                    title="Split the time"
-                    onPress={ async() =>
-                      this.splitTime()
-                    }
-                  />
-
-                  {/* Useful print statements on modal page for debugging */}
-                  {/* <Text style={appStyles.inputText}> time:{this.state.newAlarmTime} </Text>
-                  <Text style={appStyles.inputText}> hour:{this.state.newAlarmHour} </Text>
-                  <Text style={appStyles.inputText}> minute:{this.state.newAlarmMinute}</Text>
-                  <Text style={appStyles.inputText}> title:{this.state.newAlarmText}</Text> */}
-
-                  <Button style={alarmStyles.button}
-                  title="Set Alarm"
-                  onPress={ async() =>
-                    this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.currentMaxKey + 1, "#fb5b5a", this.state.alarms)
-                    .then(this.setState({ newAlarmModalOpen: false }))
-                  }
-                  />
-
-                  {/* Additional button to close the modal */}
-                  <Button
-                    title="Cancel"
-                    onPress={ async() =>
-                      this.setState({ newAlarmModalOpen: false })
-                    }
-                  />
-
-              </View>
-              </TouchableWithoutFeedback>
+                </TouchableWithoutFeedback>
               </Modal>
               {/*END OF MODAL FOR ADD ALARM */}
 
