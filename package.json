@@ -48,7 +48,8 @@
     "react-navigation": "^4.4.0",
     "react-navigation-native": "0.0.0",
     "react-navigation-stack": "^2.8.2",
-    "react-timezone-picker": "^1.0.8"
+    "react-timezone-picker": "^1.0.8",
+    "yup": "^0.29.3"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
