@@ -4,9 +4,9 @@
     "slug": "Alarm",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo9696.png",
+    "icon": "./assets/logo_final.png",
     "splash": {
-      "image": "./assets/logoiPhone.png",
+      "image": "./assets/splashScreen.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
