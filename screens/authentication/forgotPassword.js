@@ -15,6 +15,9 @@ import { auth } from "../../firebase/firebase";
 import { APPTEXTRED } from "../../style/constants";
 import { appStyles } from "../../style/stylesheet";
 import { NotificationContext } from "../../contexts/NotificationContext";
+import { Formik } from "formik";
+import * as  yup from  "yup";
+
 
 /* forgotPassword.js
  * Forgot password screen
@@ -69,6 +72,15 @@ export default function Login({ navigation }) {
               <Text style={{ ...appStyles.logo, color: theme.APPTEXTRED }}>
                 Password?
               </Text>
+              <Formik
+                initialValues={{ email: "", password: "" }}
+                //validationSchema={reviewSchema}
+                onSubmit={(values) => {
+                  loginUser(values.email.trim(), values.password);
+                }}
+              >
+                {(props) => (
+                  <Fragment>
               <View
                 style={{
                   ...appStyles.inputView,
@@ -101,6 +113,9 @@ export default function Login({ navigation }) {
                   Send password reset email
                 </Text>
               </TouchableOpacity>
+              </Fragment>
+                )}
+                </Formik>
             </View>
           </TouchableWithoutFeedback>
         );
