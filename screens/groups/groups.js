@@ -64,8 +64,6 @@ export default class Groups extends Component {
       // swipe to refresh functionality
       mainPageRefreshing: false,
       groupModalRefreshing: false,
-      // color to display group info
-      groupAlarmColor: DEFAULTGROUPCOLOR,
     };
   }
 
@@ -267,9 +265,9 @@ export default class Groups extends Component {
       .doc(userDeleted)
       .update({
         groups: Firebase.firestore.FieldValue.arrayRemove({
+          color: groupColor,
           id: groupId,
-          name: group,
-          color: groupColor
+          name: group
         }),
         notifications: Firebase.firestore.FieldValue.arrayUnion({
           title: "Group deleted",
@@ -329,9 +327,9 @@ export default class Groups extends Component {
       .doc(userDeleted)
       .update({
         groups: Firebase.firestore.FieldValue.arrayRemove({
+          color: groupColor,
           id: groupId,
-          name: group,
-          color: groupColor
+          name: group
         }),
       })
       .then(() => {
@@ -417,9 +415,9 @@ export default class Groups extends Component {
               .doc(groupMembers[i])
               .update({
                 groups: Firebase.firestore.FieldValue.arrayRemove({
+                  color: groupColor,
                   id: groupId,
-                  name: group,
-                  color: groupColor
+                  name: group
                 }),
                 notifications: Firebase.firestore.FieldValue.arrayUnion({
                   title: "Group deleted",
@@ -434,9 +432,9 @@ export default class Groups extends Component {
               .doc(groupMembers[i])
               .update({
                 groups: Firebase.firestore.FieldValue.arrayRemove({
+                  color: groupColor,
                   id: groupId,
-                  name: group,
-                  color: groupColor
+                  name: group
                 }),
               });
           }
