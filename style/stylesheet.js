@@ -41,7 +41,7 @@ const appStyles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 25,
     height: 50,
-    marginBottom: 20,
+    marginBottom: 10,
     justifyContent: "center",
     padding: 20,
   },
@@ -69,7 +69,7 @@ const appStyles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
+    marginTop: 20,
     marginBottom: 10,
   },
 
@@ -101,7 +101,7 @@ const appStyles = StyleSheet.create({
 
   buttonText: {
     color: APPTEXTWHITE,
-    fontSize: 16,
+    fontSize: 24,
     padding: 10,
   },
   
@@ -140,6 +140,18 @@ const alarmStyles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+
+  rowStyle:{
+    flexDirection: "row",
+    width: "100%",
+    height: 120,
+    paddingTop: 0,
+    paddingBottom: 0,
+    padding: 0,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   Text: {
