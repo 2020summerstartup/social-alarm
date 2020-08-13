@@ -1,6 +1,6 @@
 // home.js
 
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import "react-native-gesture-handler";
 import {
   Text,
@@ -15,6 +15,7 @@ import {
 import { auth } from "../../firebase/firebase";
 import { appStyles } from "../../style/stylesheet";
 import { NotificationContext } from "../../contexts/NotificationContext";
+import { Formik } from "formik";
 
 /* login.js
  * Login screen
@@ -22,9 +23,6 @@ import { NotificationContext } from "../../contexts/NotificationContext";
  */
 
 export default function Login({ navigation }) {
-  // states - contains info that user entered
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   // signUpUser - called when user presses sign up button,
   // navigates to sign up page
@@ -74,70 +72,94 @@ export default function Login({ navigation }) {
                 TeamTime
               </Text>
               {/* text input fields (email, password) */}
-              <View
-                style={{
-                  ...appStyles.inputView,
-                  backgroundColor: theme.APPINPUTVIEW,
+
+              <Formik
+                initialValues={{ email: "", password: "" }}
+                onSubmit={(values) => {
+                  loginUser(values.email, values.password);
                 }}
               >
-                <TextInput
-                  style={appStyles.inputText}
-                  placeholder="Email..."
-                  placeholderTextColor="#003f5c"
-                  keyboardType="email-address"
-                  onChangeText={(text) => {
-                    setEmail(text);
-                  }}
-                />
-              </View>
+                {(props) => (
+                  <Fragment>
+                    <View
+                      style={{
+                        ...appStyles.inputView,
+                        backgroundColor: theme.APPINPUTVIEW,
+                      }}
+                    >
+                      <TextInput
+                        style={appStyles.inputText}
+                        placeholder="Email..."
+                        placeholderTextColor="#003f5c"
+                        keyboardType="email-address"
+                        value={props.values.email}
+                        onChangeText={props.handleChange("email")}
+                      />
+                    </View>
 
-              <View
-                style={{
-                  ...appStyles.inputView,
-                  backgroundColor: theme.APPINPUTVIEW,
-                }}
-              >
-                <TextInput
-                  secureTextEntry
-                  style={appStyles.inputText}
-                  placeholder="Password..."
-                  placeholderTextColor="#003f5c"
-                  onChangeText={(text) => setPassword(text)}
-                />
-              </View>
+                    <View
+                      style={{
+                        ...appStyles.inputView,
+                        backgroundColor: theme.APPINPUTVIEW,
+                      }}
+                    >
+                      <TextInput
+                        secureTextEntry
+                        style={appStyles.inputText}
+                        placeholder="Password..."
+                        placeholderTextColor="#003f5c"
+                        value={props.values.password}
+                        onChangeText={props.handleChange("password")}
+                      />
+                    </View>
 
-              {/* forgot password button */}
-              <TouchableOpacity
-                onPress={() => navigation.navigate("ForgotPassword")}
-              >
-                <Text style={{ ...appStyles.forgot, color: theme.APPTEXTBLACK }}>
-                  Forgot Password?
-                </Text>
-              </TouchableOpacity>
+                    {/* forgot password button */}
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("ForgotPassword")}
+                    >
+                      <Text
+                        style={{
+                          ...appStyles.forgot,
+                          color: theme.APPTEXTBLACK,
+                        }}
+                      >
+                        Forgot Password?
+                      </Text>
+                    </TouchableOpacity>
 
-              {/* login button */}
-              <TouchableOpacity
-                style={{
-                  ...appStyles.loginBtn,
-                  backgroundColor: theme.APPTEXTRED,
-                }}
-                onPress={() => this.loginUser(email.trim(), password)}
-              >
-                <Text
-                  style={{ ...appStyles.loginText, color: theme.APPTEXTBLACK }}
-                >
-                  LOGIN
-                </Text>
-              </TouchableOpacity>
+                    {/* login button */}
+                    <TouchableOpacity
+                      style={{
+                        ...appStyles.loginBtn,
+                        backgroundColor: theme.APPTEXTRED,
+                      }}
+                      //onPress={() => this.loginUser(email.trim(), password)}
+                      onPress={props.handleSubmit}
+                    >
+                      <Text
+                        style={{
+                          ...appStyles.loginText,
+                          color: theme.APPTEXTBLACK,
+                        }}
+                      >
+                        LOGIN
+                      </Text>
+                    </TouchableOpacity>
 
-              {/* signup button */}
-              <TouchableOpacity onPress={() => this.signUpUser()}>
-                <Text
-                  style={{ ...appStyles.loginText, color: theme.APPTEXTBLACK }}
-                >
-                  Signup
-                </Text>
-              </TouchableOpacity>
+                    {/* signup button */}
+                    <TouchableOpacity onPress={() => this.signUpUser()}>
+                      <Text
+                        style={{
+                          ...appStyles.loginText,
+                          color: theme.APPTEXTBLACK,
+                        }}
+                      >
+                        Signup
+                      </Text>
+                    </TouchableOpacity>
+                  </Fragment>
+                )}
+              </Formik>
             </View>
           </TouchableWithoutFeedback>
         );
