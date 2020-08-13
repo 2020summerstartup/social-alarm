@@ -65,6 +65,7 @@ export default class Groups extends Component {
       groupModalRefreshing: false,
       // color to display group info
       groupAlarmColor: DEFAULTGROUPCOLOR,
+      // groupAlarmColor: "",
     };
   }
 
@@ -74,7 +75,6 @@ export default class Groups extends Component {
   // current user
   user = auth.currentUser;
 
-  
 
   // called when user hits create group button in create group modal
   // creates a group in firebase and adds it to local state
@@ -133,6 +133,7 @@ export default class Groups extends Component {
     this.setState({ groupModalOpen: true });
     this.setState({ groupNameClicked: groupName });
     this.setState({ groupIdClicked: groupId });
+    this.setState({ groupAlarmColor: groupColor });
 
     // gets group members,  stores them in state
     db.collection("groups")
@@ -145,7 +146,7 @@ export default class Groups extends Component {
         }
         this.setState({ groupMembers: groupMem });
         this.setState({ groupAdminClicked: doc.data().adminEmail });
-        this.setState({groupModalRefreshing: false})
+        this.setState({ groupModalRefreshing: false})
       });
   };
 
@@ -194,6 +195,7 @@ export default class Groups extends Component {
                       groups: Firebase.firestore.FieldValue.arrayUnion({
                         name: doc2.data().groupName,
                         id: doc2.id,
+                        // color: doc2.color,
                       }),
                       notifications: Firebase.firestore.FieldValue.arrayUnion({
                         title: "New Group!",
@@ -606,10 +608,12 @@ export default class Groups extends Component {
     this.setState({groupModalRefreshing: true})
     this.groupModal(this.state.groupNameClicked, this.state.groupIdClicked)
   }
+
   // Called from RNPickerSelect in GroupModal
   // Updates the group color in user's doc in Firebase
   updateGroupColor(value){
     console.log("updateGroupColor(" + value + ")")
+    console.log("this.state.groupAlarmColor:", this.state.groupAlarmColor)
 
     // Update user's doc in Firebase
     // Step 1: Remove old data from groups array
@@ -799,7 +803,7 @@ export default class Groups extends Component {
                   {label: "Dark Blue", value: ALARMCOLORDARKBLUE, color: ALARMCOLORDARKBLUE},
                 ]}
                 // Object to overide the default text placeholder for the PickerSelect
-                placeholder={{label: "Select a group color", value: "0", color: "black"}}
+                placeholder={{label: "Select a group color", value: DEFAULTGROUPCOLOR, color: DEFAULTGROUPCOLOR}}
                 style={
                   { placeholder: {
                       color: this.state.groupAlarmColor,
