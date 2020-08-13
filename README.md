@@ -1,6 +1,6 @@
 # TeamTime
 
-![logo_final](https://user-images.githubusercontent.com/33233236/90191370-97728b80-dd75-11ea-98ff-03c221e9443d.png){:height="50%" width="50%"}
+![logo_final](https://user-images.githubusercontent.com/33233236/90191370-97728b80-dd75-11ea-98ff-03c221e9443d.pngs=200)
 
 ### A team of three students, Anna Singer, Shifa Somji and Sidney Taylor, from Harvey Mudd College co-founded TeamTime in June 2020, aiming to connect friends and family with group alarms. 
 
