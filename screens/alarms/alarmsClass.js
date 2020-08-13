@@ -967,23 +967,31 @@ export default class Alarms extends Component {
             />
             <Text style={alarmStyles.modalTitle}> Edit Alarm </Text>
 
-            <DatePicker
-              style={{height: 75, width: 200, color: "black"}}
-              date= {String((this.state.alarms[this.state.openRow].alarm_hour) + ":" + (this.state.alarms[this.state.openRow].alarm_minute))} // Starts timepicker at current alarm time
-              mode="time"
-              format="HH:mm"
-              confirmBtnText="Confirm"
-              cancelBtnText="Cancel"
-              showIcon={false}
-              minuteInterval={1}
-              onDateChange={(time) => this.setState({ newAlarmTime: time })}
-              customStyles={{
-                datePicker:{backgroundColor: '#A9A9A9'},
-                dateInput:{borderColor: APPBACKGROUNDCOLOR, borderRadius: 25, height: 50, width: "75%"},
-                dateText:{fontSize: 30, color: 'black', fontWeight: "normal"},
-                placeholderText: {}
-              }}
-            />
+            <View style = {{...alarmStyles.rowStyle}}>
+              <MaterialIcons
+                name="access-time"
+                size={55}
+                style={{...appStyles.modalToggle, color: APPTEXTRED, height: -60}} // fix color so that it's theme.APPTEXTRED
+              />
+              <DatePicker
+                style={{height: 40, width: 200}}
+                date= {String((this.state.alarms[this.state.openRow].alarm_hour) + ":" + (this.state.alarms[this.state.openRow].alarm_minute))} // Starts timepicker at current alarm time
+                mode="time"
+                format="HH:mm"
+                confirmBtnText="Confirm"
+                cancelBtnText="Cancel"
+                showIcon={false}
+                minuteInterval={1}
+                onDateChange={(time) => this.setState({ newAlarmTime: time })}
+                customStyles={{
+                  // fix these so that the colors are theme._____
+                  datePicker: {backgroundColor: '#A9A9A9'},
+                  dateInput: {borderColor: APPBACKGROUNDCOLOR, borderRadius: 25, height: 60},
+                  dateText: {fontSize: 50, color: APPTEXTRED, fontWeight: "normal"},
+                  placeholderText: {color: APPTEXTRED}
+                }}
+              />
+            </View>
 
             <View style={appStyles.inputView}>
               <TextInput
@@ -1050,8 +1058,14 @@ export default class Alarms extends Component {
 
                       <Text style={{...alarmStyles.modalTitle, color: theme.APPTEXTRED}}> Add Alarm </Text>
 
+                      <View style = {{...alarmStyles.rowStyle}}>
+                        <MaterialIcons
+                          name="access-time"
+                          size={55}
+                          style={{...appStyles.modalToggle, color: theme.APPTEXTRED, height: -60}}
+                        />
                         <DatePicker
-                          style={{height: 75, width: 200, color: "white"}}
+                          style={{height: 40, width: 200}}
                           date= {moment().format("LTS")} // Starts timepicker at current time (except always AM?)
                           mode="time"
                           placeholder="select date"
@@ -1063,11 +1077,12 @@ export default class Alarms extends Component {
                           onDateChange={(time) => this.setState({ newAlarmTime: time })}
                           customStyles={{
                             datePicker: {backgroundColor: '#A9A9A9'},
-                            dateInput: {borderColor: APPBACKGROUNDCOLOR, borderRadius: 25, height: 50, width: "75%"},
-                            dateText: {fontSize: 30, color: 'black', fontWeight: "normal"},
-                            placeholderText: {}
+                            dateInput: {borderColor: theme.APPBACKGROUNDCOLOR, borderRadius: 25, height: 60},
+                            dateText: {fontSize: 50, color: theme.APPTEXTRED, fontWeight: "normal"},
+                            placeholderText: {color: theme.APPTEXTRED}
                           }}
                         />
+                      </View>
 
                       <View style={appStyles.inputView}>
                         
@@ -1094,7 +1109,7 @@ export default class Alarms extends Component {
 
                       {/* Add alarm button */}
                       <TouchableOpacity
-                        style={{...appStyles.loginBtn, backgroundColor: theme.APPTEXTRED,}}
+                        style={{...appStyles.loginBtn, backgroundColor: theme.APPTEXTRED}}
                         // title="Set Alarm"
                         onPress={ async() =>
                           this.addAlarm(this.state.newAlarmText, this.state.newAlarmHour, this.state.newAlarmMinute, this.state.currentMaxKey + 1, "#fb5b5a", this.state.alarms)

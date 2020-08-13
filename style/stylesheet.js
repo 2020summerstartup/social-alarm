@@ -142,6 +142,18 @@ const alarmStyles = StyleSheet.create({
     justifyContent: "space-between",
   },
 
+  rowStyle:{
+    flexDirection: "row",
+    width: "100%",
+    height: 120,
+    paddingTop: 0,
+    paddingBottom: 0,
+    padding: 0,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   Text: {
     height: 50,
     color: APPTEXTWHITE,
