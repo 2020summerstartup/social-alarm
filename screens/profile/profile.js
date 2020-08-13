@@ -219,8 +219,7 @@ const BirthdayPicker = () => {
       <View style={{...profileStyles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
         {/* this part shows the user's name and email */}
         <View style={profileStyles.userRow}>
-          <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK, }}>{this.state.name.replace ('<br/>', '\n')}
-          </Text>
+          <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK, }}>{this.state.name.replace ('<br/>', '\n')}</Text>
           <Text
             style={{
               color: theme.APPTEXTBLACK,
@@ -480,7 +479,7 @@ const BirthdayPicker = () => {
                   inputIOS: {
                     color: theme.APPTEXTBLACK,
                     fontSize: 18,
-                    marginRight: 12,
+                    marginRight: 0,
                     marginTop: 8,
                     alignSelf: "center",
                     alignItems: "center",

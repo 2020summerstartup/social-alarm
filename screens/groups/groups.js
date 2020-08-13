@@ -1028,10 +1028,11 @@ export default class Groups extends Component {
           )}
           renderHiddenItem={this.renderHiddenItem}
           leftOpenValue={0}
-          rightOpenValue={-160}
+          rightOpenValue={-145}
           previewRowKey={"0"}
           previewOpenValue={-80}
           previewOpenDelay={500}
+          disableRightSwipe={true}
           onRowDidOpen={this.onRowDidOpen}
           // onSwipeValueChange={this.onSwipeValueChange}
         />
