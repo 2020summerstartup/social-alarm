@@ -575,14 +575,6 @@ export default class Groups extends Component {
     this.setState({ groupNameClicked: this.state.groups[prevIndex].name })
     this.setState({ groupIdClicked: this.state.groups[prevIndex].id })
     this.setState({ groupColorClicked: this.state.groups[prevIndex].color })
-    
-    console.log("this.state.groups[prevIndex].name", this.state.groups[prevIndex].name)
-    console.log("this.state.groups[prevIndex].id", this.state.groups[prevIndex].id)
-    console.log("this.state.groups[prevIndex].color", this.state.groups[prevIndex].color)
-
-    // console.log("this.state.groupNameClicked", this.state.groupNameClicked)
-    // console.log("this.state.groupIdClicked", this.state.groupIdClicked)
-    // console.log("this.state.groupColorClicked", this.state.groupColorClicked)
   };
 
   // called when the component launches/mounts
