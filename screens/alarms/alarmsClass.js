@@ -99,6 +99,7 @@ export default class Alarms extends Component {
         this.editAlarmModal = this.editAlarmModal.bind(this);
         this.plusGroupButtonUpdate = this.plusGroupButtonUpdate.bind(this);
         this.editButtonUpdate = this.editButtonUpdate.bind(this);
+        this.splitTime = this.splitTime.bind(this);
         
         // Defining state variables that are used throughout class functions
         this.state = {
@@ -276,6 +277,8 @@ export default class Alarms extends Component {
 
     /*Adds an alarm to the alarm array, sets the alarm push notification, and updates the user's doc in Firebase*/
     async addAlarm(name, alarm_hour, alarm_minute, key, color, alarm_array) {
+
+      promise = await (this.splitTime());
             
       // Add new alarm data to the local alarm_array to display
       alarm_array.push(
@@ -466,6 +469,9 @@ export default class Alarms extends Component {
 
     /*Updates the correct document in Firebase after an alarm gets editted*/
     editButtonUpdate = async() => {
+
+      promise = await (this.splitTime());
+
       console.log("Updating local, notifications, and Firebase after alarm edit button")
 
       // Update correct Firebase document where alarm data is stored 
@@ -644,13 +650,16 @@ export default class Alarms extends Component {
     }
 
     /*Splits the time string from the time picker into hour and minute and updates state*/
-    splitTime(){
+    splitTime = () => new Promise(
+      (resolve) => {
       var variable = this.state.newAlarmTime
       var splitArray
       splitArray = variable.split(":") // splits the string at the ":" character
       this.setState( {newAlarmHour: Number(splitArray[0]) })
       this.setState( {newAlarmMinute: Number(splitArray[1]) })
+      setTimeout(() => resolve(1234), 300)
     }
+  )
 
     /*Displays all the alarm banners*/
     AlarmsTable(props){
@@ -1003,13 +1012,6 @@ export default class Alarms extends Component {
             </View>
 
             <Button
-              title="Split the time"
-              onPress={ async() =>
-                this.splitTime()
-              }
-            />
-
-            <Button
               title="Update Alarm"
               color="lightgreen"
               onPress={ async() =>
@@ -1093,19 +1095,6 @@ export default class Alarms extends Component {
                           onChangeText={(text) => this.setState({newAlarmText: text})}
                         />
                       </View>
-
-                      {/* <Button
-                        title="Split the time"
-                        onPress={ async() =>
-                          this.splitTime()
-                        }
-                      /> */}
-
-                      {/* Useful print statements on modal page for debugging */}
-                      {/* <Text style={appStyles.inputText}> time:{this.state.newAlarmTime} </Text>
-                      <Text style={appStyles.inputText}> hour:{this.state.newAlarmHour} </Text>
-                      <Text style={appStyles.inputText}> minute:{this.state.newAlarmMinute}</Text>
-                      <Text style={appStyles.inputText}> title:{this.state.newAlarmText}</Text> */}
 
                       {/* Add alarm button */}
                       <TouchableOpacity
