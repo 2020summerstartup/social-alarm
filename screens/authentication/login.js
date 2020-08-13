@@ -16,11 +16,18 @@ import { auth } from "../../firebase/firebase";
 import { appStyles } from "../../style/stylesheet";
 import { NotificationContext } from "../../contexts/NotificationContext";
 import { Formik } from "formik";
+import * as  yup from  "yup";
 
 /* login.js
  * Login screen
  *
  */
+
+
+const reviewSchema = yup.object({
+  email: yup.string().required().email(),
+  password: yup.string().required().min(6),
+})
 
 export default function Login({ navigation }) {
 
@@ -75,6 +82,7 @@ export default function Login({ navigation }) {
 
               <Formik
                 initialValues={{ email: "", password: "" }}
+                validationSchema={reviewSchema}
                 onSubmit={(values) => {
                   loginUser(values.email, values.password);
                 }}
@@ -93,9 +101,12 @@ export default function Login({ navigation }) {
                         placeholderTextColor="#003f5c"
                         keyboardType="email-address"
                         value={props.values.email}
+                        onBlur={props.handleBlur("email")}
                         onChangeText={props.handleChange("email")}
                       />
                     </View>
+
+                    <Text style={{color: "red"}}>{props.touched.email && props.errors.email}</Text>
 
                     <View
                       style={{
@@ -109,9 +120,12 @@ export default function Login({ navigation }) {
                         placeholder="Password..."
                         placeholderTextColor="#003f5c"
                         value={props.values.password}
+                        onBlur={props.handleBlur("password")}
                         onChangeText={props.handleChange("password")}
                       />
                     </View>
+
+                    <Text style={{color: "red"}}>{props.touched.password && props.errors.password}</Text>
 
                     {/* forgot password button */}
                     <TouchableOpacity
