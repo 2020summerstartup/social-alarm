@@ -1048,6 +1048,7 @@ export default class Groups extends Component {
           previewRowKey={"0"}
           previewOpenValue={-80}
           previewOpenDelay={500}
+          disableRightSwipe={true}
           onRowDidOpen={this.onRowDidOpen}
           // onSwipeValueChange={this.onSwipeValueChange}
         />

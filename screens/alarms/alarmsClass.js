@@ -96,7 +96,7 @@ export default class Alarms extends Component {
         // this.getFirebaseUsersAlarmsFromUsersDoc = this.getFirebaseUsersAlarmsFromUsersDoc.bind(this);
         // this.getFirebaseUsersAlarmsFromGroupsDocs = this.getFirebaseUsersAlarmsFromGroupsDocs.bind(this);
         this.addAlarm = this.addAlarm.bind(this);
-        this.editAlarmModal = this.editAlarmModal.bind(this);
+        // this.editAlarmModal = this.editAlarmModal.bind(this);
         this.plusGroupButtonUpdate = this.plusGroupButtonUpdate.bind(this);
         this.editButtonUpdate = this.editButtonUpdate.bind(this);
         this.splitTime = this.splitTime.bind(this);
@@ -963,7 +963,7 @@ export default class Alarms extends Component {
       this.isComponentMounted = false;
     }
 
-      /* MODAL FOR EDIT ALARM */
+    /* MODAL FOR EDIT ALARM */
     editAlarmModal(){
         return(
         <Modal visible={this.state.editAlarmModalOpen} animationType="slide">
@@ -1023,7 +1023,7 @@ export default class Alarms extends Component {
         </Modal>
         );
     }
-
+    
     render(){
       // context  (global state) stuff
       const { isDarkMode, light, dark } = this.context
@@ -1107,7 +1107,6 @@ export default class Alarms extends Component {
                         >
                         <Text style={appStyles.buttonText}> Add alarm </Text>
                       </TouchableOpacity>
-
                   </View>
                 </TouchableWithoutFeedback>
               </Modal>
@@ -1205,7 +1204,57 @@ export default class Alarms extends Component {
 
 
           {/* BEGINNING OF EDIT ALARM MODAL */}
-          <this.editAlarmModal/>
+          <Modal visible={this.state.editAlarmModalOpen} animationType="slide">
+          <View style={{...appStyles.modalContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
+            <MaterialIcons
+            name="close"
+            size={24}
+            style={{ ...appStyles.modalToggle, ...appStyles.modalClose, color: theme.APPTEXTRED }}
+            onPress={() => this.setState({ editAlarmModalOpen: false })}
+            />
+            <Text style={{...alarmStyles.modalTitle, color: theme.APPTEXTRED}}> Edit Alarm </Text>
+
+            <DatePicker
+              style={{height: 75, width: 200}}
+              date= {String((this.state.alarms[this.state.openRow].alarm_hour) + ":" + (this.state.alarms[this.state.openRow].alarm_minute))} // Starts timepicker at current alarm time
+              mode="time"
+              format="HH:mm"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              showIcon={false}
+              minuteInterval={1}
+              onDateChange={(time) => this.setState({ newAlarmTime: time })}
+              customStyles={{
+                datePicker:{backgroundColor: '#A9A9A9'}
+              }}
+            />
+
+            <View style={appStyles.inputView}>
+              <TextInput
+                style={appStyles.inputText}
+                placeholder={this.state.alarms[this.state.openRow].name}
+                placeholderTextColor="#003f5c"
+                onChangeText={(text) => this.setState({newAlarmText: text})}
+              />
+            </View>
+
+            <Button
+              title="Split the time"
+              onPress={ async() =>
+                this.splitTime()
+              }
+            />
+
+            <Button
+              title="Update Alarm"
+              color="lightgreen"
+              onPress={ async() =>
+                this.editButtonUpdate()
+              }
+            />
+
+            </View>
+        </Modal>
           {/* END OF EDIT ALARM MODAL */}
 
         </View>

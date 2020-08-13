@@ -58,6 +58,7 @@ export default function SignUp({ navigation }) {
                 alarms: [],
                 groups: [],
                 notifications: [],
+                birthday: "",
               })
               .then(navigation.navigate("App"))
               .catch(console.log("idk"));

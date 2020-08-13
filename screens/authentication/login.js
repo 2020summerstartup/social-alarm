@@ -71,7 +71,7 @@ export default function Login({ navigation }) {
               }}
             >
               <Text style={{ ...appStyles.logo, color: theme.APPTEXTRED }}>
-                Group Alarm
+                TeamTime
               </Text>
               {/* text input fields (email, password) */}
               <View

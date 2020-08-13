@@ -30,7 +30,7 @@ export default class Landing extends Component{
           carouselItems: [
           {
               // First Screen
-              title:"Alarmium",
+              title:"TeamTime",
               text: "Stay connected with your friends by setting alarms for each other!",
               image: logo,
           },
