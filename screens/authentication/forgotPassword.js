@@ -18,8 +18,11 @@ import { NotificationContext } from "../../contexts/NotificationContext";
 import { Formik } from "formik";
 import * as yup from "yup";
 
-const reviewSchema = yup.object({
-  email: yup.string()
+// forgotPasswordSchema - determines what input is valid
+// string is the error message returned
+const forgotPasswordSchema = yup.object({
+  email: yup
+    .string()
     .required("Email must be a valid email address")
     .email("Email must be a valid email address"),
 });
@@ -31,7 +34,6 @@ const reviewSchema = yup.object({
  */
 
 export default function Login({ navigation }) {
-
   // forgotPass - called when user hits forgot password button
   // sends reset password email to email in text box
   forgotPass = (email) => {
@@ -82,14 +84,18 @@ export default function Login({ navigation }) {
                 Password?
               </Text>
               <Formik
+                // state values being stored
                 initialValues={{ email: "" }}
-                validationSchema={reviewSchema}
+                // validation for user input
+                validationSchema={forgotPasswordSchema}
+                // what to do when submitting
                 onSubmit={(values) => {
                   forgotPass(values.email.trim());
                 }}
               >
                 {(props) => (
                   <Fragment>
+                    {/* email text input */}
                     <View
                       style={{
                         ...appStyles.inputView,
@@ -98,7 +104,6 @@ export default function Login({ navigation }) {
                         marginTop: 5,
                       }}
                     >
-                      {/* email text input */}
                       <TextInput
                         style={appStyles.inputText}
                         placeholder="Email..."
@@ -110,6 +115,7 @@ export default function Login({ navigation }) {
                       />
                     </View>
 
+                    {/* red text error - email */}
                     <Text style={{ color: "red" }}>
                       {props.touched.email && props.errors.email}
                     </Text>

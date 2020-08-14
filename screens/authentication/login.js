@@ -1,7 +1,7 @@
 // home.js
 
-import React, { useState, Fragment } from "react";
-import "react-native-gesture-handler";
+import React, { Fragment } from "react";
+//import "react-native-gesture-handler";
 import {
   Text,
   View,
@@ -16,25 +16,27 @@ import { auth } from "../../firebase/firebase";
 import { appStyles } from "../../style/stylesheet";
 import { NotificationContext } from "../../contexts/NotificationContext";
 import { Formik } from "formik";
-import * as  yup from  "yup";
+import * as yup from "yup";
 
 /* login.js
  * Login screen
  *
  */
 
-
-const reviewSchema = yup.object({
-  email: yup.string()
+// loginSchema - determines what input is valid
+// string is the error message returned
+const loginSchema = yup.object({
+  email: yup
+    .string()
     .required("Email must be a valid email address")
     .email("Email must be a valid email address"),
-  password: yup.string()
+  password: yup
+    .string()
     .required("Password must be at least 6 characters")
     .min(6, "Password must be at least 6 characters"),
-})
+});
 
 export default function Login({ navigation }) {
-
   // signUpUser - called when user presses sign up button,
   // navigates to sign up page
   signUpUser = () => {
@@ -85,21 +87,24 @@ export default function Login({ navigation }) {
               {/* text input fields (email, password) */}
 
               <Formik
+                // "state" values
                 initialValues={{ email: "", password: "" }}
-                validationSchema={reviewSchema}
+                // what values can the user submit
+                validationSchema={loginSchema}
+                // what to do on submit
                 onSubmit={(values) => {
                   loginUser(values.email.trim(), values.password);
                 }}
               >
                 {(props) => (
                   <Fragment>
+                    {/* email input */}
                     <View
                       style={{
                         ...appStyles.inputView,
                         backgroundColor: theme.APPINPUTVIEW,
                         marginBottom: 2,
                         marginTop: 5,
-                        
                       }}
                     >
                       <TextInput
@@ -113,8 +118,12 @@ export default function Login({ navigation }) {
                       />
                     </View>
 
-                    <Text style={{color: "red"}}>{props.touched.email && props.errors.email}</Text>
+                    {/* red error text for email */}
+                    <Text style={{ color: "red" }}>
+                      {props.touched.email && props.errors.email}
+                    </Text>
 
+                    {/* password input */}
                     <View
                       style={{
                         ...appStyles.inputView,
@@ -134,7 +143,10 @@ export default function Login({ navigation }) {
                       />
                     </View>
 
-                    <Text style={{color: "red", marginBottom: 10}}>{props.touched.password && props.errors.password}</Text>
+                    {/* red error text for password */}
+                    <Text style={{ color: "red", marginBottom: 10 }}>
+                      {props.touched.password && props.errors.password}
+                    </Text>
 
                     {/* forgot password button */}
                     <TouchableOpacity
@@ -156,7 +168,6 @@ export default function Login({ navigation }) {
                         ...appStyles.loginBtn,
                         backgroundColor: theme.APPTEXTRED,
                       }}
-                      //onPress={() => this.loginUser(email.trim(), password)}
                       onPress={props.handleSubmit}
                     >
                       <Text

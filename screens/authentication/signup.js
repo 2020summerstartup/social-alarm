@@ -21,39 +21,37 @@ import {
 import { appStyles } from "../../style/stylesheet";
 import { NotificationContext } from "../../contexts/NotificationContext";
 import { Formik } from "formik";
-import * as  yup from  "yup";
+import * as yup from "yup";
 
 /* signup.js
  * SignUp screen
  *
  */
 
-
-const reviewSchema = yup.object({
-  name: yup.string()
+// signUpSchema - determines what input is valid
+// string is the error message returned
+const signUpSchema = yup.object({
+  name: yup
+    .string()
     .required("Too short!"),
-  email: yup.string()
+  email: yup
+    .string()
     .required("Email must be a valid email address")
     .email("Email must be a valid email address"),
-  password: yup.string()
+  password: yup
+    .string()
     .required("Password must be at least 6 characters")
     .min(6, "Password must be at least 6 characters"),
-  confirmPassword: yup.string()
+  confirmPassword: yup
+    .string()
     .required("Password must be at least 6 characters")
     .min(6, "Password must be at least 6 characters")
-    .test('passwords-match', "Passwords must match", function(value) {
+    .test("passwords-match", "Passwords must match", function (value) {
       return this.parent.password === value;
-    })
-})
-
+    }),
+});
 
 export default function SignUp({ navigation }) {
-  // states - contains info that user entered
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [name, setName] = useState("");
-
   // signUpUser - called when user presses sign up button
   // if passwords match, signs user up (and logs them in) and navigates to App
   signUpUser = async (email, password, confirmPassword, name) => {
@@ -121,121 +119,148 @@ export default function SignUp({ navigation }) {
               </Text>
 
               <Formik
-                initialValues={{ name: "", email: "", password: "", confirmPassword: "" }}
-                validationSchema={reviewSchema}
+                // "state" values
+                initialValues={{
+                  name: "",
+                  email: "",
+                  password: "",
+                  confirmPassword: "",
+                }}
+                // form validation (what values user can submit)
+                validationSchema={signUpSchema}
+                // what to do onsubmit
                 onSubmit={(values) => {
                   signUpUser(
                     values.email.trim(),
                     values.password,
                     values.confirmPassword,
                     values.name.trim()
-                  )
+                  );
                 }}
               >
                 {(props) => (
                   <Fragment>
+                    {/* name text input */}
+                    <View
+                      style={{
+                        ...appStyles.inputView,
+                        backgroundColor: theme.APPINPUTVIEW,
+                        marginBottom: 2,
+                        marginTop: 5,
+                      }}
+                    >
+                      <TextInput
+                        style={appStyles.inputText}
+                        placeholder="Name..."
+                        placeholderTextColor="#003f5c"
+                        autoCorrect={false}
+                        value={props.values.name}
+                        onBlur={props.handleBlur("name")}
+                        onChangeText={props.handleChange("name")}
+                      />
+                    </View>
 
-              {/* name text input */}
-              <View
-                style={{
-                  ...appStyles.inputView,
-                  backgroundColor: theme.APPINPUTVIEW,
-                  marginBottom: 2,
-                  marginTop: 5,
-                }}
-              >
-                <TextInput
-                  style={appStyles.inputText}
-                  placeholder="Name..."
-                  placeholderTextColor="#003f5c"
-                  autoCorrect={false}
-                  value={props.values.name}
-                  onBlur={props.handleBlur("name")}
-                  onChangeText={props.handleChange("name")}
-                />
-              </View>
-              <Text style={{color: "red"}}>{props.touched.name && props.errors.name}</Text>
+                    {/* red error text - name */}
+                    <Text style={{ color: "red" }}>
+                      {props.touched.name && props.errors.name}
+                    </Text>
 
-              {/* email text input */}
-              <View
-                style={{
-                  ...appStyles.inputView,
-                  backgroundColor: theme.APPINPUTVIEW,
-                  marginBottom: 2,
-                  marginTop: 5,
-                }}
-              >
-                <TextInput
-                  style={appStyles.inputText}
-                  placeholder="Email..."
-                  placeholderTextColor="#003f5c"
-                  keyboardType="email-address"
-                  value={props.values.email}
-                  onBlur={props.handleBlur("email")}
-                  onChangeText={props.handleChange("email")}
-                />
-              </View>
-              <Text style={{color: "red"}}>{props.touched.email && props.errors.email}</Text>
+                    {/* email text input */}
+                    <View
+                      style={{
+                        ...appStyles.inputView,
+                        backgroundColor: theme.APPINPUTVIEW,
+                        marginBottom: 2,
+                        marginTop: 5,
+                      }}
+                    >
+                      <TextInput
+                        style={appStyles.inputText}
+                        placeholder="Email..."
+                        placeholderTextColor="#003f5c"
+                        keyboardType="email-address"
+                        value={props.values.email}
+                        onBlur={props.handleBlur("email")}
+                        onChangeText={props.handleChange("email")}
+                      />
+                    </View>
 
-              {/* password text input */}
-              <View
-                style={{
-                  ...appStyles.inputView,
-                  backgroundColor: theme.APPINPUTVIEW,
-                  marginBottom: 2,
-                  marginTop: 5,
-                }}
-              >
-                <TextInput
-                  secureTextEntry
-                  style={appStyles.inputText}
-                  placeholder="Password..."
-                  placeholderTextColor="#003f5c"
-                  value={props.values.password}
-                  onBlur={props.handleBlur("password")}
-                  onChangeText={props.handleChange("password")}
-                />
-              </View>
-              <Text style={{color: "red"}}>{props.touched.password && props.errors.password}</Text>
+                    {/* red error text - email */}
+                    <Text style={{ color: "red" }}>
+                      {props.touched.email && props.errors.email}
+                    </Text>
 
-              {/* confirm password text input */}
-              <View
-                style={{
-                  ...appStyles.inputView,
-                  backgroundColor: theme.APPINPUTVIEW,
-                  marginBottom: 2,
-                  marginTop: 5,
-                }}
-              >
-                <TextInput
-                  secureTextEntry
-                  style={appStyles.inputText}
-                  placeholder="Confirm password..."
-                  placeholderTextColor="#003f5c"
-                  value={props.values.confirmPassword}
-                  onBlur={props.handleBlur("confirmPassword")}
-                  onChangeText={props.handleChange("confirmPassword")}
-                />
-              </View>
-              <Text style={{color: "red"}}>{props.touched.confirmPassword && props.errors.confirmPassword}</Text>
-              {/* sign up button */}
-              <TouchableOpacity
-                style={{
-                  ...appStyles.loginBtn,
-                  backgroundColor: theme.APPTEXTRED,
-                }}
-                onPress={props.handleSubmit}
-              >
-                <Text
-                  style={{ ...appStyles.loginText, color: theme.APPTEXTBLACK }}
-                >
-                  SIGN UP
-                </Text>
-              </TouchableOpacity>
+                    {/* password text input */}
+                    <View
+                      style={{
+                        ...appStyles.inputView,
+                        backgroundColor: theme.APPINPUTVIEW,
+                        marginBottom: 2,
+                        marginTop: 5,
+                      }}
+                    >
+                      <TextInput
+                        secureTextEntry
+                        style={appStyles.inputText}
+                        placeholder="Password..."
+                        placeholderTextColor="#003f5c"
+                        value={props.values.password}
+                        onBlur={props.handleBlur("password")}
+                        onChangeText={props.handleChange("password")}
+                      />
+                    </View>
 
-              </Fragment>
+                    {/* red error text - password */}
+                    <Text style={{ color: "red" }}>
+                      {props.touched.password && props.errors.password}
+                    </Text>
+
+                    {/* confirm password text input */}
+                    <View
+                      style={{
+                        ...appStyles.inputView,
+                        backgroundColor: theme.APPINPUTVIEW,
+                        marginBottom: 2,
+                        marginTop: 5,
+                      }}
+                    >
+                      <TextInput
+                        secureTextEntry
+                        style={appStyles.inputText}
+                        placeholder="Confirm password..."
+                        placeholderTextColor="#003f5c"
+                        value={props.values.confirmPassword}
+                        onBlur={props.handleBlur("confirmPassword")}
+                        onChangeText={props.handleChange("confirmPassword")}
+                      />
+                    </View>
+
+                    {/* red error text - confirmPassword */}
+                    <Text style={{ color: "red" }}>
+                      {props.touched.confirmPassword &&
+                        props.errors.confirmPassword}
+                    </Text>
+
+                    {/* sign up button */}
+                    <TouchableOpacity
+                      style={{
+                        ...appStyles.loginBtn,
+                        backgroundColor: theme.APPTEXTRED,
+                      }}
+                      onPress={props.handleSubmit}
+                    >
+                      <Text
+                        style={{
+                          ...appStyles.loginText,
+                          color: theme.APPTEXTBLACK,
+                        }}
+                      >
+                        SIGN UP
+                      </Text>
+                    </TouchableOpacity>
+                  </Fragment>
                 )}
-                </Formik>
+              </Formik>
             </View>
           </TouchableWithoutFeedback>
         );
