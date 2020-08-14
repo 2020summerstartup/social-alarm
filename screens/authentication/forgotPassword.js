@@ -29,8 +29,6 @@ const reviewSchema = yup.object({
  */
 
 export default function Login({ navigation }) {
-  // states - contains info that user entered
-  const [email, setEmail] = useState("");
 
   // forgotPass - called when user hits forgot password button
   // sends reset password email to email in text box

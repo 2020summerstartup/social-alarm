@@ -1,5 +1,5 @@
 // home.js
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 // not sure if I need this import
 import "react-native-gesture-handler";
 import {
@@ -25,6 +25,9 @@ import { ScrollView } from "react-native-gesture-handler";
 
 import RNPickerSelect from 'react-native-picker-select';
 import Chevron from '../../components/downChevron';
+
+import { Formik } from "formik";
+import * as yup from "yup";
 
 import {
   APPBACKGROUNDCOLOR,
@@ -823,6 +826,20 @@ export default class Groups extends Component {
               />
               </View>
 
+              <Formik
+                initialValues={{ email: "" }}
+                //validationSchema={reviewSchema}
+                onSubmit={(values) => {
+                  //forgotPass(values.email.trim());
+                  this.addUserToGroup(
+                    values.email.trim(),
+                    this.state.groupIdClicked
+                  )
+                }}
+              >
+                {(props) => (
+                  <Fragment>
+
               {/* text input to add a group member */}
               <View
                 style={{
@@ -838,21 +855,16 @@ export default class Groups extends Component {
                   placeholder="Add group member..."
                   placeholderTextColor="#003f5c"
                   keyboardType="email-address"
-                  onChangeText={(text) => {
-                    this.setState({ addUser: text });
-                  }}
+                  value={props.values.email}
+                  onBlur={props.handleBlur("email")}
+                  onChangeText={props.handleChange("email")}
                 />
               </View>
 
               {/* add member button */}
               <TouchableOpacity
                 style={{ ...appStyles.loginBtn, ...{ marginTop: 10}, ...{backgroundColor: this.state.groupAlarmColor} }}
-                onPress={() =>
-                  this.addUserToGroup(
-                    this.state.addUser.trim(),
-                    this.state.groupIdClicked
-                  )
-                }
+                onPress={props.handleSubmit}
               >
                 <Text
                   style={{
@@ -863,6 +875,8 @@ export default class Groups extends Component {
                   add member
                 </Text>
               </TouchableOpacity>
+
+              </Fragment>)}</Formik>
 
               {/* number of members in the group text */}
               <Text style={{ ...styles.wordText, color: theme.APPTEXTBLACK }}>
