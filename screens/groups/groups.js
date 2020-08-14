@@ -1,6 +1,5 @@
 // home.js
 import React, { Component, Fragment } from "react";
-// not sure if I need this import
 import "react-native-gesture-handler";
 import {
   StyleSheet,
@@ -23,8 +22,8 @@ import { db, auth } from "../../firebase/firebase";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 
-import RNPickerSelect from 'react-native-picker-select';
-import Chevron from '../../components/downChevron';
+import RNPickerSelect from "react-native-picker-select";
+import Chevron from "../../components/downChevron";
 
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -39,25 +38,33 @@ import {
   ALARMCOLORMINT,
   ALARMCOLORMAROON,
   ALARMCOLORPINK,
-  ALARMCOLORDARKBLUE
+  ALARMCOLORDARKBLUE,
 } from "../../style/constants";
 import { appStyles, alarmStyles } from "../../style/stylesheet";
 import { NotificationContext } from "../../contexts/NotificationContext";
 
-const createModalReviewSchema = yup.object({
-  groupName: yup.string()
+// createModalSchema - determines what input is valid
+// string is the error message returned
+const createModalSchema = yup.object({
+  groupName: yup
+    .string()
     .required("Group name must be at least 3 characters")
     .min(3, "Group name must be at least 3 characters")
-    .test('min-length', "Group name must be at least 3 characters", function(value) {
+    .test("min-length", "Group name must be at least 3 characters", function (
+      value
+    ) {
       return value.trim().length >= 3;
     }),
-})
+});
 
-const indivModalReviewSchema = yup.object({
-    email: yup.string()
-      .required("Email must be a valid email address")
-      .email("Email must be a valid email address"),
-})
+// indivModalSchema - determines what input is valid
+// string is the error message returned
+const indivModalSchema = yup.object({
+  email: yup
+    .string()
+    .required("Email must be a valid email address")
+    .email("Email must be a valid email address"),
+});
 
 export default class Groups extends Component {
   constructor(props) {
@@ -86,7 +93,6 @@ export default class Groups extends Component {
 
   // current user
   user = auth.currentUser;
-
 
   // called when user hits create group button in create group modal
   // creates a group in firebase and adds it to local state
@@ -117,7 +123,7 @@ export default class Groups extends Component {
               groups: Firebase.firestore.FieldValue.arrayUnion({
                 name: name,
                 id: docRef.id,
-                color: DEFAULTGROUPCOLOR
+                color: DEFAULTGROUPCOLOR,
               }),
             });
           // update user's groups in local state
@@ -128,7 +134,7 @@ export default class Groups extends Component {
           groupData.push({
             name: name,
             id: docRef.id,
-            color: DEFAULTGROUPCOLOR
+            color: DEFAULTGROUPCOLOR,
           });
           this.setState({ groups: groupData });
         })
@@ -158,7 +164,7 @@ export default class Groups extends Component {
         }
         this.setState({ groupMembers: groupMem });
         this.setState({ groupAdminClicked: doc.data().adminEmail });
-        this.setState({ groupModalRefreshing: false})
+        this.setState({ groupModalRefreshing: false });
       });
   };
 
@@ -255,7 +261,6 @@ export default class Groups extends Component {
   // called when user deletes themself from a group OR
   // admin deletes someone from a group
   deleteUserFromGroup(group, groupId, groupColor, userDeleted) {
-
     // if deleteing themself - call deleteSelfFromGroup
     if (userDeleted == this.user.email) {
       this.deleteSelfFromGroup(group, groupId, groupColor);
@@ -281,7 +286,7 @@ export default class Groups extends Component {
         groups: Firebase.firestore.FieldValue.arrayRemove({
           color: groupColor,
           id: groupId,
-          name: group
+          name: group,
         }),
         notifications: Firebase.firestore.FieldValue.arrayUnion({
           title: "Group deleted",
@@ -323,7 +328,7 @@ export default class Groups extends Component {
     var self = this;
     var userDeleted = this.user.email;
 
-    console.log("group, groupId, groupColor:", group, groupId, groupColor)
+    console.log("group, groupId, groupColor:", group, groupId, groupColor);
 
     // updates state - the groups displayed on main page
     const newGroups = self.state.groups;
@@ -343,7 +348,7 @@ export default class Groups extends Component {
         groups: Firebase.firestore.FieldValue.arrayRemove({
           color: groupColor,
           id: groupId,
-          name: group
+          name: group,
         }),
       })
       .then(() => {
@@ -431,7 +436,7 @@ export default class Groups extends Component {
                 groups: Firebase.firestore.FieldValue.arrayRemove({
                   color: groupColor,
                   id: groupId,
-                  name: group
+                  name: group,
                 }),
                 notifications: Firebase.firestore.FieldValue.arrayUnion({
                   title: "Group deleted",
@@ -448,7 +453,7 @@ export default class Groups extends Component {
                 groups: Firebase.firestore.FieldValue.arrayRemove({
                   color: groupColor,
                   id: groupId,
-                  name: group
+                  name: group,
                 }),
               });
           }
@@ -540,7 +545,12 @@ export default class Groups extends Component {
           text: "Yes",
           style: "destructive",
           onPress: () =>
-            this.deleteUserFromGroup(groupName, rowKey, this.state.groupColorClicked, this.user.email),
+            this.deleteUserFromGroup(
+              groupName,
+              rowKey,
+              this.state.groupColorClicked,
+              this.user.email
+            ),
         },
       ]
     );
@@ -585,21 +595,21 @@ export default class Groups extends Component {
   onRowDidOpen = (rowKey) => {
     console.log("This row opened", rowKey);
     const prevIndex = this.state.groups.findIndex((item) => item.id === rowKey);
-    
-    this.setState({ groupNameClicked: this.state.groups[prevIndex].name })
-    this.setState({ groupIdClicked: this.state.groups[prevIndex].id })
-    this.setState({ groupColorClicked: this.state.groups[prevIndex].color })
+
+    this.setState({ groupNameClicked: this.state.groups[prevIndex].name });
+    this.setState({ groupIdClicked: this.state.groups[prevIndex].id });
+    this.setState({ groupColorClicked: this.state.groups[prevIndex].color });
   };
 
-    // Updates state when a group is swiped open
-    onRowDidOpenModal = (rowKey) => {
-      console.log("This row opened", rowKey);
-    };
+  // Updates state when a group is swiped open
+  onRowDidOpenModal = (rowKey) => {
+    console.log("This row opened", rowKey);
+  };
 
   // called when the component launches/mounts
   // sets up all local state
   componentDidMount() {
-    this.initializeState()
+    this.initializeState();
   }
 
   initializeState() {
@@ -616,10 +626,12 @@ export default class Groups extends Component {
             groupsData.push({
               name: doc.data().groups[i].name,
               id: doc.data().groups[i].id,
-              color: doc.data().groups[i].color
+              color: doc.data().groups[i].color,
             });
           }
-          this.setState({ groups: groupsData }, () => this.setState({mainPageRefreshing: false}));
+          this.setState({ groups: groupsData }, () =>
+            this.setState({ mainPageRefreshing: false })
+          );
         }
       })
       .catch(function (error) {
@@ -628,32 +640,35 @@ export default class Groups extends Component {
   }
 
   onRefreshMainPage() {
-    this.setState({mainPageRefreshing: true})
-    this.initializeState()
-
+    this.setState({ mainPageRefreshing: true });
+    this.initializeState();
   }
 
   onRefreshGroupModal() {
-    this.setState({groupModalRefreshing: true})
-    this.groupModal(this.state.groupNameClicked, this.state.groupIdClicked, this.state.groupColorClicked)
+    this.setState({ groupModalRefreshing: true });
+    this.groupModal(
+      this.state.groupNameClicked,
+      this.state.groupIdClicked,
+      this.state.groupColorClicked
+    );
   }
 
   // Called from RNPickerSelect in GroupModal
   // Updates the group color in user's doc in Firebase
-  updateGroupColor(value){
-    console.log("updateGroupColor(" + value + ")")
-    console.log("this.state.groupColorClicked:", this.state.groupColorClicked)
+  updateGroupColor(value) {
+    console.log("updateGroupColor(" + value + ")");
+    console.log("this.state.groupColorClicked:", this.state.groupColorClicked);
 
     // Update user's doc in Firebase
     // Step 1: Remove old data from groups array
     db.collection("users")
-        .doc(auth.currentUser.email)
-        .update({
-          groups: Firebase.firestore.FieldValue.arrayRemove({
-            color: this.state.groupColorClicked, 
-            id: this.state.groupIdClicked,
-            name: this.state.groupNameClicked
-          }),
+      .doc(auth.currentUser.email)
+      .update({
+        groups: Firebase.firestore.FieldValue.arrayRemove({
+          color: this.state.groupColorClicked,
+          id: this.state.groupIdClicked,
+          name: this.state.groupNameClicked,
+        }),
       });
 
     // Step 2: Add updated data back to groups array
@@ -661,27 +676,28 @@ export default class Groups extends Component {
       .doc(this.user.email)
       .update({
         groups: Firebase.firestore.FieldValue.arrayUnion({
-          color: value, 
+          color: value,
           id: this.state.groupIdClicked,
-          name: this.state.groupNameClicked
-        })
+          name: this.state.groupNameClicked,
+        }),
       });
 
     // sets prevIndex to the index of the selected alarm in the local state group array
-    const prevIndex = this.state.groups.findIndex((item) => item.id === this.state.groupIdClicked);
+    const prevIndex = this.state.groups.findIndex(
+      (item) => item.id === this.state.groupIdClicked
+    );
 
     // remove old alarm from local state group array
-    this.state.groups.splice(prevIndex, 1)
+    this.state.groups.splice(prevIndex, 1);
 
     // add updated group to local state group array
-    this.state.groups.push(
-      { color: value, 
-        id: this.state.groupIdClicked,
-        name: this.state.groupNameClicked
-      }
-    )
+    this.state.groups.push({
+      color: value,
+      id: this.state.groupIdClicked,
+      name: this.state.groupNameClicked,
+    });
 
-    this.setState({groupColorClicked: value})
+    this.setState({ groupColorClicked: value });
   }
 
   render() {
@@ -691,8 +707,12 @@ export default class Groups extends Component {
     const theme = isDarkMode ? dark : light;
 
     return (
-
-      <View style={{...appStyles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
+      <View
+        style={{
+          ...appStyles.container,
+          backgroundColor: theme.APPBACKGROUNDCOLOR,
+        }}
+      >
         {/* **************************************** CREATE NEW GROUP MODAL **************************************** */}
         <Modal visible={this.state.createModalOpen} animationType="slide">
           {/* this allows for dismiss keyboard when tapping anywhere functionality */}
@@ -722,50 +742,54 @@ export default class Groups extends Component {
               {/* text input for create new group */}
 
               <Formik
+                // state values for the form
                 initialValues={{ groupName: "" }}
-                validationSchema={createModalReviewSchema}
+                // input validation
+                validationSchema={createModalSchema}
+                // form submission event
                 onSubmit={(values) => {
-                  this.createGroup(values.groupName.trim(), this.user)
+                  this.createGroup(values.groupName.trim(), this.user);
                 }}
               >
                 {(props) => (
                   <Fragment>
+                    {/* group name input */}
+                    <View
+                      style={{
+                        ...appStyles.inputView,
+                        backgroundColor: theme.APPINPUTVIEW,
+                        marginBottom: 2,
+                        marginTop: 5,
+                      }}
+                    >
+                      <TextInput
+                        style={{ ...appStyles.inputText }}
+                        placeholder="Group name..."
+                        placeholderTextColor="#003f5c"
+                        value={props.values.email}
+                        onBlur={props.handleBlur("groupName")}
+                        onChangeText={props.handleChange("groupName")}
+                      />
+                    </View>
 
+                    {/* red error text - new group name */}
+                    <Text style={{ color: "red" }}>
+                      {props.touched.groupName && props.errors.groupName}
+                    </Text>
 
-              <View
-              style={{
-                ...appStyles.inputView,
-                backgroundColor: theme.APPINPUTVIEW,
-                marginBottom: 2,
-                marginTop: 5,
-              }}
-              >
-                <TextInput
-                  style={{ ...appStyles.inputText }}
-                  placeholder="Group name..."
-                  placeholderTextColor="#003f5c"
-                  value={props.values.email}
-                  onBlur={props.handleBlur("groupName")}
-                  onChangeText={props.handleChange("groupName")}
-                />
-              </View>
-
-              <Text style={{ color: "red" }}>
-                {props.touched.groupName && props.errors.groupName}
-              </Text>
-
-
-              {/* create new group button */}
-              <TouchableOpacity
-                style={{
-                  ...appStyles.loginBtn,
-                  backgroundColor: theme.APPTEXTRED,
-                }}
-                onPress={props.handleSubmit}
-              >
-                <Text style={appStyles.buttonText}> Create group </Text>
-              </TouchableOpacity>
-              </Fragment>)}</Formik>
+                    {/* create new group button */}
+                    <TouchableOpacity
+                      style={{
+                        ...appStyles.loginBtn,
+                        backgroundColor: theme.APPTEXTRED,
+                      }}
+                      onPress={props.handleSubmit}
+                    >
+                      <Text style={appStyles.buttonText}> Create group </Text>
+                    </TouchableOpacity>
+                  </Fragment>
+                )}
+              </Formik>
             </View>
           </TouchableWithoutFeedback>
         </Modal>
@@ -774,9 +798,18 @@ export default class Groups extends Component {
         <Modal visible={this.state.groupModalOpen} animationType="slide">
           {/* this allows for touch anywhere and keyboard dismisses functionality */}
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View style={{...appStyles.modalContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
-              <View style={{...alarmStyles.topBanner, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
-
+            <View
+              style={{
+                ...appStyles.modalContainer,
+                backgroundColor: theme.APPBACKGROUNDCOLOR,
+              }}
+            >
+              <View
+                style={{
+                  ...alarmStyles.topBanner,
+                  backgroundColor: theme.APPBACKGROUNDCOLOR,
+                }}
+              >
                 {/* close indiv group modal button */}
                 <MaterialIcons
                   name="arrow-back"
@@ -785,11 +818,11 @@ export default class Groups extends Component {
                     ...appStyles.modalToggle,
                     ...appStyles.modalClose,
                     justifyContent: "flex-end",
-                    color: theme.APPTEXTRED
+                    color: theme.APPTEXTRED,
                   }}
                   onPress={() => this.setState({ groupModalOpen: false })}
                 />
-                                                      
+
                 {/* delete group button */}
                 {this.user.email == this.state.groupAdminClicked && (
                   <MaterialIcons
@@ -828,7 +861,11 @@ export default class Groups extends Component {
               <Text
                 adjustsFontSizeToFit
                 numberOfLines={1}
-                style={{ ...appStyles.logo, ...{ marginTop: 5 }, ...{ color: this.state.groupColorClicked } }}
+                style={{
+                  ...appStyles.logo,
+                  ...{ marginTop: 5 },
+                  ...{ color: this.state.groupColorClicked },
+                }}
               >
                 {this.state.groupNameClicked}
               </Text>
@@ -843,97 +880,126 @@ export default class Groups extends Component {
               }
 
               {/* Pick color for group */}
-              <View style={{width: "100%", paddingBottom: 25}}>
-              <RNPickerSelect
-                onValueChange={(value) => this.updateGroupColor(value)}
-                items={[
-                  {label: "Mint", value: ALARMCOLORMINT, color: ALARMCOLORMINT},
-                  {label: "Maroon", value: ALARMCOLORMAROON, color: ALARMCOLORMAROON},
-                  {label: "Pink", value: ALARMCOLORPINK, color: ALARMCOLORPINK},
-                  {label: "Dark Blue", value: ALARMCOLORDARKBLUE, color: ALARMCOLORDARKBLUE},
-                ]}
-                // Object to overide the default text placeholder for the PickerSelect
-                placeholder={{label: "Select a group color", value: DEFAULTGROUPCOLOR, color: DEFAULTGROUPCOLOR}}
-                style={
-                  { placeholder: {
+              <View style={{ width: "100%", paddingBottom: 25 }}>
+                <RNPickerSelect
+                  onValueChange={(value) => this.updateGroupColor(value)}
+                  items={[
+                    {
+                      label: "Mint",
+                      value: ALARMCOLORMINT,
+                      color: ALARMCOLORMINT,
+                    },
+                    {
+                      label: "Maroon",
+                      value: ALARMCOLORMAROON,
+                      color: ALARMCOLORMAROON,
+                    },
+                    {
+                      label: "Pink",
+                      value: ALARMCOLORPINK,
+                      color: ALARMCOLORPINK,
+                    },
+                    {
+                      label: "Dark Blue",
+                      value: ALARMCOLORDARKBLUE,
+                      color: ALARMCOLORDARKBLUE,
+                    },
+                  ]}
+                  // Object to overide the default text placeholder for the PickerSelect
+                  placeholder={{
+                    label: "Select a group color",
+                    value: DEFAULTGROUPCOLOR,
+                    color: DEFAULTGROUPCOLOR,
+                  }}
+                  style={{
+                    placeholder: {
                       color: this.state.groupColorClicked,
                       fontSize: 20,
-                      fontWeight: 'bold',
-                      alignSelf: 'center',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      fontWeight: "bold",
+                      alignSelf: "center",
+                      alignItems: "center",
+                      justifyContent: "center",
                     },
                     inputIOS: {
                       color: APPTEXTBLUE,
                       fontSize: 20,
-                      alignSelf: 'center',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }
-                  }
-                }
-                doneText={"Select"}
-                Icon={() => {return <Chevron size={1.5} color="gray" />;}}
-              />
+                      alignSelf: "center",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    },
+                  }}
+                  doneText={"Select"}
+                  Icon={() => {
+                    return <Chevron size={1.5} color="gray" />;
+                  }}
+                />
               </View>
 
               <Formik
+                // state values
                 initialValues={{ email: "" }}
-                validationSchema={indivModalReviewSchema}
+                // input validation
+                validationSchema={indivModalSchema}
+                // on form submission
                 onSubmit={(values) => {
-                  //forgotPass(values.email.trim());
                   this.addUserToGroup(
                     values.email.trim(),
                     this.state.groupIdClicked
-                  )
+                  );
                 }}
               >
                 {(props) => (
                   <Fragment>
+                    {/* text input to add a group member */}
+                    <View
+                      style={{
+                        ...appStyles.inputView,
+                        backgroundColor: theme.APPINPUTVIEW,
+                        marginBottom: 2,
+                        marginTop: 5,
+                      }}
+                    >
+                      <TextInput
+                        // this is needed to dismiss text box
+                        ref={(input) => {
+                          this.textInput = input;
+                        }}
+                        style={appStyles.inputText}
+                        placeholder="Add group member..."
+                        placeholderTextColor="#003f5c"
+                        keyboardType="email-address"
+                        value={props.values.email}
+                        onBlur={props.handleBlur("email")}
+                        onChangeText={props.handleChange("email")}
+                      />
+                    </View>
 
-              {/* text input to add a group member */}
-              <View
-              style={{
-                ...appStyles.inputView,
-                backgroundColor: theme.APPINPUTVIEW,
-                marginBottom: 2,
-                marginTop: 5,
-              }}
-              >
-                <TextInput
-                  ref={(input) => {
-                    this.textInput = input;
-                  }}
-                  style={appStyles.inputText}
-                  placeholder="Add group member..."
-                  placeholderTextColor="#003f5c"
-                  keyboardType="email-address"
-                  value={props.values.email}
-                  onBlur={props.handleBlur("email")}
-                  onChangeText={props.handleChange("email")}
-                />
-              </View>
+                    {/* red error text - new member email */}
+                    <Text style={{ color: "red" }}>
+                      {props.touched.email && props.errors.email}
+                    </Text>
 
-              <Text style={{ color: "red" }}>
-                {props.touched.email && props.errors.email}
-              </Text>
-
-              {/* add member button */}
-              <TouchableOpacity
-                style={{ ...appStyles.loginBtn, ...{ marginTop: 10}, ...{backgroundColor: this.state.groupColorClicked} }}
-                onPress={props.handleSubmit}
-              >
-                <Text
-                  style={{
-                    ...appStyles.buttonText,
-                    color: theme.APPTEXTWHITE,
-                  }}
-                >
-                  add member
-                </Text>
-              </TouchableOpacity>
-
-              </Fragment>)}</Formik>
+                    {/* add member button */}
+                    <TouchableOpacity
+                      style={{
+                        ...appStyles.loginBtn,
+                        ...{ marginTop: 10 },
+                        ...{ backgroundColor: this.state.groupColorClicked },
+                      }}
+                      onPress={props.handleSubmit}
+                    >
+                      <Text
+                        style={{
+                          ...appStyles.buttonText,
+                          color: theme.APPTEXTWHITE,
+                        }}
+                      >
+                        add member
+                      </Text>
+                    </TouchableOpacity>
+                  </Fragment>
+                )}
+              </Formik>
 
               {/* number of members in the group text */}
               <Text style={{ ...styles.wordText, color: theme.APPTEXTBLACK }}>
@@ -949,13 +1015,15 @@ export default class Groups extends Component {
                 // displays ScrollView of group members
                 // (so user doesn't have swipe to delete functionality)
                 this.user.email != this.state.groupAdminClicked && (
-                  <ScrollView 
-                  style={{ width: "95%" }}
-                  refreshControl={
-                    <RefreshControl refreshing={this.state.groupModalRefreshing} 
-                    onRefresh={this.onRefreshGroupModal.bind(this)} tintColor={theme.APPTEXTBLACK}
-                    />
-                  }
+                  <ScrollView
+                    style={{ width: "95%" }}
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={this.state.groupModalRefreshing}
+                        onRefresh={this.onRefreshGroupModal.bind(this)}
+                        tintColor={theme.APPTEXTBLACK}
+                      />
+                    }
                   >
                     {this.state.groupMembers &&
                       this.state.groupMembers.map((person) => {
@@ -963,7 +1031,10 @@ export default class Groups extends Component {
                           // "button"  that displays group members
                           <TouchableHighlight
                             underlayColor={APPINPUTVIEW}
-                            style={[alarmStyles.alarmBanner, {backgroundColor: this.state.groupColorClicked}]}
+                            style={[
+                              alarmStyles.alarmBanner,
+                              { backgroundColor: this.state.groupColorClicked },
+                            ]}
                             key={person}
                           >
                             <Text
@@ -995,14 +1066,19 @@ export default class Groups extends Component {
                     keyExtractor={(item) => item} // specifying id as the key to prevent the key warning
                     data={this.state.groupMembers}
                     refreshControl={
-                      <RefreshControl refreshing={this.state.groupModalRefreshing} 
-                      onRefresh={this.onRefreshGroupModal.bind(this)} tintColor={theme.APPTEXTBLACK}
+                      <RefreshControl
+                        refreshing={this.state.groupModalRefreshing}
+                        onRefresh={this.onRefreshGroupModal.bind(this)}
+                        tintColor={theme.APPTEXTBLACK}
                       />
                     }
                     renderItem={({ item }) => (
                       // button that contains user's name
                       <TouchableHighlight
-                        style={[alarmStyles.alarmBanner, {backgroundColor: this.state.groupColorClicked}]}
+                        style={[
+                          alarmStyles.alarmBanner,
+                          { backgroundColor: this.state.groupColorClicked },
+                        ]}
                       >
                         <Text
                           adjustsFontSizeToFit
@@ -1027,57 +1103,41 @@ export default class Groups extends Component {
                   />
                 )
               }
-
             </View>
           </TouchableWithoutFeedback>
         </Modal>
 
         {/* **************************************** ACTUAL PAGE ********************************************************** */}
 
-        <View style={{...alarmStyles.topBanner, backgroundColor: theme.APPBACKGROUNDCOLOR}}>          
-          <Text style={{...alarmStyles.pageTitle, color: theme.APPTEXTRED}}>Groups</Text>
+        <View
+          style={{
+            ...alarmStyles.topBanner,
+            backgroundColor: theme.APPBACKGROUNDCOLOR,
+          }}
+        >
+          <Text style={{ ...alarmStyles.pageTitle, color: theme.APPTEXTRED }}>
+            Groups
+          </Text>
 
           {/* add new group button */}
           <MaterialIcons
             name="group-add"
             size={36}
-            style={{...appStyles.modalToggle, color: theme.APPTEXTRED}}
+            style={{ ...appStyles.modalToggle, color: theme.APPTEXTRED }}
             onPress={() => this.setState({ createModalOpen: true })}
           />
         </View>
 
-        {/*
-        // this is my old code if we wanna bring it back ever
-        // for scrollview list of groups (instead of swipe list)
-        <ScrollView style={{ width: "95%" }}>
-          {this.state.groups &&
-            this.state.groups.map((group) => {
-              return (
-                <TouchableOpacity
-                  style={alarmStyles.alarmBanner}
-                  key={group.id}
-                  onPress={() => this.groupModal(group.name, group.id, group.color)}
-                >
-                  <Text
-                    adjustsFontSizeToFit
-                    numberOfLines={1}
-                    style={alarmStyles.alarmText}
-                  >
-                    {group.name}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView> */}
-
         {/* swipelist of all groups user is in */}
         <SwipeListView
-          style={{ width: "95%" , backgroundColor: theme.APPBACKGROUNDCOLOR}}
+          style={{ width: "95%", backgroundColor: theme.APPBACKGROUNDCOLOR }}
           keyExtractor={(item) => item.id} // specifying id as the key to prevent the key warning
           data={this.state.groups}
           refreshControl={
-            <RefreshControl refreshing={this.state.mainPageRefreshing} 
-            onRefresh={this.onRefreshMainPage.bind(this)} tintColor={theme.APPTEXTBLACK}
+            <RefreshControl
+              refreshing={this.state.mainPageRefreshing}
+              onRefresh={this.onRefreshMainPage.bind(this)}
+              tintColor={theme.APPTEXTBLACK}
             />
           }
           renderItem={({ item }) => (
@@ -1085,7 +1145,7 @@ export default class Groups extends Component {
             <TouchableHighlight
               // color when clicked
               underlayColor={"#fc8c8b"}
-              style={[alarmStyles.alarmBanner, {backgroundColor: item.color}]}
+              style={[alarmStyles.alarmBanner, { backgroundColor: item.color }]}
               onPress={() => this.groupModal(item.name, item.id, item.color)}
             >
               <Text
