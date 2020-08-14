@@ -103,7 +103,6 @@ export default class Alarms extends Component {
         
         // Defining state variables that are used throughout class functions
         this.state = {
-            // alarms: [],
             alarms: [{alarm_hour: 0, alarm_minute: 0, color: null, key: " ", name: " ", switch: true}],
 
             // modal states
@@ -918,6 +917,7 @@ export default class Alarms extends Component {
 
     /*Runs when page refreshes: Initialization*/
     componentDidMount(){
+      console.log("componentDidMount")
       this.isComponentMounted = true;
       // console.log("componentDidMount, this.isComponentMounted:", this.isComponentMounted)
       this.componentDidMountHelper();
@@ -1154,10 +1154,13 @@ export default class Alarms extends Component {
                 items={this.state.groupsArray}
 
                 // Object to overide the default text placeholder for the PickerSelect
-                placeholder={{label: "Click here to select a group", value: "0"}}
+                placeholder={{label: "Click here to select a group", value: "0", color: theme.APPTEXTRED}}
                 style={
-                  { fontWeight: 'normal',
-                    color: 'red',
+                  { modalViewBottom:{
+                      backgroundColor: '#A9A9A9',
+                    },
+                    fontWeight: 'bold',
+                    color: theme.APPTEXTRED,
                     placeholder: {
                       color: theme.APPTEXTRED,
                       fontSize: 20,
@@ -1179,7 +1182,6 @@ export default class Alarms extends Component {
               />
 
               {/*
-              <Text></Text>
 
               <TouchableOpacity
                 style={{ ...appStyles.loginBtn, marginTop: 10, backgroundColor: theme.APPTEXTRED }}
@@ -1188,15 +1190,15 @@ export default class Alarms extends Component {
                   
                 */}
 
-                
-              <Button
-                title="Add alarm to group"
-                color="lightgreen"
+              {/* Add alarm to group button */}
+              <TouchableOpacity
+                style={{...appStyles.loginBtn, backgroundColor: theme.APPTEXTRED}}
                 onPress={ async() =>
                   this.plusGroupButtonUpdate()
-
                 }
-              />
+                >
+                <Text style={appStyles.buttonText}> Add alarm to group </Text>
+              </TouchableOpacity>
 
               </View>
           </Modal>
