@@ -44,6 +44,18 @@ import {
 import { appStyles, alarmStyles } from "../../style/stylesheet";
 import { NotificationContext } from "../../contexts/NotificationContext";
 
+const createModalReviewSchema = yup.object({
+  groupName: yup.string()
+    .required("Group name must be at least 3 characters")
+    .min(3, "Group name must be at least 3 characters"),
+})
+
+const indivModalReviewSchema = yup.object({
+    email: yup.string()
+      .required("Email must be a valid email address")
+      .email("Email must be a valid email address"),
+})
+
 export default class Groups extends Component {
   constructor(props) {
     super(props);
@@ -60,8 +72,6 @@ export default class Groups extends Component {
       groupIdClicked: "",
       groupAdminClicked: "",
       groupMembers: [],
-      // the text input in add user field of group specific modal
-      addUser: "",
       // swipe to refresh functionality
       mainPageRefreshing: false,
       groupModalRefreshing: false,
@@ -710,7 +720,7 @@ export default class Groups extends Component {
 
               <Formik
                 initialValues={{ groupName: "" }}
-                //validationSchema={reviewSchema}
+                validationSchema={createModalReviewSchema}
                 onSubmit={(values) => {
                   this.createGroup(values.groupName.trim(), this.user)
                 }}
@@ -720,10 +730,12 @@ export default class Groups extends Component {
 
 
               <View
-                style={{
-                  ...appStyles.inputView,
-                  backgroundColor: theme.APPINPUTVIEW,
-                }}
+              style={{
+                ...appStyles.inputView,
+                backgroundColor: theme.APPINPUTVIEW,
+                marginBottom: 2,
+                marginTop: 5,
+              }}
               >
                 <TextInput
                   style={{ ...appStyles.inputText }}
@@ -734,6 +746,12 @@ export default class Groups extends Component {
                   onChangeText={props.handleChange("groupName")}
                 />
               </View>
+
+              <Text style={{ color: "red" }}>
+                {props.touched.groupName && props.errors.groupName}
+              </Text>
+
+
               {/* create new group button */}
               <TouchableOpacity
                 style={{
@@ -858,9 +876,7 @@ export default class Groups extends Component {
 
               <Formik
                 initialValues={{ email: "" }}
-                validationSchema={yup.object({
-                  email: yup.string().required().email(),
-                })}
+                validationSchema={indivModalReviewSchema}
                 onSubmit={(values) => {
                   //forgotPass(values.email.trim());
                   this.addUserToGroup(

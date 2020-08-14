@@ -19,7 +19,9 @@ import { Formik } from "formik";
 import * as yup from "yup";
 
 const reviewSchema = yup.object({
-  email: yup.string().required().email(),
+  email: yup.string()
+    .required("Email must be a valid email address")
+    .email("Email must be a valid email address"),
 });
 
 /* forgotPassword.js

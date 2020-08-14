@@ -30,10 +30,17 @@ import * as  yup from  "yup";
 
 
 const reviewSchema = yup.object({
-  name: yup.string().required(),
-  email: yup.string().required().email(),
-  password: yup.string().required().min(6),
-  confirmPassword: yup.string().required().min(6),
+  name: yup.string()
+    .required("Too short!"),
+  email: yup.string()
+    .required("Email must be a valid email address")
+    .email("Email must be a valid email address"),
+  password: yup.string()
+    .required("Password must be at least 6 characters")
+    .min(6, "Password must be at least 6 characters"),
+    password: yup.string()
+    .required("Password must be at least 6 characters")
+    .min(6, "Password must be at least 6 characters"),
 })
 
 
