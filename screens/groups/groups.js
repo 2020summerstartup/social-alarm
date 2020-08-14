@@ -47,7 +47,10 @@ import { NotificationContext } from "../../contexts/NotificationContext";
 const createModalReviewSchema = yup.object({
   groupName: yup.string()
     .required("Group name must be at least 3 characters")
-    .min(3, "Group name must be at least 3 characters"),
+    .min(3, "Group name must be at least 3 characters")
+    .test('min-length', "Group name must be at least 3 characters", function(value) {
+      return value.trim().length >= 3;
+    }),
 })
 
 const indivModalReviewSchema = yup.object({

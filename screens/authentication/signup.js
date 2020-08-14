@@ -38,9 +38,12 @@ const reviewSchema = yup.object({
   password: yup.string()
     .required("Password must be at least 6 characters")
     .min(6, "Password must be at least 6 characters"),
-    password: yup.string()
+  confirmPassword: yup.string()
     .required("Password must be at least 6 characters")
-    .min(6, "Password must be at least 6 characters"),
+    .min(6, "Password must be at least 6 characters")
+    .test('passwords-match', "Passwords must match", function(value) {
+      return this.parent.password === value;
+    })
 })
 
 
