@@ -80,16 +80,16 @@ export default class Landing extends Component{
               backgroundColor:APPTEXTRED,
               borderRadius: 25,
               height: 500,
-              padding: 15,
-              marginLeft: 35,
+              padding: 12,
+              marginLeft: 38,
               marginTop: 15,
               marginRight: 25, }}>
-            <Text style={{fontSize: 35, fontWeight: "bold", color: APPTEXTWHITE, justifyContent: "center"}}>{item.title}</Text>
-            <Text style={{fontSize: 20, color: APPTEXTBLUE}}>{item.text}</Text>
+            <Text style={{fontSize: 48, fontWeight: "bold", color: APPTEXTWHITE, textAlign: "center", paddingTop: 13}}>{item.title}</Text>
             <Image
                 source={item.image}
                 style={styles.image}
-            />          
+            />  
+            <Text style={{fontSize: 23, color: APPTEXTBLUE, textAlign: "center"}}>{item.text}</Text>      
           </View>
 
         )
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     },
     image: {
       width: 310,
-      height: 380,
+      height: 350,
       marginLeft: 0,
       marginTop: 10,
       justifyContent: 'center',
