@@ -1,5 +1,5 @@
 // home.js
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import "react-native-gesture-handler";
 import {
   StyleSheet,
@@ -16,8 +16,11 @@ import { APPTEXTRED } from "../../style/constants";
 import { appStyles } from "../../style/stylesheet";
 import { NotificationContext } from "../../contexts/NotificationContext";
 import { Formik } from "formik";
-import * as  yup from  "yup";
+import * as yup from "yup";
 
+const reviewSchema = yup.object({
+  email: yup.string().required().email(),
+});
 
 /* forgotPassword.js
  * Forgot password screen
@@ -69,53 +72,68 @@ export default function Login({ navigation }) {
               <Text style={{ ...styles.logoTop, color: theme.APPTEXTRED }}>
                 Forgot
               </Text>
-              <Text style={{ ...appStyles.logo, color: theme.APPTEXTRED }}>
+              <Text
+                style={{
+                  ...appStyles.logo,
+                  color: theme.APPTEXTRED,
+                  marginTop: 2,
+                }}
+              >
                 Password?
               </Text>
               <Formik
-                initialValues={{ email: "", password: "" }}
-                //validationSchema={reviewSchema}
+                initialValues={{ email: "" }}
+                validationSchema={reviewSchema}
                 onSubmit={(values) => {
-                  loginUser(values.email.trim(), values.password);
+                  forgotPass(values.email.trim());
                 }}
               >
                 {(props) => (
                   <Fragment>
-              <View
-                style={{
-                  ...appStyles.inputView,
-                  backgroundColor: theme.APPINPUTVIEW,
-                }}
-              >
-                {/* email text input */}
-                <TextInput
-                  style={appStyles.inputText}
-                  placeholder="Email..."
-                  placeholderTextColor="#003f5c"
-                  keyboardType="email-address"
-                  onChangeText={(text) => {
-                    setEmail(text);
-                  }}
-                />
-              </View>
+                    <View
+                      style={{
+                        ...appStyles.inputView,
+                        backgroundColor: theme.APPINPUTVIEW,
+                        marginBottom: 2,
+                        marginTop: 5,
+                      }}
+                    >
+                      {/* email text input */}
+                      <TextInput
+                        style={appStyles.inputText}
+                        placeholder="Email..."
+                        placeholderTextColor="#003f5c"
+                        keyboardType="email-address"
+                        value={props.values.email}
+                        onBlur={props.handleBlur("email")}
+                        onChangeText={props.handleChange("email")}
+                      />
+                    </View>
 
-              {/* forgot pass button */}
-              <TouchableOpacity
-                style={{
-                  ...appStyles.loginBtn,
-                  backgroundColor: theme.APPTEXTRED,
-                }}
-                onPress={() => this.forgotPass(email.trim())}
-              >
-                <Text
-                  style={{ ...appStyles.loginText, color: theme.APPTEXTBLUE }}
-                >
-                  Send password reset email
-                </Text>
-              </TouchableOpacity>
-              </Fragment>
+                    <Text style={{ color: "red" }}>
+                      {props.touched.email && props.errors.email}
+                    </Text>
+
+                    {/* forgot pass button */}
+                    <TouchableOpacity
+                      style={{
+                        ...appStyles.loginBtn,
+                        backgroundColor: theme.APPTEXTRED,
+                      }}
+                      onPress={props.handleSubmit}
+                    >
+                      <Text
+                        style={{
+                          ...appStyles.loginText,
+                          color: theme.APPTEXTWHITE,
+                        }}
+                      >
+                        Send password reset email
+                      </Text>
+                    </TouchableOpacity>
+                  </Fragment>
                 )}
-                </Formik>
+              </Formik>
             </View>
           </TouchableWithoutFeedback>
         );
