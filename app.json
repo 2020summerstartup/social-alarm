@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Alarm",
-    "slug": "Alarm",
-    "version": "1.0.0",
+    "name": "TeamTime",
+    "slug": "team-time",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/logo9696.png",
     "splash": {
