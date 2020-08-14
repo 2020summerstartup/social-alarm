@@ -4,6 +4,8 @@
 
 #### Users can set personal reminders and create groups so they can share reminders with others. This app incorporates social media with friendly reminders so users can maintain their daily routine while growing relationships with friends and family!
 
+#### Visit our LinkedIn at www.linkedin.com/company/teamtime2020 or email us at teamtimealarms@gmail.com.
+
 ## Install
 ```
 - Git clone the repository.
