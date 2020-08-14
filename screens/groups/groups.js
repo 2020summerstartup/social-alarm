@@ -828,7 +828,9 @@ export default class Groups extends Component {
 
               <Formik
                 initialValues={{ email: "" }}
-                //validationSchema={reviewSchema}
+                validationSchema={yup.object({
+                  email: yup.string().required().email(),
+                })}
                 onSubmit={(values) => {
                   //forgotPass(values.email.trim());
                   this.addUserToGroup(
@@ -842,10 +844,12 @@ export default class Groups extends Component {
 
               {/* text input to add a group member */}
               <View
-                style={{
-                  ...appStyles.inputView,
-                  backgroundColor: theme.APPINPUTVIEW,
-                }}
+              style={{
+                ...appStyles.inputView,
+                backgroundColor: theme.APPINPUTVIEW,
+                marginBottom: 2,
+                marginTop: 5,
+              }}
               >
                 <TextInput
                   ref={(input) => {
@@ -860,6 +864,10 @@ export default class Groups extends Component {
                   onChangeText={props.handleChange("email")}
                 />
               </View>
+
+              <Text style={{ color: "red" }}>
+                {props.touched.email && props.errors.email}
+              </Text>
 
               {/* add member button */}
               <TouchableOpacity
