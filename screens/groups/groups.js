@@ -52,8 +52,6 @@ export default class Groups extends Component {
       // modal states
       createModalOpen: false,
       groupModalOpen: false,
-      // the text input box in create group modal
-      groupName: "",
       // array of groups the user is in
       groups: [],
       // info for group specific modal
@@ -709,6 +707,18 @@ export default class Groups extends Component {
                 Create Group
               </Text>
               {/* text input for create new group */}
+
+              <Formik
+                initialValues={{ groupName: "" }}
+                //validationSchema={reviewSchema}
+                onSubmit={(values) => {
+                  this.createGroup(values.groupName.trim(), this.user)
+                }}
+              >
+                {(props) => (
+                  <Fragment>
+
+
               <View
                 style={{
                   ...appStyles.inputView,
@@ -719,9 +729,9 @@ export default class Groups extends Component {
                   style={{ ...appStyles.inputText }}
                   placeholder="Group name..."
                   placeholderTextColor="#003f5c"
-                  onChangeText={(text) => {
-                    this.setState({ groupName: text });
-                  }}
+                  value={props.values.email}
+                  onBlur={props.handleBlur("groupName")}
+                  onChangeText={props.handleChange("groupName")}
                 />
               </View>
               {/* create new group button */}
@@ -730,12 +740,11 @@ export default class Groups extends Component {
                   ...appStyles.loginBtn,
                   backgroundColor: theme.APPTEXTRED,
                 }}
-                onPress={() =>
-                  this.createGroup(this.state.groupName.trim(), this.user)
-                }
+                onPress={props.handleSubmit}
               >
                 <Text style={appStyles.buttonText}> Create group </Text>
               </TouchableOpacity>
+              </Fragment>)}</Formik>
             </View>
           </TouchableWithoutFeedback>
         </Modal>
