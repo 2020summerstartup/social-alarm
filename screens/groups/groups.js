@@ -57,6 +57,7 @@ export default class Groups extends Component {
       // array of groups the user is in
       groups: [],
       // info for group specific modal
+      groupColorClicked: DEFAULTGROUPCOLOR,
       groupNameClicked: "",
       groupIdClicked: "",
       groupAdminClicked: "",
@@ -66,8 +67,6 @@ export default class Groups extends Component {
       // swipe to refresh functionality
       mainPageRefreshing: false,
       groupModalRefreshing: false,
-      // color to display group info
-      groupAlarmColor: DEFAULTGROUPCOLOR,
     };
   }
 
@@ -77,7 +76,6 @@ export default class Groups extends Component {
   // current user
   user = auth.currentUser;
 
-  
 
   // called when user hits create group button in create group modal
   // creates a group in firebase and adds it to local state
@@ -136,6 +134,7 @@ export default class Groups extends Component {
     this.setState({ groupModalOpen: true });
     this.setState({ groupNameClicked: groupName });
     this.setState({ groupIdClicked: groupId });
+    this.setState({ groupColorClicked: groupColor });
 
     // gets group members,  stores them in state
     db.collection("groups")
@@ -148,7 +147,7 @@ export default class Groups extends Component {
         }
         this.setState({ groupMembers: groupMem });
         this.setState({ groupAdminClicked: doc.data().adminEmail });
-        this.setState({groupModalRefreshing: false})
+        this.setState({ groupModalRefreshing: false})
       });
   };
 
@@ -197,6 +196,7 @@ export default class Groups extends Component {
                       groups: Firebase.firestore.FieldValue.arrayUnion({
                         name: doc2.data().groupName,
                         id: doc2.id,
+                        // color: doc2.color,
                       }),
                       notifications: Firebase.firestore.FieldValue.arrayUnion({
                         title: "New Group!",
@@ -243,11 +243,11 @@ export default class Groups extends Component {
   // deletes a user from a group
   // called when user deletes themself from a group OR
   // admin deletes someone from a group
-  deleteUserFromGroup(group, groupId, userDeleted) {
+  deleteUserFromGroup(group, groupId, groupColor, userDeleted) {
 
     // if deleteing themself - call deleteSelfFromGroup
     if (userDeleted == this.user.email) {
-      this.deleteSelfFromGroup(group, groupId);
+      this.deleteSelfFromGroup(group, groupId, groupColor);
       return;
     }
     var self = this;
@@ -268,8 +268,9 @@ export default class Groups extends Component {
       .doc(userDeleted)
       .update({
         groups: Firebase.firestore.FieldValue.arrayRemove({
+          color: groupColor,
           id: groupId,
-          name: group,
+          name: group
         }),
         notifications: Firebase.firestore.FieldValue.arrayUnion({
           title: "Group deleted",
@@ -307,9 +308,11 @@ export default class Groups extends Component {
 
   // deletes a user from a group
   // called when user deletes themself from a group (from deleteUserFromGroup)
-  deleteSelfFromGroup(group, groupId) {
+  deleteSelfFromGroup(group, groupId, groupColor) {
     var self = this;
     var userDeleted = this.user.email;
+
+    console.log("group, groupId, groupColor:", group, groupId, groupColor)
 
     // updates state - the groups displayed on main page
     const newGroups = self.state.groups;
@@ -327,8 +330,9 @@ export default class Groups extends Component {
       .doc(userDeleted)
       .update({
         groups: Firebase.firestore.FieldValue.arrayRemove({
+          color: groupColor,
           id: groupId,
-          name: group,
+          name: group
         }),
       })
       .then(() => {
@@ -384,7 +388,7 @@ export default class Groups extends Component {
 
   // called when admin wants to delete a group
   // deletes group doc,the group from all members user doc, and updates local state
-  deleteGroup(group, groupId) {
+  deleteGroup(group, groupId, groupColor) {
     var self = this;
 
     // updates the groups displayed on main page - state stuff
@@ -414,8 +418,9 @@ export default class Groups extends Component {
               .doc(groupMembers[i])
               .update({
                 groups: Firebase.firestore.FieldValue.arrayRemove({
+                  color: groupColor,
                   id: groupId,
-                  name: group,
+                  name: group
                 }),
                 notifications: Firebase.firestore.FieldValue.arrayUnion({
                   title: "Group deleted",
@@ -430,8 +435,9 @@ export default class Groups extends Component {
               .doc(groupMembers[i])
               .update({
                 groups: Firebase.firestore.FieldValue.arrayRemove({
+                  color: groupColor,
                   id: groupId,
-                  name: group,
+                  name: group
                 }),
               });
           }
@@ -516,14 +522,14 @@ export default class Groups extends Component {
 
     Alert.alert(
       "Warning",
-      "Are you sure you  want to delete yourself from this group?",
+      "Are you sure you want to delete yourself from this group?",
       [
         { text: "Cancel", style: "cancel" },
         {
           text: "Yes",
           style: "destructive",
           onPress: () =>
-            this.deleteUserFromGroup(groupName, rowKey, this.user.email),
+            this.deleteUserFromGroup(groupName, rowKey, this.state.groupColorClicked, this.user.email),
         },
       ]
     );
@@ -550,11 +556,12 @@ export default class Groups extends Component {
           {
             text: "Yes",
             style: "destructive",
-            // if they  click yes, calls deleteUserFromGroup
+            // if they click yes, calls deleteUserFromGroup
             onPress: () =>
               this.deleteUserFromGroup(
                 this.state.groupNameClicked,
                 this.state.groupIdClicked,
+                this.state.groupColorClicked,
                 rowKey
               ),
           },
@@ -563,10 +570,20 @@ export default class Groups extends Component {
     }
   };
 
-  // idk what this does - from Sidney's code (Sidney here: just good for debugging)
+  // Updates state when a group is swiped open
   onRowDidOpen = (rowKey) => {
     console.log("This row opened", rowKey);
+    const prevIndex = this.state.groups.findIndex((item) => item.id === rowKey);
+    
+    this.setState({ groupNameClicked: this.state.groups[prevIndex].name })
+    this.setState({ groupIdClicked: this.state.groups[prevIndex].id })
+    this.setState({ groupColorClicked: this.state.groups[prevIndex].color })
   };
+
+    // Updates state when a group is swiped open
+    onRowDidOpenModal = (rowKey) => {
+      console.log("This row opened", rowKey);
+    };
 
   // called when the component launches/mounts
   // sets up all local state
@@ -607,12 +624,14 @@ export default class Groups extends Component {
 
   onRefreshGroupModal() {
     this.setState({groupModalRefreshing: true})
-    this.groupModal(this.state.groupNameClicked, this.state.groupIdClicked)
+    this.groupModal(this.state.groupNameClicked, this.state.groupIdClicked, this.state.groupColorClicked)
   }
+
   // Called from RNPickerSelect in GroupModal
   // Updates the group color in user's doc in Firebase
   updateGroupColor(value){
     console.log("updateGroupColor(" + value + ")")
+    console.log("this.state.groupColorClicked:", this.state.groupColorClicked)
 
     // Update user's doc in Firebase
     // Step 1: Remove old data from groups array
@@ -620,7 +639,7 @@ export default class Groups extends Component {
         .doc(auth.currentUser.email)
         .update({
           groups: Firebase.firestore.FieldValue.arrayRemove({
-            color: this.state.groupAlarmColor, 
+            color: this.state.groupColorClicked, 
             id: this.state.groupIdClicked,
             name: this.state.groupNameClicked
           }),
@@ -645,12 +664,13 @@ export default class Groups extends Component {
 
     // add updated group to local state group array
     this.state.groups.push(
-      {color: value, 
-      id: this.state.groupIdClicked,
-      name: this.state.groupNameClicked}
+      { color: value, 
+        id: this.state.groupIdClicked,
+        name: this.state.groupNameClicked
+      }
     )
 
-    this.setState({groupAlarmColor: value})
+    this.setState({groupColorClicked: value})
   }
 
   render() {
@@ -697,7 +717,7 @@ export default class Groups extends Component {
               >
                 <TextInput
                   style={{ ...appStyles.inputText }}
-                  placeholder="group name..."
+                  placeholder="Group name..."
                   placeholderTextColor="#003f5c"
                   onChangeText={(text) => {
                     this.setState({ groupName: text });
@@ -763,7 +783,8 @@ export default class Groups extends Component {
                             onPress: () =>
                               this.deleteGroup(
                                 this.state.groupNameClicked,
-                                this.state.groupIdClicked
+                                this.state.groupIdClicked,
+                                this.state.groupColorClicked
                               ),
                           },
                         ]
@@ -777,7 +798,7 @@ export default class Groups extends Component {
               <Text
                 adjustsFontSizeToFit
                 numberOfLines={1}
-                style={{ ...appStyles.logo, ...{ marginTop: 5 }, ...{ color: this.state.groupAlarmColor } }}
+                style={{ ...appStyles.logo, ...{ marginTop: 5 }, ...{ color: this.state.groupColorClicked } }}
               >
                 {this.state.groupNameClicked}
               </Text>
@@ -802,10 +823,10 @@ export default class Groups extends Component {
                   {label: "Dark Blue", value: ALARMCOLORDARKBLUE, color: ALARMCOLORDARKBLUE},
                 ]}
                 // Object to overide the default text placeholder for the PickerSelect
-                placeholder={{label: "Select a group color", value: "0", color: "black"}}
+                placeholder={{label: "Select a group color", value: DEFAULTGROUPCOLOR, color: DEFAULTGROUPCOLOR}}
                 style={
                   { placeholder: {
-                      color: this.state.groupAlarmColor,
+                      color: this.state.groupColorClicked,
                       fontSize: 20,
                       fontWeight: 'bold',
                       alignSelf: 'center',
@@ -871,7 +892,7 @@ export default class Groups extends Component {
 
               {/* add member button */}
               <TouchableOpacity
-                style={{ ...appStyles.loginBtn, ...{ marginTop: 10}, ...{backgroundColor: this.state.groupAlarmColor} }}
+                style={{ ...appStyles.loginBtn, ...{ marginTop: 10}, ...{backgroundColor: this.state.groupColorClicked} }}
                 onPress={props.handleSubmit}
               >
                 <Text
@@ -914,7 +935,7 @@ export default class Groups extends Component {
                           // "button"  that displays group members
                           <TouchableHighlight
                             underlayColor={APPINPUTVIEW}
-                            style={[alarmStyles.alarmBanner, {backgroundColor: this.state.groupAlarmColor}]}
+                            style={[alarmStyles.alarmBanner, {backgroundColor: this.state.groupColorClicked}]}
                             key={person}
                           >
                             <Text
@@ -953,7 +974,7 @@ export default class Groups extends Component {
                     renderItem={({ item }) => (
                       // button that contains user's name
                       <TouchableHighlight
-                        style={[alarmStyles.alarmBanner, {backgroundColor: this.state.groupAlarmColor}]}
+                        style={[alarmStyles.alarmBanner, {backgroundColor: this.state.groupColorClicked}]}
                       >
                         <Text
                           adjustsFontSizeToFit
@@ -969,11 +990,11 @@ export default class Groups extends Component {
                     )}
                     renderHiddenItem={this.renderHiddenItemModal}
                     leftOpenValue={0}
-                    rightOpenValue={-160}
+                    rightOpenValue={-145}
                     previewRowKey={"0"}
                     previewOpenValue={-80}
                     previewOpenDelay={500}
-                    onRowDidOpen={this.onRowDidOpen}
+                    onRowDidOpen={this.onRowDidOpenModal}
                     // onSwipeValueChange={this.onSwipeValueChange}
                   />
                 )
