@@ -17,9 +17,9 @@ import Carousel, {Pagination} from 'react-native-snap-carousel';
 import { APPBACKGROUNDCOLOR, APPTEXTRED, APPTEXTWHITE, APPTEXTBLUE } from '../../style/constants';
 
 // the three pictures for the three screens
-import alarmpage from "../../assets/alarmpage.png";
-import logo from "../../assets/logopage1.png";
-import grouppage from "../../assets/grouppage1.png";
+import alarmpage from "../../assets/alarmpage2.jpg";
+import logo from "../../assets/logo_landing.png";
+import grouppage from "../../assets/grouppage2.jpg";
 
 export default class Landing extends Component{
 
@@ -32,7 +32,7 @@ export default class Landing extends Component{
               // First Screen
               title:"TeamTime",
               text: "Stay connected with your friends by setting alarms for each other!",
-              image: logo,
+              image: logo
           },
           {
               // Second Screen
@@ -80,8 +80,8 @@ export default class Landing extends Component{
               backgroundColor:APPTEXTRED,
               borderRadius: 25,
               height: 500,
-              padding: 20,
-              marginLeft: 40,
+              padding: 15,
+              marginLeft: 35,
               marginTop: 15,
               marginRight: 25, }}>
             <Text style={{fontSize: 35, fontWeight: "bold", color: APPTEXTWHITE, justifyContent: "center"}}>{item.title}</Text>
@@ -159,9 +159,9 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     image: {
-      width: 270,
-      height: 370,
-      marginLeft: 12,
+      width: 310,
+      height: 380,
+      marginLeft: 0,
       marginTop: 10,
       justifyContent: 'center',
     },
