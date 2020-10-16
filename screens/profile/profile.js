@@ -18,11 +18,11 @@ import { ListItem, withBadge } from "react-native-elements";
 import { auth, db } from "../../firebase/firebase";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RNPickerSelect from "react-native-picker-select";
-import { profileStyles } from "../../style/stylesheet";
+import { profileStyles, alarmStyles, appStyles } from "../../style/stylesheet";
 
 import { MaterialIcons } from "@expo/vector-icons";
 
-import { appStyles } from "../../style/stylesheet";
+// import GenerateForm from 'react-native-form-builder';
 
 import {
   APPBACKGROUNDCOLOR,
@@ -46,7 +46,6 @@ import { color } from "react-native-reanimated";
  * share our app, and send feedback
  * feel free to change or delete any of these
  */
-
 
 class ProfileScreen extends Component {
   // sign out functionality
@@ -114,7 +113,9 @@ class ProfileScreen extends Component {
         { label: 'Central Time', value: 'CST' },
         { label: 'Mountain Time', value: 'MST' },
         { label: 'Pacific Time', value: 'PST' },	  
-      ]	      
+      ],
+
+      contactUsModal: false,
     };
   }
 
@@ -157,42 +158,42 @@ class ProfileScreen extends Component {
     const theme = isDarkMode ? dark : light;
 
 
-// This is for the birthday picker
-const BirthdayPicker = () => {
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  // This is for the birthday picker
+  const BirthdayPicker = () => {
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-  // shows the date picker
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
+    // shows the date picker
+    const showDatePicker = () => {
+      setDatePickerVisibility(true);
+    };
+
+    const hideDatePicker = () => {
+      setDatePickerVisibility(false);
+    };
+
+    const handleConfirm = (date) => {
+      hideDatePicker();
+      console.log(date.toString());
+      this.setState({birthday: date.toString().substring(4, 15)})
+      db.collection("users").doc(this.state.email).update({birthday: date.toString().substring(4, 15)})
+    };
+
+    return (
+      <View>
+        <Button title="Select birthday" onPress={showDatePicker} />
+        <DateTimePickerModal
+          isVisible={isDatePickerVisible}
+          mode="date"
+          minimumDate={new Date(1900, 0, 1)}
+          maximumDate={new Date(2020, 11, 31)}
+          onConfirm={handleConfirm}
+          onCancel={hideDatePicker}
+          style={profileStyles.birthdayBtn}
+          headerTextIOS={"When's your birthday?"}
+        />
+      </View>
+    );
   };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleConfirm = (date) => {
-    hideDatePicker();
-    console.log(date.toString());
-    this.setState({birthday: date.toString().substring(4, 15)})
-    db.collection("users").doc(this.state.email).update({birthday: date.toString().substring(4, 15)})
-  };
-
-  return (
-    <View>
-      <Button title="Select birthday" onPress={showDatePicker} />
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        minimumDate={new Date(1900, 0, 1)}
-        maximumDate={new Date(2020, 11, 31)}
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-        style={profileStyles.birthdayBtn}
-        headerTextIOS={"When's your birthday?"}
-      />
-    </View>
-  );
-};
 
     // called when user opens notifications modal
     // opens modal and sets global state notification count to 0
@@ -214,9 +215,64 @@ const BirthdayPicker = () => {
     // https://react-native-elements.github.io/react-native-elements/docs/badge#withbadge-higher-order-component
     const BadgedIcon = withBadge(notificationCount)(BaseIcon);
 
+    const fields = [
+      {
+        type: 'text',
+        name: 'user_name',
+        required: true,
+        icon: 'ios-person',
+        label: 'Username',
+      },
+      {
+        type: 'password',
+        name: 'password',
+        icon: 'ios-lock',
+        required: true,
+        label: 'Password',
+      },
+      {
+        type: 'picker',
+        name: 'country',
+        mode: 'dialog',
+        label: 'Select Country',
+        defaultValue: 'INDIA',
+        options: ['US', 'INDIA', 'UK', 'CHINA', 'FRANCE'],
+      },
+    ];
+
     return (
 
       <View style={{...profileStyles.container, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
+
+        {/*** BEGINNING OF CONTACT US MODAL ***/}
+        <Modal visible={this.state.contactUsModal} animationType="slide">
+          <View style={{...appStyles.modalContainer, backgroundColor: theme.APPBACKGROUNDCOLOR}}>
+            <MaterialIcons
+            name="close"
+            size={24}
+            style={{ ...appStyles.modalToggle, ...appStyles.modalClose, color: theme.APPTEXTRED }}
+            onPress={() => this.setState({ contactUsModal: false })}
+            />
+            <Text style={{...alarmStyles.modalTitle, color: theme.APPTEXTRED}}> Contact Us </Text>
+
+            {/* <View>
+              <GenerateForm
+                ref={(c) => {
+                  this.formGenerator = c;
+                }}
+                fields={fields}
+              />
+            </View> */}
+            {/* <View style={styles.submitButton}>
+              <Button>
+                <Text>Login</Text>
+              </Button>
+            </View> */}
+
+          </View>
+        </Modal>
+        {/*** END OF CONTACT US MODAL ***/}
+
         {/* this part shows the user's name and email */}
         <View style={profileStyles.userRow}>
           <Text style={{ fontSize: 30, color: theme.APPTEXTBLACK, }}>{this.state.name.replace ('<br/>', '\n')}</Text>
@@ -560,14 +616,12 @@ const BirthdayPicker = () => {
             rightIcon={<Chevron />}
           />
 
-          {/* SEND FEEDBACK ICON */}
+          {/* CONTACT US ICON */}
           <ListItem
-            title="Send Feedback"
-            onPress={() => {
-              Linking.openURL(
-                "https://www.linkedin.com/company/teamtime2020/?viewAsMember=true"
-              );
-            }}
+            title="Contact Us"
+            onPress={() => 
+              this.setState({ contactUsModal: true })
+            }
             containerStyle={{
               ...profileStyles.listItemContainer,
               backgroundColor: theme.APPBACKGROUNDCOLOR,
